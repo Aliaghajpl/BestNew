@@ -23,7 +23,7 @@ Present: Rohan, Sofie, Petter, Cristian (on Skype)
 
 ## High-level side
 
- - Belief planning most relevant for uncertainty in the map. 
+ - Belief planning most relevant for uncertainty in the **map**. Initially rest can be assumed to be deterministic.
  - Will likey need abstraction of copter behavior to avoid planning on full model. Abstraction could be in form of LTL spec.
  - A way to decouple the problem is via assume-guarantee contracts. I.e. copter says: if #(grids to explore < 30) -> grids will be explored. Relevant work by Scott Livingston and Ioannis Filippidis.
  
