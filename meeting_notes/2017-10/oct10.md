@@ -28,7 +28,7 @@ Present: Rohan, Sofie, Petter, Cristian (on Skype)
 
 ## Low-level side
 
- - Will meet tomorrow to purchase quadrotors. Initial steps for Ames group (Andrew, Thomas, Petter) is to set them up with A-B motion generation.
+ - Ames group (Andrew, Thomas, Petter) will meet tomorrow to purchase quadrotors. Initial objective is to set them up with A-B motion generation. 
 
 
 ## Software
@@ -40,5 +40,5 @@ Present: Rohan, Sofie, Petter, Cristian (on Skype)
 ## Next steps
 
  - Improve paper with a robotics venue in mind (All)
- - Partial handover of code next week (Cristian)
+ - Prepare for partial handover of code next week, including installation instructions and list of things to be done (Cristian)
  - Write down different suggestions for problem definitions and demo scenarios (Petter)
