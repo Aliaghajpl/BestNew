@@ -24,7 +24,9 @@ Present: Rohan, Sofie, Petter, Cristian (on Skype)
 ## High-level side
 
  - Belief planning most relevant for uncertainty in the map. 
-
+ - Will likey need abstraction of copter behavior to avoid planning on full model. Abstraction could be in form of LTL spec.
+ - A way to decouple the problem is via assume-guarantee contracts. I.e. copter says: if #(grids to explore < 30) -> grids will be explored.
+ 
 
 ## Low-level side
 
