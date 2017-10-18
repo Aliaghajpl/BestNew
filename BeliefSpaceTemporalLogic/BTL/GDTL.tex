@@ -1,0 +1,192 @@
+\section{Gaussian Distribution Temporal Logic}
+\label{sec:gdtl}
+In this section, we define Gaussian Distribution Temporal Logic (GDTL),
+a predicate temporal logic defined over the space of Gaussian
+distributions with fixed dimension.
+
+\smallskip
+\noindent {\bf Notation:}
+Let $\Sigma$ be a finite set. The cardinality,
+power set, Kleene- and $\omega$-closures
+of $\Sigma$ are denoted by $\card{\Sigma}$,
+$\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
+respectively.
+$A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
+$n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
+functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
+respect to the Lebesgue measure of $\BB{R}^n$.
+The set of all positive semi-definite matrices of size
+$n \times n$, $n \geq 1$, is denoted by $S^n$.
+$\BB{E}[\cdot]$ is the expectation operator.
+The $m \times n$ zero matrix and
+the $n \times n$ identity matrix are denoted by
+$\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+The supremum and Euclidean norms are denoted by
+$\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
+
+Let $\CA{G}$ denote the Gaussian belief space
+of dimension $n$, i.e. the space of Gaussian
+probability measures over $\BB{R}^n$.
+For brevity, we identify the Gaussian measures
+with their finite parametrization, mean and
+covariance matrix. Thus,
+$\CA{G} =  \BB{R}^n \times  S^n$.
+If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
+we denote the suffix sequence $b^i b^{i+1} \ldots$ by
+$\BF{b}^i$, $i \geq 0$.
+
+\begin{definition}[GDTL Syntax]
+\label{def:gdtl-syntax}
+The {\em syntax} of Gaussian Distribution
+Temporal Logic is defined as
+\begin{equation*}
+ \phi :=  \True \ |\ f \leq 0 \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \LTLUNTIL \phi_2,% \ |\ \LTLNEXT \phi, 
+\end{equation*}
+where $\True$ is the Boolean constant ``True'',
+$f \leq 0$ is a predicate over $\CA{G}$, where
+$f \in \CA{M}(\CA{G}, \BB{R})$,
+$\notltl$ is negation (``Not''), $\andltl$ is conjunction (``And''),
+%$\LTLNEXT$ is ``Next'',
+and $\LTLUNTIL$ is ``Until''.
+\end{definition}
+
+For convenience, we define the additional operators:
+$\phi_1 \orltl \phi_2 \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2)$,
+$\LTLEVENTUALLY \phi \equiv \True \LTLUNTIL \phi$, and
+$\LTLALWAYS \phi \equiv \notltl \LTLEVENTUALLY \notltl \phi$,
+%\begin{align*}
+%\phi_1 \orltl \phi_2 & \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2) \\
+%\LTLEVENTUALLY \phi & \equiv \True \LTLUNTIL \phi \\
+%\LTLALWAYS \phi & \equiv \notltl \LTLEVENTUALLY \notltl \phi
+%\end{align*}
+where $\equiv$ denotes semantic equivalence.
+
+\begin{definition}[GDTL Semantics]  
+\label{def:gdtl-semantics}
+Let $\BF{b} = b^0b^1 \ldots \in \mathcal{G}^{\omega}$
+be an infinite sequence of belief states.
+The {\em semantics} of GDTL is defined recursively as
+\begin{align*}
+&\BF{b}^i \models  \top  & \\
+&\BF{b}^i \models f \leq 0 & \Equiv\quad & f(b^i) \leq 0\\ % \forall (x,P) \in b^i \\
+&\BF{b}^i \models \notltl \phi & \Equiv\quad & \notltl (\BF{b}^i \models \phi) \\
+&\BF{b}^i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \andltl ( \BF{b}^i \models \phi_2 ) \\
+&\BF{b}^i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \orltl ( \BF{b}^i \models \phi_2 ) \\
+&\BF{b}^i \models  \phi_1 \LTLUNTIL \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } ( \BF{b}^j \models \phi_2 ) \\
+& & & \andltl (\BF{b}^k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
+&\BF{b}^i \models \LTLEVENTUALLY \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. } \BF{b}^j \models \phi \\
+&\BF{b}^i \models \LTLALWAYS \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. } \BF{b}^j \models \phi
+\end{align*}
+
+The word $\BF{b}$ satisfies $\phi$, denoted $\BF{b} \models \phi$,
+if and only if $\BF{b}^0 \models \phi$.
+\end{definition}
+
+By allowing the definition of the atomic predicates used in GDTL to be quite general,
+we can potentially enforce interesting and relevant properties on the evolution of a system
+through belief space.  Some of these properties include
+
+\begin{itemize}
+ \item Bounds on determinant of covariance matrix $det(P)$.  This is used when 
+ we want to bound the overall uncertainty about the system's state.
+ \item Bounds on trace of covariance matrix $Tr(P)$.  This is used when we
+ want to bound the uncertainty about the system's state in any direction.
+ %\item Bound on projection of covariance matrix $\Pi P$.  This is used when
+ %we want to bound the uncertainty about the robot's state in a specific direction
+ \item Bounds on state mean $\hat{x}$.  This is used when we want to specify
+ where in state space the system should be.
+% \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
+% The Mahalanobis distance describes the distance from a point to a Gaussian distribution.  
+% It is used when we want to specify a desired state (or region) in the state space and describe how
+% certain we are that the agent achieves it.
+\end{itemize}
+
+\begin{example}
+\label{ex:running}
+Let $R$ be a system evolving along a straight line
+with state denoted by $x \in \BB{R}$.
+The belief space for this particular robot is thus
+$(\hat{x}, P) \in \BB{R} \times [0, \infty)$,
+where $\hat{x}$ and $P$ are its state estimate
+and covariance obtained from its sensors.  
+The system is tasked with going back and forth
+between two goal regions (denoted as $\pi_{g,1}$
+and $\pi_{g,2}$ in the top of Fig.~\ref{fig:OneDExample}).  
+It also must ensure that it never overshoots the goal
+regions or lands in obstacle regions $\pi_{o,1}$
+and $\pi_{o,2}$.
+The system must also %ensure that it maintains its
+maintain a
+covariance $P$ of less than 0.5 m$^2$ at all times
+and less than 0.3 m$^2$ when in one of the goal regions.
+These requirements can be described by the GDTL formula
+\begin{equation}
+\label{eq:onedformula}
+\begin{array}{lcl}
+ \phi_{1d} &=& \phi_{avoid}  \wedge \phi_{reach}  \wedge \phi_{u,1} \wedge \phi_{u,2}\:\mbox{, where}   \\
+ \phi_{avoid}  &=& \LTLALWAYS \neg ((box(\hat{x},-4,0.35)\leq 1) \\
+ & &\vee (box(\hat{x},4,0.35)\leq 1) ) \\
+ \phi_{reach} &=& \LTLALWAYS \LTLEVENTUALLY (box(\hat{x},-2,0.35)\leq 1)  \\ 
+ & & \wedge \LTLALWAYS \LTLEVENTUALLY (box(\hat{x},2,0.35)\leq 1) \\
+ \phi_{u,1} &=& \LTLALWAYS ( P < 0.5) \\
+ \phi_{u,2} &=&  \LTLALWAYS ( (box(\hat{x},-2,0.35)\leq 1)  \\ & & 
+ \wedge (box(\hat{x},2,0.35)\leq 1)) \Rightarrow (P < 0.3)\:,
+\end{array}
+ \end{equation}
+where $box\left(\hat{x},x_c,a\right)=\norminf{a^T\left(\hat{x}-x_c\right)}$
+is a function bounding $\hat{x}$ inside an interval of size $2\abs{a}$ centered at $x_c$.
+Subformula $\phi_{avoid}$ encodes keeping the system away from the obstacle regions.
+Subformula $\phi_{reach}$ encodes periodically visiting the goal regions.  
+Subformula $\phi_{u,1}$ encodes maintaining the uncertainty below 0.5 m$^2$ 
+globally and subformula $\phi_{u,2}$ encodes maintaining the uncertainty below
+0.3 m$^2$ in the goal regions.
+
+The belief space associated with this problem is shown in the bottom of Fig.~\ref{fig:OneDExample}.
+The curves in the figure correspond to the borders between the satisfaction and
+violation of predicates in~\eqref{eq:onedformula}, e.g. the level sets that
+are induced by the predicates when inequalities are replaced with equality. In
+the figure, + denotes that the predicate is satisfied in that region and - indicates that it is not.
+An example trajectory that satisfies~\eqref{eq:onedformula} is shown in black. Note
+that every point in this belief trajectory has covariance $P$ less than 0.5, which
+satisfies $\phi_{u,1}$. Further, the forbidden regions in $\phi_{avoid}$ (marked with red stripes)
+are always avoided while each of the goal regions in $\phi_{reach}$ 
+(marked with green stars) are each visited. Further, whenever the belief 
+is in a goal region, it has covariance $P$ less than 0.3, which means $\phi_{u,2}$
+is satisfied.
+\endproof
+\end{example}
+
+%\begin{figure}
+% \begin{center}
+%  \includegraphics[width=0.7\columnwidth]{OneDStateSpace}
+%  \caption{The state space of a robot moving along one dimension.}
+%  \label{fig:OneDExample}
+% \end{center}
+%\end{figure}
+%
+%\begin{figure}
+% \begin{center}
+% \includegraphics[width=\columnwidth]{newFig}
+% %\includegraphics[width=\columnwidth]{OneDBelief}
+% \caption{The predicates from~\eqref{eq:onedformula} as functions of the belief of the robot from Example!\ref{ex:running}.}
+% %The belief space  of  the robot in Example~\ref{ex:running}. 
+%% The curves correspond to the predicates in~\eqref{eq:onedformula}.}
+% \label{fig:GDTLExample}
+% \end{center}
+%\end{figure}
+
+\begin{figure}[!htb]
+\centering
+%\subfigure[]{
+%  \includegraphics[width=.6\columnwidth]{OneDStateSpace_new}
+%  \label{fig:OneDExample}
+%}
+%\subfigure[]{
+%  \includegraphics[width=.5\columnwidth]{OneDBelief_new}
+%  \label{fig:GDTLExample}
+%}
+\includegraphics[width=.9\columnwidth]{OneDBeliefSpace}
+%\caption{The state space of a system evolving along one dimension is shown in Fig.~\subref{fig:OneDExample} and the predicates from~\eqref{eq:onedformula} as functions of the belief of the system from Ex.~\ref{ex:running} are shown in Fig.~\subref{fig:GDTLExample}.}
+\caption{(Top) The state space of a system evolving along one dimension and (Bottom) the predicates from~\eqref{eq:onedformula} as functions of the belief of the system from Ex.~\ref{ex:running}.}
+\label{fig:OneDExample}
+\end{figure}

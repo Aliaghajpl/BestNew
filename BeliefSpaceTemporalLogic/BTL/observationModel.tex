@@ -1,0 +1,78 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Observation Model - Last Modified: 2016/01/25 by Eric Cristofalo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%{\color{blue} [To be expanded by Eric]}
+We localize the robot with a multiple camera network. 
+This reflects the real world constraints of sensor networks, e.g. finite coverage, finite resolution, and improved accuracy with the addition of more sensors. 
+The network was implemented using four TRENDnet Internet Protocol (IP) cameras with known pose with respect to the global coordinate frame of the experimental space. 
+Each $640\times400$ RGB image is acquired and segmented, yielding multiple pixel locations that correspond to a known pattern on the robot. 
+%The pixel locations and camera poses are used to solve common least squares problem from the Structure from Motion community that estimates the planar position and orientation of the robot in the global frame~\cite{YM-SS-JK-SSS:04}.
+The estimation of the planar position and orientation of the robot in the global frame is formulated as a least squares problem
+({\em structure from motion})~\cite{YM-SS-JK-SSS:04}.
+%as it is commonly done in the {\em structure from motion} community~\cite{YM-SS-JK-SSS:04}.
+The measurement, $y_k \in \CA{Y}$, is given by the discrete observation model:
+$y_k = Cx_k+v_k$.
+%\begin{equation}
+%\label{eq:unicycle-on-disc}
+%z_k = Cx_k+v_k
+%\, .
+%\end{equation}
+The measurement error covariance matrix is defined as $R = \mathrm{diag}(r_x,r_y,r_{\theta})$, where the value of each scalar is inversely proportional to the number of cameras used in the estimation, i.e. the number of camera views that identify the robot. These values are generated from a camera coverage map (Fig.~\ref{fig:simple-arena-cover}) of the experimental space.  
+
+
+%The measurement, $z_k \in \mathbb{R}^3$, is calculated by solving a least squares problem given $m$ cameras, their known relative positions and orientations, and the pixel positions of identifiable points on the robot in each camera's frame~\cite{YM-SS-JK-SSS:04}. 
+%The resulting measurement includes the position and orientation of the robot on the ground plane with respect to the global coordinate system. 
+
+%%%The continuous time observation model of the system is the following:
+%%%\begin{equation}
+%%%\label{eq:unicycle-om-cont}
+%%%z = C
+%%%\begin{bmatrix} p^x \\ p^y \\ \theta \end{bmatrix} +
+%%%\RM{d}\,v,
+%%%\end{equation}
+%%%where $C = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$
+%%%is the observation matrix corresponding to the camera
+%%%localization system, and
+%%%$\RM{d}\,v$ is a Gaussian white noise process
+%%%with covariance matrix $R$.
+%%%
+%%The discrete 
+%%%version of the 
+%%observation model is
+%%\begin{equation}
+%%\label{eq:unicycle-om-disc}
+%%z_k = Cx_k+
+%%%\begin{bmatrix} p^x_k \\ p^y_k \\ \theta_k \end{bmatrix} +
+%%v_k.
+%%\end{equation}
+%%%where $C\in\mathbb{R}^{3\times3}$ is the observation matrix corresponding to the camera localization system, and $v_k$ is a zero-%mean Gaussian process with covariance matrix $R\in\mathbb{R}^{3\times 3}$.
+%%%Note that 
+%%The robot's orientation is not directly measured and its estimation is left for the filter. The measurement error covariance matrix, $R$, is inversely proportional to the number of cameras used in the robot's pose estimation. 
+%%% and was estimated via sample covariance with multiple robot ground truth measurements. 
+
+%The observation model of the system is the following:
+%\begin{equation}
+%\label{eq:unicycle-om-cont}
+%z = C
+%\begin{bmatrix} p^x \\ p^y \\ \theta \end{bmatrix} +
+%\RM{d}\,v,
+%\end{equation}
+%where $C = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}$
+%is the observation matrix corresponding to the camera
+%localization system, and
+%$\RM{d}\,v$ is a Gaussian white noise process
+%with covariance matrix $R$.
+%%
+%The discrete version of the observation model is
+%\begin{equation}
+%\label{eq:unicycle-om-disc}
+%z_k = C
+%\begin{bmatrix} p^x_k \\ p^y_k \\ \theta_k \end{bmatrix} +
+%v_k,
+%\end{equation}
+%where $v_k$ is a zero-mean Gaussian process
+%with covariance matrix $R$.
+
+
+

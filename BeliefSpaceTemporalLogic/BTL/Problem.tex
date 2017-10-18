@@ -1,0 +1,135 @@
+\section{Problem Formulation}\label{sec:prob}
+In this section, we define the problem of controlling a system to satisfy a given
+GDTL formula with maximum probability.  
+%This
+%corresponds to steering a robot to satisfy a rich, temporally layered navigation
+%task that explicitly depends on its localization uncertainty.  
+
+\subsection{Motion and sensing models}
+\label{sec:motion}
+We assume the system has noisy linear time invariant (LTI) dynamics given by
+\begin{equation}
+\label{eq:LTI}
+\begin{aligned}
+x_{k+1} &= A x_k +B u_k + w_k,\\
+\end{aligned}
+\end{equation}
+%
+%{\color{blue}[We need to update this notation!] where $x \in \CA{M}( \BB{Z}_{\geq 0}, \CA{X})$ is
+%a trajectory of the system},
+where $x_k\in\CA{X}$ is the state of the system,
+$\CA{X} \subseteq \BB{R}^n$ is the state space,
+$A \in \BB{R}^{n \times n}$ is the dynamics matrix,
+$B \in \BB{R}^{n \times p}$ is the control matrix,
+$u_k \in \CA{U}$ is a control signal,
+$\CA{U} \subseteq \BB{R}^p$ is the control space,
+and $w_k$ is a zero-mean Gaussian process with covariance
+$Q \in \BB{R}^{n \times n}$.
+The state is observed indirectly 
+%$y_k \in \CA{Y}$ 
+according to the
+linear observation model
+\begin{equation}
+\label{eq:linearObservations}
+ y_k = C x_k + v_k,
+\end{equation}
+%
+where $y_k \in \CA{Y}$ is a measurement, $\CA{Y} \subseteq \BB{R}^m$ is the observation space,
+$C \in \BB{R}^{m \times n}$ is the observation matrix
+and $v_k$ is a zero-mean Gaussian process with covariance
+$R \in \BB{R}^{m \times m}$.
+%In this paper, we make the following assumptions:
+We assume the LTI system~\eqref{eq:LTI},~\eqref{eq:linearObservations}
+is controllable and observable, i.e., $(A,B)$ is a controllable pair
+and $(A,C)$ is an observable pair.
+Moreover, we assume that $C$ is full rank.
+%\footnote{
+These assumptions apply to many systems, including nonlinear systems that can be linearized to satisfy the assumptions.
+%For details of a system and observation model that fit this framework, see Sec.~\ref{sec:caseStudy}.}
+ 
+%The state of the system is recursively estimated using a Bayesian filter, which provides a belief about the system's state at each moment in time.
+%For linear systems with linear observation models and Gaussian noise, optimal estimation can be performed with Kalman Filters (KF).
+%The Kalman observer is defined by the following dynamics:
+The belief state at each time step is characterized by
+the {\it a posteriori} state and error covariance estimates, $\hat{x}_k$ and
+%the {\it a posteriori} error covariance 
+$P_k$, i.e.,
+$b^k = (\hat{x}_k, P_k)$. The belief state  is maintained via
+a Kalman filter~\cite{Bertsekas2012}, which we denote compactly as 
+%
+%{\small
+%\begin{equation}
+%\label{eq:kf}
+%\begin{aligned}
+%\hat{x}_{k+1}& = A \hat{x}_k + B u_k + K_{k+1} \Big(y_{k+1} - C  (A \hat{x}_k + B u_k) \Big)\\
+%P_{k+1} &= (I - K_{k+1 }C ) (A P_k A^T + Q)\\
+%K_{k+1} &= (A P_k A^T + Q) C^T (C (A P_k A^T + Q) C^T + R)^{-1}
+%\end{aligned},
+%\end{equation}
+%}%
+%where $K_k$ is called the Kalman gain at time step $k$.
+%We write the Kalman filter dynamics compactly as
+\begin{equation}
+\label{eq:kf-compact}
+b^{k+1} = \tau(b^k, u_k, y_{k+1}),\ \ b^0 = (\hat{x}_0, P_0)\:,
+\end{equation}
+%
+%\begin{align}
+%b^{k+1} &= \tau(b^k, u_k, z_{k+1})\\
+%b^0 &= (\hat{x}_0, P_0)\:,
+%\label{eq:kf-compact}
+%\end{align}
+where $b^0$
+is the known initial belief about the system's state
+centered at $\hat{x}_0$ with covariance $P_0$.
+For a belief state $(x, P) \in \CA{G}$ 
+we denote by $N_\delta(x, P) = \{ b \in \CA{G} \,|\, \norm{b - (x, P)}_\CA{G} \leq \delta \}$ the uncertainty ball of radius $\delta$ in the belief space centered at $(x, P)$, where $\norm{\cdot}_\CA{G}$ over $\CA{G}$ is a suitable norm in $\CA{G}$.
+
+The robot model together with the Kalman filter may be
+interpreted as a POMDP~\cite{Kaelbling98,puterman2014,Pineau03a}.
+
+%\subsubsection{Linear Quadratic Gaussian (LQG) Control}
+
+\subsection{Problem definition}
+%In this section, we define the problem of searching for an optimal policy that 
+%drives the system to satisfy a given  GDTL formula.
+%Since we intend to solve the problem over a feedback
+%information roadmap (FIRM), we must select a search space of policies that
+%is consistent with this problem.
+
+\begin{definition}[Policy]
+A control policy for the system is a feedback function from the belief space
+$\CA{G}$ to the control space, e.g., $\mu : \CA{G} \to \CA{U}$.
+Denote the space of all policies by $\BB{M} = \CA{M}(\CA{G}, \CA{U})$.
+\end{definition}
+
+\noindent
+%We consider the following probability maximization problem:
+We now introduce the main problem under consideration in this work:
+
+\begin{problem}[Maximum Probability Problem]
+\label{pb:mpp}
+Let $\phi$ be a given GDTL formula and let the system
+evolve according to dynamics~\eqref{eq:LTI},
+with observation dynamics~\eqref{eq:linearObservations},
+and using a Kalman filter defined by~\eqref{eq:kf-compact}.
+Find a policy
+$\mu^*$ such that 
+
+\begin{equation}
+\label{eq:mpp}
+\begin{aligned}
+&\mu^* = \underset{\mu \in \BB{M}}{\arg \max}Pr[\BF{b} \models \phi] \\
+&\text{subject to~\eqref{eq:LTI},~\eqref{eq:linearObservations},~\eqref{eq:kf-compact}.}  \\
+%&\ \ x_{k+1} = A x_k +B \mu(b^k) + w_k, \text{\small motion dynamics~\eqref{eq:LTI}}\\
+%&\ \ z_k = C x_k + v_k, \text{\small observation dynamics~\eqref{eq:linearObservations}}\\
+%&\ \ b^{k+1} = \tau(b^k, \mu(b^k), y_{k+1}), \text{\small KF dynamics~\eqref{eq:kf},~\eqref{eq:kf-compact}}\\
+%&\ \ b^k = (\hat{x}_k, P_k)
+%%&\ \ u_k = 
+\end{aligned}
+\end{equation}
+
+\end{problem}
+
+
+

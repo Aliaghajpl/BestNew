@@ -1,0 +1,40 @@
+Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize the probability that the given formula $\phi$ is satisfied.  
+%%
+%This is done by solving the following optimization problem
+%
+%\begin{equation}
+%\label{probMax}
+%	\underset{m \in \mathcal{F}(S_{\mathcal{P}},Act)}{\arg \max} \bigwedge_{i\in \Omega_{\mathcal{R}}}\bigwedge_{j=1}^\infty Pr_{m}( \bigvee_{k=1}^{\infty} s_{j+k} \cap \mathcal{F}_i \wedge s_{j+k} \in S_{\mathcal{P}} \setminus B_i) 
+%\end{equation}
+%
+In other words, we %need to 
+find a policy that maximizes the probability of visiting the states in $Acc_\PA$ and avoiding $Trap_\PA$.
+% To find this policy, we first decompose $\mathcal{P}$ into a set of end components and find the accepting components. Since any sample path that satisfies $\phi$ must end in an accepting component, maximizing the probability of satisfying $\phi$ is equivalent to maximizing the probability of reaching such a component.
+The optimal policy is thus given by the relationship
+%{\footnotesize
+% \begin{equation}
+% \label{eq:dp}
+% \resizebox{0.90\columnwidth}{!}{
+% $\begin{array}{lcl}
+% J^{\infty}(s) &=& \left \{ \begin{array}{ll}
+% 1, &  s \in c_i \\ 
+% \underset{a \in Act(s)}{\max} \sum_{s'} \delta(s,a,s')J^{\infty}(s') & \text{else} 
+% \end{array} \right .  \\
+% m(s) &=& \underset{a \in Act(s)}{\arg \max} \sum_{s'} \delta(s,a,s')J^{\infty}(s') \\
+% \end{array}$}
+% \end{equation}
+
+\begin{align}
+\label{eq:dp}
+\begin{array}{lcl}
+J^{\infty}(s) &= \left \{ \begin{array}{ll}
+1, &  s \in Acc_\PA \\ 
+\underset{\mu \in \mathbb{M}(s)}{\max} \sum_{s'} \delta(s,\mu,s')J^{\infty}(s') & \text{else} 
+\end{array} \right .  \\ \\
+\mu(s) &= \underset{\mu \in \mathbb{M}(s)}{\arg \max} \sum_{s'} \delta(s,\mu,s')J^{\infty}(s')
+\end{array}
+\end{align} 
+
+%}%
+This can be solved by a variety of methods, including approximate value iteration and linear programming~\cite{Bertsekas2012}.
+%[Cite Bertsekas]

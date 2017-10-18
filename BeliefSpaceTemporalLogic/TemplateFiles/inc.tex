@@ -1,0 +1,97 @@
+%\documentclass[letterpaper, 11pt, onecolumn]{TemplateFiles/ieeeconf}
+%\IEEEoverridecommandlockouts \overrideIEEEmargins 
+%\pagestyle{plain}
+
+%\usepackage[ruled,vlined,linesnumbered,boxruled]{algorithm2e}
+%\usepackage{mathrsfs}
+%\usepackage{graphicx}
+%\usepackage{amsfonts}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{array}
+%\usepackage{flafter}
+%\usepackage{tabu}
+%\usepackage{cite}
+%\usepackage{subfigure}
+%\usepackage{verbatim}
+%\usepackage{bbm}
+%\usepackage[usenames]{color}
+%\usepackage[svgnames]{xcolor}
+
+%\usepackage{balance}
+
+%\usepackage{nicefrac}
+%\usepackage{psfrag}
+%\usepackage{umoline}
+%\usepackage{hyperref}
+%\usepackage{appendix} %[2009/09/02 v1.2b extra appendix facilities]
+%\let\proof\relax
+%\let\endproof\relax
+%\usepackage{amsthm}	% This is needed for \newtheorem and proof environment.
+% \usepackage{natbib} % for citing the papers with auther-year format in parantheses.
+%\usepackage[numbers, sort]{natbib}
+
+%\usepackage{etoolbox}
+
+%\providecommand{\citet}[1]{\citeauthor{#1}\,[\citeyear{#1}]}
+%\providecommand{\citep}[1]{\cite{#1}}
+
+%\newtheorem{thm}{Theorem}
+%\newtheorem{Def}{Definition}
+%\newtheorem{Problem}{Problem}
+%\newtheorem{Lem}{Lemma}
+%\newtheorem{Cor}{Corollary}
+%\newtheorem{assumption}{Assumption}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{definition}{Definition}
+%\newtheorem{property}{Property}
+%\newtheorem{Remark}{Remark}
+%\newtheorem{exmp}{Example}[section]
+%\newenvironment{proof}[1][Proof]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+%\newcommand{\TypeOfDoc}{IJRR} % This either can be TR or Conf or IJRR
+%\newcommand{\FinalFlag}{No} % This either can be No or Accepted
+%\newtoggle{finalpaper}
+%\toggletrue{finalpaper}
+%\togglefalse{finalpaper}
+
+\graphicspath{{./figs/}}
+
+%\allowdisplaybreaks[1]
+
+%\newcommand{\kXX}[1]{\color{blue} XX #1 XX \color{black}}
+%newcommand{\AXX}[1]{\color{purple} XX #1 XX \color{black}}
+\newcommand{\aXX}[1]{\color{orange} #1  \color{black}}
+\newcommand{\axx}[1]{\aXX{#1}}
+
+
+\newcommand{\pr}[1]{\textbf{#1:} }
+
+\newcommand{\codeline}[1]{\par{\ttfamily #1 \par}}  % This line is added because sth like this \newcommand{\initeali}{\verb|InitializeEdge|} does not work. For further details please check out this link % http://tex.stackexchange.com/questions/86071/newcommand-for-verbatim
+% please do not delete above comments as it can be really confsing
+
+
+%%%%%%%%%%%%%%%% symbols
+\newcommand{\tv}{\varpi} % tube volume (edge tube volume)
+\newcommand{\td}{\Gamma} % tube distance (edge tube distance)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% To reduce pages
+%\textfloatsep = 0pt
+%\renewcommand{\baselinestretch}{0.96}
+%%%%%%%%%%%%%%%%% Make bibs smaller
+%\renewcommand{\IEEEbibitemsep}{0pt plus 2pt}
+%\makeatletter
+%\IEEEtriggercmd{\reset@font\normalfont\footnotesize}
+%\makeatother
+%\IEEEtriggeratref{1}
+
+%%%%%%%%%%%%%%%%% margins
+%\usepackage{geometry}
+% \newcommand{\papermargin}{0.97in} % IEEE asks for 0.75 on all pages, but the first page
+% %\newgeometry{top=0.75in,bottom=.75in,right=.75in,left=.75in}
+% \newgeometry{top=\papermargin,bottom=\papermargin,right=\papermargin,left=\papermargin}
+% \newgeometry{top=1.in,bottom=1.in,right=1.in,left=1.in}
+
+\let\labelindent\relax
+\usepackage{enumitem}

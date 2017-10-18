@@ -1,0 +1,221 @@
+\tikzset{/tikz/arrows = ->, /tikz/> = triangle 45, /tikz/shorten > = 0.5pt}
+\tikzset{every loop/.style={min distance=2mm,out=110,in=70,looseness=3}}
+\tikzset{every state/.style={circle,thick,draw=colorBlue,minimum size=7mm}}
+\tikzset{/tikz/initial text=,/tikz/initial distance=0.2}
+\tikzset{/tikz/node distance=2cm}
+\tikzset{/tikz/auto=left}
+\tikzset{every picture/.style={scale=3}}
+
+% Draw the helper grid in 3-d
+\newcommand{\largegrid}[3]
+{
+    \foreach \x in {0,#1}
+        \draw[#3] (\x,0) -- (\x,#2);
+    \foreach \y in {0,#2}
+        \draw[#3] (0,\y) -- (#1,\y);
+}
+
+% Draw the coordinate axes
+\newcommand{\coordaxes}
+{
+    \begin{scope}
+    \tikzset{axis/.style={draw,thick,->,>=triangle 45,scale=2}}
+    \path [axis] (0,0) -> (1, 0) node [below] {x};
+    \path [axis] (0,0) -> (0, 1) node [above left] {y};
+    \end{scope}
+}
+
+% Draw a robot at position
+\newcommand{\robot}[2]
+{
+    % Draw the quad
+    \tikzset{robot/.style={very thick, circle,fill=magenta}}
+    \node [robot](pos) at (#1, #2) {};
+}
+
+% Draw cameras
+\newcommand{\cameras}{
+    % Draw cameras
+    \tikzset{camera/.style={very thick, circle,fill=red}}
+    \node[camera] at (0, 0) {};
+    \node at (0.3, 0.4) {$C_1$};
+    \node[camera] at (8, 0) {};
+    \node at (7.7, 0.4) {$C_2$};
+    \node[camera] at (8, 5.1) {};
+    \node at (7.7, 4.7) {$C_3$};
+    \node[camera] at (0, 5.1) {};
+    \node at (0.3, 4.7) {$C_4$};
+    % Draw its FoV
+    \tikzset{fov/.style = {very thick, cyan, opacity=.2}};
+    \tikzset{fov line/.style = {very thick, cyan, opacity=.5}};
+    \fill [fov] (0, 0) -- ++(4.5,1.7) -- ++(-1,0) -- ++(0,1.7) -- ++(1.454,1.7) -- ++(-4.954,0);
+    \draw [fov line] (0, 0) -- ++(4.5,1.7) -- ++(-1,0) -- ++(0,1.7) -- ++(1.454,1.7) -- ++(-4.954,0) -- ++(0, -5.1);
+    \fill [fov] (8, 0) -- ++(-4.5,1.7) -- ++(1,0) -- ++(0,1.7) -- ++(-1.454,1.7) -- ++(4.954,0);
+    \draw [fov line] (8, 0) -- ++(-4.5,1.7) -- ++(1,0) -- ++(0,1.7) -- ++(-1.454,1.7) -- ++(4.954,0) -- ++(0, -5.1);
+    \fill [fov] (8, 5.1) -- ++(-4.5,-1.7) -- ++(1,0) -- ++(0,-1.7) -- ++(-1.454,-1.7) -- ++(4.954,0);
+    \draw [fov line] (8, 5.1) -- ++(-4.5,-1.7) -- ++(1,0) -- ++(0,-1.7) -- ++(-1.454,-1.7) -- ++(4.954,0) -- ++(0, 5.1);
+    \fill [fov] (0, 5.1) -- ++(4.5,-1.7) -- ++(-1,0) -- ++(0,-1.7) -- ++(1.454,-1.7) -- ++(-4.954,0);
+    \draw [fov line] (0, 5.1) -- ++(4.5,-1.7) -- ++(-1,0) -- ++(0,-1.7) -- ++(1.454,-1.7) -- ++(-4.954,0) -- ++(0, 5.1);
+}
+
+% Draw camera
+\newcommand{\camera}{
+    % Draw cameras
+    \tikzset{camera/.style={very thick, circle,fill=red}}
+    \node[camera] at (0, 0) {};
+    \node at (0.3, 0.4) {$C_1$};
+    % Draw its FoV
+    \tikzset{fov/.style = {very thick, cyan, opacity=.2}};
+    \tikzset{fov line/.style = {very thick, cyan, opacity=.5}};
+    \fill [fov] (0, 0) -- ++(4.5,1.7) -- ++(-1,0) -- ++(0,1.7) -- ++(1.454,1.7) -- ++(-4.954,0);
+    \draw [fov line] (0, 0) -- ++(4.5,1.7) -- ++(-1,0) -- ++(0,1.7) -- ++(1.454,1.7) -- ++(-4.954,0);
+}
+
+\newcommand{\regions}
+{
+    % Region A
+    \tikzset{region A/.style = {thick, green, opacity=.8}};
+    \fill [region A] (0,0) -- (2,0) -- (2,2) -- (0,2);
+    \node at (1,1) {\Large $A$};
+    \draw [black, thick] (0,0) -- (2,0) -- (2,2) -- (0,2) -- (0, 0);
+    % Region B
+    \tikzset{region B/.style = {thick, blue, opacity=.8}};
+    \fill [region B] (6,3.1) -- (8,3.1) -- (8,5.1) -- (6,5.1);
+    \node at (7,4.05) {\Large $B$};
+    \draw [black, thick] (6,3.1) -- (8,3.1) -- (8,5.1) -- (6,5.1) -- (6,3.1);
+    % Region D1
+    \tikzset{region D1/.style = {thick, orange, opacity=.8}};
+    \fill [region D1] (3.7,0) -- (4.3,0) -- (4.3,1.7) -- (3.7,1.7);
+    \node at (4,0.85) {\Large $D_1$};
+    \draw [black, thick] (3.7,0) -- (4.3,0) -- (4.3,1.7) -- (3.7,1.7) -- (3.7,0);
+    % Region D2
+    \tikzset{region D2/.style = {thick, pink, opacity=.8}};
+    \fill [region D2] (3.7,3.4) -- (4.3,3.4) -- (4.3,5.1) -- (3.7,5.1);
+    \node at (4,4.25) {\Large $D_2$};
+    \draw [black, thick] (3.7,3.4) -- (4.3,3.4) -- (4.3,5.1) -- (3.7,5.1) -- (3.7,3.4);
+    % Region O
+    \tikzset{region O/.style = {thick, gray, opacity=.8}};
+    \fill [region O] (3.5,1.7) -- (4.5,1.7) -- (4.5,3.4) -- (3.5,3.4);
+    \node at (4,2.55) {\Large $Obs$};
+    \draw [black, thick] (3.5,1.7) -- (4.5,1.7) -- (4.5,3.4) -- (3.5,3.4) -- (3.5,1.7);
+}
+
+\newcommand{\PRM}[2]{
+    \tikzset{prm/.style = {thin, circle, fill=black, inner sep=0pt,minimum size=5pt}};
+    \node [prm](s0) at (#1, #2) {};
+    \node [prm](s1) at (2, 3.5) {};
+    \node [prm](s2) at (1.8, 1.7) {};
+    \node [prm](s3) at (3, 2.6) {};
+    \node [prm](s4) at (2.75, 1) {};
+    \node [prm](s5) at (2.6, 4.3) {};
+    \node [prm](s6) at (4.1, 4.7) {};
+    \node [prm](s7) at (5.2, 3.9) {};
+    \node [prm](s8) at (6.7, 4) {};
+    \node [prm](s9) at (5.9, 2.8) {};
+    \node [prm](s10) at (4.9, 2.2) {};
+    \node [prm](s11) at (6.5, 1.8) {};
+    \node [prm](s12) at (5.3, 1.3) {};
+    \node [prm](s13) at (4.8, 0.5) {};
+    \node [prm](s14) at (4, 0.6) {};
+
+    \tikzset{trans/.style = {thin, opacity=.8}};
+    \draw[->] [trans] (s0) -- (s1);
+    \draw[<->] [trans] (s1) -- (s2);
+    \draw[<->] [trans] (s1) -- (s3);
+    \draw[<->] [trans] (s1) -- (s5);
+    \draw[<->] [trans] (s2) -- (s3);
+    \draw[<->] [trans] (s2) -- (s4);
+    \draw[<->] [trans] (s3) -- (s4);
+    \draw[<-] [trans] (s5) -- (s6);
+    \draw[<-] [trans] (s6) -- (s7);
+    \draw[<->] [trans] (s7) -- (s8);
+    \draw[<->] [trans] (s7) -- (s9);
+    \draw[<->] [trans] (s8) -- (s9);
+    \draw[<->] [trans] (s9) -- (s10);
+    \draw[<->] [trans] (s9) -- (s11);
+    \draw[<->] [trans] (s9) -- (s12);
+    \draw[<->] [trans] (s10) -- (s11);
+    \draw[<->] [trans] (s10) -- (s12);
+    \draw[<->] [trans] (s11) -- (s12);
+    \draw[<->] [trans] (s13) -- (s12);
+    \draw[<-] [trans] (s13) -- (s14);
+    \draw[<-] [trans] (s14) -- (s4);
+}
+
+\newcommand{\arena}[2]
+{
+    \tikzset{/tikz/arrows = -}
+    \tikzset{every picture/.style={scale=1}}
+    \begin{tikzpicture}%[spy using outlines={rectangle, magnification=1.75, size=9cm, connect spies}]
+    \begin{scope}
+    % Draw the regions
+    \regions;
+    % Coordinate axes
+    \coordaxes;
+    % Draw the helper grid
+    \largegrid{8}{5.1}{black!50};
+    % Draw the robot
+    \robot{#1}{#2};
+    \end{scope}
+    \end{tikzpicture}
+}
+
+\newcommand{\arenacam}[2]
+{
+    \tikzset{/tikz/arrows = -}
+    \tikzset{every picture/.style={scale=1}}
+    \begin{tikzpicture}%[spy using outlines={rectangle, magnification=1.75, size=9cm, connect spies}]
+    \begin{scope}
+    % Draw the regions
+    \regions;
+    % Coordinate axes
+    \coordaxes;
+    % Draw the helper grid
+    \largegrid{8}{5.1}{black!50};
+    % Draw the robot
+    \robot{#1}{#2};
+    % Draw camera
+    \camera;
+    \end{scope}
+    \end{tikzpicture}
+}
+
+\newcommand{\arenacams}[2]
+{
+    \tikzset{/tikz/arrows = -}
+    \tikzset{every picture/.style={scale=1}}
+    \begin{tikzpicture}%[spy using outlines={rectangle, magnification=1.75, size=9cm, connect spies}]
+    \begin{scope}
+    % Draw the regions
+    \regions;
+    % Coordinate axes
+    \coordaxes;
+    % Draw the helper grid
+    \largegrid{8}{5.1}{black!50};
+    % Draw the robot
+    \robot{#1}{#2};
+    % Draw cameras
+    \cameras;
+    \end{scope}
+    \end{tikzpicture}
+}
+
+\newcommand{\arenaprm}[2]
+{
+    \tikzset{/tikz/arrows = -}
+    \tikzset{every picture/.style={scale=1}}
+    \begin{tikzpicture}%[spy using outlines={rectangle, magnification=1.75, size=9cm, connect spies}]
+    \begin{scope}
+    % Draw the regions
+    \regions;
+    % Coordinate axes
+    \coordaxes;
+    % Draw the helper grid
+    \largegrid{8}{5.1}{black!50};
+    % Draw the robot
+    \robot{#1}{#2};
+    % Draw PRM
+    \PRM{#1}{#2};
+    \end{scope}
+    \end{tikzpicture}
+}

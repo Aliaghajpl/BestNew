@@ -1,0 +1,60 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this paper, we presented a sampling-based algorithm that
+generates feedback policies for stochastic systems with
+temporal and uncertainty constraints.
+The desired behavior of the system is specified using
+{\em Gaussian Distribution Temporal Logic}
+such that the generated policy satisfies the task
+specification with maximum probability.
+The proposed algorithm generates a transition system
+in the belief space of the system.
+A key step towards the scalability of the automata-based
+methods employed in the solution
+was breaking the {\em curse of history} for POMDPs.
+Local feedback controllers that drive the system within
+belief sets were employed to achieve history independence
+for paths in the transition system.
+%The second component that contributes 
+Also contributing
+to the scalability
+of our solution is a construction procedure for an annotated
+product Markov Decision Process called GDTL-FIRM,
+where each transition is associated with a ``failure probability''.
+GDTL-FIRM captures both satisfaction and the stochastic
+behavior of the system.
+Switching feedback policies were computed over the product MDP.
+Lastly, we showed the performance of the computed policies in
+experimental trials with a ground robot %operating in an planar
+%environment 
+%equipped with a 
+tracked via
+camera network.
+%
+The case study %also 
+shows that properties specifying
+the temporal and stochastic behavior of systems can be
+expressed using GDTL and our algorithm is able to
+compute control policies that satisfy the %task
+specification with a given probability.
+
+%GDTL was used to formulate a maximum probability (MP) problem.
+%Our approach to solve the MP problem adapts sampling-based
+%and automata-based methods.
+%We use an off-the shelf tool~\cite{klein2006} to translate
+%a GDTL formula to a deterministic Rabin automaton.
+%Inspired by the feedback information roadmap planner~\cite{Agha14},
+%we propose a planning algorithm that generates finite transition
+%systems in the belief space of the robot.
+%These transition systems are combined with Rabin automata
+%encoding the GDTL task specifications into product
+%Markov Decision Process (MDP) models.
+%In order to mitigate the state space explosion problem,
+%the planner generates product MDPs with transition-based
+%acceptance conditions.
+%Switching feedback policies were computed over the product MDPs
+%based on dynamic programming.
+%Lastly, we showed the performance of the computed policies in
+%experimental trials with a ground robot operating in an planar
+%environment equipped with a camera network.

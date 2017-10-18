@@ -1,0 +1,182 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\usepackage{color}
+
+
+\usepackage[left=1.00cm, right=1.00cm, top=1.00cm, bottom=1.00cm]{geometry}
+
+\newcommand{\fOnObstacle}[1]{\ensuremath{ \mathtt{on\_obstacle} ( #1 ) }}  
+\newcommand{\fHasEvent}[2]{\ensuremath{ \mathtt{has\_event} ( #1, #2 ) }}
+\newcommand{\fDetectFeatures}[2]{\ensuremath{ \mathtt{detect\_features} ( #1, #2 ) }} 
+\newcommand{\fEvaluateRisk}[2]{\ensuremath{ \mathtt{eval\_risk} ( #1, #2 ) }}  
+\newcommand{\fIsRisk}[2]{\ensuremath{ \mathtt{is\_risk} ( #1, #2 ) }}
+
+\newcommand{\fIsOpmode}[2]{\ensuremath{ \mathtt{is\_opmode} (#1,#2) }}
+\newcommand{\fAtPose}[2]{\ensuremath{ \mathtt{at} ( #1, #2 ) }} 
+\newcommand{\fPose}[1]{\ensuremath{ \mathtt{pose} (#1)}} 
+
+
+%%%
+\newcommand{\fIsMemory}[2]{\ensuremath{ \mathtt{is\_memory} (#1,#2)}} 
+\newcommand{\fIsEnergy}[2]{\ensuremath{ \mathtt{is\_energy} (#1,#2) }} 
+
+\newcommand{\fFailedDevice}[1]{\ensuremath{ \mathtt{failed\_device} (#1) }}
+
+\newcommand{\fIsNeighbor}[2]{\ensuremath{ \mathtt{is\_neighbor} (#1, #2) }} 
+\newcommand{\fIsOver}[2]{\ensuremath{ \mathtt{is\_over} (#1, #2) }} 
+
+\newcommand{\fCommandDriveTo}[2]{\ensuremath{ \mathtt{drive\_to} (#1, #2) }}
+\newcommand{\fCommandFlyTo}[2]{\ensuremath{ \mathtt{fly\_to} (#1, #2) }}
+\newcommand{\fCommandLandOn}[2]{\ensuremath{ \mathtt{land\_on} (#1, #2) }}
+\newcommand{\fCommandExploreOn}[2]{\ensuremath{ \mathtt{explore\_on} (#1, #2) }}
+\newcommand{\fCommandMoveTo}[2]{\ensuremath{ \mathtt{move\_to} (#1, #2) }}
+\newcommand{\fCommandApproachOn}[2]{\ensuremath{ \mathtt{approach\_on} (#1, #2) }}
+\newcommand{\fCommandHoverTo}[2]{\ensuremath{ \mathtt{hover\_to} (#1,#2) }}
+
+
+
+
+
+\newcommand{\vRover}{\ensuremath{\mathtt{v_{rov}}}}
+\newcommand{\vCopter}{\ensuremath{\mathtt{v_{cop}}}}
+
+\newcommand{\cnstWind}{\ensuremath{\mathtt{wind}}}
+\newcommand{\cnstDust}{\ensuremath{\mathtt{dust}}}
+
+
+\newcommand{\cnstFlying}{\ensuremath{\mathtt{flying}}}
+\newcommand{\cnstLanding}{\ensuremath{\mathtt{landing}}}
+
+\newcommand{\cnstLow}{\ensuremath{\mathtt{low}}}
+\newcommand{\cnstHigh}{\ensuremath{\mathtt{high}}}
+
+\newcommand{\cnstRunnable}{\ensuremath{\mathtt{runnable}}}
+\newcommand{\cnstRecharging}{\ensuremath{\mathtt{recharging}}}
+\newcommand{\cnstHalting}{\ensuremath{\mathtt{halting}}}
+
+
+
+\newcommand{\vXInitRover}{\ensuremath{X_{\mathrm{0, rov}}}}
+\newcommand{\vXInitCopter}{\ensuremath{X_{\mathrm{0, cop}}}}
+
+\newcommand{\vXGoalRover}{\ensuremath{X_{\mathrm{f, rov}}}}
+\newcommand{\vXGoalCopter}{\ensuremath{X_{\mathrm{f, cop}}}}
+
+\newcommand{\todo}[1]{{\color{red}#1}}
+
+
+
+
+\begin{document}
+	
+
+	
+
+%$\bigcirc \; \phi$ : `next' $\phi$
+
+%$\phi \; \mathcal{U} \; \theta $ : $\phi$ holds until $\theta$
+
+%$\diamond \; \phi$ : eventually $\phi$ holds
+
+%$\square \; \phi$ : `always' $\phi$ 
+
+\paragraph{Short Version}
+
+Linear Temporal Logic (LTL) is a powerful framework to express a wide range of desired properties of dynamical systems. LTL is formed of a set of atomic propositions, the logic connectives ($\neg$, $\lor$, $\land$, $\Rightarrow$), and the temporal modal operators $(\bigcirc, \square, \diamondsuit, \mathcal{U})$ which correspond to ``next'', ``always'' , ``eventually'', and ``until'', respectively. Its semantics is interpreted over an infinite sequence of states, i.e., an execution path over a dynamical system.
+
+
+
+As a first step, a set of atomic propositions needs to be defined in order to express a robotic task by using LTL. These atomic propositions are usually grouped into three categories. Sensor propositions abstract the perception system of the robot and provide information about the environment. State propositions are used to abstract the position or internal mode of the robot in the workspace (whether or not the robot is inside a defined region). Action propositions abstract commands of the robot that can be executed. Then, the specification of the task is given by a LTL formula in terms of desired safety, guarantee, obligation, progress, response, stability properties. More specifically, a \textit{safety} formula is of the form $\square p$, which simply asserts that the property $p$ remains invariantly true throughout an execution. A \textit{guarantee} formula is of the form $\diamondsuit p$, which guarantees that the property $p$ becomes true at least once in an execution. An\textit{ obligation} formula is a disjunction of safety and guarantee formulas, $\square p \lor \diamondsuit q$. A \textit{progress} formula is of the form $\square \diamondsuit p$, which essentially states that the property $p$ holds infinitely often in an execution. A \textit{response} formula is of the form, $\square (p \Rightarrow \diamondsuit q)$ which states that following any point in an execution where the property $p$ is true, there exists a point where the property $q$ is true. A \textit{stability} formula is of the form $\diamondsuit \square p$, which asserts that there is a point in an execution where the property $p$ becomes invariantly true for the remainder of the execution. 
+	
+
+
+Suppose the workspace of the rover and the copter is partitioned into regions $X_{1}, \ldots, X_{m}$. Both the rover and the copter are initially at the region $\vXInitRover$ and $\vXInitCopter$, respectively. The rover is commanded to drive to the region $\vXGoalRover$, and the copter needs to fly to $\vXGoalCopter$ for overhead tracking. Motions of vehicles are abstracted as a discrete transition system model $\mathbb{S}$. In addition, we assume that some of the regions $X_{1}, \ldots, X_{m}$ may be occupied by obstacles or hazardous due to environmental conditions (e.g., strong wind or dust devils in the regions) at a given time. If the rover detects some interesting features, objects in a region, then, it commands the rover to explore that region for further investigation. Both vehicles aim to jointly explore the environment while obeying the operational constraints of their systems such as energy, memory, hardware limitations, etc. This mission can be specified via LTL as follows:
+
+\begin{align}
+\varphi_{\mathrm{init}} =& \fAtPose{\vRover}{\vXInitRover} \land \fIsOpmode{\vRover}{\cnstRunnable} \land \fCommandDriveTo{\vRover}{\vXGoalRover} \land \\\nonumber
+& \fAtPose{\vCopter}{\vXInitCopter} \land \fIsOpmode{\vCopter}{\cnstRunnable} \land \fCommandFlyTo{\vCopter}{\vXGoalCopter}
+\end{align}
+
+
+\begin{equation}
+\varphi_{\mathrm{env}} =  \bigwedge_{i \in I_{\mathrm{obs}}} \fOnObstacle{X_{i}} \land \bigwedge_{i \in I_{\mathrm{wind}}} \fHasEvent{X_{i}}{\cnstWind} \land \bigwedge_{i \in I_{\mathrm{dust}}} \fHasEvent{X_{i}}{\cnstDust}
+\end{equation}
+
+
+\begin{itemize}
+	\item $\varphi_{1} = \bigwedge_{i} \square \bigl\{ ( \fOnObstacle{X_{i}} \lor \fHasEvent{X_{i}}{\cnstWind} \lor \fHasEvent{X_{i}}{\cnstDust} ) \Rightarrow (\neg\fAtPose{\vRover}{X_{i}} \land \neg\fAtPose{\vCopter}{X_{i}} ) \bigr\}$, that is, vehicles should avoid obstacles and hazardous regions with strong wind and dusts at all times.
+		
+	%\item $\bigwedge_{i} \square \bigl\{ ( \fOnObstacle{X_{i}} \lor \fHasEvent{X_{i}}{\cnstWind} \lor \fHasEvent{X_{i}}{\cnstDust} ) \Rightarrow (\neg\fAtPose{\vRover}{X_{i}} \land \neg\fAtPose{\vCopter}{X_{i}} ) \bigr\}$ : the vehicles should avoid obstacles and hazardous regions
+	
+	\item $\varphi_{2} = \square \bigl\{  \left( \fIsEnergy{v_{x}}{\cnstLow}  \lor \fIsMemory{v_{x}}{\cnstHigh} \lor \fFailedDevice{v_{x}} \right)\Rightarrow \bigcirc \neg\fIsOpmode{v_{x}}{\cnstRunnable} \bigr\}$ for all  $v_{x} \in \{\vRover, \vCopter \}$, that is, 
+		
+	\item $\varphi_{3} =  \square \bigl\{  \left( \fIsEnergy{v_{x}}{\cnstLow}  \Rightarrow \bigcirc \fIsOpmode{v_{x}}{\cnstRecharging} \right) \land \left( \fFailedDevice{v_{x}}  \Rightarrow \bigcirc \fIsOpmode{v_{x}}{\cnstHalting} \right) \bigr\}$ for all  $v_{x} \in \{\vRover, \vCopter \}$, that is, if vehicle $v_{x}$ has low energy (a failed device), it is set to recharging (halting) mode  at the next step.
+		
+		
+	\item $\varphi_{4} = \bigwedge_{i} \square \bigl\{ \fCommandDriveTo{\vRover}{X_{i}} \Rightarrow \diamondsuit \fAtPose{\vRover}{X_{i}} \bigr\} $, that is, the rover should eventually reach the goal region $\vXGoalRover$ when it is commanded to drive there.
+	
+	\item $\varphi_{5} = \bigwedge_{i} \square \bigl\{  \bigl( \fIsNeighbor{\fPose{\vRover}}{X_{i}}  \land \fCommandMoveTo{\vRover}{X_{i}} \bigr) \Rightarrow  \bigcirc \fAtPose{\vRover}{X_{i}} \bigr\}$, that is, when commanded, the rover should move to the region $X_{i}$ if it is adjacent to the rover's current pose.  
+	
+	
+	\item $\varphi_{6} = \bigwedge_{i} \square \bigl\{ ( \fCommandFlyTo{\vCopter}{X_{i}} \lor \fCommandLandOn{\vCopter}{X_{i}} ) \Rightarrow \diamondsuit \fAtPose{\vCopter}{X_{i}} \bigr\} $, that is, the copter should eventually reach the region $\vXGoalCopter$ when it is commanded to fly or land there.
+
+	\item $\varphi_{7} = \bigwedge_{i} \square \bigl\{ \bigl( \neg \fIsOver{X_{i}}{\fPose{\vRover}} \land \fIsRisk{ \fEvaluateRisk{X_{i}}{\cnstFlying} } {\cnstLow} \land \fCommandHoverTo{\vCopter, X_{i}} \bigr) \Rightarrow  \bigcirc \fAtPose{\vCopter}{X_{i}}  \bigr\} $, that is, when the copter is commanded to hover, it should reach the region $X_{i}$ if it has low flying risk and does not have the rover underneath.  
+
+	\item $\varphi_{8} = \bigwedge_{i} \square \bigl\{ \bigl( \neg\fAtPose{\vRover}{X_{i}} \land \fIsRisk{ \fEvaluateRisk{X_{i}}{\cnstLanding} } {\cnstLow} \land \fCommandApproachOn{\vCopter}{X_{i}} \bigr) \Rightarrow  \bigcirc \fAtPose{\vCopter}{X_{i}}  \bigr\} $, that is, when the copter is commanded to approach for landing, it should land on the region $X_{i}$ if it has low landing risk and does not collide with the rover.
+
+		
+	\item $\varphi_{9} = \bigwedge_{i} \square \bigl\{  \fCommandExploreOn{\vCopter}{X_{i}} \Rightarrow  \square \diamondsuit  \fAtPose{\vCopter}{ X_{i} }  \bigr\}  $, that is, the copter should visit the regions $X_{i}$ infinitely often.
+	
+	\item $\varphi_{10} = \bigwedge_{i} \square \bigl\{  \fDetectFeatures{\vRover}{X_{i}}  \Rightarrow \diamondsuit \fCommandExploreOn{\vCopter}{X_{i}} \bigr\} $ : if the rover detects some salient features in the region $X_{i}$, the  copter should explore that area at the next time step.		
+\end{itemize}
+
+
+
+
+In summary, the specification of $\mathbb{S}$ is given by $\varphi_{\mathrm{init}} \land \varphi_{\mathrm{env}} \Rightarrow \varphi_{\mathrm{spec}}$ where $\varphi_{\mathrm{spec}} = \bigwedge_{i = 1}^{10} \varphi_{i}$.
+
+
+%Here, for each $i \in I$, $p_{\mathrm{rv},i}$, $p_{\mathrm{cp},i}$ are location propositions for the rover and the copter, respectively, whereas $o_{i}$, which represents the existence of an obstacle in a region $(i)$, is a sensor propositions
+\paragraph{Backup paragraphs (from T. Wongpiromsarn, U. Topcu, and R. M. Murray)}
+
+\begin{description}
+	\item[\textbf{safety} (invariance)] A safety formula is of the form $\square p$, which simply asserts that the property $p$ remains invariantly true throughout an execution. Typically, a safety property ensures that nothing bad happens.
+	
+	A classic example of safety property frequently used in the robot motion planning domain is obstacle avoidance.
+	
+	\item[\textbf{guarantee} (reachability)] A guarantee formula is of the form $\diamondsuit p$, which guarantees that the property p becomes true at least once in an execution, i.e., a state satisfying p is reachable. Reaching a goal state is an example of a guarantee property.
+	
+	\item[\textbf{obligation} ] An obligation formula is a disjunction of safety and guarantee formulas, $\square p \lor \diamondsuit q$. It can be easily shown that any safety and progress property can be expressed using an obligation formula. (By letting $q \equiv False$, we obtain a safety formula and by letting $p \equiv False$, we obtain a guarantee formula.)
+
+	\item[\textbf{progress} (recurrence)] A progress formula is of the form $\square \diamondsuit p$, which essentially states that the property p holds infinitely often in an execution. As the name suggests, a progress property typically ensures that the system keeps making progress throughout the execution.
+	
+	\item[ \textbf{response}] A response formula is of the form, $\square (p \Rightarrow \diamondsuit q)$ which states that following any point in an execution where the property p is true, there exists a point where the property q is true. A response property can be used to describe how the system should react to changes in the operating conditions.
+	
+	\item[\textbf{stability} (persistence)] A stability formula is of the form $\diamondsuit \square p$, which asserts that there is a point in an execution where the property p becomes invariantly true for the remainder of the execution. This definition corresponds to the definition of stability in the controls domain since it essentially ensures that eventually, the system converges to a desired operating point and remains there for the remainder of the execution.
+
+\end{description}
+
+\begin{equation*}
+\varphi_{s} = \bigwedge\limits_{j \in J_{1}} \square p_{1,j}^{s} \land
+\bigwedge\limits_{j \in J_{2}} \diamondsuit p_{2,j}^{s} \land
+\bigwedge\limits_{j \in J_{3}} ( \square p_{3,j}^{s} \lor \diamondsuit q_{3,j}^{s})
+\bigwedge\limits_{j \in J_{4}} \square\diamondsuit p_{4,j}^{s} \land
+\bigwedge\limits_{j \in J_{5}} \square (p_{5,j}^{s} \Rightarrow q_{5,j}^{s}) \land 
+\bigwedge\limits_{j \in J_{6}} \diamondsuit \square p_{6,j}^{s}
+\end{equation*}
+
+where $J_{1}, \ldots, J_{6}$ are finite sets and for any $i$ and $j$, $p_{i,j}^{s}$ and $q_{i,j}^{s}$ are propositional formula of variables from $V$ that are build from $\Pi$.
+
+
+%\begin{itemize}
+%	\item $\bigwedge_{i} \square (o_{i} \Rightarrow \neg p_{\mathrm{rv},i} \land \neg p_{\mathrm{cp},i})$ is the obstacle avoidance requirement
+		
+%	\item $\bigwedge_{i} \square (s_{7,i} \Rightarrow \neg p_{\mathrm{rv},i} \land \neg p_{\mathrm{cp},i})$, if dust devils is detected at $x_{i}$, then, avoid that area.
+%\end{itemize}
+
+\end{document}

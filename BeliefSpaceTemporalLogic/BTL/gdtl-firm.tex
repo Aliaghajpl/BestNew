@@ -1,0 +1,137 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+%\documentclass[conference]{IEEEtran}
+
+\let\proof\relax
+\let\endproof\relax
+\input{def.tex}
+\input{unicycle.tex}
+
+% \pdfinfo{
+%    /Author (Homer Simpson)
+%    /Title  (Robots: Our new overlords)
+%    /CreationDate (D:20101201120000)
+%    /Subject (Robots)
+%    /Keywords (Robots;Overlords)
+% }
+
+% paper title
+\title{\LARGE \bf
+Control in Belief Space with Temporal Logic Specifications
+}
+
+\author{Cristian-Ioan Vasile$^{1}$, Kevin Leahy$^{2}$, Eric Cristofalo$^{2}$, Austin Jones$^{3}$, Mac Schwager$^{4}$ and Calin Belta$^{2}$
+\thanks{*This work was supported by NSF NRI-1426907, NSF CMMI-1400167.}% <-this % stops a space
+\thanks{$^{1}$Cristian-Ioan Vasile is with the Division of Systems Engineering,
+    Boston University, 15 Saint Mary's Street, Brookline, MA 02446, USA
+    {\tt\small cvasile@bu.edu}
+}%
+\thanks{$^{2}$Kevin Leahy, Eric Cristofalo and Calin Belta are with the
+    Department of Mechanical Engineering, Boston University,
+    110 Cummington Mall, Boston, MA 02215, USA
+    {\tt\small \{kjleahy, emc73, cbelta\}@bu.edu}
+}%
+\thanks{$^{3}$Austin Jones is with Mechanical Engineering and
+    Electrical Engineering at Georgia Institute of Technology, North Ave NW, Atlanta, GA 30332, USA 
+    {\tt\small austinjones@gatech.edu}}
+%
+\thanks{$^{4}$Mac Schwager is with the
+    Department of Aeronautics and Astronautics, Stanford University,
+    Durand Building, 496 Lomita Mall,  Stanford, CA 94305, USA
+    {\tt\small schwager@stanford.edu}
+}%
+}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%\begin{abstract}
+%One of the greatest challenges of motion planning in robotics 
+%is dealing with uncertainty in the robot's location and motion.
+%In this paper, we present a sampling-based planner for
+%persistent missions with temporal and uncertainty constraints.
+%We introduce a specification language called
+%{\em Gaussian Distribution Temporal Logic (GDTL)},
+%an extension of Boolean logic that allows us to incorporate
+%temporal evolution and noise mitigation directly into the task
+%specifications,
+%e.g. "Go to region A and reduce the variance of your position
+%estimate below 0.1 $m^2$."
+%Our motion planning algorithm
+%%adapts the computationally efficient feedback information roadmap planner to
+%generates a transition system in the belief space.
+%The planner breaks the {\em curse of history} associated
+%with belief space planning using local feedback controllers,
+%which makes automata-based methods tractable.
+%Control policies are then computed using a product
+%Markov Decision Process (MDP) between
+%the transition system and the Rabin automaton encoding 
+%the task specification.
+%We present algorithms to translate a GDTL formula to a Rabin
+%automaton and to efficiently construct the product MDP
+%by leveraging recent results from incremental computing.
+%Our approach is evaluated in simulation and hardware
+%experiments using a camera network and ground robot.
+%\end{abstract}
+
+\begin{abstract}
+In this paper, we present a sampling-based algorithm
+to synthesize control policies with temporal and
+uncertainty constraints.
+We introduce a specification language called
+{\em Gaussian Distribution Temporal Logic (GDTL)},
+an extension of Boolean logic that allows us to incorporate
+temporal evolution and noise mitigation directly into the task
+specifications,
+e.g. ``Go to region A and reduce the variance of your state
+estimate below 0.1 $m^2$."
+Our algorithm generates a transition system in the belief space
+and uses local feedback controllers to break the {\em curse of history}
+associated with belief space planning.
+%Another benefit is that automata-based methods become tractable.
+Furthermore, conventional automata-based methods become tractable.
+Switching control policies are then computed using a product
+Markov Decision Process (MDP) between
+the transition system and the Rabin automaton encoding 
+the task specification.
+We present algorithms to translate a GDTL formula to a Rabin
+automaton and to efficiently construct the product MDP
+by leveraging recent results from incremental computing.
+Our approach is evaluated in hardware experiments using
+a camera network and ground robot.
+\end{abstract}
+
+%\IEEEpeerreviewmaketitle
+
+
+\input{Introduction}
+%\input{Preliminaries}
+\input{GDTL}
+\input{Problem}
+\input{Solution}
+\input{CaseStudy}
+\input{Conclusion}
+
+%% Use plainnat to work nicely with natbib. 
+
+%\bibliographystyle{plainnat}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
+
+

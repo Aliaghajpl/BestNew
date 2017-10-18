@@ -1,0 +1,305 @@
+\section{Case Studies}
+\label{sec:caseStudy}
+
+In this section, we apply our algorithm to control a unicycle robot
+moving in a bounded planar environment.
+To deal with the non-linear nature of the robot model,
+we locally approximate the robot's dynamics using LTI systems
+with Gaussian noise around samples in the workspace.
+This heuristic is very common, since the non-linear and
+non-Gaussian cases yield recursive filters that do not
+in general admit finite parametrization.
+Moreover, the control policy is constrained to satisfy a
+rich temporal specification.
+The proposed sampling-based solution opvercomes %may overcome
+these difficulties due to its randomized and incremental
+nature.
+As the size of the GDTL-FIRM increases, we expect
+the algorithm to return a policy, if one exists, with
+increasing satisfaction probability.
+Since it is very difficult to obtain analytical bounds on
+the satisfaction probability, we demonstrate the
+performance of our solution in experimental trials.
+
+\subsubsection{Motion model}
+
+%The motion model for a unicycle is
+%\begin{equation}
+%\label{eq:unicycle-mm-cont}
+%\begin{bmatrix} \dot{p}^x \\ \dot{p}^y \\ \dot{\theta} \end{bmatrix} =
+%\begin{bmatrix} \cos(\theta) & 0 \\ \sin(\theta) & 0 \\ 0 & 1 \end{bmatrix} \cdot
+% \begin{bmatrix} v \\ \omega \end{bmatrix} +
+%\RM{d}\,w^{\CA{X}},
+%\end{equation}
+%where $p^x$, $p^y$ and $\theta$ are the
+%position and orientation of the robot
+%in the global reference frame,
+%$v$ is the forward velocity,
+%$\omega$ is the angular velocity
+%and $\RM{d}\,w^{\CA{X}}$ and $\RM{d}\,w^{\CA{U}}$
+%are Gaussian white noise process with
+%covariance matrices $Q_\CA{X}$ and $Q_\CA{U}$,
+%respectively.
+
+The motion model for our system is a unicycle.
+We discretize the system dynamics
+using Euler's approximation. The motion
+model becomes:
+{\small
+\begin{align}
+\label{eq:unicycle-mm-disc}
+x_{k+1} &= f(x_k, u_k, w_k) = x_k +
+\begin{bmatrix} \cos(\theta_k) & 0 \\ \sin(\theta_k) & 0 \\ 0 & 1 \end{bmatrix} \cdot
+u_k + w_k
+\end{align}
+}%
+where
+$x_k = \begin{bmatrix} p^x_k\  p^y_k\ \theta_k \end{bmatrix}^T$,
+$p^x_k$, $p^y_k$ and $\theta_k$ are the position and orientation of the robot
+in a global reference frame,
+$u_k = \begin{bmatrix} v'_k\ \omega'_k \end{bmatrix}^T = \Delta t \begin{bmatrix} v_k \ \omega_k \end{bmatrix}^T$,
+$v_k$ and $\omega_k$ are the linear and rotation velocities
+of the robot,
+$\Delta t$ is the discretization step, and
+$w_k$ is a zero-mean Gaussian process with covariance matrix
+%$Q = \sqrt{\Delta t} Q_{\CA{X}}$, where $Q_{\CA{X}}\in\mathbb{R}^{3\times 3}$.
+$Q \in \BB{R}^{3\times 3}$.
+%
+Next, we linearize the system around a nominal
+operating point $(x^d, u^d)$ without noise,
+\begin{equation}
+\label{eq:unycycle-lti}
+x_{k+1}  =  f(x^d, u^d, 0) + A \ (x_k - x^d) + B \ (u_k - u^d) + w_k,
+\end{equation}
+where $A = \frac{\partial f}{\partial x_k} (x^d, u^d, 0)$
+and $B = \frac{\partial f}{\partial u_k} (x^d, u^d, 0)$
+are the process and control Jacobians,
+$x^d = \begin{bmatrix} p^{x\,d} \  p^{y\,d}\ \theta^d \end{bmatrix}^T$,
+and $u^d = \begin{bmatrix} v'^d_k\ \omega'^d_k \end{bmatrix}^T$.
+%\begin{align}
+%A &= \frac{\partial f}{\partial x_k} (x^d, u^d, 0) =
+%\begin{bmatrix} 1 & 0 & - v'^d \cos(\theta^d) \\ 0 & 1 & v'^d \sin(\theta^d) \\ 0 & 0 & 1 \end{bmatrix}\\
+%B &= \frac{\partial f}{\partial u_k} (x^d, u^d, 0) =
+%\begin{bmatrix} \cos(\theta^d) & 0 \\ \sin(\theta^d) & 0 \\ 0 & 1 \end{bmatrix}\\
+%G &= \frac{\partial f}{\partial w_k} (x^d, u^d, 0) =
+%\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+%\end{align}
+
+In our framework, we associate with each belief node
+$B_g \in \TSX$ centered at $(\hat{x}^g, P)$ an LTI
+system obtained by linearization~\eqref{eq:unycycle-lti}
+about $(\hat{x}^g, u^g)$, where $u^g = [0.1, \, 0]^T$
+corresponds to 0.1\;m/s linear velocity and 0
+angular velocity.
+
+%%%%%%%%%%
+\subsubsection{Observation Model}
+\label{sec:bayes}
+\input{observationModel}
+%%%%%%%%%%
+%\subsubsection{Observation model}
+%{\color{blue} [To be expanded by Eric]}
+%
+%The observation model of the system is the following:
+%\begin{equation}
+%\label{eq:unicycle-om-cont}
+%z = C
+%\begin{bmatrix} p^x \\ p^y \\ \theta \end{bmatrix} +
+%\RM{d}\,v,
+%\end{equation}
+%where $C = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}$
+%is the observation matrix corresponding to the camera
+%localization system, and
+%$\RM{d}\,v$ is a Gaussian white noise process
+%with covariance matrix $R$.
+%%
+%The discrete version of the observation model is
+%\begin{equation}
+%\label{eq:unicycle-om-disc}
+%z_k = C
+%\begin{bmatrix} p^x_k \\ p^y_k \\ \theta_k \end{bmatrix} +
+%v_k,
+%\end{equation}
+%where $v_k$ is a zero-mean Gaussian process
+%with covariance matrix $R$.
+
+\subsubsection{Specification}
+The specification is given over belief states associated
+with the measurement $y$ of the robot as follows:
+``Visit regions $A$ and $B$ infinitely many times.
+If region $A$ is visited, then only corridor $D_1$
+may be used to cross to the right side of the environment.
+Similarly, if region $B$ is visited, then only corridor
+$D_2$ may be used to cross to the left side of the
+environment. The obstacle $Obs$ in the center must
+always be avoided. The uncertainty must always
+be less than $0.9$. When passing through the
+corridors $D_1$ and $D_2$ the uncertainty must
+be at most $0.6$.''
+
+The corresponding GDTL formula is:
+\begin{align}
+\label{eq:simple-spec}
+\phi_1 =\ & \phi_{avoid}  \andltl \phi_{reach}  \andltl \phi_{u,1} \andltl \phi_{u,2} \andltl \phi_{bounds} \\
+\phi_{avoid} = & \LTLALWAYS \neg \phi_{Obs} \nonumber\\
+\phi_{reach} = & \LTLALWAYS \big( \LTLEVENTUALLY (\phi_A \andltl \notltl \phi_{D_2} \LTLUNTIL \phi_B) \LTLEVENTUALLY (\phi_B \andltl \notltl \phi_{D_1} \LTLUNTIL \phi_A) \big) \nonumber\\
+% &\qquad \andltl \LTLEVENTUALLY (\phi_B \andltl \notltl \phi_{D_1} \LTLUNTIL \phi_A) \big)\\
+\phi_{u,1} = & \LTLALWAYS ( tr(P) \leq 0.9) \nonumber\\
+\phi_{u,2} =&  \LTLALWAYS \big( ( \phi_{D_1} \orltl \phi_{D_2}) \Implies ( tr(P) \leq 0.6 ) \big) \nonumber\\
+\phi_{bounds} =& \LTLALWAYS (box(\hat{x},x_c,a)\leq 1) , \nonumber
+\end{align}
+where $(\hat{x}, P)$ is a belief state associated with $y$,
+%\begin{equation*}
+$
+a = \begin{bmatrix}
+\frac{2}{l} & \frac{2}{w} & 0
+\end{bmatrix} $
+%\end{equation*}
+%where
+so that
+$\hat{x}$ must remain within a rectangular $l\times w$ region
+with center $x_c= \begin{bmatrix}
+\frac{l}{2} & \frac{w}{2} & 0
+\end{bmatrix}$, $l=4.13\,m$ and $w=3.54\,m$.
+The 5 regions in the environment are defined by GDTL predicate
+formulae $\phi_{Reg} = (box(\hat{x},x_{Reg},r_{Reg})\leq 1)$,
+%as follows:
+%\begin{align*}
+%\phi_A &=& (\CA{M}(\hat{x},P,x_A) \leq r_A) \\
+%\phi_B &=& (\CA{M}(\hat{x},P,x_B) \leq r_B) \\
+%\phi_{D_1} &=& (\CA{M}(\hat{x},P,x_A) \leq r_{D_1}) \\
+%\phi_{D_2} &=& (\CA{M}(\hat{x},P,x_A) \leq r_{D_2}) \\
+%\phi_{Obs} &=& (\CA{M}(\hat{x},P,x_{Obs}) \leq r_{Obs}),
+%\end{align*}
+%\begin{equation*}
+%\phi_{Reg} = (box(\hat{x},x_{Reg},r_{Reg})\leq 1),
+%\end{equation*}
+where $x_{Reg}$ and $r_{Reg}$ are the center and the dimensions
+of region $Reg \in \{A, B, D_1, D_2, Obs\}$, respectively.
+%Fig.~\ref{fig:simple-arena} shows the planar environment
+%and the 5 regions.
+
+%The LTL formula $\varphi_1$ corresponding to $\phi_1$ is:
+%\begin{align*}
+%\phi_1 = & \LTLALWAYS \big( \LTLEVENTUALLY (\pi_A \andltl \notltl \pi_{D_2} \LTLUNTIL \pi_B)
+%\andltl \LTLEVENTUALLY (\pi_B \andltl \notltl \pi_{D_1} \LTLUNTIL \pi_A) \big)\\
+%& \andltl \LTLALWAYS \neg \pi_{Obs} \andltl \LTLALWAYS \pi_{u,1}
+%\andltl \LTLALWAYS \big( ( \pi_{D_1} \orltl \pi_{D_2}) \Implies \pi_{u,2} \big),
+%\end{align*}
+%where $\AP=\{ \pi_A, \pi_B, \pi_{D_1}, \pi_{D_2}, \pi_{Obs}, \pi_{u,1}, \pi_{u,2} \}$,
+%and the map from the predicates of $\phi_1$ to $\AP$ is
+%$\widetilde{\phi_{Reg}} = \pi_{Reg}$, $Reg \in \{A, B, D_1, D_2, Obs\}$,
+%$\widetilde{tr(P) \leq 0.5} = \pi_{u,1}$ and
+%$\widetilde{tr(P) \leq 0.3} = \pi_{u,2}$.
+
+\begin{figure}[!htb]
+\centering
+\subfigure[Environment]{
+%  \resizebox{0.46\columnwidth}{!}{\arena{1}{4}}
+  \includegraphics[width=0.45\columnwidth]{exp_setup_1}
+  \label{fig:simple-arena}
+}
+\subfigure[Camera coverage map]{
+%  \resizebox{0.46\columnwidth}{!}{\arenacams{1}{4}}
+  \includegraphics[width=0.45\columnwidth]{exp_setup_2}
+  \label{fig:simple-arena-cover}
+}
+\subfigure[Pose estimation]{
+%  \resizebox{0.46\columnwidth}{!}{\arenacams{1}{4}}
+  \includegraphics[width=0.45\columnwidth]{exp_setup_3}
+  \label{fig:simple-arena-pose}
+}
+\subfigure[Transition system ]{
+%  \resizebox{0.46\columnwidth}{!}{\arenaprm{1}{4}}
+  \includegraphics[width=0.45\columnwidth]{exp_setup_4}
+  \label{fig:simple-arena-ts}
+}
+\caption{Fig.~\subref{fig:simple-arena}
+shows an environment with
+two regions $A$ and $B$, two corridors
+$D_1$ and $D_2$ and an obstacle $Obs$.
+%The magenta disk is the initial position of
+%the robot.
+Fig.~\subref{fig:simple-arena-cover}
+shows the coverage of the cameras.
+Fig.~\subref{fig:simple-arena-pose}
+shows the pose of the robot computed
+from the images taken by the 4 cameras.
+Fig.~\subref{fig:simple-arena-ts}
+shows the transition system computed
+by Alg.~\ref{alg:compute-mdp}.
+%Fig.~\subref{fig:simple-arena-cover}
+%shows the overall coverage of the four
+%cameras placed at the corners of the
+%arena.
+%Fig.~\subref{fig:simple-arena-prm}
+%shows a possible MDP obtained by
+%a run of the FIRM-based algorithm.
+}
+\label{fig:simple-case}
+\end{figure}
+
+
+\subsubsection{Local controllers}
+We used the following simple switching controller
+to drive the robot towards belief nodes:
+\begin{equation*}
+\resizebox{0.95\columnwidth}{!}{$u_{k+1} = \begin{cases}
+\begin{bmatrix}k_D \normeucl{\alpha^T(x^g - \hat{x}_k)} &  k_\theta (\theta^{los}_k - \hat{\theta}_k) \end{bmatrix}^T & \mbox{if } \abs{\theta^{los}_k - \hat{\theta}_k} < \frac{\pi}{12}\\
+\begin{bmatrix}0 & k_\theta (\theta^{los}_k - \hat{\theta}_k) \end{bmatrix}^T, & \mbox{otherwise}
+\end{cases}$,}
+\end{equation*}
+where $k_D>0$ and $k_\theta>0$ are proportional scalar gains,
+$x^g$ is the goal position, $\theta^{los}_k$ is the line-of-sight angle
+and $\alpha=[1\  1\  0]^T$.
+We assume, as in~\cite{Agha14}, that the controller
+is able to stabilize the system state and uncertainty
+around the goal belief state $(x^g, P^\infty)$,
+where $P^\infty$ is the stationary covariance matrix.
+
+\subsubsection{Experiments}
+
+The algorithms in this paper were implemented in Python2.7 using
+{\em LOMAP}~\cite{ulusoy-ijrr2013} and {\em networkx}~\cite{nx} libraries.
+The {\em ltl2star} tool~\cite{klein2006} was used to convert the LTL specification
+into a Rabin automaton.
+All computation was performed on a Ubuntu 14.04 machine with
+an Intel Core i7 CPU at 2.4 Ghz and 8GB RAM.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.8\columnwidth]{experiment_trajectories}
+\caption{The figure shows the trajectory of the robot over 10 surveillance cycles.
+At each time step, the pose of the robot is marked by an arrow.
+The true trajectory of the robot is shown in green. The trajectory obtained from
+the camera network is shown in yellow, while the trajectory estimated by the
+Kalman filter is shown in black.}
+\label{fig:exp-traj}
+\end{figure}
+
+A switched feedback policy was computed for the ground
+robot described by~\eqref{eq:unicycle-mm-disc} operating
+in the environment shown in Fig.~\ref{fig:simple-arena}
+with mission specification~\eqref{eq:simple-spec} using
+Alg.~\ref{alg:compute-mdp}.
+The overall computation time to generate the policy was
+32.739 seconds and generated a transition system and product
+MDP of sizes (23, 90) and (144, 538), respectively.
+The Rabin automaton obtained from the GDTL formula has
+7 states and 23 transitions operating over a set of atomic
+propositions of size 8.
+The most computationally intensive operation in
+Alg.~\ref{alg:compute-mdp} is the computation of the
+transition and intersection probabilities.
+To speed up the execution, we generated trajectories for
+each transition of the TS and reused them whenever
+Alg.~\ref{alg:compute-prob} is called for a transition
+of the product MDP.
+The mean execution time for the probability computation
+was 0.389 seconds for each transition of $\TS$.
+
+We executed the computed policy on the ground vehicle
+over 9 experimental trials for a total of 24 surveillance cycles.
+The specification was met in all of surveillance cycles.
+A trajectory of the ground robot over 10 surveillance cycles
+(continuous operation) is shown in Fig.~\ref{fig:exp-traj}.

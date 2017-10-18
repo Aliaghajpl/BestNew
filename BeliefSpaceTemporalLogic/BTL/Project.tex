@@ -1,0 +1,78 @@
+\documentclass[conference]{IEEEtran}
+
+\begin{document}
+
+\title{Project}
+
+\section{Meeting Notes} \label{sec:meetingNotes}
+
+1) Ali/Kamak/Rohan
+Set up meeting wiht Havard Grip
+    -- Dynamics model
+    -- Mission scenario (read Cristi's paper/ read this draft/ discuss with Ali)
+Set up meeting MiMi Aung (lead of entire Mars Copter)
+    -- further polish the scenario
+    -- get feedback from her that we are on the right track the whole idea
+    
+2) Ali: staffing
+Add Cristi to weekly meetings
+Send email to Rich Murray regarding potential student
+Ali is talking to three postdocs
+Talk to Sertac/Cristi as a visiting post-doc
+    -- it will help Cristi with his job process
+
+From JPL:
+Kamak (mission)
+Rohan (software support for Cristi)
+Kyon (best implementation -- 20percent of his time for 2018)
+Oktay (not certain how much time spend)
+
+Co-I:
+Issa (mobility)
+MiMi (Mars copter leader)
+Lorrain (Autonomy/ Health-aware systems)
+
+=======
+
+Set up a meeting at Caltech next week (maybe Tues 10am)
+
+Aaron is out of town ??-?? 
+
+3) Rohan/Kamak
+Supporting Cristi on the software
+Embedding our scenario into his solver
+
+\section{TODO List}
+\begin{enumerate}
+  \item Get map for the environment [R]
+  \item Convert to Finite-State-Machine [C]
+  \item Update software to handle FSM [C]
+  \item Define GDTL specification in paper, Add text [R]
+  \item Write mission description language [R]
+  \item Implement GDTL specs in Software, install spot [R]
+  \item Write simple running example [C] *first cut
+  \item Figure for product MDP [R]
+  \item Handle remapping and re-planing
+\end{enumerate} \
+
+Ideas for Future Work:
+\begin{enumerate}
+  \item Add unexplored region label in the map
+  \item Use Rover Slip detection work from Oktay
+  \item Tell copter where to go
+\end{enumerate} \
+
+Leverage Ali's FY17 work:
+\begin{enumerate}
+  \item Learn how to assess the traversability of the (copter) unseen areas using rover's long-range images and HiRise images
+  \item Use the "where to look paper" to assess the planning-relevant visual content in images
+\end{enumerate} \
+
+Planning methods for space exploration- a review:
+\begin{enumerate}
+  \item Steve Chien: Casper, ASPEN, Using iterative Repair to Improve...
+  \item Gregory Rabideau (implementer)
+  \item Tables for 
+\end{enumerate} 
+    
+\end{document}
