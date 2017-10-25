@@ -6,6 +6,7 @@
 \input{TemplateFiles/def.tex}
 \input{TemplateFiles/inc}
 
+\newcommand{\red}[1]{{\color{red} #1}}
 % numbers option provides compact numerical references in the text. 
 
 \pdfinfo{
@@ -59,6 +60,117 @@ This work studies ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction} \label{subsec:intro}
 
+
+	\section{Belief Space Temporal Logic [exact copy of best orig.paper]}
+	\red{Copy of Best orig. paper. Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then fix this in the original paper, before starting to write this report.}
+	In this section, we define a language for planning under uncertainty in partially-observable environments using formal methods. We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
+	
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\subsection{POMDP}\label{sec:POMDP}
+	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. Defining the one-step cost of taking action $u$ at belief $b$ by $c(b,u)$, we can formally define the POMDP problem as: 
+    \begin{align}
+    \pi^*=\arg\min_\pi\mathbb{E}\sum_{k=0}^{\infty}c(b_k,\pi(b_k))
+    \end{align}
+    Note that $c(b,u)=0$ for all $b\in B_{goal}$ and $c(b,u)>0$, otherwise. In this work, we aim to approximate and solve this problem while we satisfy mission specifications.
+    
+    
+	\begin{figure*}[t!]
+    	\centering
+    % 	\includegraphics[width=1.4\columnwidth]{figs/map.png}
+    	\includegraphics[width=2\columnwidth]{figs/MarsLabelledWithSand.png}
+    	\caption{Labelled map of a typical campaign where blue and purple areas show regions containing science targets for the rover and orange area shows the region in sand.}
+    	\label{fig:Scenario}
+    \end{figure*}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\subsection{\DTL}\label{sec:DTL}
+    To encode mission specifications, and synthesize a controller to satisfy them, we resort to formal methods. To develop a language for formal planning and reasoning over the belief state, we rely on predicate-based logic.
+    %\pr{Predicate-based logic vs. propositions-based logic}
+    %In this work, we will rely on predicate logic because we explicitly reason about the belief of the system (e.g. covariance matrix) as opposed to proposition-based logic where the state of system is implicit in the definitions of the propositions.
+    
+    %a predicate temporal logic defined over the space of Gaussian distributions with fixed dimension.
+    
+    \pr{Notation}
+    Let $\Sigma$ be a finite set. The cardinality,
+    power set, Kleene- and $\omega$-closures
+    of $\Sigma$ are denoted by $\card{\Sigma}$,
+    $\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
+    respectively.
+    $A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
+    $n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
+    functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
+    respect to the Lebesgue measure of $\BB{R}^n$.
+    The set of all positive semi-definite matrices of size
+    $n \times n$, $n \geq 1$, is denoted by $S^n$.
+    $\BB{E}[\cdot]$ is the expectation operator.
+    The $m \times n$ zero matrix and
+    the $n \times n$ identity matrix are denoted by
+    $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+    The supremum and Euclidean norms are denoted by
+    $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
+    
+    \pr{Parametrized Belief space}
+    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+    of dimension $n$, i.e. the space of Gaussian
+    probability measures over $\BB{R}^n$.
+    For brevity, we identify the Gaussian measures
+    with their finite parametrization, mean and
+    covariance matrix. Thus,
+    $\CA{G} =  \BB{R}^n \times  S^n$.
+    If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
+    we denote the suffix sequence $b^i b^{i+1} \ldots$ by
+    $\BF{b}^i$, $i \geq 0$. Each member of $\Sigma^*$ and $\Sigma^\omega$ is referred to as ``word" or "sequence". 
+    
+    For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied. Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). Some examples are \textbf{(i)} Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state. \textbf{(ii)} Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
+    \textbf{(iii)} Bounds on state mean $\hat{x}$ to specify
+    where in the state space the system should be. \textbf{(iv)} Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
+    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. We then combine these predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
+    
+    %\pr{Structure of the formulae}
+    %Parts of the formulae is not part of the syntax but rather ... In particular $|$ defines option. For example, $\phi::=A | B$ means specification $\phi$ can be either $A$ or $B$. Example: an arithmetic expression has the following syntax grammar $expr::= c | x | expr + expr | expr - expr | expr * expr | expr / expr$.
+    
+    \begin{definition}[\DTL Syntax]
+    \label{def:gdtl-syntax}
+    The {\em syntax} of \DTL includes the minimum number of operators to define the logic:
+    \begin{equation*}
+     \phi :=  \True \ |\ f \leq 0 \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+    \end{equation*}
+    %where $\True$ is the Boolean constant ``True'',
+    %$f \leq 0$ is a predicate over $\mathbb{B}$, where
+    %$f \in \CA{M}(\mathbb{B}, \BB{R})$.
+    %$\notltl$ is negation (``Not''), $\andltl$ is conjunction (``And''),
+    %$\Next$ is ``Next'',
+    %and $\Until$ is ``Until''.
+    \end{definition}
+
+    For convenience, we define the additional operators:
+    $\phi_1 \orltl \phi_2 \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2)$,
+    $\Event \phi \equiv \True \Until \phi$, and
+    $\Always \phi \equiv \notltl \Event \notltl \phi$,
+    %\begin{align*}
+    %\phi_1 \orltl \phi_2 & \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2) \\
+    %\LTLEVENTUALLY \phi & \equiv \True \LTLUNTIL \phi \\
+    %\LTLALWAYS \phi & \equiv \notltl \LTLEVENTUALLY \notltl \phi
+    %\end{align*}
+    where $\equiv$ denotes semantic equivalence. \DTL syntax defines the symbols and their correct ordering to form a formulae. In the following, we define \DTL semantics, i.e., the meaning of those symbols.
+
+    \begin{definition}[\DTL Semantics]
+    \label{def:gdtl-semantics}
+    Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
+    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$. Accordingly, the {\em semantics} of \DTL is defined recursively as
+    \begin{align*}
+    &\BF{b}^i \models  \top  & \\
+    &\BF{b}^i \models f \leq 0 & \Equiv\quad & f(b^i) \leq 0\\ % \forall (x,P) \in b^i \\
+    &\BF{b}^i \models \notltl \phi & \Equiv\quad & \notltl (\BF{b}^i \models \phi) \\
+    &\BF{b}^i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \andltl ( \BF{b}^i \models \phi_2 ) \\
+    &\BF{b}^i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \orltl ( \BF{b}^i \models \phi_2 ) \\
+    &\BF{b}^i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } ( \BF{b}^j \models \phi_2 ) \\
+    & & & \andltl (\BF{b}^k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
+    &\BF{b}^i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. } \BF{b}^j \models \phi \\
+    &\BF{b}^i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. } \BF{b}^j \models \phi
+    \end{align*}
+    
+    \end{definition}
 
 \end{document}
 
