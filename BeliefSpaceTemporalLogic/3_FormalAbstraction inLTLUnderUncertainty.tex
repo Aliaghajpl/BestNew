@@ -59,28 +59,21 @@ This work studies ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction} \label{subsec:intro}
+In this work, we use a language for specifying behavior under uncertainty using formal methods. 
 
 
-	\section{Belief Space Temporal Logic [exact copy of best orig.paper]}
-	\red{Copy of Best orig. paper. Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then fix this in the original paper, before starting to write this report.}
-	In this section, we define a language for planning under uncertainty in partially-observable environments using formal methods. We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
+	\section{Belief Space Temporal Logic}
+	\red{Copy of Best orig. paper. Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then fix this in the original paper, before starting to write this report.\\*}
+	In this section, we define a language for specifying behavior under uncertainty using formal methods. This is of particular interest for planning problems in partially-observable environments.
+	 We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{POMDP}\label{sec:POMDP}
-	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. Defining the one-step cost of taking action $u$ at belief $b$ by $c(b,u)$, we can formally define the POMDP problem as: 
-    \begin{align}
-    \pi^*=\arg\min_\pi\mathbb{E}\sum_{k=0}^{\infty}c(b_k,\pi(b_k))
-    \end{align}
-    Note that $c(b,u)=0$ for all $b\in B_{goal}$ and $c(b,u)>0$, otherwise. In this work, we aim to approximate and solve this problem while we satisfy mission specifications.
+	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise.  \red{Is this by default independent noise?}
+	
+	
+	Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. 
     
-    
-	\begin{figure*}[t!]
-    	\centering
-    % 	\includegraphics[width=1.4\columnwidth]{figs/map.png}
-    	\includegraphics[width=2\columnwidth]{figs/MarsLabelledWithSand.png}
-    	\caption{Labelled map of a typical campaign where blue and purple areas show regions containing science targets for the rover and orange area shows the region in sand.}
-    	\label{fig:Scenario}
-    \end{figure*}
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{\DTL}\label{sec:DTL}
