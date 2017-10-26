@@ -2,11 +2,20 @@
 \usepackage{standalone}
 \usepackage{times}
 \usepackage{float}
+\usepackage{amsmath}
 
 \input{TemplateFiles/def.tex}
 \input{TemplateFiles/inc}
 
 \newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\X}{{\mathbb{X}}}
+\newcommand{\Y}{{\mathbb{Y}}}
+
+\newcommand{\po}{\mathbb{P}}     % Probability of an event
+\newcommand{\p}[1]{\po\left(#1\right)}     % Probability of an event
+\newcommand{\pd}[1]{p\left(#1\right)}     % Probability density of an event
+\newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
+\newcommand{\rel}{\mathcal{R}}%{A relation}
 % numbers option provides compact numerical references in the text. 
 
 \pdfinfo{
@@ -33,9 +42,8 @@
   {}
 \makeatother
 
-\newcommand{\ali}[1]{{\color{green} Ali: #1}}
-\newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
-\newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
+
+
 \allowdisplaybreaks[1]
 
 \begin{document}
@@ -62,7 +70,33 @@ This work studies ...
 In this work, we use a language for specifying behavior under uncertainty using formal methods. 
 
 
-	\section{Belief Space Temporal Logic}
+\section{Partially observable Markov decision Processes}
+In this work, we only consider  Borel measurable spaces, i.e., $(\X,\mathcal{B}(\X))$, 
+%In this work,
+and we restrict our attention to Polish spaces \cite{bogachev2007measure}. 
+Together with the measurable space $(\X,\mathcal{B}(\X))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\X),\po)$ and has realisations  $x\sim \po$.   
+Let us further denote the set of all probability measures for a given measurable space $(\X,\mathcal{B}(\X))$ as $\mathcal P (\X,\mathcal{B}(\X))$.
+
+For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
+%We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
+For a given set $\Y$ a metric or distance function $\mathbf d_\Y$ is a function $\mathbf{d}_\Y: \Y\times \Y\rightarrow \mathbb R_{\ge 0}$ 
+satisfying the following conditions: 
+$\forall y_1,y_2,y_3\in\Y$:
+$\mathbf d_\Y(y_1,y_2)=0$ iff $y_1=y_2$; 
+$\mathbf d_\Y(y_1,y_2)=\mathbf d_{\Y}(y_2,y_1)$;  and
+$\mathbf d_\Y(y_1,y_3)\leq \mathbf d_\Y(y_1,y_2) +\mathbf d_\Y(y_2,y_3)$. 
+ 
+ 
+ 
+ 
+The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
+\cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
+
+
+
+
+
+\section{Belief Space Temporal Logic}
 	\red{Copy of Best orig. paper. Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then fix this in the original paper, before starting to write this report.\\*}
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. This is of particular interest for planning problems in partially-observable environments.
 	 We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
@@ -164,6 +198,10 @@ In this work, we use a language for specifying behavior under uncertainty using 
     \end{align*}
     
     \end{definition}
+
+
+	\bibliographystyle{plain}
+	\bibliography{AliAgha,references}
 
 \end{document}
 
