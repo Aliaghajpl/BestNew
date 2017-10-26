@@ -51,7 +51,7 @@
 % paper title
 %\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
 
-\title{\huge Formal abstraction of POMDPs for Distribution LTL:\\ Can we formally deal with uncertainty?}
+\title{\huge Formal abstraction of POMDPs for Distribution LTL}
 
 \author{Sofie, Petter, Cristi, Rohan, Ali Agha, Richard Murray, Aaron Ames}
 
@@ -86,16 +86,10 @@ Some of the questions to be tackled are as follows:
 \end{description}
 
 
-\section{Partially observable Markov decision Processes}
-In this work, we only consider  Borel measurable spaces, i.e., $(\X,\mathcal{B}(\X))$, 
-%In this work,
-and we restrict our attention to Polish spaces \cite{bogachev2007measure}. 
-Together with the measurable space $(\X,\mathcal{B}(\X))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\X),\po)$ and has realisations  $x\sim \po$.   
-Let us further denote the set of all probability measures for a given measurable space $(\X,\mathcal{B}(\X))$ as $\mathcal P (\X,\mathcal{B}(\X))$.
+\section{Literature}
+This section contains a summary of related literature.
 
-
- 
- 
+\subsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 \cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
 
@@ -104,6 +98,30 @@ In \cite{feinberg2016partially} and in \cite{feinberg2014optimality} the optimal
 In \cite{saldi2017finite}, the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs is analyzed. 
 
 
+
+\section{Partially observable Markov decision Processes}
+In this section, we tackle the first research question. That is, we analyze the formulation of distribution temporal logics as originally given in \cite{JonesDTL2013} for POMDPS. 
+First, we give the definition of POMDPs. After which we will give a distribution temporal logic.
+Given time, it could be a good idea to give the examples of \red{Cristis report}, for the mission planning case study.
+
+
+
+For metric space $\mathbb S$, we denote with  $\mathcal{B}(\mathbb S)$ its Borel $\sigma$-field. That is  $\mathcal{B}(\mathbb S)$ is the  
+collection of all sets that can be formed from countable unions and intersections of open sets.
+We refer to  $(\mathbb S,\mathcal{B}(\mathbb S))$ as a Borel measurable space and we denote with $\mathcal P(\mathbb S)$ the set of probability measures on $(\mathbb S,\mathcal{B}(\mathbb S))$.
+Together with the measurable space $(\mathbb S,\mathcal{B}(\mathbb S))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s\sim \po$.   
+Polish spaces are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
+
+
+
+ 
+ 
+
+\subsection{POMDP}\label{sec:POMDP}
+	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise.  \red{Is this by default independent noise?}
+	
+	
+	Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. 
 
 
 
@@ -114,11 +132,7 @@ In \cite{saldi2017finite}, the convergence of solutions of finite abstractions o
 	 We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{POMDP}\label{sec:POMDP}
-	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise.  \red{Is this by default independent noise?}
 	
-	
-	Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. 
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
