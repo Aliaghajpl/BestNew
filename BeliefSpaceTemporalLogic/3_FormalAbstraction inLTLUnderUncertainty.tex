@@ -51,14 +51,14 @@
 % paper title
 %\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
 
-\title{\huge Formal abstraction in LTL Under Uncertainty}
+\title{\huge Formal abstraction of POMDPs for Distribution LTL:\\ Can we formally deal with uncertainty?}
 
 \author{Sofie, Petter, Cristi, Rohan, Ali Agha, Richard Murray, Aaron Ames}
 
 \maketitle
 
 \begin{abstract}
-This work studies ...
+Currently this report mainly includes copies of the  original paper on pulled by Cristi on Temporal logics with beliefs for planning problems.  Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then we will include this in the original paper, before starting continuing with the development of this report. 
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -66,8 +66,24 @@ This work studies ...
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
 \section{Introduction} \label{subsec:intro}
 In this work, we use a language for specifying behavior under uncertainty using formal methods. 
+
+Some of the questions to be tackled are as follows:
+\begin{description}
+	\item[Framework:] Does it make sense to formulate the DLTL on a specific choice of belief space or sufficient statistic? Can we instead first formulate it on the POMDP and then show that it  is equivalent to a problem on a COMDP?
+	\item[Technical:]  What are the minimal measurability conditions that are required such that for given a POMDP and its reduced COMDP  the LTL problem is ``well"-defined (measurable).
+	\item[Technical:] Beyond well-definedness, do we also keep soundness and completeness?
+	\item[Technical:] When are optimal policies non-randomized?
+	\item[Simulation relations]  Use $(\epsilon,\delta)$- simulation relation for doing formal abstractions on the COMDP model.
+	Show that it can be used for control refinement.
+	\item[Interesting:] How does system identification fit into this picture?
+	\item[Simulation relations:] Can we quantify an $(\epsilon,\delta)$-simulation relation between the sampling based model and the original COMDP?
+	\item[Computation results:] Improve results for the computation of $(\epsilon,\delta)$-simulation relations for LTI systems. Reformulate LMI requirement from S-procedure to requirements over Polytopes. 
+	\item[Scalable computations:] Can we  tackle the computations in a modular fashion. Split up requirements for e.g. the helicopter and the rover and show that the combined system still behaves as required.
+	 
+\end{description}
 
 
 \section{Partially observable Markov decision Processes}
@@ -77,27 +93,23 @@ and we restrict our attention to Polish spaces \cite{bogachev2007measure}.
 Together with the measurable space $(\X,\mathcal{B}(\X))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\X),\po)$ and has realisations  $x\sim \po$.   
 Let us further denote the set of all probability measures for a given measurable space $(\X,\mathcal{B}(\X))$ as $\mathcal P (\X,\mathcal{B}(\X))$.
 
-For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
-%We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
-For a given set $\Y$ a metric or distance function $\mathbf d_\Y$ is a function $\mathbf{d}_\Y: \Y\times \Y\rightarrow \mathbb R_{\ge 0}$ 
-satisfying the following conditions: 
-$\forall y_1,y_2,y_3\in\Y$:
-$\mathbf d_\Y(y_1,y_2)=0$ iff $y_1=y_2$; 
-$\mathbf d_\Y(y_1,y_2)=\mathbf d_{\Y}(y_2,y_1)$;  and
-$\mathbf d_\Y(y_1,y_3)\leq \mathbf d_\Y(y_1,y_2) +\mathbf d_\Y(y_2,y_3)$. 
- 
- 
+
  
  
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 \cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
+
+In \cite{feinberg2016partially} and in \cite{feinberg2014optimality} the optimality conditions for POMDP problems solved via COMDPs are analyzed. 
+
+In \cite{saldi2017finite}, the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs is analyzed. 
+
 
 
 
 
 
 \section{Belief Space Temporal Logic}
-	\red{Copy of Best orig. paper. Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then fix this in the original paper, before starting to write this report.\\*}
+
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. This is of particular interest for planning problems in partially-observable environments.
 	 We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
 	
@@ -199,6 +211,19 @@ The reduction of Markov decision problems with incomplete information to problem
     
     \end{definition}
 
+
+
+\section{Formal abstractions}
+For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
+%We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
+For a given set $\Y$ a metric or distance function $\mathbf d_\Y$ is a function $\mathbf{d}_\Y: \Y\times \Y\rightarrow \mathbb R_{\ge 0}$ 
+satisfying the following conditions: 
+$\forall y_1,y_2,y_3\in\Y$:
+$\mathbf d_\Y(y_1,y_2)=0$ iff $y_1=y_2$; 
+$\mathbf d_\Y(y_1,y_2)=\mathbf d_{\Y}(y_2,y_1)$;  and
+$\mathbf d_\Y(y_1,y_3)\leq \mathbf d_\Y(y_1,y_2) +\mathbf d_\Y(y_2,y_3)$. 
+ 
+ 
 
 	\bibliographystyle{plain}
 	\bibliography{AliAgha,references}
