@@ -1,0 +1,163 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{amsmath, amsthm, amssymb, dsfont, accents}
+
+\usepackage{hyperref, booktabs}
+\usepackage{biblatex}
+\addbibresource{5_refs.bib}
+
+
+\pdfinfo{
+   /Author (Homer Simpson)
+   /Title  (Robots: Our new overlords)
+   /CreationDate (D:20101201120000)
+   /Subject (Robots)
+   /Keywords (Robots;Overlords)
+}
+
+\newtheorem{problem}{Problem}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\title{\huge Provably Safe Flight }
+
+\author{Petter, Rohan, Cristi, Sofie, Ali Agha, Richard Murray, Aaron Ames}
+
+\maketitle
+
+\begin{abstract}
+In this work we develop a method for provably safe quadrotor flight. Using analytical control barrier functions as a means of enforcing invariance, we guarantee trajectory tracking within a quantified error bound. We account for both input bounds and disturbance magnitude. The effectiveness of the method is demonstrated via simulations and real-world tests in a wind tunnel. 
+\end{abstract}
+
+
+\IEEEpeerreviewmaketitle
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initial targets:
+
+\begin{itemize}
+  \item Provably safe means
+  \begin{itemize}
+    \item Reach target within given time
+    \item Do not exceed input bounds
+    \item Be robust to given disturbance (wind, modeling error)
+  \end{itemize}
+  \item Provably safe A-B flight
+  \item Provably safe landing
+\end{itemize}
+
+Potential later steps:
+\begin{itemize}
+  \item Extend to probabilistic framework with an uncertain state estimate
+  \item Recovery from failure: stabilize a falling quadrotor
+\end{itemize}
+
+\section{Introduction} \label{subsec:intro}
+
+The scientific tasks of the 2020 NASA Mars mission mission will be carried out by a ground rover operating in a largely unknown environment. The rover moves slowly and has limited capabilities of surveying its environment, therefore, there are plans to also send a helicopter that can assist the rover by more efficiently mapping the surroundings. With a more accurate environment map the rover can optimize routing to execute its tasks quicker.
+
+Helicopter flight is safety-critical: while the rover can always stop to be in a safe state, the helicopter needs to perform a maneuver to land in a safe location. Making matters worse, the helicopter will have just 2-3 minutes of battery life each day. Combined with a communication delay of 8 minutes between Earth and Mars, the helicopter needs to operate autonomously in a highly safety-critical manner.
+
+With these requirements in mind, in this paper we develop a provably safe controller that does X Y and Z. As a proxy for the Mars helicopter we use a quadrotor to validate our work in simulation and experiment.   
+
+
+\subsection{Related Work}
+
+Previous work on provably safe quadrotor flight has focused on obstacle avoidance and can be characterized into two categories: analytical approaches and computational.
+
+Starting with computational methods, an early effort towards provably safe flight was reported in \cite{Gillula2010} where the authors used Hamilton-Jacobi-Bellman reachability tools to verify correctness of controllers designed to perform a flip maneuver. Due to the relatively high dimensionality of the quadrotor system, several assumptions were introduced that reduce the analysis to two two-dimensional systems. Avoidance of static obstacles was considered for the full 12-dimensional model as an application of the \emph{funnel library} approach developed by Majumdar et. al. \cite{Majumdar2017}, who suggest constructing a library of motion primitives with associated ``funnels'' that bound the maximal deviation. Funnels can be patched together in a provably correct manner by verifying an inclusion property.
+
+Turning to analytical methods, control barrier functions have been used to guarantee collision-free behavior in teams of quadrotors by introducing a safety barrier around each agent \cite{Wang2017a}. In general, composition of barrier functions does not preserve feasibility, but feasibility was proven in \cite{Wang2017} under the assumption that angular velocity (as opposed to angular acceleration) is directly controllable. Avoidance of environmental obstacles via analytical control barrier functions was considered in \cite{Wu2016}.
+
+\subsection{Notation}
+
+\begin{itemize}
+  \item $\mathcal B_p(x,\epsilon)$ is the $\epsilon$-ball in $p$-norm centered at $x$.
+\end{itemize}
+
+\section{Problem Statement}
+
+A standard 12-dimensional model for a quadrotor is obtained from force-balance equations in a rotating reference frame (e.g. \cite{Mellinger2011,Zhou2014}). Let the 12-dimensional state be $x^c = (\mathbf{r}^c, \mathbf{v}^c, \xi^c, \mathbf{\omega}^c)$, where $\mathbf{r}^c$ and $\mathbf{v}^c$ are position and velocity in $\mathbb{R}^3$, $\xi^c = (\Phi^c, \Theta^c, \Psi^c)$ are roll, pitch and yaw angles, and $\mathbf{\omega}^c \in \mathbb{R}^3$ are angular velocities in the quadrotor body frame. Then
+\begin{equation}
+\label{eq:quadrotor_dyn}
+\begin{aligned}
+  & \frac{\mathrm{d}^2}{\mathrm{d}t^2} \mathbf{r}^c = \begin{bmatrix}
+    0 \\ 0 \\ -g
+  \end{bmatrix} + \frac{1}{m} u^c_1 R(\xi^c) \begin{bmatrix}
+    0 \\ 0 \\ 1
+  \end{bmatrix} + \mathbf{w}^c, \\
+  & \frac{\mathrm{d}}{\mathrm{d}t} \xi^c
+   = T(\xi^c) \omega^c, \\
+  & J \frac{\mathrm{d}}{\mathrm{d}t} \mathbf{\omega}^c = \mathbf{u}^c_2 - (\mathbf{\omega}^c \times (J \mathbf{\omega}^c)).
+\end{aligned}
+\end{equation}
+Here $R(\xi^c)$ is the x-y-z rotation matrix from a body-fixed frame to the world frame, and $T$ the resulting mapping between angular velocities:
+\begin{equation}
+\begin{aligned}
+  R(\xi^c) & = R_z(\Psi^c) R_y(\Theta^c) R_x(\Phi^c), \\
+   T(\xi^c) & = \begin{bmatrix}
+     1 & \sin(\Phi^c)\tan(\Theta^c) & \cos(\Phi^c)\tan(\Theta^c) \\
+     0 & \cos(\Phi^c)   &  -\sin(\Phi^c) \\
+     0 & \sec(\Theta^c)\sin(\Phi^c)  & \cos(\Phi^c)\sec(\Theta^c)
+  \end{bmatrix}.
+\end{aligned}
+\end{equation}
+
+In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^z, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
+\begin{equation}
+\begin{bmatrix}
+  u_1^c \\
+  u_2^c \\
+  u_3^c \\
+  u_4^c
+\end{bmatrix} =
+\begin{bmatrix}
+  -k_f  & k_f& -k_f&  k_f \\
+    -k_f r_1^y &   k_f r_2^y &  -k_f r_3^y &   k_f r_4^y \\
+     k_f r_1^x &  -k_f r_2^x &   k_f r_3^x  & -k_f r_4^x \\
+     -k_t  &     -k_t    &   -k_t       & -k_t
+\end{bmatrix}
+\begin{bmatrix}
+  \omega^P_1 |\omega^P_1| \\
+  \omega^P_2 |\omega^P_2| \\
+  \omega^P_3 |\omega^P_3| \\
+  \omega^P_4 |\omega^P_4|
+\end{bmatrix}
+\end{equation}
+
+This model is differentially flat in the output $(\mathbf{r}^c, \Psi^c$), where $\Psi^c$ is the yaw angle, meaning that there is a map from any four-times differentiable output trajectory $(\mathbf{r}^c(t), \Psi^c(t))$ to the remaining system states and model inputs.
+
+\paragraph{Model alternations}
+\begin{itemize}
+  \item Actuation limits may be introduced:
+  \begin{equation}
+  \begin{aligned}
+    u_1^c & \in [f_z^-, f_z^+], \\
+    p & \in [p^-, p^+], \\
+    q,r & \in [\tau^- , \tau^+].
+  \end{aligned}
+  \end{equation}
+  The inputs $q$ and $r$ affect pitch and yaw, respectively, and can be assumed to have the same actuation limits due to symmetry of the quadrotor. Presence of actuation limits will limit the set of admissible flat trajectories and make construction of CBFs more difficult.
+  \item An alternative is to consider $\omega$ as a model input, as done in \cite{Wang2017}. Then the order of flatness decreases from four to three.
+  \item Stochastic or bounded uncertainty in the dynamics can be incorporated to account for e.g. wind.
+\end{itemize}
+
+\begin{problem}
+  \label{prob:main}
+  Given an initial state $x^c_0$, a target state $x^c_1$, bounds $\epsilon_0, \epsilon_1$ and a time horizon $T$, construct a controller such that any trajectory starting in $\mathcal B(x^c_0, \epsilon_0)$ will reach $\mathcal B(x_1^c, \epsilon_1)$ after time at most $T$, or determine that no such controller exists.
+\end{problem}
+
+An algorithm that solves this problem can serve as feedback to a high-level planning framework. If the planner requests a feasible trajectory the quadrotor executes it in a safe manner, whereas if a safe trajectory can not be found this is reported to the planner, potentially along with information quantifying the infeasibility.
+
+\begin{remark}
+  Problem \ref{prob:main} is at least NP-hard and potentially undecidable \cite{Bell2010} so we can not expect to solve it exactly: for a solution there will typically be a gap between those problem instances for which a safe trajectory can be found, and those instances for which it can be proved that no safe trajectory exists. 
+\end{remark}
+
+\printbibliography
+
+\end{document}
+

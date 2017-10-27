@@ -1,12 +1,12 @@
 \documentclass[conference]{IEEEtran}
-\usepackage{standalone}
-\usepackage{times}
-\usepackage{float}
 
-\input{TemplateFiles/def.tex}
-\input{TemplateFiles/inc}
+\usepackage{amsmath, amsthm, amssymb, dsfont, accents}
 
-% numbers option provides compact numerical references in the text. 
+\usepackage{tikz}
+\usepackage{hyperref, booktabs}
+\usepackage{biblatex}
+\addbibresource{5_refs.bib}
+
 
 \pdfinfo{
    /Author (Homer Simpson)
@@ -16,40 +16,36 @@
    /Keywords (Robots;Overlords)
 }
 
-% Table caption wrangling
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd{\@makecaption}
-  {\scshape}
-  {}
-  {}
-  {}
-\makeatletter
-\patchcmd{\@makecaption}
-  {\\}
-  {.\ }
-  {}
-  {}
-\makeatother
+\newcommand{\notltl}{\neg}
+\newcommand{\andltl}{\wedge}
+\newcommand{\orltl}{\vee}
+\newcommand{\Next}{\ensuremath{\bigcirc}}
+\newcommand{\Always}{\ensuremath{\ \square\ }}
+\newcommand{\Event}{\ensuremath{\ \diamondsuit\ }}
+\newcommand{\Until}{\ \mathcal{U}\ }
+\newcommand{\Implies}{\Rightarrow}
+\newcommand{\Equiv}{\Leftrightarrow}
+\newcommand{\True}{\top}
+\newcommand{\False}{\perp}
+\newcommand{\AP}{AP}
+\newcommand{\pred}{\xi}
 
-\newcommand{\rohan}[1]{{\color{green} Ali: #1}}
-\newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
-\newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
-\allowdisplaybreaks[1]
+\newtheorem{problem}{Problem}
+\newtheorem{remark}{Remark}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
 
-% paper title
-%\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
+\title{\huge Belief-Space Temporal Logic }
 
-\title{\huge Advanced Belief Space Temporal Logic}
-
-\author{Petter, Cristi, Rohan, Sofie, Ali Agha, Richard Murray, Aaron Ames}
+\author{Petter, Rohan, Cristi, Sofie, Ali Agha, Richard Murray, Aaron Ames}
 
 \maketitle
 
 \begin{abstract}
-This work studies ...
+Motivated by autonomy in space, we study the difficult problem of planning under uncertainty and capacity constraints. By leveraging ideas from formal synthesis and belief-space roadmaps, we synthesize a reactive strategy that maximizes the probability of satisfying certain high-level objectives, while guaranteeing that a safety-critical specification is satisfied throughout the mission.  
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -58,9 +54,162 @@ This work studies ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction} \label{subsec:intro}
-In this report, we will propose a method that better connects the theory and practice of report 1 to each other.
 
-The drone stuff and better application scenario will be here.
+\subsection{Specification}
+
+From the first report we borrow the notion of GLT---a version of LTL interpreted over a finitely-dimensional belief space $\mathbb{B}$. A GLTL formula $\phi$ is expressed in the syntax
+\begin{equation}
+     \phi :=  \True \ |\ f \leq 0 \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi,
+\end{equation}
+for $f : \mathbb{B} \rightarrow \mathbb{R}$. The formula is interpreted over infinite discrete-time sequences $b^0 b^1, \ldots$ in $\mathbb{B}$ using the standard LTL semantics. 
+
+For a continuous-time trajectory $b : \mathbb{R}^+ \rightarrow \mathbb{B}$ we say that $b \models \phi$ if there exists a strictly increasing sequence $\{ t_k \}_{k=0}^\infty$ with $\lim_{k \rightarrow \infty} t_k = \infty$ such that $b(t_0) b(t_1) \ldots \models \phi$ in the discrete-time sense.
+
+Normal definition of a controller $\mu$ ...
+
+
+\subsection{Dynamics}
+
+The overall concrete state is $x = (x^r, x^c) \in \mathbb{R}^{n^r} \times \mathbb{R}^{n^c}$, where $x^r$ is the state of the rover and $x^c$ the state of the copter. There are control inputs $u^r$ and $u^c$ to the two systems. In addition, the environment model is represented with a (stationary but unknown) map state $m \in (\mathbb{R} \times L)^{n^m}$, where the first component is elevation and $L$ is a set of pre-defined labels.
+
+\subsection{Copter Dynamics}
+
+We assume that the copter can move freely between regions, but that it is constrained by its battery capacity $\lambda$ that limits its total movement during the mission. When the copter moves to a new region $\lambda$ decreases at a rate proportional to the distance traveled.
+
+\subsubsection{Belief Dynamics}
+
+We assume that we can observe outputs $y = (y^r, y^c, y^m) = h(x^r, x^c, x^m, w^y)$ of the rover, copter, and map that may be corrupted by stochastic or bounded noise $w^y$. Based on these measurements, we maintain belief states $b(t) \in \mathbb{B}$ that are updated according to some deterministic filter $\tau : \mathbb{B} \times \mathbb{U} \times \mathbb{Y} \rightarrow T \mathbb{B}$:
+\begin{equation}
+  \dot b = \tau(b, u, y).
+\end{equation} 
+The overall augmented system thus becomes
+\begin{equation}
+\label{eq:belief}
+\begin{aligned}
+  & \dot x^r = f^r(x^r, u^r, w^r), \\
+  & \dot x^c = f^c(x^c, u^c, w^c), \\
+  & \dot b = \tau(b, u^c, u^r, h(x^r, x^c, m, w^y)),
+\end{aligned}
+\end{equation}
+where $w^r$ $w^c$ and $w^y$ are aggregated noise entering the system at different locations. A control policy for the overall system is a (potentially hybrid) system with input $b$ and outputs $u^r$ and $u^c$. As a special case stochasticity can be removed from parts of the system and a perfect output map can be assumed, which reduces the belief state to the concrete state. 
+
+When $\tau$ is a Kalman filter, the belief state is ($\hat x, P)$, where $\hat x$ is the current state estimate and $P$ represents the covariance of $x - \hat x$. In this case, the dynamics of $P$ are deterministic but the state estimate $\hat x$ is affected by the noise and is thus a stochastic process.
+
+
+\subsection{Problem Statement}
+
+In this work we seek to synthesize reactive controllers in belief space in order to achieve two things: satisfaction of a safety-critical specification with very high probability, and maximization of the probability that a set of non-safety critical target specifications are satisfied. In particular, consider a safety specification $\varphi_S$ and a set of target specifications $\{ \varphi_{T_i} \}_{i \in I}$ and seek to approximately solve the following problem:
+\begin{equation}
+\begin{aligned}
+  \argmax_{\mu} & \quad  \sum_{i \in I} \mathbb{P} \left( \xi \models \varphi_{T_i} \right), \\ 
+  \text{s.t.} &\quad   \mathbb{P} \left( \xi \models \varphi_S \right) \geq 1 - \delta.
+\end{aligned}
+\end{equation}
+A crucial part of the safety specification is the following guarantee that the copter does not find itself with insufficient battery to return to a safe landing spot:
+\begin{equation}
+  \lambda > 0 \lor  \text{copter has landed in a safe place}
+\end{equation}
+
+\section{Toy Example}
+
+\subsection{Toy example}
+
+Consider a world with four regions $s_1, s_2, s_3, s_4$ and the following transitions:
+
+\begin{center}
+\begin{tikzpicture}
+  \node[circle, draw] (s1) {$s_1$};
+  \node[circle, draw, above right of=s1, xshift=2cm] (s2) {$s_2$};
+  \node[circle, draw, below right of=s1, xshift=2cm] (s3) {$s_3$};
+  \node[circle, draw, below right of=s2, xshift=2cm] (s4) {$s_4$};
+  \draw[-latex, <->] (s1) -- (s2);
+  \draw[-latex, <->] (s1) -- (s3);
+  \draw[-latex, <->] (s2) -- (s4);
+  \draw[-latex, <->] (s3) -- (s4);
+  \path (s1) edge[loop left] (s1)
+      (s2) edge[loop above] (s2)
+      (s3) edge[loop below] (s3)
+      (s4) edge[loop right] (s4);
+\end{tikzpicture}
+\end{center}
+
+A copter and a rover can be controlled to move between these regions; the current region captured by states $\xi^c, \xi^r \in \{ s_1, s_2, s_3, s_4 \}$. Each region $s_i$ can be safe or unsafe, as captured by a binary unknown label $\bar l_i$. The label is estimated via a belief state $(\hat l_i, \hat \sigma^2_i)$. When the copter visits a state $s_i$ it receives a measurement $l_i$ drawn from $\mathcal N(\bar l_i, \sigma_i^2)$ and updates the estimate. This gives the belief dynamics
+\begin{equation}
+\begin{aligned}
+(\hat l_i)^+ =
+\begin{cases}
+  \frac{\hat \sigma^2_i l_i + \sigma_i^2 \hat l_i}{\sigma_i^2 + \hat \sigma_i^2}, & \xi^c = s_i, \\
+  \hat l_i, & \text{otherwise,}
+\end{cases}
+\quad (\hat \sigma_i^2)^+ = 
+\begin{cases}
+  \frac{\hat \sigma_i^2 \sigma_i^2}{\hat \sigma_i^2 + \sigma_i^2}, & \xi^c = s_i, \\
+  \hat \sigma_i^2, & \text{otherwise,}
+\end{cases}
+\end{aligned}
+\end{equation}
+which is a nonlinear stochastic system. Let the specification be
+\begin{equation}
+  \lozenge (\xi^r = s_4) \land \bigwedge_{i=1}^4 \square \left[ (\xi^c = s_i) \implies (\hat l_i -3 \hat\sigma_i > 0) \right]
+\end{equation}
+and assume initial conditions
+\begin{equation}
+\begin{aligned}
+  & \xi^c = \xi^r = s_1, & \\
+  & \hat l_1 = \hat l_4 = 1, \quad   & \hat \sigma_1 = \hat \sigma_4 = 0, \\
+  & \hat l_2 = \hat l_3 = 0.5, \quad & \hat \sigma_2 = \hat \sigma_3 = 0.5.
+\end{aligned}
+\end{equation}
+
+\begin{itemize}
+  \item A solution may not exist \\
+  \item Could impose assumptions on $\bar l_2$ and $\bar l_3$ to ensure existence ($\bar l_2 + \bar l_3 \geq 1$) \\
+  \item Without assumptions, can we find strategy that maximizes $\mathbb{P} \left[ x \models \phi \right]$?
+\end{itemize}
+Can we ``solve'' this with FIRM? Can create one FIRM object per state and consider cross space of 5 transition systems where state of copter is input to FIRM.
+
+
+\section{Case Study}
+
+This is a non-formal description of a potential demo scenario. The more theoretical guarantees we can have with respect to one of the above frameworks, the better!
+
+Equipment:
+\begin{itemize}
+  \item Quadrotor,
+  \item Rover,
+  \item Monitor displaying current belief for environment (safety probability for each region, variance).
+\end{itemize}
+
+
+\paragraph{Environment and exploration:} Collection of regions $\{ M_i \}$ such that $M_i \cap M_j = \emptyset$, and $\cup_i M_i$ is the whole work space. Each region $i$ has a binary label $l^i$ indicating that it is safe ($l^i = 1$) or unsafe ($l^i=0)$. Initially, there is a prior belief over labels that has high confidence only for regions close to the starting point. The quadrotor can estimate the label of regions it flies over with a confidence level that is inversely proportional to distance. For instance, the quadrotor can be assumed to receive a measurement of $l^i$ each second, drawn from $\mathcal N(l^i, \gamma(\| x^i - \mathbf{r}^c \|_2) )$, where $x^i \in \mathbb{R}^2$ is the center of region $i$ and $\gamma$ is a class $\mathcal K_\infty$-function.
+
+
+\paragraph{Specifications:}
+
+\begin{itemize}
+  \item Let $A$ and $B$ be sets of regions. The rover should visit at least one $A$-region and at least one $B$-region.
+  \item The rover can not visit unsafe regions.
+  \item Quadrotor can only land in safe regions.
+\end{itemize}
+
+
+\paragraph{Practical details:} State estimation done via motion-capture for both quadrotor and rover.
+
+
+\paragraph{What do we need to make this happen?}
+
+\begin{itemize}
+  \item Abstraction of quadrotor behavior providing an interface amenable to planning.
+  \item Abstraction of rover behavior providing an interface amenable to planning.
+  \item Planning to orchestrate rover and quadrotor motion.
+  \begin{itemize}
+    \item Simplest meaningful planning space: rover and copter spatial locations (2D + 3D), map belief space.
+  \end{itemize}
+  \item Quadrotor controller that can follow plan for take-off, flight, and landing.
+  \item Rover controller that can follow plan.
+\end{itemize}
+
+
 
 \end{document}
 
