@@ -53,9 +53,12 @@ Motivated by autonomy in space, we study the difficult problem of planning under
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction} \label{subsec:intro}
 
-\subsection{Specification}
+\section{Introduction}
+
+\subsection{Preliminaries}
+
+\subsection{GLT}
 
 From the first report we borrow the notion of GLT---a version of LTL interpreted over a finitely-dimensional belief space $\mathbb{B}$. A GLTL formula $\phi$ is expressed in the syntax
 \begin{equation}
@@ -67,14 +70,21 @@ For a continuous-time trajectory $b : \mathbb{R}^+ \rightarrow \mathbb{B}$ we sa
 
 Normal definition of a controller $\mu$ ...
 
+\section{Problem Setup}
 
 \subsection{Dynamics}
 
-The overall concrete state is $x = (x^r, x^c) \in \mathbb{R}^{n^r} \times \mathbb{R}^{n^c}$, where $x^r$ is the state of the rover and $x^c$ the state of the copter. There are control inputs $u^r$ and $u^c$ to the two systems. In addition, the environment model is represented with a (stationary but unknown) map state $m \in (\mathbb{R} \times L)^{n^m}$, where the first component is elevation and $L$ is a set of pre-defined labels.
+The overall concrete state is $x = (x^r, x^c)$, where $x^r$ is the state of the rover and $x^c$ the state of the copter. There are control inputs $u^r$ and $u^c$ to the two systems. In addition, the environment model is represented with a (stationary but unknown) map state $m \in L^{n^m}$, where $L$ is a set of pre-defined labels.
 
 \subsection{Copter Dynamics}
 
-We assume that the copter can move freely between regions, but that it is constrained by its battery capacity $\lambda$ that limits its total movement during the mission. When the copter moves to a new region $\lambda$ decreases at a rate proportional to the distance traveled.
+We assume that the copter state is $(x^c, p^c)$ where $p^c \in \{ 0,1 \}$ determines whether the copter is at the ground or airborne. When it is airborne it can move freely between regions at a bounded speed, but is constrained by its battery capacity $\lambda$ that limits its total movement throughout the mission. When the copter is airborne $\lambda$ decreases at a rate proportional to the distance traveled:
+\begin{equation}
+  \frac{\mathrm{d}}{\mathrm{d}t} \lambda(t) = \begin{cases}
+    -1 & p^c = 1, \\
+    0 & \text{otherwise}.
+  \end{cases}
+\end{equation}
 
 \subsubsection{Belief Dynamics}
 
@@ -96,19 +106,27 @@ where $w^r$ $w^c$ and $w^y$ are aggregated noise entering the system at differen
 When $\tau$ is a Kalman filter, the belief state is ($\hat x, P)$, where $\hat x$ is the current state estimate and $P$ represents the covariance of $x - \hat x$. In this case, the dynamics of $P$ are deterministic but the state estimate $\hat x$ is affected by the noise and is thus a stochastic process.
 
 
+\subsection{Specification}
+
+A crucial part of the safety specification is the following guarantee that the copter behaves in a safe way:
+\begin{equation}
+  \square (\lambda \geq 0) \land p^c \implies x^c \; \text{safe} \land p^c(T) = 0.
+\end{equation}
+
+
 \subsection{Problem Statement}
 
-In this work we seek to synthesize reactive controllers in belief space in order to achieve two things: satisfaction of a safety-critical specification with very high probability, and maximization of the probability that a set of non-safety critical target specifications are satisfied. In particular, consider a safety specification $\varphi_S$ and a set of target specifications $\{ \varphi_{T_i} \}_{i \in I}$ and seek to approximately solve the following problem:
+In this work we seek to synthesize reactive controllers in belief space in order to achieve two things: satisfaction of a safety-critical specification with very high probability, and maximization of the probability that a set of non-safety critical target specifications are satisfied. In particular, we consider a safety specification $\varphi_S$ and a set of target specifications $\{ \varphi_{T_i} \}_{i \in I}$ and seek to approximately solve the following problem:
 \begin{equation}
 \begin{aligned}
   \argmax_{\mu} & \quad  \sum_{i \in I} \mathbb{P} \left( \xi \models \varphi_{T_i} \right), \\ 
   \text{s.t.} &\quad   \mathbb{P} \left( \xi \models \varphi_S \right) \geq 1 - \delta.
 \end{aligned}
 \end{equation}
-A crucial part of the safety specification is the following guarantee that the copter does not find itself with insufficient battery to return to a safe landing spot:
-\begin{equation}
-  \lambda > 0 \lor  \text{copter has landed in a safe place}
-\end{equation}
+
+
+For certain infinite-horizon properties and types of stochastic noise, the probability of specification violation is 1 for any control policy \cite{Ehlers2016}. For this reason we consider satisfaction over a finite horizon $[0, T]$ by assuming that no further movement is possible for $t > T$.
+
 
 \section{Toy Example}
 
@@ -209,7 +227,7 @@ Equipment:
   \item Rover controller that can follow plan.
 \end{itemize}
 
-
+\printbibliography
 
 \end{document}
 
