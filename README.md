@@ -1,2 +1,2 @@
 # BeST
-Believe Space Temporal Logic
+Belief Space Temporal-Logic
