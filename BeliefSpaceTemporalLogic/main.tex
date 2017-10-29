@@ -1,0 +1,64 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{standalone}
+\usepackage{times}
+\usepackage{float}
+
+\input{TemplateFiles/def.tex}
+\input{TemplateFiles/inc}
+
+% numbers option provides compact numerical references in the text. 
+
+\pdfinfo{
+   /Author (Homer Simpson)
+   /Title  (Robots: Our new overlords)
+   /CreationDate (D:20101201120000)
+   /Subject (Robots)
+   /Keywords (Robots;Overlords)
+}
+
+% Table caption wrangling
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@makecaption}
+  {\scshape}
+  {}
+  {}
+  {}
+\makeatletter
+\patchcmd{\@makecaption}
+  {\\}
+  {.\ }
+  {}
+  {}
+\makeatother
+
+\newcommand{\rohan}[1]{{\color{green} Ali: #1}}
+\newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
+\newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
+\allowdisplaybreaks[1]
+
+\begin{document}
+
+% paper title
+%\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
+
+\title{\huge Software/Systems}
+
+\author{Kyon, Rohan, Petter, Kamak, Cristi, Sofie, Ali Agha, Richard Murray, Aaron Ames}
+
+\maketitle
+
+\begin{abstract}
+This work studies ...
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction} \label{subsec:intro}
+
+
+\end{document}
+
