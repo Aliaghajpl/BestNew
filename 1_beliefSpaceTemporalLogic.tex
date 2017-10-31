@@ -114,7 +114,7 @@ This work studies the problem of planetary exploration with a two-agent team of 
     The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning \cite{KB-TAC08-LTLCon}, and
     reactive planning in  \cite{kress-gazit:whereswaldo?,Murray2009} for deterministic models. Equivalent results for stochastic models are computationally intractable for continuous space systems and require approximate approaches \cite{soudjani2015faust,haesaert2017verification}. Additionally, little work exists on partially observable system.
     Hence, one of the important gaps between theory and real-world applications is that %the majority of high-level language that expresses 
-    missions specificied in terms of temporal specifications requires deterministic models or perfect observability. %, assumes the low level temporal properties are deterministic (or perfectly-observable, if stochastic).
+    missions specified in terms of temporal specifications requires deterministic models or perfect observability. %, assumes the low level temporal properties are deterministic (or perfectly-observable, if stochastic).
     This assumption is limiting in real-world systems where the environment representation %, and hence safety properties, are created based on 
     is inferred from imperfect and noisy sensor measurements.
     
@@ -219,7 +219,14 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{POMDP}\label{sec:POMDP}
-	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$. The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. Defining the one-step cost of taking action $u$ at belief $b$ by $c(b,u)$, we can formally define the POMDP problem as: 
+	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$.
+    {\color{red} In this work, we require that the belief space is a Polish space\footnote{With Euclidean spaces as a typical example a Polish space is a separable and completely metrizable topological space. } and that the recursive filter is a Borel measurable mappings.}
+% * <haesaert@caltech.edu> 2017-10-31T06:56:01.319Z:
+%
+% > In this work, we require that the belief space is a Polish space\footnote{With Euclidean spaces as a typical example a Polish space is a separable and completely metrizable topological space. } and that the recursive filter is a Borel measurable mappings.
+%
+% ^.
+    The control policy $\pi$ in a partially observable setting is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. Defining the one-step cost of taking action $u$ at belief $b$ by $c(b,u)$, we can formally define the POMDP problem as: 
     \begin{align}
     \pi^*=\arg\min_\pi\mathbb{E}\sum_{k=0}^{\infty}c(b_k,\pi(b_k))
     \end{align}
@@ -262,7 +269,7 @@ This work studies the problem of planetary exploration with a two-agent team of 
     $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
     
     \pr{Parametrized Belief space}
-    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+    In this work, we assume that the belief space $\mathbb{B}$ is  a finite dimensional space and that it can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
     of dimension $n$, i.e. the space of Gaussian
     probability measures over $\BB{R}^n$.
     For brevity, we identify the Gaussian measures
@@ -273,7 +280,13 @@ This work studies the problem of planetary exploration with a two-agent team of 
     we denote the suffix sequence $b^i b^{i+1} \ldots$ by
     $\BF{b}^i$, $i \geq 0$. Each member of $\Sigma^*$ and $\Sigma^\omega$ is referred to as ``word" or "sequence". 
     
-    For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied. Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). Some examples are \textbf{(i)} Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state. \textbf{(ii)} Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
+    For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied. 
+    Predicate $f\leq 0$ is defined as a Borel measurable function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). Some examples are \textbf{(i)} Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state. \textbf{(ii)} Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
+% * <haesaert@caltech.edu> 2017-10-31T06:59:20.048Z:
+%
+% >  Bakus-Naur form. 
+%
+% ^.
     \textbf{(iii)} Bounds on state mean $\hat{x}$ to specify
     where in the state space the system should be. \textbf{(iv)} Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
     to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. We then combine these predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
