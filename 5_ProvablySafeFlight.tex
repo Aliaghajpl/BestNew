@@ -112,7 +112,7 @@ Here $R(\xi^c)$ is the x-y-z rotation matrix from a body-fixed frame to the worl
 \end{aligned}
 \end{equation}
 
-In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^z, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
+In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^i, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
 \begin{equation}
 \begin{bmatrix}
   u_1^c \\
