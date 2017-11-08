@@ -34,6 +34,8 @@
 
 \newcommand{\cristi}[1]{{\color{orange} [Cristi] #1}}
 \newcommand{\rohan}[1]{{\color{blue} [Rohan] #1}}
+\newcommand{\sofie}[1]{{\color{purple} [Sofie] #1}}
+
 
 \allowdisplaybreaks[1]
 
@@ -215,6 +217,8 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Belief Space Temporal Logic}
+    {\color{red} [There is currently no problem definition, would it make sense to add this to the end of this section?]}
+    
 	In this section, we define a language for planning under uncertainty in partially-observable environments using formal methods. We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -441,13 +445,14 @@ This work studies the problem of planetary exploration with a two-agent team of 
     In this section, we define the \DTL predicates corresponding to the mission specifications described in Section~\ref{sec:misspec}.
     
     We start by defining the overall specification (i.e., $\phi$) for the campaign in hand:
-    \begin{align}
+    \begin{align}\label{eq:overallspec}
         \phi = \phi_{science} \land \Always (\pred_{uncert} \land \phi_{safety} \land \phi_{dynamic})
         % \Until \pred_{complete},
     \end{align}
     which expresses the mission where the science objective $\phi_{science}$ needs to be satisfied and we always need to maintain a desired level of accuracy (expressed by $\zeta_{uncert}$, safety $\phi_{safety}$, and dynamics constraints $\phi_{dynamic}$.
+   \sofie{[See later comment on this.]}
 
-    \pr{Science} The science objective in this campaign is to collect two samples from high-valued science areas A and one sample from area B. Let $\pred_{X} = p^r \in X$ denote the event that pick up a sample from region $X$ that is subset of the terrain.
+\noindent\pr{Science} The science objective in this campaign is to collect two samples from high-valued science areas A and one sample from area B. Let $\pred_{X} = p^r \in X$ denote the event that pick up a sample from region $X$ that is subset of the terrain.
     \begin{align}
         \phi_{science} = \Event ((\pred_A \land \pred_{\exists A}) \land
         \Event (\pred_A \land \pred_{\exists A})) \land
@@ -464,13 +469,13 @@ This work studies the problem of planetary exploration with a two-agent team of 
         \pred_{uncert} = tr(P^c) < \Sigma^c_{max}
     \end{align}
     
-    \pr{Safety specification} Space application falls into the category of safety-critical applications. Thus, maintaining the safety of systems along the operation is a very important objective of the mission. We express the safety specification as:
+   \noindent \pr{Safety specification} Space application falls into the category of safety-critical applications. Thus, maintaining the safety of systems along the operation is a very important objective of the mission. We express the safety specification as:
 	\begin{align}
 	   \phi_{safety} &= \phi_{keepout} \land \pred_{near} \land \phi_{charge}
 	\end{align}
 	In the following paragraphs, we will explain each term in the definition of above safety specification.
 	
-	\pr{Keep-out predicate}
+	\noindent\pr{Keep-out predicate}
 	$\phi_{keepout}$ encodes the distance from risky regions of the map such as non-traversable obstacles, sandy areas with a risk of getting stuck, cliffs, high-slope areas, etc. We will define keep-out constraints for both rover and copter.
 	\begin{align}
 	   %\phi_{keepout} &= \bigwedge_{o\in O} (\pred_{keepout}^r \land \pred_{keepout}^c)
@@ -486,14 +491,14 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	\end{align}
 	where $\hat{p}^c$ and $P^c$ are the position and associated uncertainty of the copter.
     
-    \pr{Rover-copter distance predicate} In Mars copter/rover missions, rover is the mother-craft and the vital part of the mission, whereas the copter is a daughter-craft. Since the rover is carrying almost all science payload and instruments, the copter should not pose any risk to rover's functionality. Thus, copter has to always maintain a minimum distance from rover to avoid costly collisions with rover in the case of copter failure. Below specification expresses this mission requirement.
+\noindent\pr{Rover-copter distance predicate} In Mars copter/rover missions, rover is the mother-craft and the vital part of the mission, whereas the copter is a daughter-craft. Since the rover is carrying almost all science payload and instruments, the copter should not pose any risk to rover's functionality. Thus, copter has to always maintain a minimum distance from rover to avoid costly collisions with rover in the case of copter failure. Below specification expresses this mission requirement.
  	\begin{align}
  	    f_{coll} = \int b^{s}(x)\times b^{m}(x)dx - \epsilon_{coll} \\
  	    \pred_{near} = d_{min} \leq \norm{\overline{x}^r - \overline{x}^c} \leq d_{max}
  	\end{align}
     where $\overline{x}^r$ and $\overline{x}^c$ denotes the 2D position of the rover and copter, respectively, on the Mars surface.
 
-    \pr{Charge predicates} Energy is a critical issue in space missions. For a solar-powered rover and copter, and for each given campaign, $\zeta_{base}$ defines an area on Mars surface with a high-level of sun light intensity, where the vehicles can re-charge themselves. We express the charging constraint of both vehicles as:
+\noindent\pr{Charge predicates} Energy is a critical issue in space missions. For a solar-powered rover and copter, and for each given campaign, $\zeta_{base}$ dxefines an area on Mars surface with a high-level of sun light intensity, where the vehicles can re-charge themselves. We express the charging constraint of both vehicles as:
  	\begin{align}
 	    \phi_{charge} &= \phi_{charge}^r \land \phi_{charge}^c
 	\end{align}
@@ -503,7 +508,7 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	\end{align}
 	Note that $\epsilon_{battery}^S$, for each vehicle is chosen large enough to permit return to the base.
 
-    \pr{Dynamics predicates} Due to rover and copter mechanical/electrical capabilities, these assets should not exceed certain velocity levels given the environment status. The following specification captures such mission requirements.
+\noindent\pr{Dynamics predicates} Due to rover and copter mechanical/electrical capabilities, these assets should not exceed certain velocity levels given the environment status. The following specification captures such mission requirements.
     \begin{align}
 	    \phi_{dynamic} = \norm{v^r} \leq \epsilon_{velocity}^r(m)
 	\end{align}
@@ -617,6 +622,7 @@ $Acc_\FSA\subset S_\FSA$ is a set of accepting states.
 %    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
 %\end{itemize}
 \end{definition}
+\sofie{[Q: From what I understand, only a syntactically co-safe property can be rewritten to a DFA. This is a property which has a finite witness. In this paragraph, there is no reference to this. Additionally, looking at the properties defined in \eqref{eq:overallspec}, it looks like the specification includes an always operator. This cannot be described by a DFA. Am I missing something? Is the accepting state a state you want to visit infinitely often? Hence it is actually a Buchi machine? ]}
 
 \newcommand{\goal}{{\color{green!50!black}\blacksquare}}
 \newcommand{\obst}{{\color{red}\blacksquare}}
@@ -657,10 +663,10 @@ initial text={}]
 Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Agha14}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
 
 \begin{definition}[FIRM]
-A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a feedback local controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
+A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a \sofie{[change to local feedback controller/mapping]} feedback local controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
-FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node corresponds to a Gaussian belief state $b = (\hat{x},P) \in \TSX$ with mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to fomral methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
+FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node corresponds to a Gaussian belief state $b = (\hat{x},P) \in \TSX$ with mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
 
 
 % Prev Version --------
@@ -870,7 +876,7 @@ In this work, we only work with the marginal distribution over the terminal stat
 Figure \ref{fig:TransProb} shows a simple example illustrating how we compute the final FSA state distribution $p(s^{ij}_n|\mu^{ij},s_0)$.
 We start from the belief $b_0$ at FIRM node $B^i$ and simulate the belief trajectory $b^{ij}_{0:n}$ by executing controller $\mu^{ij}$. We do this multiple times to create multiple belief paths. For each belief trajectory $b^{ij}_{0:n}$, we obtain the induced FSA trajectory $s^{ij}_{0:n}$ by first generating the event $\sigma_k \asgn \{ f \,|\, f(b^{ij}_k) \leq 0, \forall f \in F_\phi \}$ and then using the transition function $s^{ij}_{k} = \delta(s^{ij}_{k-1},\sigma_k)$. Finally, we approximate the $p(s^{ij}_n)$ by the ratio of the number of particles landed in a particular FSA state to the total number of particles simulated.
 
-
+\sofie{[So actually, you use FIRM to find a good control sequence, which you then evaluate with a sampling based algorithm. Are you using any bounds on this? I added a reference \cite{Legay2010}. There has been done quite some work on this topic.]}
 %Given a transition $e=(B_u, B_v)$ on the FIRM graph and its associated local controller $ec_e$,
 
 % Alg.~\ref{alg:compute-prob} computes the above-mentioned transition distributions from an initial state $s_0$ on Rabin Automaton 
@@ -975,7 +981,7 @@ FSA $\FSA$.
 % {\color{red}what is $Acc_\FSA$? has been defined already?}
 A trajectory of $\PA = \TS \times \FSA$ is said to be accepting
 if and only if the trajectory ends in a state from $Acc_\PA$. The acceptance condition for $\PA$ is defined by its transitions and not in the usual way in terms of its states, due to the stochastic nature of transitions between belief nodes in $\TS$.
-
+\sofie{[The last statement does not make sense to me, the acceptance condition is defined as $Acc_\FSA$ which is a subset of the states $Q_\PA $ of $\PA$]}
 %It follows by construction that a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ of $\PA$ is accepting if and only if the trajectory $\BF{s}^0_{0:T_0-1} \BF{s}^1_{0:T_1-1} \ldots$ is accepting in $\FSA$, where $\BF{s}^i_{0:T_i}$ is the random trajectory of $\FSA$ obtained by traversing the transition $e = (B_i, B_{i+1})$ using the controller $\mu^{ij}$ and $s^i_{0} = s_i$ for all $i \geq 0$. Note that $\BF{s}^i_{T_i} = \BF{s}^{i+1}_0$. As a result, a trajectory of $\TS$ obtained from an accepting trajectory of $\PA$ satisfies the given specification encoded by $\FSA$ with positive probability. We denote the projection of a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ onto $\TS$ by $\proj{\BF{q}}{\TS} = B_0 B_1 \ldots$.
 
 \begin{remark}
@@ -1038,7 +1044,7 @@ Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as b
 % in~\cite{Haeupler2012}. %,Bender2015
 
 \begin{algorithm}[!h]
-\caption{$SynthesizeRoverPolicy(B_0,\phi,\varepsilon)$ }
+\caption{SynthesizeRoverPolicy$(B_0,\phi,\varepsilon)$ }
 \label{alg:compute-mdp}
 \DontPrintSemicolon
 \KwIn{Initial belief node $B_0$, \DTL specification $\phi$, and lower bound $\varepsilon$ on the policy success probability}
@@ -1162,7 +1168,9 @@ $\bar{m} \asgn$ GetInitialExplorationDirection() \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding the Maximum Probability policy}
-The existence of satisfying policies results immediately from the construction. We only need to check if the product MDP $\PA$ has any accepting transitions $Acc_\PA$.
+The existence of satisfying policies results immediately from the construction.
+\sofie{[This isn't obvious to me]}
+We only need to check if the product MDP $\PA$ has any accepting transitions $Acc_\PA$.
 
 Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize the probability that a given formula $\phi$ is satisfied.  
 %%
@@ -1197,8 +1205,9 @@ J(s) &= \begin{cases}
 \end{align}
 
 %}
-{\color{red} define the value function...}
+\sofie{[This is only holds if $J$ is either initialized with zero, and then iterated. Additionally, you are of course not computing the maximal policy. At least, there is no prove that you are. Since you are working with probability transitions which are estimates of the actual probability distribution. This is totally fine, just clarify.]}
 The value function $J(\cdot)$ can be computed by solving the Eq.~\ref{eq:product-DP} via a variety of methods, including approximate value iteration and linear programming~\cite{Bertsekas2012}.
+\sofie{See previous statement, I disagree with the notion that this can be solved with LP. The operator (for LP) defined in (18) is not contractive!  You can only show that it will converge if you start at zero, since in that case it is strictly increasing. Probably there are some conditions in one of the papers of Ilya Tkachev that states on which conditions contractivity can be assumed. Anyways, as a counter example. Take a trivial MDP, with a unreachable accepting state and a circle connection of deterministic transitions. Put one value of this cycle to 1, then at each iteration the state with value 1 will move one position. This issue can probably be fixed by requiring that J is the smallest positive solution of the bellman equation.}
 %[Cite Bertsekas]
 
 
