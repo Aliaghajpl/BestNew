@@ -2,7 +2,6 @@
 \usepackage{standalone}
 \usepackage{times}
 \usepackage{float}
-\usepackage{booktabs}
 
 \input{TemplateFiles/def.tex}
 \input{TemplateFiles/inc}
@@ -33,7 +32,7 @@
   {}
 \makeatother
 
-\newcommand{\rohan}[1]{{\color{green} Ali: #1}}
+\newcommand{\Ali}[1]{{\color{green} Ali: #1}}
 \newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
 \newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
 \allowdisplaybreaks[1]
@@ -49,16 +48,11 @@
 
 \maketitle
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 This paper provides a comprehensive review of the popular methods for space exploration.
 \end{abstract}
 
-% \begin{IEEEkeywords}
-% \end{IEEEkeywords}
-
-\IEEEpeerreviewmaketitle
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +60,15 @@ This paper provides a comprehensive review of the popular methods for space expl
 As a world leader in space exploration, NASA advances deep space exploration missions and continues to uncover vast amount of new knowledge about the universe.
 In order to satisfy a set of high-level science and engineering goals for every space robotic mission, a step-by-step planning and scheduling of spacecraft operations is required. This involves generating a sequence of low-level spacecraft commands that according to the goal of the mission, describes the action plan of the robot. The action plans is a series of states, and actions in order to move from one state to another.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Features for Planning methods}
+
+Verifiable specification satisfaction:
+
+Uncertainty: 
+
+Real-time Replanning:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Planning method overview for space applications}
@@ -92,21 +95,21 @@ ASPEN (Automated Scheduling and Planning ENvironment) encodes spacecraft operabi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summary Table}\label{sec:table}
-In this section, we summarise the ....
+In this section, we summarize the ....
 
 \begin{center}
-\begin {tabular}{ |p{5cm}||p{1cm}|p{1cm}|p{1cm}| }
+\begin {tabular}{ c|c|c|c }
  \hline
- \multicolumn{4}{|c|}{Autonomous Planning Methods List} \\
+%  \multicolumn{4}{|c|}{Autonomous Planning Methods List} \\
  \hline
- Planning Method & ASPEN & Casper &MAPGEN &APGEN\\
+Planning Method & ASPEN & Casper &MAPGEN\\
  \hline
 Scalability   &YES   &NA   &NA\\
 Uncertainty   &NA    &NA   &NA\\
 Optimization   &YES    &NA   &NA\\
 Verifiable    &NA &NA &NA\\
 Planing/ scheduling &YES  &NA   &NA\\
-Real-time Replanning/rescheduling &YES    &NA   &NA\\
+Real-time Re-planning/rescheduling &YES    &NA   &NA\\
 Repair capability &YES    &NA   &NA\\
 Success/performance guarantees &YES &NA &NA\\
 Graphical User Interface &YES  &NA &NA\\
@@ -125,22 +128,16 @@ Temporal reasoning system  &YES &NA &NA \\
 The authors would like to thank...
 
 
-
-
-
-
-
-
 \begin{thebibliography}{1}
 
 \bibitem{IEEEhowto:Chien1}
-Chien, S., Rabideau, G., Knight, R., Sherwood, R., Engelhardt, E., Mutz, D., Estlin, T., Smith, B., Fisher, F., Barrett, T., Stebbins, T., & Tran, T. (2000). ASPEN - automating space mission operations using automated planning and scheduling. In Proceedings of SpaceOps-2000.
+Chien, S., Rabideau, G., Knight, R., Sherwood, R., Engelhardt, E., Mutz, D., Estlin, T., Smith, B., Fisher, F., Barrett, T., Stebbins, T., Tran, T. (2000). ASPEN - automating space mission operations using automated planning and scheduling. In Proceedings of SpaceOps-2000.
 
 \bibitem{IEEEhowto:Chien2}
-Chien, S., Knight, R., Stechert, A., Sherwood, R., & Rabideau, G. 2000. Using Iterative Repair to Increase the Responsiveness of Planning and Scheduling for Autonomous Spacecraft. In Proc. 5th Intl. Conf. on Artificial Intelligence Planning and Scheduling (AIPS-00).
+Chien, S., Knight, R., Stechert, A., Sherwood, R., Rabideau, G. 2000. Using Iterative Repair to Increase the Responsiveness of Planning and Scheduling for Autonomous Spacecraft. In Proc. 5th Intl. Conf. on Artificial Intelligence Planning and Scheduling (AIPS-00).
 
 \bibitem{IEEEhowto:Rabideau}
-Rabideau, G., Knight, R., Chien, S., Fukunaga, A., & Govindjee, A. (1999). Iterative repair planning for spacecraft operations in the ASPEN system. In International Symposium on Artificial Intelligence Robotics and Automation in Space (i-SAIRAS).
+Rabideau, G., Knight, R., Chien, S., Fukunaga, A., Govindjee, A. (1999). Iterative repair planning for spacecraft operations in the ASPEN system. In International Symposium on Artificial Intelligence Robotics and Automation in Space (i-SAIRAS).
 
 \bibitem{IEEEhowto:Ai-Chang}
 Ai-Chang, M.; Bresina, J.; Charest, L.; Chase, A.; jung Hsu, J. C.; Jonsson, A.; Kanefsky, B.; Morris, P.; Rajan, K.; Yglesias, J.; Chafin, B. G.; Dias, W. C.; and Maldague, P. F. 2004. Mapgen: Mixed-initiative planning and scheduling for the mars exploration rover mission. IEEE Intelligent Systems 8–12.
@@ -158,9 +155,9 @@ Di Rocco M, Pecora F, Saffiotti A. When robots are late: configuration planning 
 
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{picture}}]{John Doe}
-\blindtext
 \end{IEEEbiography}
 
 \end{document}
+
 
 

@@ -2,7 +2,7 @@
 
 \usepackage{amsmath, amsthm, amssymb, dsfont, accents}
 
-\usepackage{hyperref, booktabs}
+\usepackage{hyperref, booktabs, color}
 \usepackage{biblatex}
 \addbibresource{5_refs.bib}
 
@@ -17,12 +17,13 @@
 
 \newtheorem{problem}{Problem}
 \newtheorem{remark}{Remark}
+\newtheorem{prop}{Proposition}
 
 \begin{document}
 
 \title{\huge Provably Safe Flight }
 
-\author{Petter, Rohan, Cristi, Sofie, Ali Agha, Richard Murray, Aaron Ames}
+\author{Petter, Andrew, Thomas, Rohan, Ames, etc}
 
 \maketitle
 
@@ -59,6 +60,11 @@ Potential later steps:
 \begin{itemize}
   \item Extend to probabilistic framework with an uncertain state estimate
   \item Recovery from failure: stabilize a falling quadrotor
+\end{itemize}
+
+Open questions:
+\begin{itemize}
+  \item Can barrier functions with input bound be designed with backstepping?
 \end{itemize}
 
 \section{Introduction} \label{subsec:intro}
@@ -112,7 +118,7 @@ Here $R(\xi^c)$ is the x-y-z rotation matrix from a body-fixed frame to the worl
 \end{aligned}
 \end{equation}
 
-In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^z, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
+In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^i, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
 \begin{equation}
 \begin{bmatrix}
   u_1^c \\
@@ -162,7 +168,113 @@ An algorithm that solves this problem can serve as feedback to a high-level plan
   Problem \ref{prob:main} is at least NP-hard and potentially undecidable \cite{Bell2010} so we can not expect to solve it exactly: for a solution there will typically be a gap between those problem instances for which a safe trajectory can be found, and those instances for which it can be proved that no safe trajectory exists. 
 \end{remark}
 
-\printbibliography
+\section{Approach: SOS-Verified Barrier Function}
+
+Here an initial approach based on polynomial barrier functions is described. For simplicity, we consider the problem of stabilizing the quadrotor in hovering mode under external disturbance, with the intention to extend to trajectory tracking.
+
+The dynamics \eqref{eq:quadrotor_dyn} can be written with the Euler angles replaced by a quaternion state $q$:
+\begin{equation}
+\label{eq:quadrotor_dyn_quat}
+\begin{aligned}
+  & \frac{\mathrm{d}^2}{\mathrm{d}t^2} \mathbf{r} =  -g \mathbf{e}_3 + \frac{1}{m} (q * \mathbf{e}_3 * q^{-1}) u_1, \\
+  & \frac{\mathrm{d}}{\mathrm{d}t} q
+   = \frac{1}{2} (q * \omega), \\
+  & J \frac{\mathrm{d}}{\mathrm{d}t} \mathbf{\omega} = \mathbf{u}_2 - (\mathbf{\omega} \times (J \mathbf{\omega})).
+\end{aligned}
+\end{equation}
+Here, $*$ denotes the quaternion product; the product between a quaternion $q$ and a vector $v$ is the quaternion product of $q$ and $q_v = v_x \mathbf{i} + v_y \mathbf{j} + v_z \mathbf{k}$.
+
+The most cited advantage of the quaternion representation over Euler angles is the absence of singularities (or gimbal lock), however, another important difference is that \eqref{eq:quadrotor_dyn_quat} is a polynomial system which makes sums-of-squares approach more applicable\footnote{Sums-of-squares can be applied also to trigonometric terms by introducing additional variables.}. A third alternative formulation is to use the full rotation matrix $R$ as a state in the dynamics, which also results in polynomial dynamics without trigonometric terms. However, a rotation matrix requires nine states as opposed to the four quaternion states. As such, a quaternion representation is the most parsimonious representation that renders the dynamics polynomial.
+
+\subsection{Invariance of a Polynomial Level Function}
+
+In the following, we develop sufficient conditions for a polynomial $h(x)$ to define a controlled-invariant set $\mathcal C = \{ x : h(x) \leq \epsilon \}$. In particular, we want to verify whether the following is true:
+\begin{equation}
+\label{eq:invariancecond}
+   \forall x \in \partial \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d) \leq 0.
+ \end{equation} 
+\begin{remark}
+  We could equivalently replace the invariance condition with the standard control barrier function condition
+  \begin{equation}
+  \label{eq:cbf_condition}
+    \forall x \in \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d) + h(x) \leq 0.
+  \end{equation}
+  without changing the fundamentals of the derivations below. Obviously, \eqref{eq:cbf_condition} implies \eqref{eq:invariancecond}.
+\end{remark}
+ For reasons that will be made clear below, we assume that the set of admissible inputs $\mathcal U$ is rectangular:
+ \begin{equation}
+   \mathcal U = \prod_{i=1}^4 [-\bar u_i, \bar u_i].
+ \end{equation}
+ We remark that any rectangular input set can be converted to this symmetric form by a change of input variables. In addition, we consider semi-algebraic disturbance sets:
+\begin{equation}
+  \mathcal D = \left\{ d : h_d \leq 0 \right\},
+\end{equation}
+where $h_d$ is potentially vector-valued in which case the inequality is interpreted component-wise.
+
+The invariance expression \eqref{eq:invariancecond} can be restated as follows:
+\begin{equation}
+  \max_{x : h(x) = \epsilon} \max_{d \in \mathcal D} \min_{u \in \mathcal U} \mathcal L_f h(x) + \mathcal L_{g_u} h(x) u + \mathcal L_{g_d}(x) d \leq 0.
+\end{equation}
+\begin{remark}
+  Since the expression is affine in both $d$ and $u$, the quantification over these two variables can be interchanged for a fixed $x$. In other words, there is no ``first mover advantage'' in the game between $u$ and $d$.
+\end{remark}
+The inner minimization problem is linear in $u$ and can thus be solved in a bang-bang fashion:
+\begin{equation*}
+\begin{aligned}
+    & \min_{u \in \mathcal U} \mathcal L_{g_u} h(x) u = \sum_{i=1}^4 \min \left([\mathcal L_{g_u} h(x)]_i \bar u_i, [\mathcal L_{g_u} h(x)]_i (- \bar u_i) \right) \\
+    & = - \sum_{i=1}^4 \left| [\mathcal L_{g_u} h(x)]_i \right|  \bar u_i.
+\end{aligned}
+\end{equation*} 
+Hence, we are left with a condition for invariance quantified only over $x$ and $d$.
+\begin{equation}
+  \max_{x : h(x) = \epsilon} \max_{d \in \mathcal D} \mathcal L_f h (x) + \mathcal L_{g_d} h (x) d \leq \sum_{i=1}^4 \left| \left[ \mathcal L_{g_u} h(x) \right]_i \right|  \bar u_i.
+\end{equation}
+For signs $s \in \{ -1,1 \}^4$ the problem can be decomposed into eight problems
+\begin{equation}
+\begin{aligned}
+  & \max_{x : \substack{h(x) = \epsilon \\ s_i \left[ \mathcal  L_{g_u} h(x) \right]_i \geq 0 }} \max_{d \in \mathcal D} \mathcal L_f h (x) + \mathcal L_{g_d} h (x) d \\
+  & \quad \leq \sum_{i=1}^4 s_i \left[ \mathcal L_{g_u} h(x) \right]_i \bar u_i
+\end{aligned}
+\end{equation}
+that verify the condition in different parts of the state space depending on the sign of $\mathcal L_{g_u} h(x)$.
+
+Consider the optimization problem constructed using the S procedure:
+\begin{equation}
+\label{eq:tmin}
+\begin{aligned}
+  \min_{t, \sigma_1, \sigma_2} & \quad t \\
+  \text{s.t} &  \quad  t - \left[ \mathcal L_f h(x) + \mathcal L_{g_d} h(x) d -\sum_{i=1}^4 s_i \left[\mathcal L_{g_u} h(x) \right]_i \bar u_i \right] \\
+             & \quad - \sigma_1(x,d) \left( h(x) - \epsilon \right) - \sigma_{2,i}(x,d) \left( s_i \left[ \mathcal L_{g_u} h(x) \right]_i \right) \\
+             & \quad + \sigma_3(x,d) \left( h_d(d) \right) \geq 0, \\
+             & \quad  \sigma_{2,i}(x) \geq 0, \sigma_3(x) \geq 0.
+\end{aligned}
+\end{equation}
+
+\textcolor{red}{Can pack all constraints into one problem and solve bilinearly by alternating multipliers and V..}
+
+\textcolor{red}{Can optimize volume of invariant set.}
+
+\begin{prop}
+  If the minimizing $t$ is less than or equal to zero for all eight combinations of $s_i$, then $\mathcal C$ is robustly controlled invariant for disturbances $d \in \mathcal D$.
+\end{prop}
+
+Upper bounds to the problem \eqref{eq:tmin} can be found by converting the inequality constraints to SOS constraints and solving the resulting semi-definite program for increasing polynomial degrees.
+
+\subsection{Finding a Polynomial}
+
+Given the invariance verification above, the problem is finding a candidate polynomial $h$. Below potential approaches are outlined:
+\begin{itemize}
+   \item Construct a feedback controller (e.g LQR) and use a Lyapunov function as a candidate
+   \item Impose symmetry arguments based on symmetries in dynamics to reduce search space and guess a function.
+   \item Solve \eqref{eq:tmin} as bi-linear SOS.
+   \item Impose structural constraints on $h$ such that sign of $\mathcal L_g h$ only depends on $x$, which makes problem linear in barrier-function setting $\dot h + h \geq 0$ when analysis confined to a box.
+   \begin{itemize}
+     \item This should be sufficient: $h = h_1(r,q) + \alpha \| \dot r \|^2_2 + \beta \| \omega \|_2^2$ for $\alpha, \beta > 0$.
+   \end{itemize} 
+\end{itemize} 
+
+
+\printbibliography 
 
 \end{document}
 
