@@ -10,7 +10,7 @@ Present: Rohan, Kamak, Kyon Ali, Petter, Sofie
  	- Make edits
  	- Push changes from local repo to Github
  	- Pull changes from Github to Sharelatex (x)
- - Argument for this is that potential merge conflicts will arise in step (x) and can then be handled on the git side  
+ - Potential merge conflicts will arise in step (x) and will have to be handled on the git side  
 
 ## Report 1
  - Petter and Rohan working on policy generation (value iteration/LP) and simulation
