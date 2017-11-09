@@ -1,2 +1,2 @@
-test 2 merge conflict test
+sharelatex change merge conflict test
 
