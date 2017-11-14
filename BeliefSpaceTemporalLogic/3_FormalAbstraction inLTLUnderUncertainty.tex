@@ -261,8 +261,14 @@ The disturbance signal $w$ is zero mean independently and identically   distribu
   
     
      Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). 
+     We require that the predicate functions $f$ are Borel measurable, that is we require that the induced sets  are Borel measurable
+     \[B_f:=\{b|f(b)\leq 0\}\in \borel{\mathbb B}\] 
      
-     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S$ on state $x$, Some examples are \begin{enumerate}
+     \begin{prop}[Borel measurability under elementary operations]
+     	
+     \end{prop}
+     
+     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then examples of predicate functions are  \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
  	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
    \item   Bounds on state mean $\hat{x}$ to specify
@@ -270,10 +276,11 @@ The disturbance signal $w$ is zero mean independently and identically   distribu
     \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
     to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. We then combine these predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
     \end{enumerate}
- 
-    %\pr{Structure of the formulae}
-    %Parts of the formulae is not part of the syntax but rather ... In particular $|$ defines option. For example, $\phi::=A | B$ means specification $\phi$ can be either $A$ or $B$. Example: an arithmetic expression has the following syntax grammar $expr::= c | x | expr + expr | expr - expr | expr * expr | expr / expr$.
     
+    The Borel measurability of typical operations in linear algebra 
+   has been proven in \cite{azoff1974borel}.
+  This is quite intuitive, since for maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \cite[page 116]{lang1993real}.
+  
     \subsection{DTL}    
     If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
     we denote the suffix sequence $b^i b^{i+1} \ldots$ by
