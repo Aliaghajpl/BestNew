@@ -264,9 +264,7 @@ The disturbance signal $w$ is zero mean independently and identically   distribu
      We require that the predicate functions $f$ are Borel measurable, that is we require that the induced sets  are Borel measurable
      \[B_f:=\{b|f(b)\leq 0\}\in \borel{\mathbb B}\] 
      
-     \begin{prop}[Borel measurability under elementary operations]
-     	
-     \end{prop}
+
      
      Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then examples of predicate functions are  \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
@@ -274,18 +272,18 @@ The disturbance signal $w$ is zero mean independently and identically   distribu
    \item   Bounds on state mean $\hat{x}$ to specify
     where in the state space the system should be. 
     \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
-    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. We then combine these predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
+    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
     \end{enumerate}
-    
+ 
     The Borel measurability of typical operations in linear algebra 
    has been proven in \cite{azoff1974borel}.
-  This is quite intuitive, since for maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \cite[page 116]{lang1993real}.
+For maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \cite[page 116]{lang1993real}.
   
     \subsection{DTL}    
     If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
     we denote the suffix sequence $b^i b^{i+1} \ldots$ by
     $\BF{b}^i$, $i \geq 0$.  \red{[Even when finitely parameterized this is not a finite set, hence $\CA{G}^{\omega}$ operator is not defined. ]}
-
+   We  combine the predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
       For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied.
     
     \begin{definition}[\DTL Syntax]
