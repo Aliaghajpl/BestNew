@@ -13,12 +13,16 @@
 \newcommand{\U}{{\mathbb{A}}}
 \newcommand{\Hist}{{\mathsf{H}}}
 
+
+
 \newcommand{\M}{{\mathbf{M}}}
 
 \newcommand{\po}{\mathbb{P}}     % Probability of an event
 \newcommand{\p}[1]{\po\left(#1\right)}     % Probability of an event
 \renewcommand{\P}{P}
 \newcommand{\pd}[1]{p\left(#1\right)}     % Probability density of an event
+
+\renewcommand{\S}{\mathbb S}
 \newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
 
 
@@ -95,7 +99,7 @@ Some of the questions to be tackled are as follows:
 \end{description}
 
 
-\section{Literature}
+\subsection{Literature}
 This section contains a summary of related literature.
 
 \subsection{Technical math results for POMDPs}
@@ -114,6 +118,35 @@ Most of the work (including the references given above) has been developed for a
 
 In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
 In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
+
+
+\subsection{Notation}
+
+    Let $\Sigma$ be a finite set. The cardinality,
+    power set, Kleene- and $\omega$-closures
+    of $\Sigma$ are denoted by $\card{\Sigma}$,
+    $\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
+    respectively.    
+    Each member of $\Sigma^*$ and $\Sigma^\omega$ is referred to as ``word" or "sequence". 
+    
+    
+    $A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
+    $n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
+    functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
+    respect to the Lebesgue measure of $\BB{R}^n$.
+    
+    
+    The set of all positive semi-definite matrices of size
+    $n \times n$, $n \geq 1$, is denoted by $\S^n$.
+    $\BB{E}[\cdot]$ is the expectation operator.
+    The $m \times n$ zero matrix and
+    the $n \times n$ identity matrix are denoted by
+    $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+    The supremum and Euclidean norms are denoted by
+    $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
+    
+    
+    
 \section{Partially observable Markov decision Processes}
 In this section, we  analyze the formulation of distribution temporal logics as originally given in \cite{JonesDTL2013} for POMDPS. 
 First, we give the definition of POMDPs. Then,  we  give the definition of distribution temporal logic. 
@@ -189,7 +222,28 @@ A control policy developed for the Belief space model is a mapping from belief s
 \red{[Write about the Borel space etcetera ]}
 
 
-\subsection{Gaussian case}
+\subsection{Parametrized Belief space: LTI Gaussian case}
+
+
+
+    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+    of dimension $n$, i.e. the space of Gaussian
+    probability measures over $\BB{R}^n$.
+    For brevity, we identify the Gaussian measures
+    with their finite parametrization, mean and
+    covariance matrix.
+     Thus,
+    $\CA{G} =  \BB{R}^n \times  \S^n$.
+    
+    
+    
+Consider the linear time invariant system with Gaussian disturbance, given as
+\begin{align}
+	x_{t+1} &= A x_{t}+Bu_{t}+ F w_{t}\\
+	y_{t}&=C x_{t}+D u_{t}+E w_{t}
+\end{align}
+with matrices $A,B,C,D$ and matrices $F,E$ such that $F^TE=0$. 
+The disturbance signal $w$ is zero mean independently and identically   distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
 
 \section{Belief Space Temporal Logic}
 
@@ -202,51 +256,30 @@ A control policy developed for the Belief space model is a mapping from belief s
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{\DTL}\label{sec:DTL}
-    To encode mission specifications, and synthesize a controller to satisfy them, we resort to formal methods. To develop a language for formal planning and reasoning over the belief state, we rely on predicate-based logic.
-    %\pr{Predicate-based logic vs. propositions-based logic}
-    %In this work, we will rely on predicate logic because we explicitly reason about the belief of the system (e.g. covariance matrix) as opposed to proposition-based logic where the state of system is implicit in the definitions of the propositions.
+	\subsection{Predicates}\label{sec:DTL}  
     
-    %a predicate temporal logic defined over the space of Gaussian distributions with fixed dimension.
+  
     
-    \pr{Notation}
-    Let $\Sigma$ be a finite set. The cardinality,
-    power set, Kleene- and $\omega$-closures
-    of $\Sigma$ are denoted by $\card{\Sigma}$,
-    $\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
-    respectively.
-    $A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
-    $n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
-    functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
-    respect to the Lebesgue measure of $\BB{R}^n$.
-    The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $S^n$.
-    $\BB{E}[\cdot]$ is the expectation operator.
-    The $m \times n$ zero matrix and
-    the $n \times n$ identity matrix are denoted by
-    $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
-    The supremum and Euclidean norms are denoted by
-    $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
-    
-    \pr{Parametrized Belief space}
-    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
-    of dimension $n$, i.e. the space of Gaussian
-    probability measures over $\BB{R}^n$.
-    For brevity, we identify the Gaussian measures
-    with their finite parametrization, mean and
-    covariance matrix. Thus,
-    $\CA{G} =  \BB{R}^n \times  S^n$.
-    If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
-    we denote the suffix sequence $b^i b^{i+1} \ldots$ by
-    $\BF{b}^i$, $i \geq 0$. Each member of $\Sigma^*$ and $\Sigma^\omega$ is referred to as ``word" or "sequence". 
-    
-    For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied. Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). Some examples are \textbf{(i)} Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state. \textbf{(ii)} Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
-    \textbf{(iii)} Bounds on state mean $\hat{x}$ to specify
-    where in the state space the system should be. \textbf{(iv)} Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
+     Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). 
+     
+     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S$ on state $x$, Some examples are \begin{enumerate}
+ 	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
+ 	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
+   \item   Bounds on state mean $\hat{x}$ to specify
+    where in the state space the system should be. 
+    \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$.
     to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. We then combine these predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
-    
+    \end{enumerate}
+ 
     %\pr{Structure of the formulae}
     %Parts of the formulae is not part of the syntax but rather ... In particular $|$ defines option. For example, $\phi::=A | B$ means specification $\phi$ can be either $A$ or $B$. Example: an arithmetic expression has the following syntax grammar $expr::= c | x | expr + expr | expr - expr | expr * expr | expr / expr$.
+    
+    \subsection{DTL}    
+    If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
+    we denote the suffix sequence $b^i b^{i+1} \ldots$ by
+    $\BF{b}^i$, $i \geq 0$.  \red{[Even when finitely parameterized this is not a finite set, hence $\CA{G}^{\omega}$ operator is not defined. ]}
+
+      For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied.
     
     \begin{definition}[\DTL Syntax]
     \label{def:gdtl-syntax}
