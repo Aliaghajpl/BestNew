@@ -92,39 +92,41 @@ Turning to analytical methods, control barrier functions have been used to guara
 
 \section{Problem Statement}
 
-A standard 12-dimensional model for a quadrotor is obtained from force-balance equations in a rotating reference frame (e.g. \cite{Mellinger2011,Zhou2014}). Let the 12-dimensional state be $x^c = (\mathbf{r}^c, \mathbf{v}^c, \xi^c, \mathbf{\omega}^c)$, where $\mathbf{r}^c$ and $\mathbf{v}^c$ are position and velocity in $\mathbb{R}^3$, $\xi^c = (\Phi^c, \Theta^c, \Psi^c)$ are roll, pitch and yaw angles, and $\mathbf{\omega}^c \in \mathbb{R}^3$ are angular velocities in the quadrotor body frame. Then
+A standard 12-dimensional model for a quadrotor is obtained from force-balance equations in a rotating reference frame (e.g. \cite{Mellinger2011,Zhou2014}). Let the 12-dimensional state be $\mathbf{x} = (\mathbf{r}, \mathbf{v}, \xi, \mathbf{\omega})$, where $\mathbf{r}$ and $\mathbf{v}$ are position and velocity in $\mathbb{R}^3$, $\xi = (\phi, \theta, \psi)$ are roll, pitch and yaw angles, and $\mathbf{\omega} \in \mathbb{R}^3$ are angular velocities in the quadrotor body frame. Then
 \begin{equation}
 \label{eq:quadrotor_dyn}
 \begin{aligned}
-  & \frac{\mathrm{d}^2}{\mathrm{d}t^2} \mathbf{r}^c = \begin{bmatrix}
-    0 \\ 0 \\ -g
-  \end{bmatrix} + \frac{1}{m} u^c_1 R(\xi^c) \begin{bmatrix}
+  & m \frac{\mathrm{d}^2}{\mathrm{d}t^2} \mathbf{r} = \begin{bmatrix}
+    0 \\ 0 \\ -m g
+  \end{bmatrix} + u_1 R(\xi) \begin{bmatrix}
     0 \\ 0 \\ 1
-  \end{bmatrix} + \mathbf{w}^c, \\
-  & \frac{\mathrm{d}}{\mathrm{d}t} \xi^c
-   = T(\xi^c) \omega^c, \\
-  & J \frac{\mathrm{d}}{\mathrm{d}t} \mathbf{\omega}^c = \mathbf{u}^c_2 - (\mathbf{\omega}^c \times (J \mathbf{\omega}^c)).
+  \end{bmatrix} + \mathbf{w}, \\
+  & \frac{\mathrm{d}}{\mathrm{d}t} \xi
+   = T(\xi) \omega, \\
+  & J \frac{\mathrm{d}}{\mathrm{d}t} \mathbf{\omega} = \mathbf{u}_2 - (\mathbf{\omega} \times (J \mathbf{\omega})).
 \end{aligned}
 \end{equation}
-Here $R(\xi^c)$ is the x-y-z rotation matrix from a body-fixed frame to the world frame, and $T$ the resulting mapping between angular velocities:
+Here $R(\xi)$ is the x-y-z rotation matrix from a body-fixed frame to the world frame, and $T$ the resulting mapping between angular velocities:
 \begin{equation}
+\label{eq:rotmat}
 \begin{aligned}
-  R(\xi^c) & = R_z(\Psi^c) R_y(\Theta^c) R_x(\Phi^c), \\
-   T(\xi^c) & = \begin{bmatrix}
-     1 & \sin(\Phi^c)\tan(\Theta^c) & \cos(\Phi^c)\tan(\Theta^c) \\
-     0 & \cos(\Phi^c)   &  -\sin(\Phi^c) \\
-     0 & \sec(\Theta^c)\sin(\Phi^c)  & \cos(\Phi^c)\sec(\Theta^c)
+  R(\xi) & = R_z(\psi) R_y(\theta) R_x(\phi), \\
+   T(\xi) & = \begin{bmatrix}
+     1 & \sin(\phi)\tan(\theta) & \cos(\phi)\tan(\theta) \\
+     0 & \cos(\phi)   &  -\sin(\phi) \\
+     0 & \sec(\theta)\sin(\phi)  & \cos(\phi)\sec(\theta)
   \end{bmatrix}.
 \end{aligned}
 \end{equation}
 
-In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w}^c \in \mathcal W^c$. The controlled inputs are total upwards thrust force $u_1^c$ and angular torques $\mathbf{u}^c_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^i, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
+In \eqref{eq:quadrotor_dyn}, $\mathbf{w}$ is a disturbance force acting on the quadrotor as a result of wind; it is assumed to be bounded as $\mathbf{w} \in \mathcal W$. The controlled inputs are total upwards thrust force $u_1$ and angular torques $\mathbf{u}_2 = (p,q,r)$. Equivalently, the input can be chosen as the angular velocities of the propellers. Let propeller $i$ be located at $r_x^i, r_y^i, r_z^i$ in relation to the copter center of gravity, and assume that it generates a torque $- k_t \omega_i^P |\omega_i^P|$ and an upward force $d_i k_f \omega_i^P |\omega_i^P|$ where $d_i = (-1)^i$ is the direction of rotation. Then the following linear map from squared angular propeller velocities to total force and moment is invertible:
 \begin{equation}
+\label{eq:omega_to_u}
 \begin{bmatrix}
-  u_1^c \\
-  u_2^c \\
-  u_3^c \\
-  u_4^c
+  u_1 \\
+  u_2 \\
+  u_3 \\
+  u_4
 \end{bmatrix} =
 \begin{bmatrix}
   -k_f  & k_f& -k_f&  k_f \\
@@ -140,26 +142,20 @@ In \eqref{eq:quadrotor_dyn}, $\mathbf{w}^c$ is a disturbance force acting on the
 \end{bmatrix}
 \end{equation}
 
-This model is differentially flat in the output $(\mathbf{r}^c, \Psi^c$), where $\Psi^c$ is the yaw angle, meaning that there is a map from any four-times differentiable output trajectory $(\mathbf{r}^c(t), \Psi^c(t))$ to the remaining system states and model inputs.
+This model is differentially flat in the output $(\mathbf{r}, \psi$), where $\psi$ is the yaw angle, meaning that there is a map from any four-times differentiable output trajectory $(\mathbf{r}(t), \psi(t))$ to the remaining system states and model inputs.
 
-\paragraph{Model alternations}
-\begin{itemize}
-  \item Actuation limits may be introduced:
-  \begin{equation}
-  \begin{aligned}
-    u_1^c & \in [f_z^-, f_z^+], \\
-    p & \in [p^-, p^+], \\
-    q,r & \in [\tau^- , \tau^+].
-  \end{aligned}
-  \end{equation}
-  The inputs $q$ and $r$ affect pitch and yaw, respectively, and can be assumed to have the same actuation limits due to symmetry of the quadrotor. Presence of actuation limits will limit the set of admissible flat trajectories and make construction of CBFs more difficult.
-  \item An alternative is to consider $\omega$ as a model input, as done in \cite{Wang2017}. Then the order of flatness decreases from four to three.
-  \item Stochastic or bounded uncertainty in the dynamics can be incorporated to account for e.g. wind.
-\end{itemize}
+We can further incorporate motors dynamics by modeling motors that generate the angular propeller velocities $\omega_i^P$ from an input voltage $V_i$. We use a first-order model for the voltage-torque relationship in the motors, and the reaction torques $-k_t \omega_i^P |\omega_i^P|$ from above to obtain:
+\begin{equation}
+\label{eq:propdyn}
+  I_{prop} \dot \omega_i^P = \frac{k_m}{ R} \left( d_i V_i - k_m \omega_i^P \right) - k_t |\omega_i^P| \omega_i^P.
+\end{equation}
+Here, $R$ is the resistance and $k_m$ is a motor constant. Combined, the dynamics consist of equations \eqref{eq:quadrotor_dyn}, \eqref{eq:rotmat}, \eqref{eq:omega_to_u}, and \eqref{eq:propdyn} with inputs $V_i$ and states $\mathbf{x}, \omega_1^P, \omega_2^P, \omega_3^P, \omega_4^P$.
+
+\textcolor{red}{For now, this disregards the addition of mass and inertia from the propellers to the overall system.}
 
 \begin{problem}
   \label{prob:main}
-  Given an initial state $x^c_0$, a target state $x^c_1$, bounds $\epsilon_0, \epsilon_1$ and a time horizon $T$, construct a controller such that any trajectory starting in $\mathcal B(x^c_0, \epsilon_0)$ will reach $\mathcal B(x_1^c, \epsilon_1)$ after time at most $T$, or determine that no such controller exists.
+  Given an initial state $x_0$, a target state $x_1$, bounds $\epsilon_0, \epsilon_1$ and a time horizon $T$, construct a controller such that any trajectory starting in $\mathcal B(x_0, \epsilon_0)$ will reach $\mathcal B(x_1, \epsilon_1)$ after time at most $T$, or determine that no such controller exists.
 \end{problem}
 
 An algorithm that solves this problem can serve as feedback to a high-level planning framework. If the planner requests a feasible trajectory the quadrotor executes it in a safe manner, whereas if a safe trajectory can not be found this is reported to the planner, potentially along with information quantifying the infeasibility.
