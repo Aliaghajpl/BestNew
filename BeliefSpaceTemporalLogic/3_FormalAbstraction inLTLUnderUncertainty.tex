@@ -122,6 +122,12 @@ In \cite{LESSER20141989}, the analysis of partially observable systems with as o
 
 \subsection{Notation}
 
+For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
+%We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
+
+
+
+
     Let $\Sigma$ be a finite set. The cardinality,
     power set, Kleene- and $\omega$-closures
     of $\Sigma$ are denoted by $\card{\Sigma}$,
@@ -137,14 +143,26 @@ In \cite{LESSER20141989}, the analysis of partially observable systems with as o
     
     
     The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $\S^n$.
-    $\BB{E}[\cdot]$ is the expectation operator.
-    The $m \times n$ zero matrix and
+    $n \times n$, $n \geq 1$, is denoted by $\S^n$.    The $m \times n$ zero matrix and
     the $n \times n$ identity matrix are denoted by
     $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
     The supremum and Euclidean norms are denoted by
     $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
-    
+    For a given set $\Y$ a metric or distance function $\mathbf d_\Y$ is a function $\mathbf{d}_\Y: \Y\times \Y\rightarrow \mathbb R_{\ge 0}$ 
+satisfying the following conditions: 
+$\forall y_1,y_2,y_3\in\Y$:
+$\mathbf d_\Y(y_1,y_2)=0$ iff $y_1=y_2$; 
+$\mathbf d_\Y(y_1,y_2)=\mathbf d_{\Y}(y_2,y_1)$;  and
+$\mathbf d_\Y(y_1,y_3)\leq \mathbf d_\Y(y_1,y_2) +\mathbf d_\Y(y_2,y_3)$. 
+ %
+For metric space $\mathbb S$, we denote with  $\mathcal{B}(\mathbb S)$ its Borel $\sigma$-field. That is  $\mathcal{B}(\mathbb S)$ is the  
+collection of all sets that can be formed from countable unions and intersections of open sets.
+We refer to  $(\mathbb S,\mathcal{B}(\mathbb S))$ as a Borel measurable space and we denote with $\mathcal P(\mathbb S)$ the set of probability measures on $(\mathbb S,\mathcal{B}(\mathbb S))$.
+Together with the measurable space $(\mathbb S,\mathcal{B}(\mathbb S))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s\sim \po$.   
+Polish spaces are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
+
+    $\BB{E}[\cdot]$ is the expectation operator.
+
     
     
 \section{Partially observable Markov decision Processes}
@@ -154,12 +172,6 @@ First, we give the definition of POMDPs. Then,  we  give the definition of distr
 
 The reachability problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function 
 
-
-For metric space $\mathbb S$, we denote with  $\mathcal{B}(\mathbb S)$ its Borel $\sigma$-field. That is  $\mathcal{B}(\mathbb S)$ is the  
-collection of all sets that can be formed from countable unions and intersections of open sets.
-We refer to  $(\mathbb S,\mathcal{B}(\mathbb S))$ as a Borel measurable space and we denote with $\mathcal P(\mathbb S)$ the set of probability measures on $(\mathbb S,\mathcal{B}(\mathbb S))$.
-Together with the measurable space $(\mathbb S,\mathcal{B}(\mathbb S))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s\sim \po$.   
-Polish spaces are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
 
  
 
@@ -219,7 +231,8 @@ recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,a_k,z_{k+1})$.
 
 A control policy developed for the Belief space model is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. 
 
-\red{[Write about the Borel space etcetera ]}
+\red{[Write about the Borel space etcetera based on \cite{bertsekas2004stochastic}.]}
+
 
 
 \subsection{Parametrized Belief space: LTI Gaussian case}
@@ -332,16 +345,11 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
 
 
 \section{Formal abstractions}
-For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
-%We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
-For a given set $\Y$ a metric or distance function $\mathbf d_\Y$ is a function $\mathbf{d}_\Y: \Y\times \Y\rightarrow \mathbb R_{\ge 0}$ 
-satisfying the following conditions: 
-$\forall y_1,y_2,y_3\in\Y$:
-$\mathbf d_\Y(y_1,y_2)=0$ iff $y_1=y_2$; 
-$\mathbf d_\Y(y_1,y_2)=\mathbf d_{\Y}(y_2,y_1)$;  and
-$\mathbf d_\Y(y_1,y_3)\leq \mathbf d_\Y(y_1,y_2) +\mathbf d_\Y(y_2,y_3)$. 
- 
- 
+
+ Introduce a concept of similarity which relaxes the requirement of equality of the output space. 
+ Instead we will require that for 
+ \[\forall (\tilde b,b)\in \rel: f(\tilde b)\leq 0\rightarrow f( b)\leq 0.\]
+Int he above  $\tilde b$ is the approximate belief state. 
 
 	\bibliographystyle{plain}
 	\bibliography{AliAgha,references}
