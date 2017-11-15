@@ -11,9 +11,13 @@
 \newcommand{\X}{{\mathbb{X}}}
 \newcommand{\Y}{{\mathbb{Y}}}
 \newcommand{\U}{{\mathbb{A}}}
+\newcommand{\A}{{\U}}
+
 \newcommand{\Hist}{{\mathsf{H}}}
 
-
+\newcommand{\InF}{\mathcal{U}_{v}}
+\newcommand{\Wt}{\mathbb{W}_{\mathbb{T}}}
+\newcommand{\Fpred}{{\mathcal F}}
 
 \newcommand{\M}{{\mathbf{M}}}
 
@@ -26,10 +30,7 @@
 \newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
 
 
-
-
-\newcommand{\rel}{\mathcal{R}}%{A relation}
-% numbers option provides compact numerical references in the text. 
+\newcommand{\eps}{\epsilon} \newcommand{\rel}{\mathcal{R}} % numbers option provides compact numerical references in the text. 
 
 \pdfinfo{
    /Author (Homer Simpson)
@@ -291,6 +292,8 @@ The disturbance signal $w$ is zero mean independently and identically   distribu
     The Borel measurability of typical operations in linear algebra 
    has been proven in \cite{azoff1974borel}.
 For maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \cite[page 116]{lang1993real}.
+
+\red{[Require $f$ to belong to a finite set $\Fpred$. ]}
   
     \subsection{DTL}    
     If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
@@ -304,13 +307,7 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     The {\em syntax} of \DTL includes the minimum number of operators to define the logic:
     \begin{equation*}
      \phi :=  \True \ |\ f \leq 0 \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
-    \end{equation*}
-    %where $\True$ is the Boolean constant ``True'',
-    %$f \leq 0$ is a predicate over $\mathbb{B}$, where
-    %$f \in \CA{M}(\mathbb{B}, \BB{R})$.
-    %$\notltl$ is negation (``Not''), $\andltl$ is conjunction (``And''),
-    %$\Next$ is ``Next'',
-    %and $\Until$ is ``Until''.
+    \end{equation*} where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
     \end{definition}
 
     For convenience, we define the additional operators:
@@ -327,7 +324,9 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     \begin{definition}[\DTL Semantics]
     \label{def:gdtl-semantics}
     Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
-    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$. Accordingly, the {\em semantics} of \DTL is defined recursively as
+    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$.
+    
+     Accordingly, the {\em semantics} of \DTL is defined recursively as
     \begin{align*}
     &\BF{b}^i \models  \top  & \\
     &\BF{b}^i \models f \leq 0 & \Equiv\quad & f(b^i) \leq 0\\ % \forall (x,P) \in b^i \\
@@ -347,10 +346,67 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
 \section{Formal abstractions}
 
  Introduce a concept of similarity which relaxes the requirement of equality of the output space. 
- Instead we will require that for 
+ Instead we can  require that for 
  \[\forall (\tilde b,b)\in \rel: f(\tilde b)\leq 0\rightarrow f( b)\leq 0.\]
-Int he above  $\tilde b$ is the approximate belief state. 
+In the above  $\tilde b$ is the approximate belief state. 
+As an alternative we can require that there exist  $\tilde f$ such that
+ \[\forall (\tilde b,b)\in \rel: \tilde f(\tilde b)\leq 0\rightarrow f( b)\leq 0.\]
+  Consider the case that $b$ is defined by $\hat x$ and $P$. Suppose that  
+ $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$ if  $\tilde P\succeq P$, then it suffices to show that
+ for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$. This is for instance the case for $f(\cdot):=\det(\cdot).$
+ 
+Hence by replacing the strict requirement on (approximate) equality, with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$. 
+ 
 
+
+\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
+	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)), (\X_2,\mathcal B(\X_2))$,
+	and let  $\rel\subseteq \X_1\times \X_2$ be a relation for which $\rel\in \mathcal B(\X_1\times \X_2)$.
+	We denote by
+	$\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))$ the corresponding lifted relation so that $\Delta \bar \rel_\delta \Theta$ holds if there exists a probability space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2), \mathbb W)$  (equivalently, a lifting $\mathbb W$) satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
+		\begin{enumerate}
+			\item[\textbf{L1.}] for all $X_1\in \mathcal{B}(\X_1)$: $\mathbb W(X_1\times \X_2)=\Delta(X_1)$;
+			\item [\textbf{L2.}] for all $X_2\in \mathcal{B}(\X_2)$:  $\mathbb W(\X_1\times X_2)=\Theta(X_2)$;
+			\item[\textbf{L3.}] for the probability space  $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2), \mathbb W)$ it holds that
+			$x_1\rel x_2$ with probability at least $1-\delta$, or equivalently that $\mathbb{W}\left(\rel\right)\geq1-\delta$.
+	\end{enumerate}}%
+\end{definition}
+
+
+
+
+
+
+
+
+
+%
+\begin{definition}[$\delta$-predicate  simulation relation]\label{def:apbsim}
+	Consider two gMDPs $\M_i=(\X_i,\pi_i ,\mathbb T_i,\A_i,h_i,\Y),$ $i =1,2$,  over a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.
+	$\M_1$ is $(\epsilon,\delta)$-stochastically simulated by $\M_2$ if there exists an interface function $\InF$ and
+	a relation $\rel\subseteq \X_1\times \X_2$, for which there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} u_1,x_1,x_2)$ on $\X_1\times\X_2$ given $\A_1\times\X_1\times\X_2$,
+	such that:
+	{ \setlength{\parskip}{-2pt}\setlength{\parsep}{-1pt}
+		\begin{description}
+			\item[\textbf{PS1.}] $\forall (x_1,x_2)\in \rel$,  $f(b_1)\leq0\rightarrow f(b_2)\leq 0$;
+			\item[\textbf{PS2.}] $\forall (x_1,x_2)\in \rel$, $\forall u_1\in\A_1$:
+			\[\mathbb T_1(\cdot| x_1, u_1)\ \bar \rel_\delta \  \mathbb T_2(\cdot| x_2, \InF(u_1,x_1,x_2)),\] with lifted probability measure $\Wt(\,\cdot\,{\mid}u_1,x_1,x_2)$;
+			\item[\textbf{PS3.}] $\pi_1\bar \rel_\delta \pi_2$.
+	\end{description} }
+	\noindent The simulation relation is denoted as $\M_1\preceq^{\delta}_\eps\M_2$.
+\end{definition}
+This definition extends the known exact notions of probabilistic simulation in \cite{larsen1991bisimulation},
+and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish spaces as elaborated in \cite{haesaert2017verification}.
+%
+
+
+
+
+\section{Distribution LTL control of POMDPs. }
+ We detail two cases. In the first, we give a standard Gaussian LTL model and we show that one can use a constant estimator even when the noise is not constant.
+ 
+ In the second case, we leverage the developed simulation relation for FIRM. 
+ 
 	\bibliographystyle{plain}
 	\bibliography{AliAgha,references}
 
