@@ -49,7 +49,7 @@
 \maketitle
 
 \begin{abstract}
-This work studies ...
+This report summarizes the software architecture and the system description for V\&V tasks. 
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -58,6 +58,63 @@ This work studies ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction} \label{subsec:intro}
+
+For V\&V purpose, we have built a ROS (Robot Operating System)-based system. Each module in the system communicates each other using the predefined message types over synchronous/asynchronous communication infrastructure. The modular architecture provides an abstraction of hardware, meaning that the same algorithm code can be tested against both hardware and physics simulation. 
+
+\section{Software Architecture}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{BeliefSpaceTemporalLogic/figs/SoftwareArch.jpg}
+    \caption{Software architecture}
+    \label{fig:software_arch}
+\end{figure*}
+
+A high-level software architecture is shown in Fig.~\ref{fig:software_arch}. Each node in the grpah roughly corresponding to a single ROS node (process). The background color represents the status of node development. 
+
+\textit{Belief space planner} is a core planning node running on the ground vehicle. It takes a map from the copter (and possibly from rover's navigation cameras) as input, and generates a policy for the rover's motion and a next measurement plan for the copter. 
+
+\textit{Policy executor} receives the policy from the planner, and translates the policy to the form that the locomotion node can understand (e.g., next waypoint coordinates).
+
+\textit{Locomotor} accepts two types of commands: arc and waypoint. The arc command directly specifies three arc parameters. The waypoint command specifies $x$ and $y$, with the option of additional heading $\theta$. 
+
+\textit{Pose estimator} is an EKF fusing the information from motor commands, an IMU, and cameras. The estimator gives a mean pose estimate with covariance.
+
+
+The other modules are mock at this moment. The descriptions will be updated as they proceed. 
+
+
+
+\section{Simulation}
+
+We use the Gazebo simulation framework\footnote{http://gazebosim.org}, which comes with physics and graphics computation engines with potential ROS integration. We chose Gazebo over the JPL in-house simulation framework (DARTS) for the ease of multi-institutional collaboration. 
+
+Our focus in the simulation is sorely on the validation of the planning pipeline, rather than high-fidelity physics-based evaluation. Therefore, simplified models are used wherever reasonable.
+
+\subsection{Environmental Models}
+
+\begin{figure}
+    \centering
+    %\includegraphics[width=\textwidth]{BeliefSpaceTemporalLogic/figs/GazeboScene}
+    \caption{Mars terrain loaded in the Gazebo simulator}
+    \label{fig:gazebo_scene}
+\end{figure}
+
+We use Martian terrain models from the JPL OnSight project. Their map processing pipeline produces photo-realistic terrain geometry from MSL Curiosity's surface imagery. An example scene is shown in Fig.~\ref{fig:gazebo_scene}.
+
+
+\subsection{Robot Models}
+
+TBD
+
+
+
+\section{Hardware Testbed}
+
+\subsection{Ground rover (Athena/JPL)}
+
+
+\subsection{Aerial copter (Caltech)}
 
 
 \end{document}
