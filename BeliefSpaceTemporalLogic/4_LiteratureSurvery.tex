@@ -1,3 +1,16 @@
+
+\usepackage{blindtext, graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools,xparse}
+\usepackage{dirtytalk}
+\usepackage{tabularx}
+\usepackage{tabu}
+\usepackage{booktabs}% for better rules in the table
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+
 \documentclass[conference]{IEEEtran}
 \usepackage{standalone}
 \usepackage{times}
@@ -44,38 +57,51 @@
 
 \title{\huge Overview of Autonomous Planning Methods for Space Applications}
 
-\author{Kamak, Rohan, Ali, Cristi, Petter, Sofie Richard Murray, Aaron Ames}
+\author{Kamak Ebadi, Rohan, Ali, Cristi, Petter, Sofie Richard Murray, Aaron Ames}
 
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-This paper provides a comprehensive review of the popular methods for space exploration.
+This paper provides a comprehensive review of the popular methods for automation of planning and scheduling for space mission operations.
 \end{abstract}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+Space Robotics is important to human’s overall ability to explore or operate in space, by providing greater access beyond human spaceflight limitations in the harsh environment of space and by providing greater operational handling that extends astronauts’ capabilities. Autonomous systems are capable of reducing the cognitive load on humans given the abundance of information that has to be reasoned upon in a timely fashion, hence are critical for improving human and systems’ safety. Robotics can also enable the deployment and operation of multiple assets without the same order of magnitude increase in ground support.
 As a world leader in space exploration, NASA advances deep space exploration missions and continues to uncover vast amount of new knowledge about the universe.
 In order to satisfy a set of high-level science and engineering goals for every space robotic mission, a step-by-step planning and scheduling of spacecraft operations is required. This involves generating a sequence of low-level spacecraft commands that according to the goal of the mission, describes the action plan of the robot. The action plans is a series of states, and actions in order to move from one state to another.
+In this article we survey past and present space robotic mission planners, as well as describe a new mission planner targeting future joint Mars rover and helicopter mission concepts.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Features for Planning methods}
+\subsection{\textbf{Verifiable specification satisfaction}}
+for credibility, quality control and confidence.
 
-Verifiable specification satisfaction:
+\subsection{\textbf{Uncertainty}} 
+Uncertainties generally interfere with two aspects of planning:
+\begin{enumerate}
+\item Predictability: Due to uncertainties, it is not known what will happen in the future when certain actions are applied. This means that future states are not necessarily predictable.
+\item Sensing: Due to uncertainties, the current state is not necessarily known. Information regarding the state is obtained from initial conditions, sensors, and the memory of previously applied actions.
+\end{enumerate}
 
-Uncertainty: 
-
-Real-time Replanning:
+\subsection{\textbf{Planning and Scheduling}}
+Planning and scheduling spacecraft operations involves generating a sequence of low-level spacecraft commands from a set of high-level science and engineering goals.
+\subsection{\textbf{Repair and Optimization}}
+Repairing and optimizing an existing plan enables fast replanning when necessary from manual plan modifications or from unexpected differences detected during execution.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Planning method overview for space applications}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{ASPEN}\label{sec:aspen}
-ASPEN (Automated Scheduling and Planning ENvironment) encodes spacecraft operability constraints, flight rules, spacecraft hardware models, science experiment goals, and operations procedures to allow for automated generation of low-level spacecraft sequences. ASPEN contains a number of innovations including: 
+\subsection{\textbf{Apex}}\label{sec:apex}
+Apex is an execution system and has been used in numerous large-scale applications including control of real autonomous helicopters, control of simulated aircraft for wildfire detection, and in simulating humans for Human Computer Interface (HCI) analysis.
+Apex is a reactive execution system that selects for execution one or more procedures (partial plans) from its library of procedures at each execution step. In most applications Apex has been used as an execution-only system. Apex is designed to unify plan-running and mission-management functionality. Planners may be called on to produce or extend a mission plan, to solve a local planning problem within a mission plan or both. Apex may therefore potentially be used as an execution system coupled with an external planner.
+
+
+\subsection{\textbf{ASPEN}}\label{sec:aspen}
+Automated Scheduling and Planning ENvironment encodes spacecraft operability constraints, flight rules, spacecraft hardware models, science experiment goals, and operations procedures to allow for automated generation of low-level spacecraft sequences. ASPEN contains a number of innovations including: 
 
 \begin{itemize}
   \item an expressive but easy to use modeling language
@@ -85,38 +111,90 @@ ASPEN (Automated Scheduling and Planning ENvironment) encodes spacecraft operabi
   \item plan optimization
 \end{itemize}
  
- ASPEN is being used for the Citizen Explorer (CX-1) (August 2000 launch) and the 2nd Antarctic Mapping Missions (AMM-2) (September 2000). ASPEN has also been used to automate ground communications stations – automating generation of tracking plans for the Deep Space Terminal (DS-T). ASPEN has been used to demonstrate automated command generation and onboard planning for rovers and is currently being evaluated for operational use for the Mars-01 Marie Curie rover mission. CASPER, the soft real-time versions of ASPEN, has been demonstrated with the Jet Propulsion Laboratory (JPL) Mission Data Systems (MDS) Control Architecture prototypes..
+ASPEN has also been used to automate ground communications stations – automating generation of tracking plans for the Deep Space Terminal (DS-T). ASPEN has been used to demonstrate automated command generation and onboard planning for rovers and is currently being evaluated for operational use for the Mars-01 Marie Curie rover mission. 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Subsection Heading Here}
+\subsection{\textbf{CASPER}}\label{sec:casper}
+It is the soft real-time version of ASPEN, has been demonstrated with the Jet Propulsion Laboratory (JPL) Mission Data Systems (MDS) Control Architecture prototypes.
+
+\subsection{\textbf{CRL and C-CRL Executive}}\label{sec:crl}
+The Contingent Rover Language (CRL) is a declarative plan execution language that was designed to represent contingent plans. It uses a hierarchical representation and can represent simple and floating branches, nesting, flexible time, and state and resource conditions. 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Summary Table}\label{sec:table}
-In this section, we summarize the ....
 
-\begin{center}
-\begin {tabular}{ c|c|c|c }
- \hline
-%  \multicolumn{4}{|c|}{Autonomous Planning Methods List} \\
- \hline
-Planning Method & ASPEN & Casper &MAPGEN\\
- \hline
-Scalability   &YES   &NA   &NA\\
-Uncertainty   &NA    &NA   &NA\\
-Optimization   &YES    &NA   &NA\\
-Verifiable    &NA &NA &NA\\
-Planing/ scheduling &YES  &NA   &NA\\
-Real-time Re-planning/rescheduling &YES    &NA   &NA\\
-Repair capability &YES    &NA   &NA\\
-Success/performance guarantees &YES &NA &NA\\
-Graphical User Interface &YES  &NA &NA\\
-Temporal reasoning system  &YES &NA &NA \\
- \hline
-\end{tabular}
-\end{center}
+\subsection{\textbf{IDEA}}\label{sec:idea}
+Intelligent Distributed Execution Architecture (IDEA) is a model-based planning and execution system. IDEA was developed to support controllers/planners at multiple levels of abstraction. IDEA uses the classic sense-plan-act cycle. One of the novel features in IDEA is the use of an on-board planner from first principles (i.e., the sub-goaling model) to plan for a limited horizon into the future and execute the current task at hand simultaneously. The advantage is that this allows it to dynamically update the plan based on the current state of the world and previous actions, which can yield a wider range of robust behaviors than possible with traditional execution scripts.
+
+
+\subsection{\textbf{MPE}}\label{sec:mpe}
+Mission Planning and Execution (MPE) is the execution subsystem of the Mission Data System (MDS). MDS uses an explicit state-based representation. Knowledge about the spacecraft and the environment is provided by state estimates. Knowledge about the behavior of the system is stored in state models. Information is reported via a history of states, measurements, and control commands. The input to MPE is operator “intent” (expressed as temporal constraints, and constraints on states), flight rules, and hard constraints on variables. MPE is an execution system with internal planner that can locally adapt the original plan to recover from faults and handle uncertainty.
+
+\subsection{\textbf{PROPEL}}\label{sec:propel}
+Program Planning and Execution Language (PROPEL), is a unified planning and execution system that uses a procedural representation and was designed to increase the scope of the planner’s model to include software in order to address the problem of software failure detection and recovery. Motivation for using a procedural representation includes:
+\begin{itemize}
+    \item Desire to include all software within the planner’s model in order to increase the scope of failure recovery to include infrastructure software failures.
+    \item Desire to represent complex procedures including loops, conditionals, local variables, and multiprocessing.
+    \item Desire to reduce the need to develop and maintain different models for the planner and execution system.
+    \item Reduce risk of loss of information in translation between execution and planning (and vice versa).
+\end{itemize}
+
+\subsection{\textbf{PRS}}\label{sec:prs}
+The Procedural Reasoning System (PRS) was developed to address the problem encountered in developing autonomous systems that were required to be continuously active and have real-time response. PRS has a knowledge-base of procedures. Each procedure requires the specification of an event, the state of the world that will trigger that event, the steps that are executed by the procedure, and the sub-goals that it achieves.
+
+\subsection{\textbf{RAP System}}\label{sec:rap}
+Reactive Action Package System (RAPs) was designed to support reactive planning and execution. 
+The main idea behind RAPs is that all capabilities of goal- achieving behaviors – task decomposition, different tactics for achieving a goal, monitoring, error recovery, checking of pre- and post-conditions – should be represented in a single “package.” Each RAPs is thus a self-contained module that knows how to achieve a particular goal in the face of uncertainty.
+
+\subsection{\textbf{Remote Agent (RA) Executive}}\label{sec:ra}
+Remote Agent is an AI system that flew on-board the Deep Space One (DS-1) spacecraft in 1999. The main characteristics of the Remote Agent are that it is model-based with on-board planning, fault detection, and recovery. The input to the Remote Agent executive is a high-level state and duration for which the state must be maintained. The executive autonomously calls the planner to generate a plan to satisfy a high-level goal. The novel features demonstrated by the RA executive in the DS-I experiment were integrated planning and execution with low-latency response time to contingencies and deficiencies in the plan and the lack of intervention required by the human operator after issuing high level mission goals. 
+
+\subsection{\textbf{RMPL}}\label{sec:rmpl}
+RMPL is used to specify both the control information used by the control component and the model-based state estimation and planning component. The control information supports control constructs such as loops, conditions, iterations and contingencies, over model-based specifications of concurrent and sequenced goals. The control elements of RMPL are compiled into hybrid control automata (HCA), while the mode identification and reconfiguration is specified in terms of concurrent control automata (CCA).
+
+\subsection{\textbf{Titan}}\label{sec:titan}
+Titan is a model-based execution system that supports both execution control and model-based goal achievement specifications. The execution control component generates goal states, which are then given to the model-based goal achievement component. The goal achievement component uses automated diagnosis methods to estimate the current state from observable data (mode identification), and then uses automated planning (mode reconfiguration) to generate command sequences to achieve the given goals from the current state.
+
+\subsection{\textbf{RPL}}\label{sec:rpl}
+RPL was designed to support replanning and debugging of task definitions. Based on experience obtained during execution and Monte-Carlo simulations of task execution, situations can be identified where tasks are likely to fail. Heuristic “critics” are then used modify the task (e.g., adding new constraints, adding new policies) in order to fix the bugs found. RPL is an execution system with internal planner.
+
+\subsection{\textbf{TDL}}\label{sec:tdl}
+The Task Description Language (TDL) uses a procedural representation to support plan execution.
+TDL provides the ability to represent high-level control constructs including task decomposition, task coordination and synchronization, execution monitoring and exception handling, as well as distributed coordination between multiple agents.
+
+\subsection{\textbf{Universal-Executive}}\label{sec:universal}
+The Universal-Executive is a collaborative effort of researchers at NASA Ames Research Center, NASA’s Jet Propulsion Laboratory and Carnegie-Mellon University. It is being designed to facilitate reuse and inter-operability of execution and planning frameworks. Plan execution systems often have a close relation to the planners that they are associated with, which makes information sharing between different execution and decision-making systems difficult.
+
+
+
+   \begin{table*}[t]
+     \centering
+     \caption{Comparing characteristics of different mission planners} 
+     \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+     \hline
+     Planner & scalability & Uncertainty  & Optimization & Verifiable  & Planning/scheduling   &real-time &replanning  &Repair  & Performance Guarantee\\
+        \hline
+        Apex &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        APGEN &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        ASPEN &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        BeST &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        CASPER  &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        CLARAty &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        CRL &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        IDEA &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        MAPGEN &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        MPE &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        PROPE &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        PRS &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        RAP &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        RA &NA &NA &NA &NA &NA &NA &NA &NA &NA\\   
+        RPL &NA &NA &NA &NA &NA &NA &NA &NA &NA\\  
+        RSE &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        Titan &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        TDL &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
+        \hline
+      \end{tabular}
+    \end{table*}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
