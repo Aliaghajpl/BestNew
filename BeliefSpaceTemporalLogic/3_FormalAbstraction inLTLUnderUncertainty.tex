@@ -59,6 +59,7 @@
 
 
 \allowdisplaybreaks[1]
+\usetikzlibrary{fit}
 
 \begin{document}
 
@@ -403,6 +404,55 @@ and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish
 
 
 \section{Distribution LTL control of POMDPs. }
+
+
+\begin{figure}[htp]
+	\centering
+
+\begin{tikzpicture}
+
+\tikzset{model/.style={
+  rectangle,
+  inner sep=0pt,
+  text width=25mm,
+  align=center,
+  draw=black, fill=white,
+  minimum height = 10mm
+  }}
+  
+  \node[model] (C) at (0,2.25) {$\tilde{ \mathbf{ C}}$}; 
+\node[model] (Bhat) at (0,.75) {$\tilde{ \mathbf{ B}}$}; 
+
+%\node[label=below:$u$](bl) at (-2,.75) {};
+%\node[label=below:$x$](br) at (2,.75) {};
+\node(be) at (.75,1.25) {};
+\node(bw) at (-.75,1.25) {};
+
+\path[draw,<-] (be.center) -- node[label=right:$\tilde u$]{} (.75,1.75);
+\path[draw,->] (bw.center) -- node[left] {$\tilde b$} (-.75,1.75);
+%\path[draw,<-] (bl.center)--(Bhat);
+%\path[draw,<-] (Bhat)--(br);
+
+ 
+
+
+\node[model, fill=white](m) at (0,-2) {$\M$};
+\node[](ml) at (-.75,-1.5) {};
+\node[label=below:$y$](mr) at (2,-2) {};
+\path[draw,->] (-.75,-1.125) -- node[left] {$\tilde b$}(-.75,0);
+\path[draw,<-] (.75,-1.5) -- node[left] {$\tilde u$}(.75,.25);
+\path[draw,->] (m)--(mr);
+\begin{scope}[on background layer]
+\node[model, fit=(ml) (mr) (m),inner sep=2.5mm,label=below:$\mathbf B$, fill=gray!30](B) {};
+\node[model, fit=(C) (Bhat),inner sep=2.5mm, fill=gray!30](B) {};
+\end{scope}			
+\end{tikzpicture}
+
+\caption{Control synthesis}
+\end{figure}
+
+
+\section{Case studies}
  We detail two cases. In the first, we give a standard Gaussian LTL model and we show that one can use a constant estimator even when the noise is not constant.
  
  In the second case, we leverage the developed simulation relation for FIRM. 
