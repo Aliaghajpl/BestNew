@@ -75,21 +75,25 @@ In this article we survey past and present space robotic mission planners, as we
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Features for Planning methods}
-\subsection{\textbf{Verifiable specification satisfaction}}
+\section{Features for Planning methods: }
+\textbf{Verifiable specification satisfaction: }
 for credibility, quality control and confidence.
 
-\subsection{\textbf{Uncertainty}} 
+\textbf{Uncertainty: }
 Uncertainties generally interfere with two aspects of planning:
-\begin{enumerate}
+\begin{itemize}
 \item Predictability: Due to uncertainties, it is not known what will happen in the future when certain actions are applied. This means that future states are not necessarily predictable.
 \item Sensing: Due to uncertainties, the current state is not necessarily known. Information regarding the state is obtained from initial conditions, sensors, and the memory of previously applied actions.
-\end{enumerate}
+\end{itemize}
 
-\subsection{\textbf{Planning and Scheduling}}
+\textbf{Planning and Scheduling: }
 Planning and scheduling spacecraft operations involves generating a sequence of low-level spacecraft commands from a set of high-level science and engineering goals.
-\subsection{\textbf{Repair and Optimization}}
-Repairing and optimizing an existing plan enables fast replanning when necessary from manual plan modifications or from unexpected differences detected during execution.
+
+\textbf{Repair and Optimization: }
+Repairing and optimizing an existing plan enables fast re-planning when necessary from manual plan modifications or from unexpected differences detected during execution.
+
+\textbf{Scalability: }
+Scalability is a characteristic of a system, model or function that describes its capability to cope and perform under an increased or expanding workload. A system that scales well will be able to maintain or even increase its level of performance or efficiency when tested by larger operational demands.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Planning method overview for space applications}
@@ -171,7 +175,7 @@ The Universal-Executive is a collaborative effort of researchers at NASA Ames Re
      \caption{Comparing characteristics of different mission planners} 
      \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
      \hline
-     Planner & scalability & Uncertainty  & Optimization & Verifiable  & Planning/scheduling   &real-time &replanning  &Repair  & Performance Guarantee\\
+     Planner & Scalability & Uncertainty  & Optimization & Verifiable  & Planning/scheduling   &real-time &replanning  &Repair  & Performance Guarantee\\
         \hline
         Apex &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
         APGEN &NA &NA &NA &NA &NA &NA &NA &NA &NA\\
