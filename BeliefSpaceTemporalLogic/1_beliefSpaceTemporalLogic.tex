@@ -1181,9 +1181,8 @@ Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize t
 %	\underset{m \in \mathcal{F}(S_{\mathcal{P}},Act)}{\arg \max} \bigwedge_{i\in \Omega_{\mathcal{R}}}\bigwedge_{j=1}^\infty Pr_{m}( \bigvee_{k=1}^{\infty} s_{j+k} \cap \mathcal{F}_i \wedge s_{j+k} \in S_{\mathcal{P}} \setminus B_i) 
 %\end{equation}
 %
-In other words, we find a policy that maximizes the probability of visiting the $Acc_\PA$ states.
+In other words, we find a policy that maximizes the estimated probability of visiting the $Acc_\PA$ states which can be done by finding the smallest fixed point of the Bellman equation.
 % To find this policy, we first decompose $\mathcal{P}$ into a set of end components and find the accepting components. Since any sample path that satisfies $\phi$ must end in an accepting component, maximizing the probability of satisfying $\phi$ is equivalent to maximizing the probability of reaching such a component.
-The optimal policy is thus given by the relationship
 %{\footnotesize
 % \begin{equation}
 % \label{eq:dp}
@@ -1203,11 +1202,11 @@ J(s) &= \begin{cases}
 \end{cases}  \label{eq:product-DP}\\
 \pi(s) &= \underset{\mu \in \mathbb{M}(s)}{\arg \max} \sum_{s'} \delta(s,\mu,s')J(s')
 \end{align}
-
+The smallest fixed point can be  found by initializing $J(s) = 0$ for all $s$ and iterating \eqref{eq:product-DP} until convergence, or by solving a linear program \cite[Theorem 10.105]{Baier08}.
 %}
-\sofie{[This is only holds if $J$ is either initialized with zero, and then iterated. Additionally, you are of course not computing the maximal policy. At least, there is no prove that you are. Since you are working with probability transitions which are estimates of the actual probability distribution. This is totally fine, just clarify.]}
-The value function $J(\cdot)$ can be computed by solving the Eq.~\ref{eq:product-DP} via a variety of methods, including approximate value iteration and linear programming~\cite{Bertsekas2012}.
-\sofie{See previous statement, I disagree with the notion that this can be solved with LP. The operator (for LP) defined in (18) is not contractive!  You can only show that it will converge if you start at zero, since in that case it is strictly increasing. Probably there are some conditions in one of the papers of Ilya Tkachev that states on which conditions contractivity can be assumed. Anyways, as a counter example. Take a trivial MDP, with a unreachable accepting state and a circle connection of deterministic transitions. Put one value of this cycle to 1, then at each iteration the state with value 1 will move one position. This issue can probably be fixed by requiring that J is the smallest positive solution of the bellman equation.}
+% \sofie{[This is only holds if $J$ is either initialized with zero, and then iterated. Additionally, you are of course not computing the maximal policy. At least, there is no prove that you are. Since you are working with probability transitions which are estimates of the actual probability distribution. This is totally fine, just clarify.]}
+% The value function $J(\cdot)$ can be computed by solving the Eq.~\ref{eq:product-DP} via a variety of methods, including approximate value iteration and linear programming~\cite{Baier08}.
+% \sofie{See previous statement, I disagree with the notion that this can be solved with LP. The operator (for LP) defined in (18) is not contractive!  You can only show that it will converge if you start at zero, since in that case it is strictly increasing. Probably there are some conditions in one of the papers of Ilya Tkachev that states on which conditions contractivity can be assumed. Anyways, as a counter example. Take a trivial MDP, with a unreachable accepting state and a circle connection of deterministic transitions. Put one value of this cycle to 1, then at each iteration the state with value 1 will move one position. This issue can probably be fixed by requiring that J is the smallest positive solution of the bellman equation.}
 %[Cite Bertsekas]
 
 
@@ -1267,9 +1266,33 @@ For dynamics we opt for a unicycle model
         x(t+1) \\
         y(t+1) \\
         \varphi(t+1)
-    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\varphi(t)) \\ y(t) + v \sin(\varphi(t)) \\ \varphi(t) + \omega \end{bmatrix},
+    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\varphi(t)) \\ y(t) + v \sin(\varphi(t)) \\ \varphi(t) + \omega \end{bmatrix} + w,
 \end{equation}
-where $v$ and $\omega$ are the inputs to the model.
+where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim \mathcal N(0, Q)$ is Gaussian process noise. We assume availability of state observations corrupted by Gaussian noise, and use an extended Kalman filter to update the belief state of the system. To control the belief state between FIRM belief nodes, we use the same switching controller as in \cite{Vasile2016} that first directs the heading angle $\varphi$ towards the target before starting to move. 
+
+In order to simulate an uncertain environment we assume that map labels are only available for the region surrounding the initial state. The rover can request that the copter explores a new area in order to extend the planning region. Furthermore, if the rover encounters a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure \ref{fig:planning_overview}.
+
+
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}
+	[mynode/.style = {draw, rounded corners, fill=blue!50, minimum width=12mm, minimum height=6mm}]
+ 	\node[mynode] (sample) {Sample};
+ 	\node[mynode, node distance=2cm, right of=sample] (solve) {Solve};
+ 	\node[mynode, above right of=solve, node distance=2cm] (explore) {Explore};
+ 	\node[mynode, below right of=solve, node distance=2cm] (replan) {Update map};
+ 	\node[mynode, below right of=explore, node distance=2cm] (execute) {Execute};
+ 	\draw[-latex] (solve) -- node[left] {$p < p^*$} (explore);
+  	\draw[-latex] (solve) -- node[above] {$p\geq p^*$} (execute);
+  	\draw[-latex] (execute) -- node[right] {Mismatch} (replan);
+  	\draw[-latex] (replan) -- (solve);
+  	\draw[-latex] (sample) -- (solve);
+  	\draw[-latex] (explore) to[out=180, in=45] (sample);
+\end{tikzpicture} 
+\end{center}
+\label{fig:planning_overview}
+\caption{Illustration of the sample-solve-explore planning algorithm. A plan is not executed unless the probability of specification satisfaction is estimated to be above a threshold $p^*$. If the rover encounters unexpected terrain during the execution, the map is updated and a new plan is computed.}
+\end{figure}
 
 % 	\begin{figure}[ht!]
 % 		\centering
