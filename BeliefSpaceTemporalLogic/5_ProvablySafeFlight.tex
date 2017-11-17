@@ -19,6 +19,9 @@
 \newtheorem{remark}{Remark}
 \newtheorem{prop}{Proposition}
 
+\DeclareMathOperator*{\argmin}{arg\,min} 
+\DeclareMathOperator*{\argmax}{arg\,max} 
+
 \begin{document}
 
 \title{\huge Provably Safe Flight }
@@ -83,6 +86,10 @@ Previous work on provably safe quadrotor flight has focused on obstacle avoidanc
 Starting with computational methods, an early effort towards provably safe flight was reported in \cite{Gillula2010} where the authors used Hamilton-Jacobi-Bellman reachability tools to verify correctness of controllers designed to perform a flip maneuver. Due to the relatively high dimensionality of the quadrotor system, several assumptions were introduced that reduce the analysis to two two-dimensional systems. Avoidance of static obstacles was considered for the full 12-dimensional model as an application of the \emph{funnel library} approach developed by Majumdar et. al. \cite{Majumdar2017}, who suggest constructing a library of motion primitives with associated ``funnels'' that bound the maximal deviation. Funnels can be patched together in a provably correct manner by verifying an inclusion property.
 
 Turning to analytical methods, control barrier functions have been used to guarantee collision-free behavior in teams of quadrotors by introducing a safety barrier around each agent \cite{Wang2017a}. In general, composition of barrier functions does not preserve feasibility, but feasibility was proven in \cite{Wang2017} under the assumption that angular velocity (as opposed to angular acceleration) is directly controllable. Avoidance of environmental obstacles via analytical control barrier functions was considered in \cite{Wu2016}.
+
+\begin{itemize}
+  \item Barriers from data with GPs \cite{Wang2017c}
+\end{itemize}
 
 \subsection{Notation}
 
@@ -184,77 +191,85 @@ The most cited advantage of the quaternion representation over Euler angles is t
 
 \subsection{Invariance of a Polynomial Level Function}
 
-In the following, we develop sufficient conditions for a polynomial $h(x)$ to define a controlled-invariant set $\mathcal C = \{ x : h(x) \leq \epsilon \}$. In particular, we want to verify whether the following is true:
+In the following, we develop sufficient conditions for a polynomial $h(x)$ to define a controlled-invariant set $\mathcal C = \{ x : h(x) \geq 0 \}$. In particular, we want to search for functions that satisfy the following zeroing control barrier function condition:
 \begin{equation}
-\label{eq:invariancecond}
-   \forall x \in \partial \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d) \leq 0.
+\label{eq:cbf_condition}
+   \forall x \in \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d) + \alpha h(x) \geq 0,
  \end{equation} 
+where $\alpha > 0$ is a scalar.
 \begin{remark}
-  We could equivalently replace the invariance condition with the standard control barrier function condition
+  As shown in \cite{Ames2017}, the control barrier condition \eqref{eq:cbf_condition} implies the standard invariance condition
   \begin{equation}
-  \label{eq:cbf_condition}
-    \forall x \in \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d) + h(x) \leq 0.
+  \label{eq:invariancecond}
+    \forall x \in \partial \mathcal C, \;  \forall d \in \mathcal D, \; \exists u \in \mathcal U, \; \frac{\mathrm{d}}{\mathrm{d}t} h(x,u,d)  \geq 0.
   \end{equation}
-  without changing the fundamentals of the derivations below. Obviously, \eqref{eq:cbf_condition} implies \eqref{eq:invariancecond}.
+  Although \eqref{eq:cbf_condition} is a stricter condition, it has several practical advantages over \eqref{eq:invariancecond}. While enforcing \eqref{eq:invariancecond} requires knowing the boundary of $\mathcal C$, it is reasonable to search for functions that satisfy \eqref{eq:cbf_condition} on a larger set $\bar {\mathcal D} \supset \mathcal C$, thus avoiding a bilinear term in the resulting program. Enforcing \eqref{eq:invariancecond} on a larger set is equivalent to the control Lyapunov function condition which is too restrictive for uncertain systems. Secondly, implementation of a safety controller based on \eqref{eq:cbf_condition} can lead to smoother performance: instead of ``bouncing back'' once a trajectory hits $\partial \mathcal C$, a more graceful intervention can be made that depends on the magnitude of $\alpha h(x)$.
 \end{remark}
  For reasons that will be made clear below, we assume that the set of admissible inputs $\mathcal U$ is rectangular:
  \begin{equation}
    \mathcal U = \prod_{i=1}^4 [-\bar u_i, \bar u_i].
  \end{equation}
- We remark that any rectangular input set can be converted to this symmetric form by a change of input variables. In addition, we consider semi-algebraic disturbance sets:
+ We remark that any rectangular input set can be converted to this symmetric form by a change of input variables. In addition, we consider semi-algebraic disturbance sets
 \begin{equation}
-  \mathcal D = \left\{ d : h_d \leq 0 \right\},
+  \mathcal D = \left\{ d : h_d \geq 0 \right\},
 \end{equation}
 where $h_d$ is potentially vector-valued in which case the inequality is interpreted component-wise.
 
-The invariance expression \eqref{eq:invariancecond} can be restated as follows:
+The invariance expression \eqref{eq:cbf_condition} can be restated as follows:
 \begin{equation}
-  \max_{x : h(x) = \epsilon} \max_{d \in \mathcal D} \min_{u \in \mathcal U} \mathcal L_f h(x) + \mathcal L_{g_u} h(x) u + \mathcal L_{g_d}(x) d \leq 0.
+\label{eq:maxformulation}
+  \min_{x \in \mathcal C} \min_{d \in \mathcal D} \max_{u \in \mathcal U} \mathcal L_f h(x) + \mathcal L_{g_u} h(x) u + \mathcal L_{g_d}(x) d + \alpha h(x) \geq 0.
 \end{equation}
 \begin{remark}
-  Since the expression is affine in both $d$ and $u$, the quantification over these two variables can be interchanged for a fixed $x$. In other words, there is no ``first mover advantage'' in the game between $u$ and $d$.
+  Since the expression is affine in both $d$ and $u$, the quantification over these two variables can be interchanged for a fixed $x$. In other words, there is no ``first mover advantage'' in the differential game between $u$ and $d$, thus the game \emph{has value} \cite{Barron1990}.
 \end{remark}
-The inner minimization problem is linear in $u$ and can thus be solved in a bang-bang fashion:
-\begin{equation*}
-\begin{aligned}
-    & \min_{u \in \mathcal U} \mathcal L_{g_u} h(x) u = \sum_{i=1}^4 \min \left([\mathcal L_{g_u} h(x)]_i \bar u_i, [\mathcal L_{g_u} h(x)]_i (- \bar u_i) \right) \\
-    & = - \sum_{i=1}^4 \left| [\mathcal L_{g_u} h(x)]_i \right|  \bar u_i.
-\end{aligned}
-\end{equation*} 
-Hence, we are left with a condition for invariance quantified only over $x$ and $d$.
+Apart from the maximization over $u$ this expression is linear in the coefficients of $h$. Based on the observation that the optimal $u$ in \eqref{eq:maxformulation} is always equal to $\pm \bar u$, as determined by the sign of $\mathcal L_{g_u}(x)$, we now introduce the main innovation in this section by assuming knowledge of functions $s_i(x)$ that determine the sign of the invariance-enforcing control action $\bar u_i$ at a state $x$. As demonstrated below, this function can often be guessed from elementary observations of the dynamics. In particular, we assume that
 \begin{equation}
-  \max_{x : h(x) = \epsilon} \max_{d \in \mathcal D} \mathcal L_f h (x) + \mathcal L_{g_d} h (x) d \leq \sum_{i=1}^4 \left| \left[ \mathcal L_{g_u} h(x) \right]_i \right|  \bar u_i.
-\end{equation}
-For signs $s \in \{ -1,1 \}^4$ the problem can be decomposed into eight problems
-\begin{equation}
+\label{eq:signfunction}
 \begin{aligned}
-  & \max_{x : \substack{h(x) = \epsilon \\ s_i \left[ \mathcal  L_{g_u} h(x) \right]_i \geq 0 }} \max_{d \in \mathcal D} \mathcal L_f h (x) + \mathcal L_{g_d} h (x) d \\
-  & \quad \leq \sum_{i=1}^4 s_i \left[ \mathcal L_{g_u} h(x) \right]_i \bar u_i
+	s_i(x) \geq &0 \implies \argmax_{u \in \mathcal U} \mathcal L_{g_u} h(x) u = \bar u_i, \\
+	s_i(x) < &0 \implies \argmax_{u \in \mathcal U} \mathcal L_{g_u} h(x) u = -\bar u_i.
 \end{aligned}
 \end{equation}
-that verify the condition in different parts of the state space depending on the sign of $\mathcal L_{g_u} h(x)$.
+We can now decompose the problem into $2^m$ different regions based on the signs $\chi_i \in \{ -1,1 \}$ of the functions $s_i(x)$.
+\begin{equation}
+  \min_{\substack{x \in  \mathcal C \\ \chi_i s_i(x) \geq 0}} \min_{d \in \mathcal D} \mathcal L_f h(x) + \mathcal L_{g_u} h(x) \begin{bmatrix}
+  	\chi_1 \bar u_1 \\
+  	\vdots \\
+  	\chi_m \bar u_m
+  \end{bmatrix} + \mathcal L_{g_d}(x) d + \alpha h(x) \geq 0.
+\end{equation}
 
-Consider the optimization problem constructed using the S procedure:
+Now assume that we want to enforce invariance of a set $\bar {\mathcal C} = \{ g_x(x) \geq 0 \}$ and consider the optimization problem constructed using the S procedure:
 \begin{equation}
 \label{eq:tmin}
 \begin{aligned}
-  \min_{t, \sigma_1, \sigma_2} & \quad t \\
-  \text{s.t} &  \quad  t - \left[ \mathcal L_f h(x) + \mathcal L_{g_d} h(x) d -\sum_{i=1}^4 s_i \left[\mathcal L_{g_u} h(x) \right]_i \bar u_i \right] \\
-             & \quad - \sigma_1(x,d) \left( h(x) - \epsilon \right) - \sigma_{2,i}(x,d) \left( s_i \left[ \mathcal L_{g_u} h(x) \right]_i \right) \\
-             & \quad + \sigma_3(x,d) \left( h_d(d) \right) \geq 0, \\
-             & \quad  \sigma_{2,i}(x) \geq 0, \sigma_3(x) \geq 0.
+  \max_{h, \sigma^k_1, \sigma^k_{2,i}, \sigma^k_3} & \quad \int_{\bar {\mathcal C}} h(x) \mathrm{d} x \\
+  \text{s.t} &  \quad \mathcal L_f h(x) + \mathcal L_{g_d}(x) d + \mathcal L_{g_u} h(x) \begin{bmatrix}
+  	\chi_1 \bar u_1 \\
+  	\vdots \\
+  	\chi_m \bar u_m
+  \end{bmatrix} + h(x) \\
+  & \qquad \geq \sigma^k_1(x,d) g_x(x) + \sum_{i=1}^m \sigma^k_{2,i}(x,d) (\chi_i s_i(x)) \\
+  & \qquad \;  + \sigma^k_3(x,d) g_d(d), \quad \forall \chi_i \in \{ -1,1 \} \\
+  & \quad \sigma^k_1(x,d) \geq 0, \sigma^k_{2,i}(x,d) \geq 0, \sigma^k_3(x,d) \geq 0.
 \end{aligned}
 \end{equation}
-
-\textcolor{red}{Can pack all constraints into one problem and solve bilinearly by alternating multipliers and V..}
-
-\textcolor{red}{Can optimize volume of invariant set.}
-
+Here, $k$ ranges from $1$ to $2^m$, i.e., the multipliers are allowed to be different for different values of $\chi_1, \ldots, \chi_m$. While optimization over the set of non-negative polynomials is intractable, the positivity constraints can be strengthened into SOS constraints to turn the problem into a semi-definite program that is linear in the decision variables.
+ 
 \begin{prop}
-  If the minimizing $t$ is less than or equal to zero for all eight combinations of $s_i$, then $\mathcal C$ is robustly controlled invariant for disturbances $d \in \mathcal D$.
+  A function $h(x)$ that satisfies \eqref{eq:tmin} describes a controlled-invariant set contained in $\bar{\mathcal C}$, and satisfies the control barrier condition \eqref{eq:cbf_condition}.
 \end{prop}
 
-Upper bounds to the problem \eqref{eq:tmin} can be found by converting the inequality constraints to SOS constraints and solving the resulting semi-definite program for increasing polynomial degrees.
+\begin{remark}
+	The sign restriction \eqref{eq:signfunction} essentially amounts to defining a switching feedback controller with switching surfaces described by $s_i(x) = 0$. These switching surfaces can turn out to be problematic if they are \emph{unstable}, i.e., if there exists a system trajectory $x(t)$ for which $s_i(x(t)) \equiv 0$ and $\| x(t) \| \rightarrow \infty$. The phenomenon is related to \emph{abnormal extremals} in time-optimal control \cite{Boscain2004}. To cope with this numerically, \eqref{eq:tmin} can be slightly relaxed by replacing $\chi_i s_i(x)$ with $\chi_i s_i(x) - \epsilon$, thus disregarding neighborhoods of points where $s_i(x) = 0$.
+\end{remark}
+
+\begin{prop}
+	\textcolor{red}{Can potentially prove a convergence/necessity result if the set is \emph{contractive} \cite{Ames2017} via Putinar etc.}
+\end{prop}
+
+
 
 \subsection{Finding a Polynomial}
 
@@ -269,6 +284,22 @@ Given the invariance verification above, the problem is finding a candidate poly
    \end{itemize} 
 \end{itemize} 
 
+\section{Numerical Examples}
+
+We now present a series of examples with increasing level of sophistication. We start with a simple 2D system to highlight how $s(x)$ can be chosen from elementary considerations, continue with Dubin's car that suffers from singularities and thus can't be solved exactly, and finally move on to quadrotor systems.
+
+\subsection{Planar System}
+
+\subsection{Dubin's Car}
+
+\subsection{Planar Quadrotor}
+
+\subsection{Full Quadrotor}
+
+
+\section{Experimental Results}
+
+Report of implementation on real quadrotor
 
 \printbibliography 
 
