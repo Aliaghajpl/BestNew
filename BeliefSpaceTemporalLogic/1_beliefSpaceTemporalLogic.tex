@@ -1256,7 +1256,21 @@ $\card{S_\PA}$~\cite{papadimitriou1987}.
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Results} \label{sec:simulation}
-	
+
+We now present results from the proposed planner algorithm in a realistic mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
+\begin{equation}
+    \bigwedge_{c \in \{A,B \}} \lozenge \xi_c \land \left( \xi_{keepout} \Until \xi_c \right).
+\end{equation}
+For dynamics we opt for a unicycle model
+\begin{equation}
+    \begin{bmatrix}
+        x(t+1) \\
+        y(t+1) \\
+        \varphi(t+1)
+    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\varphi(t)) \\ y(t) + v \sin(\varphi(t)) \\ \varphi(t) + \omega \end{bmatrix},
+\end{equation}
+where $v$ and $\omega$ are the inputs to the model.
+
 % 	\begin{figure}[ht!]
 % 		\centering
 % 		\subfigure{
