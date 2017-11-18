@@ -58,7 +58,7 @@ Belief Space Planning with Temporal Logic Constraints}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
 
-%\author{Cristi, Ali, Rohan, Petter, Sofie, Richard Murray, Aaron Ames}
+\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Sofie Haesaert, Ali-Akbar Agha-Mohammadi}
 
 % avoiding spaces at the end of the author lines is not a problem with
 % conference papers because we don't use \thanks or \IEEEmembership
@@ -730,7 +730,7 @@ initial text={}]
 Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Agha14}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
 
 \begin{definition}[FIRM]
-A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a \local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
+A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
 FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node corresponds to a Gaussian belief state $b = (\hat{x},P) \in \TSX$ with mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
@@ -1327,6 +1327,24 @@ $\card{S_\PA}$~\cite{papadimitriou1987}.
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Results} \label{sec:simulation}
 
+\begin{figure*}[h]
+	\begin{center}
+		\includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_1.png} ~ \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_3.png} ~
+		\includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_5.png} ~ \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_7.png} 
+	\end{center}
+	\label{fig:planning}
+	\caption{Illustration of the incremental planning and re-planning procedure, where the shaded areas illustrate regions that have been explored by the copter. The first three figures illustrate how the roadmap is build until a trajectory that visits both \texttt{A} and \texttt{B} without entering \texttt{Obs} can be constructed. However, during execution (blue line), an additional obstacle \texttt{ObsLater} is encountered, which triggers a construction of a new roadmap. The rightmost figure shows the new roadmap together with an execution trajectory that fulfills the specification.}
+\end{figure*}
+
+\begin{figure*}[h]
+	\begin{center}
+		\includegraphics[width=0.15\textwidth]{figs/pdf1.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf2.png} ~
+		\includegraphics[width=0.15\textwidth]{figs/pdf4.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf5.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf6.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf7.png} 
+	\end{center}
+	\label{fig:rover_path}
+	\caption{TODO}
+\end{figure*}
+
 We now present results from the proposed planner algorithm in a realistic mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
 \begin{equation}
     \bigwedge_{c \in \{A,B \}} \lozenge \xi_c \land \left( \xi_{keepout} \Until \xi_c \right).
@@ -1343,6 +1361,7 @@ where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim 
 
 In order to simulate an uncertain environment we assume that map labels are only available for the region surrounding the initial state. The rover can request that the copter explores a new area in order to extend the planning region. Furthermore, if the rover encounters a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure \ref{fig:planning_overview}.
 
+We defined a square environment with obstacles and science targets \texttt{A} and \texttt{B} in order to test the algorithm. Fig. \ref{fig:planning} illustrates the incremental construction of a road map, including a replanning step
 
 \begin{figure}
 \begin{center}
@@ -1377,6 +1396,13 @@ In order to simulate an uncertain environment we assume that map labels are only
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Conclusion} \label{sec:conclusion}
 	This paper proposes ...
+
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
