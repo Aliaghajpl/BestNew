@@ -94,22 +94,22 @@ To aid this objective, we devise a specification framework for missions based on
 Distribution Temporal Logic (DTL), a language that is able to capture temporal
 and uncertainty constraints.
 Using DTL, we formally encode complex mission specifications used for actual
-Mars robot deployment that enforce constraints raging from science campaign
+Mars robot deployment that enforce constraints ranging from science campaign
 (e.g., getting science results from certain regions) to operational constraints
-such as maintaining certain accuracy over the the vehicles' state and
+such as maintaining certain accuracy over the vehicles' state and
 the environment, inter-agent distance, energy level, etc.
+
 In this paper, we consider a simplified version of the full specification set.
 The rover is assumed to have stochastic motion and perception, and is tasked
 with collecting samples from a partially-known deterministic environment.
 The helicopter provides support in terms of exploring the environment on-demand.
 We propose a sampling-based control policy synthesis framework for the rover
-together with an on-line execution procedure, where the exploration demands for
+together with an on-line execution procedure, where exploration demands for
 the helicopter are generated.
-Exploration is necessary if insufficient knowledge is available to synthesize a
-satisfying control policy with sufficient success probability.
-Another case is during execution if a mismatch between maintained environment
-map and the rover's sensor observations is detected, e.g., observing high-risk
-areas with sand or high slopes.
+Exploration is necessary if insufficient knowledge is available to synthesize a control policy with sufficient success probability.
+In addition, a monitor is attached to the execution procedure that triggers re-planning if a mismatch between the maintained environment
+map and the rover's sensor observations is detected, e.g., if high-risk
+areas with sand or high slopes are encountered.
 We present simulation results that illustrate performance and capabilities
 of the algorithm.
 %
