@@ -84,8 +84,37 @@ Belief Space Planning with Temporal Logic Constraints}
 \maketitle
 
 \begin{abstract}
-This work studies the problem of planetary exploration with a two-agent team of Mars rover and Mars helicopter, tasked to collect a set of samples from the Mars surface. The motion and perception of both robots are subject to uncertainty and the environment map is unknown. In addition, the robot team needs to satisfy a set of specifications ranging from constraints of the science campaign (e.g., getting science results from certain regions) to operational constraints such as maintaining certain accuracy, inter-agent distance, energy level, etc. We cast the problem of planning under uncertainty as a POMDP (Partially-Observable Markov Decision Process) problem that needs to be solved along with constraints encoded as mission specifications. We utilize temporal logic to synthesize a policy for a partially-observable system that satisfies mission specification. The emerging policy demonstrates active perception behaviors such as gathering information (e.g., about the environment map) to enable satisfaction of the mission and safety specifications.
-
+In this paper we consider the problem of planetary exploration with a two-agent
+team composed of a Mars rover and a Mars helicopter, tasked to collect a set of
+samples from the Mars surface.
+Due to the high cost and risk associated with these missions, it is critical
+to have strong correctness and performance guarantees on the robots' behaviors
+under the synthesized control policies.
+To aid this objective, we devise a specification framework for missions based on
+Distribution Temporal Logic (DTL), a language that is able to capture temporal
+and uncertainty constraints.
+Using DTL, we formally encode complex mission specifications used for actual
+Mars robot deployment that enforce constraints raging from science campaign
+(e.g., getting science results from certain regions) to operational constraints
+such as maintaining certain accuracy over the the vehicles' state and
+the environment, inter-agent distance, energy level, etc.
+In this paper, we consider a simplified version of the full specification set.
+The rover is assumed to have stochastic motion and perception, and is tasked
+with collecting samples from a partially-known deterministic environment.
+The helicopter provides support in terms of exploring the environment on-demand.
+We propose a sampling-based control policy synthesis framework for the rover
+together with an on-line execution procedure, where the exploration demands for
+the helicopter are generated.
+Exploration is necessary if insufficient knowledge is available to synthesize a
+satisfying control policy with sufficient success probability.
+Another case is during execution if a mismatch between maintained environment
+map and the rover's sensor observations is detected, e.g., observing high-risk
+areas with sand or high slopes.
+We present simulation results that illustrate performance and capabilities
+of the algorithm.
+%
+% This work studies the problem of planetary exploration with a two-agent team of Mars rover and Mars helicopter, tasked to collect a set of samples from the Mars surface. The motion and perception of both robots are subject to uncertainty and the environment map is unknown. In addition, the robot team needs to satisfy a set of specifications ranging from constraints of the science campaign (e.g., getting science results from certain regions) to operational constraints such as maintaining certain accuracy, inter-agent distance, energy level, etc. We cast the problem of planning under uncertainty as a POMDP (Partially-Observable Markov Decision Process) problem that needs to be solved along with constraints encoded as mission specifications. We utilize temporal logic to synthesize a policy for a partially-observable system that satisfies mission specification. The emerging policy demonstrates active perception behaviors such as gathering information (e.g., about the environment map) to enable satisfaction of the mission and safety specifications.
+% 
 % In this paper, we present a sampling-based algorithm
 % to synthesize control policies with temporal and uncertainty
 % constraints. We introduce a specification language called
@@ -112,20 +141,24 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	\section{Introduction} \label{subsec:intro}
 	Future space missions will require much higher level of autonomy due to the growing complexity and uncertainty of missions and very short and delayed communication windows. At the same time, space missions are safety-critical, especially as it relates to surface exploration of planetary bodies like Mars. Despite this need, most of  today’s missions still require frequent human intervention. One of main areas humans are needed is to bridge the gap between high-level discrete planning and low-level continuous control, in particular, when there is partial information and real-world perception noise.
 
-    Focusing on a two-asset mission (Fig. \ref{fig:cover} for Mars helicopter ([copter?]) and Mars rover (\cite{traverse2020}, \cite{mars2012}) navigation/coordination, this work is concerned with developing a mathematical language to principally bridge the gap between high-level mission specifications and low-level control algorithms under partial and uncertain environment representation. \\
-    The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning \cite{KB-TAC08-LTLCon}, and
-    reactive planning in  \cite{kress-gazit:whereswaldo?,Murray2009} for deterministic models. Equivalent results for stochastic models are computationally intractable for continuous space systems and require approximate approaches \cite{soudjani2015faust,haesaert2017verification}. Additionally, little work exists on partially observable system.
+    Focusing on two-asset missions such as the one shown in Fig.~\ref{fig:cover} for the Mars helicopter and Mars rover~\cite{traverse2020}, \cite{mars2012} navigation and coordination, this work is concerned with developing a mathematical language to principally bridge the gap between high-level mission specifications and low-level control algorithms under partial and uncertain environment representation. \\
+    The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning~\cite{KB-TAC08-LTLCon}, and
+    reactive planning in~\cite{kress-gazit:whereswaldo?,Murray2009} for deterministic models. Equivalent results for stochastic models are computationally intractable for continuous space systems and require approximate approaches~\cite{soudjani2015faust,haesaert2017verification}. Additionally, little work exists on partially observable system.
     Hence, one of the important gaps between theory and real-world applications is that %the majority of high-level language that expresses 
     missions specified in terms of temporal specifications requires deterministic models or perfect observability. %, assumes the low level temporal properties are deterministic (or perfectly-observable, if stochastic).
     This assumption is limiting in real-world systems where the environment representation %, and hence safety properties, are created based on 
     is inferred from imperfect and noisy sensor measurements.
     
     To represent the low-level control and decision making under motion and sensing uncertainty, we model the system %problem 
-    in its most generic and principled form as a Partially-Observable Markov Decision Process (POMDP) problem \cite{Leslie98} \cite{Smallwood73} \cite{Bertsekas2012}. For the high-level decision making problem we rely on formal temporal logic methods [?ask Cirsti for this?]. In this work, we aim to bridge the gap between these two layers and propose a unified mission and motion planning framework.
+    in its most generic and principled form as a Partially-Observable Markov Decision Process (POMDP) problem \cite{Leslie98} \cite{Smallwood73} \cite{Bertsekas2012}. For the high-level decision making problem we rely on Distribution Tempiral Logic for mission specification and techniques from formal methods for control policy synthesis. In this work, we aim to bridge the gap between these two layers and propose a unified mission and motion planning framework.
 	
 	In the rest of this section, we will go over over the related work and put our work into the context. 
-	In Section \ref{sec:DTL}, we discuss the POMDP framework, belief space planning and propose formal method languages that can directly work with belief spaces for decision making. In Section \ref{sec:misspec}, we explain the specific Mars mission that we aim to satisfy. The rest of the section shows a general framework to formulate the mission specification into \DTL specification.
-	Section \ref{sec:planner} details the process of synthesizing a control policy for unified mission and motion planning.
+	In Section \ref{sec:DTL}, we discuss the POMDP framework, belief space planning and propose a formal specification framework that can directly work with belief spaces for decision making. In Section \ref{sec:misspec}, we present DTL formulation of a full Mars mission.
+	Next, we proceed to solve a simplified version of the problem that tackles the challenges of planning a rover with stochastic motion and perception
+	and with partially known maps, reactive deployment, and coordination between the rover and helicopter for information gathering necessary for
+	control policy synthesis.
+% 	The rest of the section shows a general framework to formulate the mission specification into \DTL specification.
+	Section \ref{sec:planner} details the process of synthesizing a control policy for unified mission and motion problem planning.
 	In Section \ref{sec:simulation}, we show simulation results for one instance of the general framework proposed in Section \ref{sec:SysModel} and \ref{sec:gdtlspec}. Note that our simulation focuses on the motion planning for the rover and assumes a deterministic map and deterministic copter dynamics. 
 	\begin{figure}[t]
 		\centering
@@ -140,7 +173,6 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	The highlights and contributions of this work can be listed as follows.
 	\begin{enumerate}
 	
-	{\color{orange}
 	% contribution: system model and mars mission spec
 	\item We rely on formal methods that can deal with stochastic partially observable systems, and we define complex specification for a two-robot team (i.e., rover, copter) in planetary exploration applications. In particular, we focus on complex missions that require rover and helicopter coordination, where the resulting formulae capture properties that take into account uncertainty
 	over the robots' poses, and map (elevation, regions and their labels, presence of samples).
@@ -153,13 +185,13 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	
 	
 	% contribution: planning framework, where the two robots interact
-	\item We propose a method that can handle failures and unexpected contingencies during the execution via re-planning or re-mapping the environment to get more information. The re-mapping phase is an instance of active perception behaviors that emerges of the proposed framework.
+	\item We propose a method that can handle failures and unexpected contingencies during the execution via re-planning and re-mapping the environment to get more information. The re-mapping phase is an instance of active perception behaviors that emerges of the proposed framework.
 	
-	\item We consider an interacting team of robots (copter and vehicle) and
-	propose a framework that integrates on-line execution policy with active
-	perception to detect perception failures/mismatches, on demand mapping of
-	the environment by the copter when the currently available map is insufficient,
-	dynamic re-planning in case of failure or remapping.
+% 	\item We consider an interacting team of robots (copter and vehicle) and
+% 	propose a framework that integrates on-line execution policy with active
+% 	perception to detect perception failures/mismatches, on demand mapping of
+% 	the environment by the copter when the currently available map is insufficient,
+% 	dynamic re-planning in case of failure or remapping.
 	
 	% contribution: sampling-based algorithm for the rover
 	\item We propose a sampling-based framework to synthesize 
@@ -172,22 +204,21 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	A simple case study is used to show the main features of the framework.
 	The second example considers a real location on Mars that the robot team
 	needs to explore.
-	}
 	
-	% problem: we don't define a new logic, and the extension is rather thin. It is much better to focus on how we use DTL in the Mars mission case. See first contribution.
-	\item The proposed method extends the formal methods to stochastic partially observable systems, where we can incorporate map uncertainty into the planning. For example, we can express predicates like: the uncertainty of a given part of map needs to be below a certain threshold.
+% 	% problem: we don't define a new logic, and the extension is rather thin. It is much better to focus on how we use DTL in the Mars mission case. See first contribution.
+% 	\item The proposed method extends the formal methods to stochastic partially observable systems, where we can incorporate map uncertainty into the planning. For example, we can express predicates like: the uncertainty of a given part of map needs to be below a certain threshold.
 	
-	% problem: unclear what the contribution is from this paragraph. I re-focused it on a framework of interacting robots, and active perception is integrated in it.
-	\item This framework results in active perception and information gathering behaviors. For example, to satisfy safety constraints, the system actively steers its sensors to gather more information about the parts of map that violate the safety constraints.
+% 	% problem: unclear what the contribution is from this paragraph. I re-focused it on a framework of interacting robots, and active perception is integrated in it.
+% 	\item This framework results in active perception and information gathering behaviors. For example, to satisfy safety constraints, the system actively steers its sensors to gather more information about the parts of map that violate the safety constraints.
 	
-	% problem: this is not quite a contribution, it is already present in previous work
-	\item The proposed method can express predicates directly over the system belief, rather than system state.
+% 	% problem: this is not quite a contribution, it is already present in previous work
+% 	\item The proposed method can express predicates directly over the system belief, rather than system state.
 	
-	% problem: this is good, but the feedback I usually receive from PIs is that contributions must be very crisp, i.e., stated very clearly. I integrated this into the second contribution above.
-	\item The proposed method also handles execution failures. When things don't go according to plan during execution, the propose method re-plans or re-maps the environment to get more information.
+% 	% problem: this is good, but the feedback I usually receive from PIs is that contributions must be very crisp, i.e., stated very clearly. I integrated this into the second contribution above.
+% 	\item The proposed method also handles execution failures. When things don't go according to plan during execution, the propose method re-plans or re-maps the environment to get more information.
 	
-	% problem: there is a wording problem. We didn't extend formal methods to space problems (see work by Brian Williams), but we applied it there. We can claim that we focus on rover space missions. See first and forth contribution.
-	\item We extend the application of formal methods to space problems, in particular surface exploration via a two-agent system.
+% 	% problem: there is a wording problem. We didn't extend formal methods to space problems (see work by Brian Williams), but we applied it there. We can claim that we focus on rover space missions. See first and forth contribution.
+% 	\item We extend the application of formal methods to space problems, in particular surface exploration via a two-agent system.
 	\end{enumerate}
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,8 +254,17 @@ This work studies the problem of planetary exploration with a two-agent team of 
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{POMDP}\label{sec:POMDP}
-	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let $x_{k+1}=f(x_k,u_k,w_k)$ and $z_k=h(x_k,v_k)$ denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as $b_{k+1}=\tau(b_k,u_k,z_{k+1})$.
-    {\color{red} In this work, we require that the belief space is a Polish space\footnote{With Euclidean spaces as a typical example a Polish space is a separable and completely metrizable topological space. } and that the recursive filter is a Borel measurable mappings.}
+	Let us denote the system state, action, and observation at the $k$-th time-step by $x_k, u_k, z_k$, respectively. Let
+	\begin{align}
+	x_{k+1} &= f(x_k,u_k,w_k) \label{eq:dynamics} \\
+	z_k &= h(x_k,v_k) \label{eq:observations}
+	\end{align}
+	denote the system dynamics and measurement models, where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ denote the state-dependent process and observation noise. Due to the observation noise, the best one can infer about the system state is a probability distribution over all possible states, referred to as belief $b_k=p(x_k|z_{0:k})$. Belief space (i.e., the set of all beliefs) is denoted by $\BB{B}$. Belief is typically evolved using a recursive filter denoted by $\tau$ as
+	\begin{equation}
+	\label{eq:filter}
+	b_{k+1}=\tau(b_k,u_k,z_{k+1}).
+	\end{equation}
+    In this work, we require that the belief space is a Polish space\footnote{With Euclidean spaces as a typical example a Polish space is a separable and completely metrizable topological space.} and that the recursive filter is a Borel measurable mapping.
 % * <haesaert@caltech.edu> 2017-10-31T06:56:01.319Z:
 %
 % > In this work, we require that the belief space is a Polish space\footnote{With Euclidean spaces as a typical example a Polish space is a separable and completely metrizable topological space. } and that the recursive filter is a Borel measurable mappings.
@@ -341,6 +381,28 @@ This work studies the problem of planetary exploration with a two-agent team of 
     
     \end{definition}
     
+    \subsection{Problem Formulation}\label{sec:prob}
+    
+    The control synthesis problem for the POMDP with DTL specifications can be formulated as follows:
+    
+    \begin{problem}[Maximum Probability Problem]
+    \label{pb:mpp}
+    Let $\phi$ be a given DTL formula and let the system
+    evolve according to dynamics~\eqref{eq:dynamics},
+    with observation dynamics~\eqref{eq:observations},
+    and using a Kalman filter defined by~\eqref{eq:filter}.
+    Find a policy $\pi^*$ such that 
+    
+    \begin{equation}
+    \label{eq:mpp}
+    \begin{aligned}
+    &\mu^* = \underset{\mu \in \BB{M}}{\arg \max}Pr[\BF{b} \models \phi] \\
+    &\text{subject to~\eqref{eq:dynamics},~\eqref{eq:observations},~\eqref{eq:filter}.}
+    \end{aligned}
+    \end{equation}
+    
+    \end{problem}
+    
 % 	\begin{figure}[h!]
 % 		%\vspace*{-20pt}
 % 		\centering
@@ -446,11 +508,12 @@ This work studies the problem of planetary exploration with a two-agent team of 
     
     We start by defining the overall specification (i.e., $\phi$) for the campaign in hand:
     \begin{align}\label{eq:overallspec}
-        \phi = \phi_{science} \land \Always (\pred_{uncert} \land \phi_{safety} \land \phi_{dynamic})
+        \phi = \phi_{science} \land (\pred_{uncert} \land \phi_{safety} \land \phi_{dynamic}) \Until \pred_{completed}
         % \Until \pred_{complete},
     \end{align}
-    which expresses the mission where the science objective $\phi_{science}$ needs to be satisfied and we always need to maintain a desired level of accuracy (expressed by $\zeta_{uncert}$, safety $\phi_{safety}$, and dynamics constraints $\phi_{dynamic}$.
-   \sofie{[See later comment on this.]}
+    which expresses the mission where the science objective $\phi_{science}$ needs to be satisfied and we need to maintain a desired level of accuracy,
+    safety, and dynamics constraints until the mission is completed as expressed by $\zeta_{uncert}$, $\phi_{safety}$, $\phi_{dynamic}$, and
+    $\pred_{completed}$, respectively.
 
 \noindent\pr{Science} The science objective in this campaign is to collect two samples from high-valued science areas A and one sample from area B. Let $\pred_{X} = p^r \in X$ denote the event that pick up a sample from region $X$ that is subset of the terrain.
     \begin{align}
@@ -597,7 +660,11 @@ In this section, we describe our approach to generate a control policy that driv
 \subsection{Finite State Automaton}\label{FSA}
 %\pr{GDTL to LTL conversion}
 % FIRM graph introduced in Section \ref{sec:FIRM} captures the evolution of the system belief and in this section we discuss Rabin automaton that captures the evolution of the mission specification satisfaction.
-We start by describing the process of converting the high level mission specifications expressed in \DTL into a Finite State Automaton (FSA) that captures the evolution of specification satisfaction. To generate the FSA, we first convert \DTL to LTL simply by converting the predicates to symbols~\cite{JonesDTL2013}, and then we use {\em spot}~\cite{duret14} to convert the LTL specifications to FSA.
+We start by describing the process of converting the high level mission specifications expressed in \DTL
+into a Finite State Automaton (FSA) that captures the evolution of specification satisfaction.
+To generate the FSA, we first convert \DTL to LTL simply by converting the predicates to symbols~\cite{JonesDTL2013},
+and then we use {\em spot}~\cite{duret14} to convert the LTL specifications to FSA.
+Note that an FSA is sufficient in this case, because we considered a syntactically co-safe mission specification.
 % Symbol vs. predicates function
 % $f\equiv f(b_k)\leq 0$
 % $f\in F_\phi$
@@ -622,7 +689,7 @@ $Acc_\FSA\subset S_\FSA$ is a set of accepting states.
 %    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
 %\end{itemize}
 \end{definition}
-\sofie{[Q: From what I understand, only a syntactically co-safe property can be rewritten to a DFA. This is a property which has a finite witness. In this paragraph, there is no reference to this. Additionally, looking at the properties defined in \eqref{eq:overallspec}, it looks like the specification includes an always operator. This cannot be described by a DFA. Am I missing something? Is the accepting state a state you want to visit infinitely often? Hence it is actually a Buchi machine? ]}
+% \sofie{[Q: From what I understand, only a syntactically co-safe property can be rewritten to a DFA. This is a property which has a finite witness. In this paragraph, there is no reference to this. Additionally, looking at the properties defined in \eqref{eq:overallspec}, it looks like the specification includes an always operator. This cannot be described by a DFA. Am I missing something? Is the accepting state a state you want to visit infinitely often? Hence it is actually a Buchi machine? ]}
 
 \newcommand{\goal}{{\color{green!50!black}\blacksquare}}
 \newcommand{\obst}{{\color{red}\blacksquare}}
@@ -663,7 +730,7 @@ initial text={}]
 Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Agha14}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
 
 \begin{definition}[FIRM]
-A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a \sofie{[change to local feedback controller/mapping]} feedback local controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
+A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a \local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
 FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node corresponds to a Gaussian belief state $b = (\hat{x},P) \in \TSX$ with mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
@@ -980,8 +1047,8 @@ FSA $\FSA$.
 % $Bad_\PA = \{ e \in \Delta_\PA \,|\, p(Trap_\FSA \mid e) > 0\}$.
 % {\color{red}what is $Acc_\FSA$? has been defined already?}
 A trajectory of $\PA = \TS \times \FSA$ is said to be accepting
-if and only if the trajectory ends in a state from $Acc_\PA$. The acceptance condition for $\PA$ is defined by its transitions and not in the usual way in terms of its states, due to the stochastic nature of transitions between belief nodes in $\TS$.
-\sofie{[The last statement does not make sense to me, the acceptance condition is defined as $Acc_\FSA$ which is a subset of the states $Q_\PA $ of $\PA$]}
+if and only if the trajectory ends in a state from $Acc_\PA$. 
+% \sofie{[The last statement does not make sense to me, the acceptance condition is defined as $Acc_\FSA$ which is a subset of the states $Q_\PA $ of $\PA$]}
 %It follows by construction that a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ of $\PA$ is accepting if and only if the trajectory $\BF{s}^0_{0:T_0-1} \BF{s}^1_{0:T_1-1} \ldots$ is accepting in $\FSA$, where $\BF{s}^i_{0:T_i}$ is the random trajectory of $\FSA$ obtained by traversing the transition $e = (B_i, B_{i+1})$ using the controller $\mu^{ij}$ and $s^i_{0} = s_i$ for all $i \geq 0$. Note that $\BF{s}^i_{T_i} = \BF{s}^{i+1}_0$. As a result, a trajectory of $\TS$ obtained from an accepting trajectory of $\PA$ satisfies the given specification encoded by $\FSA$ with positive probability. We denote the projection of a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ onto $\TS$ by $\proj{\BF{q}}{\TS} = B_0 B_1 \ldots$.
 
 \begin{remark}
@@ -1168,9 +1235,13 @@ $\bar{m} \asgn$ GetInitialExplorationDirection() \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding the Maximum Probability policy}
-The existence of satisfying policies results immediately from the construction.
-\sofie{[This isn't obvious to me]}
-We only need to check if the product MDP $\PA$ has any accepting transitions $Acc_\PA$.
+The existence of satisfying policies results immediately from the construction,
+i.e., if the Alg.~\ref{alg:compute-mdp} returns a non-empty policy,
+then the memoryless policy on $\PA$ reaches a final state of $\PA$,
+and can be converted into a finite-memory policy on $\MDP$.
+Since the policy reaches a final state of $\PA$, and therefore of $\FSA$,
+it follows that it satisfies the specification with positive probability.
+We only need to check if the product MDP $\PA$ has any accepting states $Acc_\PA$.
 
 Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize the probability that a given formula $\phi$ is satisfied.  
 %%
