@@ -44,7 +44,7 @@
 % paper title
 %\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
 
-\title{\huge Planetary Exploration with a Copter-Rover Team:\\
+\title{\huge Planetary Exploration with a Helicopter-Rover Team:\\
 Belief Space Planning with Temporal Logic Constraints}
 % \title{
 % Belief Space Mission and Motion Planning with Temporal Logic Constraints:
@@ -58,7 +58,7 @@ Belief Space Planning with Temporal Logic Constraints}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
 
-\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Sofie Haesaert, Ali-Akbar Agha-Mohammadi}
+%\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Sofie Haesaert, Ali-Akbar Agha-Mohammadi}
 
 % avoiding spaces at the end of the author lines is not a problem with
 % conference papers because we don't use \thanks or \IEEEmembership
@@ -84,22 +84,19 @@ Belief Space Planning with Temporal Logic Constraints}
 \maketitle
 
 \begin{abstract}
-In this paper we consider the problem of planetary exploration with a two-agent
+In this paper, we consider the problem of planetary exploration with a two-agent
 team composed of a Mars rover and a Mars helicopter, tasked to collect a set of
 samples from the Mars surface.
 Due to the high cost and risk associated with these missions, it is critical
-to have strong correctness and performance guarantees on the robots' behaviors
-under the synthesized control policies.
-To aid this objective, we devise a specification framework for missions based on
-Distribution Temporal Logic (DTL), a language that is able to capture temporal
-and uncertainty constraints.
-Using DTL, we formally encode complex mission specifications used for actual
-Mars robot deployment that enforce constraints ranging from science campaign
-(e.g., getting science results from certain regions) to operational constraints
-such as maintaining certain accuracy over the vehicles' state and
-the environment, inter-agent distance, energy level, etc.
+to have strong correctness and performance guarantees on the robots' behaviors.
+To aid this objective, we devise a mission specification framework and
+formally encode complex mission specifications used for real Mars rover operation.
+We use Distribution Temporal Logic (DTL) to capture temporal and uncertainty constraints
+ranging from science campaign (e.g., getting science results from certain regions)
+to operational constraints such as maintaining certain accuracy over the vehicles' state
+and the environment, inter-agent distance, energy level, etc.
 
-In this paper, we consider a simplified version of the full specification set.
+In this work, we consider a simplified version of the full specification set.
 The rover is assumed to have stochastic motion and perception, and is tasked
 with collecting samples from a partially-known deterministic environment.
 The helicopter provides support in terms of exploring the environment on-demand.
@@ -107,7 +104,7 @@ We propose a sampling-based control policy synthesis framework for the rover
 together with an on-line execution procedure, where exploration demands for
 the helicopter are generated.
 Exploration is necessary if insufficient knowledge is available to synthesize a control policy with sufficient success probability.
-In addition, a monitor is attached to the execution procedure that triggers re-planning if a mismatch between the maintained environment
+In addition, a health monitor is attached to the execution procedure that triggers re-planning if a mismatch between the maintained environment
 map and the rover's sensor observations is detected, e.g., if high-risk
 areas with sand or high slopes are encountered.
 We present simulation results that illustrate performance and capabilities
@@ -139,43 +136,70 @@ of the algorithm.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 	\section{Introduction} \label{subsec:intro}
-	Future space missions will require much higher level of autonomy due to the growing complexity and uncertainty of missions and very short and delayed communication windows. At the same time, space missions are safety-critical, especially as it relates to surface exploration of planetary bodies like Mars. Despite this need, most of  today’s missions still require frequent human intervention. One of main areas humans are needed is to bridge the gap between high-level discrete planning and low-level continuous control, in particular, when there is partial information and real-world perception noise.
+	Future space missions will require much higher level of autonomy due to the growing complexity and uncertainty of missions and very short and delayed communication windows. At the same time, space missions are safety-critical, especially as it relates to surface exploration of planetary bodies like Mars. Despite this need, most of today’s missions still require frequent human intervention. One of main areas humans are needed is to bridge the gap between high-level discrete planning and low-level continuous control, in particular, when there is partial information and real-world perception noise.
 
-    Focusing on two-asset missions such as the one shown in Fig.~\ref{fig:cover} for the Mars helicopter and Mars rover~\cite{traverse2020}, \cite{mars2012} navigation and coordination, this work is concerned with developing a mathematical language to principally bridge the gap between high-level mission specifications and low-level control algorithms under partial and uncertain environment representation. \\
-    The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning~\cite{KB-TAC08-LTLCon}, and
-    reactive planning in~\cite{kress-gazit:whereswaldo?,Murray2009} for deterministic models. Equivalent results for stochastic models are computationally intractable for continuous space systems and require approximate approaches~\cite{soudjani2015faust,haesaert2017verification}. Additionally, little work exists on partially observable system.
-    Hence, one of the important gaps between theory and real-world applications is that %the majority of high-level language that expresses 
-    missions specified in terms of temporal specifications requires deterministic models or perfect observability. %, assumes the low level temporal properties are deterministic (or perfectly-observable, if stochastic).
-    This assumption is limiting in real-world systems where the environment representation %, and hence safety properties, are created based on 
-    is inferred from imperfect and noisy sensor measurements.
+    Focusing on two-asset missions such as the one shown in Fig.~\ref{fig:cover} for the Mars helicopter and Mars rover~\cite{traverse2020},~\cite{mars2012} navigation and coordination, this work is concerned with developing a mathematical language to principally bridge the gap between high-level mission specifications and low-level control under partial and uncertain environment representation.
     
-    To represent the low-level control and decision making under motion and sensing uncertainty, we model the system %problem 
-    in its most generic and principled form as a Partially-Observable Markov Decision Process (POMDP) problem \cite{Leslie98} \cite{Smallwood73} \cite{Bertsekas2012}. For the high-level decision making problem we rely on Distribution Tempiral Logic for mission specification and techniques from formal methods for control policy synthesis. In this work, we aim to bridge the gap between these two layers and propose a unified mission and motion planning framework.
-	
-	In the rest of this section, we will go over over the related work and put our work into the context. 
-	In Section \ref{sec:DTL}, we discuss the POMDP framework, belief space planning and propose a formal specification framework that can directly work with belief spaces for decision making. In Section \ref{sec:misspec}, we present DTL formulation of a full Mars mission.
-	Next, we proceed to solve a simplified version of the problem that tackles the challenges of planning a rover with stochastic motion and perception
-	and with partially known maps, reactive deployment, and coordination between the rover and helicopter for information gathering necessary for
-	control policy synthesis.
-% 	The rest of the section shows a general framework to formulate the mission specification into \DTL specification.
-	Section \ref{sec:planner} details the process of synthesizing a control policy for unified mission and motion problem planning.
-	In Section \ref{sec:simulation}, we show simulation results for one instance of the general framework proposed in Section \ref{sec:SysModel} and \ref{sec:gdtlspec}. Note that our simulation focuses on the motion planning for the rover and assumes a deterministic map and deterministic copter dynamics. 
-	\begin{figure}[t]
+    A growing body of literature considers control and planning problems with high-level mission specification
+    expresses in temporal logic in
+    deterministic~\cite{KB-TAC08-LTLCon,kress-gazit:whereswaldo?,Murray2009,VaBe-IROS-2013}, and
+    stochastic~\cite{Lahijanian2012,svorenova2013,Ayala2014,Cristi-CDC-2016,Kaelbling98} settings.
+    However, synthesis from temporal logic for continuous space stochastic systems is still very challenging.
+    Additionally, little work exists on partially observable systems and specifications integrating
+    temporal and uncertainty constraints.
+    Real-world system on the other had need to be able to operate in continuous environments, while able to reason
+    about their states and the environment representations inferred from imperfect and noisy sensor measurements.
+    
+    % The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning~\cite{KB-TAC08-LTLCon}, and
+    % reactive planning in~\cite{kress-gazit:whereswaldo?,Murray2009} for deterministic models. Equivalent results for stochastic models are computationally intractable for continuous space systems and require approximate approaches~\cite{soudjani2015faust,haesaert2017verification}. Additionally, little work exists on partially observable system.
+    % Hence, one of the important gaps between theory and real-world applications is that %the majority of high-level language that expresses 
+    % missions specified in terms of temporal specifications requires deterministic models or perfect observability. %, assumes the low level temporal properties are deterministic (or perfectly-observable, if stochastic).
+    % This assumption is limiting in real-world systems where the environment representation %, and hence safety properties, are created based on 
+    % is inferred from imperfect and noisy sensor measurements.
+    
+    \begin{figure}[t]
 		\centering
-		\includegraphics[width=0.99\columnwidth]{figs/heli-rover.png}
+		\includegraphics[width=0.75\columnwidth]{figs/heli-rover.png}
 		\caption{Mars rover and Mars helicopter coordinating and navigating on unknown Mars terrains.}
 		\label{fig:cover}
 	\end{figure}
+    
+    To represent the low-level control and decision making under motion and sensing uncertainty, we model the robot
+    in its most generic and principled form as a Partially-Observable Markov Decision Process
+    (POMDP)~\cite{Kaelbling98,Smallwood73}.
+    For the high-level decision making problem we rely on Distribution Temporal Logic (DTL)~\cite{JonesDTL2013},
+    and techniques from formal methods for control policy synthesis.
+    In this work, we aim to bridge the gap between these two layers and propose a unified mission and motion planning framework for systems with stochastic motion and observations, and partial environment knowledge.
+	
+	In the rest of this section, we present contributions and related work.
+	In Sec.~\ref{sec:DTL}, we propose a formal specification framework that integrates uncertainty and temporal
+	properties in the decision makings.
+	Sec.~\ref{sec:misspec} shows the formulation in DTL of a full Mars mission.
+	Next, we proceed to solve a simplified version of the problem that tackles the challenges of:
+	(a) planning a rover with stochastic motion and perception and with partially known maps,
+	(b) reactive deployment,
+	and (c) coordination between the rover and helicopter for information gathering necessary
+	for control policy synthesis.
+	Simplifying assumptions that will be lifted in future work include deterministic environment maps
+	and deterministic copter dynamics.
+	Sec.~\ref{sec:planner} details the process of synthesizing a control policy for unified mission
+	and motion problem planning.
+	Lastly, Sec.~\ref{sec:simulation} shows simulation results.
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{Highlights and contributions}
-	The highlights and contributions of this work can be listed as follows.
+	\subsection{Contributions}
+	The contributions of this work can be listed as follows:
 	\begin{enumerate}
 	
-	% contribution: system model and mars mission spec
-	\item We rely on formal methods that can deal with stochastic partially observable systems, and we define complex specification for a two-robot team (i.e., rover, copter) in planetary exploration applications. In particular, we focus on complex missions that require rover and helicopter coordination, where the resulting formulae capture properties that take into account uncertainty
-	over the robots' poses, and map (elevation, regions and their labels, presence of samples).
+	% contribution: system model and Mars mission spec
+	\item We define a mission specification framework for stochastic partially observable systems, and 
+	use it to encode a full set of a Mars deployment mission for a two-robot team, a rover and a helicopter.
+	The specifications require coordination between the two robots, and capture properties involving
+	uncertainty over the robots' poses, and map (elevation, regions and labels, presence of samples).
+	
+% 	We rely on formal methods that can deal with stochastic partially observable systems, and we define complex specification for a two-robot team (i.e., rover, helicopter) in planetary exploration applications. In particular, we focus on complex missions that require rover and helicopter coordination, where the resulting formulae capture properties that take into account uncertainty
+% 	over the robots' poses, and map (elevation, regions and their labels, presence of samples).
 	
 	%we can define constraints over the probability distribution of robot poses and the environment map.
 	%The proposed method extends the formal methods to stochastic partially observable systems, where we can incorporate map uncertainty into the planning.
@@ -185,7 +209,7 @@ of the algorithm.
 	
 	
 	% contribution: planning framework, where the two robots interact
-	\item We propose a method that can handle failures and unexpected contingencies during the execution via re-planning and re-mapping the environment to get more information. The re-mapping phase is an instance of active perception behaviors that emerges of the proposed framework.
+	\item We propose a method that can handle failures and unexpected contingencies during the execution via re-planning and re-mapping the environment to get more information. The re-mapping phase is an instance of active perception behaviors that emerges from the proposed framework.
 	
 % 	\item We consider an interacting team of robots (copter and vehicle) and
 % 	propose a framework that integrates on-line execution policy with active
@@ -196,14 +220,11 @@ of the algorithm.
 	% contribution: sampling-based algorithm for the rover
 	\item We propose a sampling-based framework to synthesize 
 	correct-by-construction policies for the rover that plans over maps provided
-	the copter, where the map information can be extended on-demand.
+	the helicopter, where the map information can be extended on-demand.
 	
 	% contribution: case studies
-	\item We highlight the proposed algorithms in two case studies involving
-	space exploration missions for a rover-copter team.
-	A simple case study is used to show the main features of the framework.
-	The second example considers a real location on Mars that the robot team
-	needs to explore.
+	\item We highlight the proposed algorithms in a case study involving
+	a real location on Mars that the robot team needs to explore.
 	
 % 	% problem: we don't define a new logic, and the extension is rather thin. It is much better to focus on how we use DTL in the Mars mission case. See first contribution.
 % 	\item The proposed method extends the formal methods to stochastic partially observable systems, where we can incorporate map uncertainty into the planning. For example, we can express predicates like: the uncertainty of a given part of map needs to be below a certain threshold.
@@ -223,33 +244,59 @@ of the algorithm.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{Related Work}
-	\cristi{TODO: related work on
-	(a) sampling-based methods for stochastic systems,}
-	\cristi{(b) formal-methods in robotics in general,}
-	The use of formal methods to specify mission goals for robot tasks has been successfully employed by \cite{DiKlChBe-RAM-2011,KB-TAC08-LTLCon}.  % Add citation to some of the work on language guided synthesis for scLTL and how it is related to solving reachability problems over automatons?
-	\cristi{(c) emphasis on synthesis for stochastic systems with TL specs,}
-    For finite state Markov decision processes properties expressed in PCTL and CSL can be verified by tools such as \cite{KNP11} and  \cite{dehnert2017storm}. 
-	For Markov processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications (PLTL) that can be formulated as automata specifications. By reformulation the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton %, representing the specification,
-	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. Still, its  computational implementation  hinges on formal abstraction of the stochastic system to a finite state Markov decision chain \cite{soudjani2015faust}.  
+	
+	In the last few years, planning and control in robotics has seen the adoption of temporal logics
+	as specification languages for rich robot missions.
+	Methods have been developed both for deterministic~\cite{KB-TAC08-LTLCon,kress-gazit:whereswaldo?,Murray2009,VaBe-IROS-2013}, and
+    stochastic~\cite{Lahijanian2012,svorenova2013,Ayala2014,Cristi-CDC-2016,Kaelbling98} settings.
+    Most of these are based on computing a finite abstraction for robots, and suffer from
+    poor scalability with the robots' state spaces.
+    
+    To deal with {\em the curse of dimension} and {\em the curse of history}, a class of randomized
+    algorithms has been developed~\cite{KF-IJRR11,Kav96,platt2010,bry2011} called sampling-based methods.
+    These have been adapted to deal with temporal logic goals without~\cite{bhatia2010sampling,VaBe-IROS-2013,vandenBerg11,Ali14-IJRR}
+    and with uncertainty~\cite{Morteza-HSCC-2013,Cristi-CDC-2016,prentice2009}.
+	
+% 	\cristi{TODO: related work on
+% 	(a) sampling-based methods for stochastic systems,}
+% 	\cristi{(b) formal-methods in robotics in general,}
+% 	The use of formal methods to specify mission goals for robot tasks has been successfully employed by \cite{DiKlChBe-RAM-2011,KB-TAC08-LTLCon}.  % Add citation to some of the work on language guided synthesis for scLTL and how it is related to solving reachability problems over automatons?
+% 	\cristi{(c) emphasis on synthesis for stochastic systems with TL specs,}
+	
+	% {[Cristi] These seem to be mostly about verification, and we already have space problems. I will make some remarks about it, but in less detail.}
+    % For finite state Markov decision processes properties expressed in PCTL and CSL can be verified by tools such as \cite{KNP11} and  \cite{dehnert2017storm}. 
+% 	For Markov processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications (PLTL) that can be formulated as automata specifications. By reformulation the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton %, representing the specification,
+% 	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. Still, its  computational implementation  hinges on formal abstraction of the stochastic system to a finite state Markov decision chain \cite{soudjani2015faust}.
+	
+% 	approximate approaches~\cite{soudjani2015faust,haesaert2017verification}
 	
 		% In this paragraph, the formal methods are given for partially observable systems.
-	For the safety verification of partially observable systems, \cite{Lesser2015} uses finite state approximations of stochastic hybrid systems to solve the safety problem over an equivalent information space. Next to the partial observations, also the knowledge that the system has been safe up to that moment is used to compute the belief space. % or sufficient statistic.
-	In \cite{Cristi-CDC-2016}, the standard linear-time temporal logic has been extended to incorporate beliefs and uncertainty. 
+% 	For the safety verification of partially observable systems, \cite{Lesser2015} uses finite state approximations of stochastic hybrid systems to solve the safety problem over an equivalent information space. Next to the partial observations, also the knowledge that the system has been safe up to that moment is used to compute the belief space. % or sufficient statistic.
 	
+% 	In \cite{Cristi-CDC-2016}, the standard linear-time temporal logic has been extended to incorporate beliefs and uncertainty. 
 	
+% 	\cristi{	(d) closest work and how it differs (i.e., CDC/ISER papers, Austin's and Kevin's work).
+% 	}
 	
-	\cristi{	(d) closest work and how it differs (i.e., CDC/ISER papers, Austin's and Kevin's work).
-	}
-
-	
-% 	In this section, we overview the most related work.
-	
-	In the last few years, formal methods has been extended to stochastic partially observable setting (e.g., \cite{Cristi-CDC-2016}, \cite{dorsa-rss2016}, \cite{fu2015integrating}). While these literature advance the formal methods approaches to partially observable and stochastic setting, there is a need for methods that enable replanning when the system faces with unmodeled contingencies. In other words, there exist a gap between planning and execution when it comes to real-world setup when the modelling assumption can be violated. Further, the uncertainty in the map has not yet been included in formal method approaches as a decision making parameter. In our application, the map uncertainty is a crucial factor in deciding what path is optimal and how/where the system need to increase its information to provide higher level of mission accomplishment success.
+	Extensions to temporal logic planning for partially observable and stochastic systems have also been
+	proposed~\cite{Cristi-CDC-2016,dorsa-rss2016,fu2015integrating}.
+	However, these do not consider replanning replanning when the system faces unmodeled contingencies.
+	In other words, there exist a gap between planning and execution when it comes to real-world setup
+	when the modelling assumptions can be violated.
+	The closest work to our own is~\cite{Cristi-CDC-2016}, where the authors a ground vehicle tasks with
+	a mission with temporal and uncertainty constraints, and a quadrobot provides noisy pose measurements
+	to the ground vehicle.
+	However, there is no on-line replanning and the no explicit cooperation between the robots.
+	Further, in~\cite{Cristi-CDC-2016} the environment map is assumed to be fully known a priori.
+	In our application, the environment is only partially known, and this plays a crucial role in
+	deciding what path is optimal, and how the two-robot system needs to increase information to
+	provide higher level of mission accomplishment success.
+	The proposed approach team actively cooperate to achieve the mission, where the rover's planning
+	algorithms generates demands for the helicopter explore parts of the environment.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Belief Space Temporal Logic}
-    {\color{red} [There is currently no problem definition, would it make sense to add this to the end of this section?]}
-    
+
 	In this section, we define a language for planning under uncertainty in partially-observable environments using formal methods. We will start by reviewing partially-observable systems and the POMDP problem. Then we will go over the belief-based temporal logic for mission planning.
 	
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,8 +327,9 @@ of the algorithm.
 	\begin{figure*}[t!]
     	\centering
     % 	\includegraphics[width=1.4\columnwidth]{figs/map.png}
-    	\includegraphics[width=2\columnwidth]{figs/MarsLabelledWithSand.png}
-    	\caption{Labelled map of a typical campaign where blue and purple areas show regions containing science targets for the rover and orange area shows the region in sand.}
+    	\includegraphics[width=1.7\columnwidth]{figs/MarsLabelledWithSand.png}
+    	\caption{Labelled map of a %typical
+    	campaign where blue and purple mark regions containing science targets for the rover and orange area shows the region in sand.}
     	\label{fig:Scenario}
     \end{figure*}
     
@@ -293,36 +341,39 @@ of the algorithm.
     
     %a predicate temporal logic defined over the space of Gaussian distributions with fixed dimension.
     
-    \pr{Notation}
-    Let $\Sigma$ be a finite set. The cardinality,
-    power set, Kleene- and $\omega$-closures
-    of $\Sigma$ are denoted by $\card{\Sigma}$,
-    $\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
-    respectively.
-    $A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
-    $n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
-    functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
-    respect to the Lebesgue measure of $\BB{R}^n$.
-    The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $S^n$.
-    $\BB{E}[\cdot]$ is the expectation operator.
-    The $m \times n$ zero matrix and
-    the $n \times n$ identity matrix are denoted by
-    $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
-    The supremum and Euclidean norms are denoted by
-    $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
+    % {[Cristi] We can introduce notation on-the-fly.}
+    % \pr{Notation}
+    % Let $\Sigma$ be a finite set. The cardinality,
+    % power set, Kleene- and $\omega$-closures
+    % of $\Sigma$ are denoted by $\card{\Sigma}$,
+    % $\spow{\Sigma}$, $\Sigma^*$ and $\Sigma^\omega$,
+    % respectively.
+    % $A \subseteq \BB{R}^n$ and $B \subseteq \BB{R}^m$,
+    % $n, m \geq 0$, we denote by $\CA{M}(A, B)$ the set of
+    % functions with domain $A$ and co-domain $B$, where $A$ has positive measure with
+    % respect to the Lebesgue measure of $\BB{R}^n$.
+    % The set of all positive semi-definite matrices of size
+    % $n \times n$, $n \geq 1$, is denoted by $S^n$.
+    % $\BB{E}[\cdot]$ is the expectation operator.
+    % The $m \times n$ zero matrix and
+    % the $n \times n$ identity matrix are denoted by
+    % $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+    % The supremum and Euclidean norms are denoted by
+    % $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
     
     \pr{Parametrized Belief space}
-    In this work, we assume that the belief space $\mathbb{B}$ is  a finite dimensional space and that it can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+    In this work, we assume that the belief space $\BB{B}$ is  a finite dimensional space and that it can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
     of dimension $n$, i.e. the space of Gaussian
     probability measures over $\BB{R}^n$.
     For brevity, we identify the Gaussian measures
     with their finite parametrization, mean and
     covariance matrix. Thus,
     $\CA{G} =  \BB{R}^n \times  S^n$.
-    If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
+    If $\BF{b} = b^0b^1 \ldots \in \BB{B}^{\omega}$,
     we denote the suffix sequence $b^i b^{i+1} \ldots$ by
-    $\BF{b}^i$, $i \geq 0$. Each member of $\Sigma^*$ and $\Sigma^\omega$ is referred to as ``word" or "sequence". 
+    $\BF{b}^i$, $i \geq 0$.
+    Each member of $\BB{B}^\omega$ is referred to as a infinite ``word" or "sequence".
+    % Each member of $\BB{B}^*$ and $\BB{B}^\omega$ is referred to as finite or infinite ``word" or "sequence", respectively.
     
     For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied. 
     Predicate $f\leq 0$ is defined as a Borel measurable function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). Some examples are \textbf{(i)} Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state. \textbf{(ii)} Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
@@ -387,7 +438,7 @@ of the algorithm.
     
     \begin{problem}[Maximum Probability Problem]
     \label{pb:mpp}
-    Let $\phi$ be a given DTL formula and let the system
+    Let $\phi$ be a given DTL formula and let the robot
     evolve according to dynamics~\eqref{eq:dynamics},
     with observation dynamics~\eqref{eq:observations},
     and using a Kalman filter defined by~\eqref{eq:filter}.
@@ -413,37 +464,40 @@ of the algorithm.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Illustrative science campaign}
-	Existing Mars rover (and future Mars copter) missions are prescribed via science campaigns. Each campaign is comprised of many science goals and mission requirements. In this section, we present a science campaigns that we have selected for Mars helicopter and Mars Rover coordination and navigation scenario. Fig. \ref{fig:Scenario} shows a map of the ?? area on Mars surface created by ?? [?]. To describe the science campaign, we start by listing a set of requirements for typical Mars missions. These requirements are generated by rover planers and systems engineers at JPL. Then, we show how to model these requirements using the \DTL language.
+	Existing Mars rover (and future Mars helicopter) missions are prescribed via science campaigns. Each campaign is comprised of many science goals and mission requirements. In this section, we present a science campaigns that we have selected for Mars helicopter and Mars Rover coordination and navigation scenario. Fig. \ref{fig:Scenario} shows a map of the Marias Pass on Mars surface created from the images taken by the JPL/Nasa's Curiosity rover. To describe the science campaign, we start by listing a set of requirements for typical Mars missions. These requirements are generated by rover planers and systems engineers at JPL. Then, we show how to express these requirements using the \DTL language.
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{Mission specification}
 	\label{sec:misspec}
-	Below is a set of requirements that specifies a science campaign.
+	The set of requirements below specify a science campaign.
 	\begin{enumerate}
       \item \textit{Rover must visit any two of the science targets type A and one of the science targets type B}. These areas are shown in purple and blue, respectively, in Fig. \ref{fig:Scenario}. They represent areas for potentially high-science-value rock/soil samples that need to be collected.
       \item \textit{Rover must maintain the variance of its state below $\Sigma_{max}$}. This specification is to maintain accuracy along the mission and reduce the risk of unexpected events.
-      \item \textit{Rover routes must avoid hazards}. These hazard areas represent large rocks, deep sands, steep slopes, etc, which are given as the regions labeled on the map as part of the science campaign.
-      \item \textit{Rover must follow speed constraints}. Fig. \ref{fig:SpeedConstriants} encodes the speed constraints. Rover's maximum speed is a function of cumulative fractional area [?] and the terrain slope.
-      \item \textit{Copter and Rover must satisfy battery and power constraints}. In particular, Mars helicopter can only fly for 2-3 minutes per day. Thus, at each stage, the remaining battery level plays an important role in shaping the mission.
-      \item \textit{Mars copter must avoid landing near hazards}. These hazards include large rocks, deep sands, steep slopes, etc.
-      \item \textit{Copter must maintain a minimum distance $d_{min}$ and a maximum distance $d_{max}$ from the rover}. This specification is because the main asset of the this mission is rover as it carries all important science instruments. Therefore the copter should not pose any risk for the rover, in case of copter failure.
+      \item \textit{Rover routes must avoid hazards}. Hazard areas include large rocks, deep sands, steep slopes, and are given as labeled regions on the map as part of the science campaign.
+      \item \textit{Rover must follow speed constraints}.
+    %   Fig.~\ref{fig:SpeedConstriants} encodes the speed constraints.
+      Rover's maximum speed is a function of cumulative fractional area of rocks and the terrain slope, see Fig.~\ref{fig:SpeedConstriants}.
+      \item \textit{Helicopter and Rover must satisfy battery and power constraints}. In particular, Mars helicopter can only fly for 2-3 minutes per day. Thus, the remaining battery level plays an important role in shaping the mission.
+      \item \textit{Mars helicopter must avoid landing near hazards}. These hazards include large rocks, deep sands, steep slopes, etc.
+      \item \textit{Helicopter must maintain a minimum distance $d_{min}$ and a maximum distance $d_{max}$ from the rover}. This specification is because the main asset of the this mission is rover as it carries all important science instruments. Therefore the helicopter should not pose any risk for the rover, in case of helicopter failure. It also needs to stay in communication range with the rover.
     \end{enumerate}
 
     \begin{figure}[h]
 	\centering
 	%\subimport*{figs/}{graph.tex}	
-	\scalebox{.5}{\input{figs/speed_constraints.tex}}
+	\scalebox{.45}{\input{figs/speed_constraints.tex}}
 	\caption{Speed Constraints for Slope vs Rock CFA (Cumulative Fractional Area). High speed (green), Low speed (yellow) and Stop (red).}
 	\label{fig:SpeedConstriants}
     \end{figure}
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{Example Mission Execution}
+	\label{subsec:ExampleMissionExecution}
 	In this section, we describe an example instance of the functional architecture shown in Fig. \ref{fig:FuncArc}, that may occur during the execution of the campaign. 
 	
-	We start the campaign by flying the helicopter in the environment and generating a labelled map that classifies science targets, cumulative fraction area (CFA) covered by rock and hazardous regions. During this time, the helicopter maintains the constraints on battery level, distance from the rover and avoids terrain hazards while landing. The rover gets the labelled map from the helicopter and mission requirements from users on Earth. Using this, the rover computes a control policy and executes it to move along a desired path in the environment.
+	The campaign starts by flying the helicopter in the environment and generating a labelled map that classifies science targets, cumulative fraction area (CFA) covered by rock and hazardous regions. During this time, the helicopter maintains the constraints on battery level, distance from the rover and avoids terrain hazards while landing. The rover gets the labelled map from the helicopter and mission requirements from users on Earth. Using this, it computes a control policy and executes it to move along a desired path in the environment.
 	
-	During execution, the rover detects non-traversibility, eg. excessive slip due to large slope or larger CFA that was not accurately estimated in the labelled map obtained from the helicopter. Now, the rover updates the correct labels in map and tries to recompute the policy. If it is not possible to find a feasible policy that satisfies all the mission requirements, it asks the copter to fly and re-map the unexplored regions. On getting the information of the unexplored regions, it recomputes a control policy and resumes execution.
+	During execution, the rover detects non-traversibility, eg. excessive slip due to large slope or larger CFA that was not accurately estimated in the labelled map obtained from the helicopter. Now, the rover updates the correct labels in map and tries to recompute the policy. If it is not possible to find a feasible policy that satisfies all the mission requirements, it asks the helicopter to fly and re-map the unexplored regions. On getting the information of the unexplored regions, it recomputes a control policy and resumes execution.
 % 	\begin{enumerate}
 % 	\item Copter maps the environment and generates a labelled map to classify science targets, rock CFA, slope and hazardous regions.
 % 	\item copter sends the map to rover 
@@ -463,8 +517,8 @@ of the algorithm.
 % 	\end{enumerate}
     	\begin{figure}[h!]
     	\centering
-    	\includegraphics[width=\columnwidth]{figs/FunctionalArcV3.png}
-    	\caption{Functional Architecture.}
+    	\includegraphics[width=\columnwidth]{figs/FunctionalArcV4.png}
+    	\caption{Architecture showing mapping, planning and execution framework.}
     	\label{fig:FuncArc}
     \end{figure}
 	
@@ -478,13 +532,13 @@ of the algorithm.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\subsection{System Model}\label{sec:SysModel}
-    To translate the specification to mathematical predicates, we start by defining the system state and belief. Note that in this section, we are proposing a general formulation of the problem with belief over rover, copter and map. However, for the simulation in section \ref{sec:simulation} we focus on the planning and execution problem of the rover and assume a deterministic map and deterministic copter dynamics.
+    To translate the specification to mathematical predicates, we start by defining the system state and belief. Note that in this section, we are proposing a general formulation of the problem with belief over rover, helicopter and map. However, for the simulation in section \ref{sec:simulation} we focus on the planning and execution problem of the rover and assume a deterministic map and deterministic helicopter dynamics.
     
-    Our system described by state $x$ is comprised of a rover $x^r$, a copter $x^c$, and the environment $m$.
+    Our system described by state $x$ is comprised of a rover $x^r$, a helicopter $x^c$, and the environment $m$.
     \begin{align}
         x = (x^r, x^c, m) 
     \end{align}
-    Due to the noise in system motion and perception, the best one can infer about the system state is its belief, i.e., the probability distribution over all possible states, denoted by $b_k=p(x|z_{0:k})$. In this work, we approximate the joint belief over rover, copter, and the environment, with three separate marginalized beliefs.
+    Due to the noise in system motion and perception, the best one can infer about the system state is its belief, i.e., the probability distribution over all possible states, denoted by $b_k=p(x|z_{0:k})$. In this work, we approximate the joint belief over rover, helicopter, and the environment, with three separate marginalized beliefs.
     \begin{align}
         \nonumber
         b_k &= p(x|z_{0:k})=p(x^r, x^c, m|z_{0:k})\\
@@ -496,8 +550,8 @@ of the algorithm.
     %     b \equiv (\hat{x}^r, \hat{x}^r, P, b^{m})
     % \end{align}
     %where
-    The robot state $x^r=(p^r, v^r, q^r)$ is comprised of the rover pose $p^r$, rover velocity $v^r$, and rover battery charge level $q^r \in [0, 1]$. Similarly, the copter state $x^c=(p^c, v^c, q^c)$ includes pose, velocity, and charge level of the copter. We represent the belief over rover and copter state by Gaussian, characterized by its mean and covariance $b^r\equiv(\hat{x}^r,P^r)$, $b^c\equiv(\hat{x}^c,P^c)$. 
-    To describe the map, we follow the traditional occupancy grid map representation, where map is comprised of voxels $m=(m^1,\cdots,m^n)$. Each voxel contain the terrain height $h^i$ and terrain type $l^i$ at that voxel, i.e., $m^i = (h^i,l^i)$. We have a set $L$ of predefined terrain labels, such as rock, deep sample, steep slopes, unseen areas, etc. Note that $l^i$ can take belong to multiple labels. We represent this fuzzy belonging via a label belief $b^{l^i}:L\rightarrow[0,1]$, i.e., $b^{l^i}$ will assign a probability for voxel $i$ to belong to each given label. We assume that the belief over height and type are independent $b^{m^i} = b^{h^i}\times b^{l^i}$. 
+    The robot state $x^r=(p^r, v^r, q^r)$ is comprised of the rover pose $p^r$, rover velocity $v^r$, and rover battery charge level $q^r \in [0, 1]$. Similarly, the helicopter state $x^c=(p^c, v^c, q^c)$ includes pose, velocity, and charge level of the helicopter. We represent the belief over rover and helicopter state by Gaussian, characterized by its mean and covariance $b^r\equiv(\hat{x}^r,P^r)$, $b^c\equiv(\hat{x}^c,P^c)$. 
+    To describe the map, we follow the traditional occupancy grid map representation, where map is comprised of voxels $m=(m^1,\cdots,m^n)$. Each voxel contain the terrain height $h^i$ and terrain type $l^i$ at that voxel, i.e., $m^i = (h^i,l^i)$. We have a set $L$ of predefined terrain labels, such as rock, deep sample, steep slopes, unseen areas, etc. Note that $l^i$ can belong to multiple labels. We represent this fuzzy belonging via a label belief $b^{l^i}:L\rightarrow[0,1]$, i.e., $b^{l^i}$ will assign a probability for voxel $i$ to belong to each given label. We assume that the belief over height and type are independent $b^{m^i} = b^{h^i}\times b^{l^i}$. 
     
     %The belief over height is $b^{h^i}=p(h^i|z_{0:k)}$ and the belief over terrain label is $b^{l^i}=p(l^i|z_{0:k})$.
     
@@ -506,19 +560,21 @@ of the algorithm.
     \label{sec:gdtlspec}
     In this section, we define the \DTL predicates corresponding to the mission specifications described in Section~\ref{sec:misspec}.
     
-    We start by defining the overall specification (i.e., $\phi$) for the campaign in hand:
-    \begin{align}\label{eq:overallspec}
+    The overall specification $\phi$ for the campaign is:
+    {\small
+    \begin{align}
+    \label{eq:overallspec}
         \phi = \phi_{science} \land (\pred_{uncert} \land \phi_{safety} \land \phi_{dynamic}) \Until \pred_{completed}
         % \Until \pred_{complete},
     \end{align}
+    }%
     which expresses the mission where the science objective $\phi_{science}$ needs to be satisfied and we need to maintain a desired level of accuracy,
     safety, and dynamics constraints until the mission is completed as expressed by $\zeta_{uncert}$, $\phi_{safety}$, $\phi_{dynamic}$, and
     $\pred_{completed}$, respectively.
 
-\noindent\pr{Science} The science objective in this campaign is to collect two samples from high-valued science areas A and one sample from area B. Let $\pred_{X} = p^r \in X$ denote the event that pick up a sample from region $X$ that is subset of the terrain.
+\noindent\pr{Science} The science objective in this campaign is to collect one sample from each of the high-valued science areas A and B. Let $\pred_{X} = p^r \in X$ denote the event that the rover is located in region $X$ that is subset of the terrain.
     \begin{align}
         \phi_{science} = \Event ((\pred_A \land \pred_{\exists A}) \land
-        \Event (\pred_A \land \pred_{\exists A})) \land
         \Event (\pred_B \land \pred_{\exists B})
     \end{align}
     where $\pred_{\exists X}$ refers to the event that there exist a desired sample to pick up at region $X$.
@@ -526,7 +582,7 @@ of the algorithm.
     \pred_{\exists X} = \sum_{m^i \subseteq X} p(l^i=X) \geq \epsilon_{sc}\geq 0
     % \int_X \int_{\Real^2} m^i(x) K(x | p) \df x \df p \geq \epsilon_{sc}\geq 0
     \end{align}
-    \pr{Uncertainty} The uncertainty objective is to maintain the desired level of accuracy on their estimated state (e.g., robots need to know where they are with respect samples) during the mission. 
+    \pr{Uncertainty} The uncertainty objective is to maintain the desired level of accuracy on the state estimates. 
     \begin{align}
         \nonumber\pred_{uncert} = tr(P^r) < \Sigma^r_{max}\\
         \pred_{uncert} = tr(P^c) < \Sigma^c_{max}
@@ -539,44 +595,49 @@ of the algorithm.
 	In the following paragraphs, we will explain each term in the definition of above safety specification.
 	
 	\noindent\pr{Keep-out predicate}
-	$\phi_{keepout}$ encodes the distance from risky regions of the map such as non-traversable obstacles, sandy areas with a risk of getting stuck, cliffs, high-slope areas, etc. We will define keep-out constraints for both rover and copter.
+	$\phi_{keepout}$ encodes the distance from risky regions of the map such as non-traversable obstacles, sandy areas with a risk of getting stuck, cliffs, high-slope areas, etc. We will define keep-out constraints for both rover and helicopter.
 	\begin{align}
 	   %\phi_{keepout} &= \bigwedge_{o\in O} (\pred_{keepout}^r \land \pred_{keepout}^c)
 	   \phi_{keepout} &= \bigwedge_{o\in O} (\pred_{keepout}^r \land (\pred_{keepout}^c \lor h^c > \epsilon_{h}^c))
 	\end{align}
 	where risk areas are extracted from the map $m^t$ based on the labels. Each risk region is approximated by Gaussian distribution $o \sim\mathcal{N}(\hat{p}^o, P^o)$, in which $\hat{p}^o$ represents the mean of the risk area and $P^o$ is the spatial variance of the risk area. For obstacle $o$, rover's keepout specification can be written as:
+	{\small
 	\begin{align}
     	\pred_{keepout}^r = (\hat{p}^r-\hat{p}^o)^T(P^r+P^o)^{-1}(\hat{p}^r-\hat{p}^o) \geq \epsilon_{safety}^r
 	\end{align}
-	where $\hat{p}^r$ and $P^r$ are the position and associated uncertainty of the rover. For the copter, we have the same constraints when its height is below a threshold
+	}%
+	where $\hat{p}^r$ and $P^r$ are the position and associated uncertainty of the rover. For the helicopter, we have the same constraints when its height is below a threshold
+	{\small
 	\begin{align}
     	\pred_{keepout}^c = (\hat{x}^c-\hat{x}^o)^T(P^c+P^o)^{-1}(\hat{x}^c-\hat{x}^o) \geq \epsilon_{safety}^c
 	\end{align}
-	where $\hat{p}^c$ and $P^c$ are the position and associated uncertainty of the copter.
+	}%
+	where $\hat{p}^c$ and $P^c$ are the position and associated uncertainty of the helicopter.
     
-\noindent\pr{Rover-copter distance predicate} In Mars copter/rover missions, rover is the mother-craft and the vital part of the mission, whereas the copter is a daughter-craft. Since the rover is carrying almost all science payload and instruments, the copter should not pose any risk to rover's functionality. Thus, copter has to always maintain a minimum distance from rover to avoid costly collisions with rover in the case of copter failure. Below specification expresses this mission requirement.
+\noindent\pr{Rover-helicopter distance predicate} In Mars helicopter/rover missions, rover is the mother-craft and the vital part of the mission, whereas the helicopter is a daughter-craft. Since the rover is carrying almost all science payload and instruments, the helicopter should not pose any risk to rover's functionality. Thus, helicopter has to always maintain a minimum distance from rover to avoid costly collisions with rover in the case of helicopter failure. Below specification expresses this mission requirement.
  	\begin{align}
- 	    f_{coll} = \int b^{s}(x)\times b^{m}(x)dx - \epsilon_{coll} \\
+ 	  %  \cristi{\text{Not used?: }
+ 	  %  f_{coll} = \int b^{s}(x)\times b^{m}(x)dx - \epsilon_{coll}} \\
  	    \pred_{near} = d_{min} \leq \norm{\overline{x}^r - \overline{x}^c} \leq d_{max}
  	\end{align}
-    where $\overline{x}^r$ and $\overline{x}^c$ denotes the 2D position of the rover and copter, respectively, on the Mars surface.
+    where $\overline{x}^r$ and $\overline{x}^c$ denotes the 2D position of the rover and helicopter, respectively, on the Mars surface.
 
-\noindent\pr{Charge predicates} Energy is a critical issue in space missions. For a solar-powered rover and copter, and for each given campaign, $\zeta_{base}$ dxefines an area on Mars surface with a high-level of sun light intensity, where the vehicles can re-charge themselves. We express the charging constraint of both vehicles as:
+\noindent\pr{Charge predicates} Energy is a critical issue in space missions. For a solar-powered rover and helicopter, and for each given campaign, $\xi_{ch}$ defines areas on Mars surface with a high-level of sun light intensity, where the vehicles can re-charge themselves. We express the charging constraint of both vehicles as:
  	\begin{align}
 	    \phi_{charge} &= \phi_{charge}^r \land \phi_{charge}^c
 	\end{align}
 	where for each vehicle $s \in \{r, c\}$, we have
 	\begin{align}
-	    \phi_{charge}^s &= q^s \geq \epsilon_{battery}^s \Implies \Event (\xi^s_{Base} \Until q^s \geq \epsilon_{charged}^s)
+	    \phi_{charge}^s &= q^s \geq \epsilon_{battery}^s \Implies \Event (\xi^s_{ch} \Until q^s \geq \epsilon_{charged}^s)
 	\end{align}
-	Note that $\epsilon_{battery}^S$, for each vehicle is chosen large enough to permit return to the base.
+	Note that $\epsilon_{battery}^S$, for each vehicle is chosen large enough to permit reaching the charging regions.
 
-\noindent\pr{Dynamics predicates} Due to rover and copter mechanical/electrical capabilities, these assets should not exceed certain velocity levels given the environment status. The following specification captures such mission requirements.
+\noindent\pr{Dynamics predicates} Due to rover and helicopter mechanical/electrical capabilities, these assets should not exceed certain velocity levels given the environment status. The following specification captures such mission requirements.
     \begin{align}
-	    \phi_{dynamic} = \norm{v^r} \leq \epsilon_{velocity}^r(m)
+	    \phi_{dynamic} = \norm{v^s} \leq \epsilon_{velocity}^s(m, p^s)
 	\end{align}
-	where $\epsilon_{velocity}^r(m)$ is the velocity
-	bound for the rover and copter, respectively, and depend on the map belief and position.
+	where $\epsilon_{velocity}^s(m)$, $s\in \{r, c\}$, is the velocity
+	bound for the rover and helicopter, respectively, and depend on the map belief and position.
 	Fig.~\ref{fig:SpeedConstriants} shows the dependence of the velocity with respect to
 	map features (steep slopes, rocks).
 	
@@ -641,7 +702,12 @@ of the algorithm.
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Control policy synthesis} \label{sec:planner}
-In this section, we describe our approach to generate a control policy that drives the rover to the desired belief state $b^r_{des}$ while satisfying all the mission requirements specified in \DTL in Section \ref{sec:gdtlspec}. We start by converting the \DTL specifications to a Finite State Automaton (FSA), described in Section \ref{FSA}. Then we describe how sampling based methods in belief space are used to compute transition probabilities of FSA in Section \ref{sec:FIRM} and \ref{TransProb}. We then define the product \DTL-FIRM in Section \ref{DTL-FIRM}. Afterwards, we detail the procedure to find a policy that maximizes the probability of specification satisfaction. Section \ref{replanning} shows how we handle execution failures by re-planning and mapping the unexplored regions. Finally, in Section \ref{complexity}, we discuss the complexity of the proposed algorithm.
+In this section, we describe our approach to generate a control policy that drives the rover to the desired belief state $b^r_{des}$ while satisfying a subset of the mission requirements specified in \DTL in Sec.~\ref{sec:gdtlspec}.
+We focus on the science, safety and uncertainty part of the mission specification, and assume that: (a) the rover has stochastic motion and perception, and access to a partially known deterministic environment map, and (b) the helicopter has deterministic motion and perception that can suffer from terrain classification errors.
+Charging constraints are not considered.
+The approach has two components: (a) an off-line planner that returns a motion plan for the rover to satisfy the science mission or generate a request for exploring the environment by the helicopter, and an on-line execution algorithm that is coupled with a monitor to detect mismatches between the maintained environment map and observations.
+The off-line method starts by converting the \DTL specifications to a Finite State Automaton (FSA), described in Sec.~\ref{sec:FSA}. Then a belief space sampling-based planner called Feedback Information RoadMap (FIRM) is used to compute a finite abstraction of the rover in Sec.~\ref{sec:FIRM}. The computation of transition probabilities on the FSA is detailed in Sec.~\ref{sec:TransProb}. We define the product MDP named \DTL-FIRM in Sec.~\ref{sec:DTL-FIRM} that capture motion, map state evolution, and satisfaction at the same time. Afterwards, we detail the procedure to find a policy that maximizes the probability of specification satisfaction. Sec.~\ref{sec:replanning} shows how we handle execution failures by re-planning and mapping unexplored regions.
+% Finally, in Sec.~\ref{sec:complexity}, we discuss the complexity of the proposed algorithm.
 
 %Local controllers drive the systems along these paths and stabilize at key points. 
 %The closed-loop behavior of the system induces paths in the belief space. 
@@ -657,12 +723,13 @@ In this section, we describe our approach to generate a control policy that driv
 % the formula. The resulting policy can then be translated to
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Finite State Automaton}\label{FSA}
+\subsection{Finite State Automaton}
+\label{sec:FSA}
 %\pr{GDTL to LTL conversion}
 % FIRM graph introduced in Section \ref{sec:FIRM} captures the evolution of the system belief and in this section we discuss Rabin automaton that captures the evolution of the mission specification satisfaction.
-We start by describing the process of converting the high level mission specifications expressed in \DTL
-into a Finite State Automaton (FSA) that captures the evolution of specification satisfaction.
-To generate the FSA, we first convert \DTL to LTL simply by converting the predicates to symbols~\cite{JonesDTL2013},
+% We start by describing the process of converting the high level mission specifications expressed in \DTL
+% into a Finite State Automaton (FSA) that captures the evolution of specification satisfaction.
+To generate the specification FSA, we first convert \DTL to LTL by converting the predicates to symbols~\cite{JonesDTL2013},
 and then we use {\em spot}~\cite{duret14} to convert the LTL specifications to FSA.
 Note that an FSA is sufficient in this case, because we considered a syntactically co-safe mission specification.
 % Symbol vs. predicates function
@@ -701,15 +768,15 @@ Fig. \ref{fig:simple-spec-fsa} shows a simple example of an FSA generated from t
 \label{eq:simple-spec}
 \phi = (\Event \goal) \land \big((\neg \obst \land tr(P) < 1) \Until \goal \big)
 \end{align}
-The specification says, (eventually reach goal~$\goal$) and (don't collide with obstacles~$\obst$ and keep the uncertainty below a threshold) until goal~$\goal$ is reached. $s^0$ corresponds to the state where goal is not reached and we have not violated collision or uncertainty constraints. $s^1$ represents the goal state and $s^2$ represents the state in which either or both constraints are violated.
+The specification says: (eventually reach goal~$\goal$) and (don't collide with obstacles~$\obst$ and keep the uncertainty below a threshold) until goal~$\goal$ is reached. $s^0$ is the state where goal is not reached and we have not violated collision or uncertainty constraints. $s^1$ represents the goal state and $s^2$ represents the state in which either or both constraints are violated.
 
 \begin{figure}[h!]
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.8cm, semithick,
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.3cm, semithick,
 initial text={}]
 \tikzstyle{every state}=[text=black]
 
 \node[initial,state]   (s0)                    {$s^0$};
-\node[state,accepting] (s1) [right of=s0, node distance=6cm] {$s^1$};
+\node[state,accepting] (s1) [right of=s0, node distance=5cm] {$s^1$};
 \node[state]           (s2) [below of=s0] {$s^2$};
 
 \path[->] (s0) edge [loop above] node {$\neg \goal \land \neg \obst \land tr(P) < 1$} (s0)
@@ -726,14 +793,15 @@ initial text={}]
 \let\obst\undefined
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Sampling-based methods in belief space}\label{sec:FIRM}
+\subsection{Sampling-based methods in belief space}
+\label{sec:FIRM}
 Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Agha14}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
 
 \begin{definition}[FIRM]
 A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
-FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node corresponds to a Gaussian belief state $b = (\hat{x},P) \in \TSX$ with mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
+FIRM iteratively grows a graph $\TS$ in belief space, where each node corresponds to a Gaussian belief and map state $b = (\hat{x},P, m) \in \TSX$ with pose mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
 
 
 % Prev Version --------
@@ -901,8 +969,8 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node cor
 	\centering
 	%\subimport*{figs/}{graph.tex}	
  	%\input{figs/graph.tex}
-	\includegraphics[width=\columnwidth]{figs/BeliefRabinTransitionV3.png}
-	\caption{To compute transition probabilities in FSA state-space, we start with belief trajectories $b^{ij}_{0:4}$ (top) along a FIRM edge $\mu^{ij}$ obtained by sampling points in $B^i$ and simulating $\mu^{ij}$ controller until we reach $\epsilon-$neighborhood of $B^j$. For each $b^{ij}_k$ we find the event $\sigma_k$ fired by $b^{ij}_k$. The events $\sigma_k$ lead to the trajectory $S^{ij}_{0:4}$ in FSA state-space based on $s^{ij}_k = \delta(s^{ij}_{k-1},\sigma_k)$. Finally, we compute the transition probability in FSA state-space by computing the ratio of the number of particles that land in $s_k$ to the total number of particles simulated.}
+	\includegraphics[width=.8\columnwidth]{figs/BeliefRabinTransitionV3.png}
+	\caption{To compute transition probabilities in FSA state-space, belief trajectories $b^{ij}_{0:4}$ (top) along a FIRM edge $\mu^{ij}$ are obtained by sampling points in $B^i$ and simulating $\mu^{ij}$ controller until we reach $\epsilon-$neighborhood of $B^j$. For each $b^{ij}_k$ we find the event $\sigma_k$ fired by $b^{ij}_k$. The events $\sigma_k$ lead to the trajectory $S^{ij}_{0:4}$ in FSA state-space based on $s^{ij}_k = \delta(s^{ij}_{k-1},\sigma_k)$. Finally, we compute the transition probability in FSA state-space as the ratio of the number of particles that land in $s_k$ to the total number of particles simulated.}
 	\label{fig:TransProb}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -928,12 +996,14 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each vertex/node cor
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Induced transition probabilities on FSA} \label{sec:TransProbSec}
+\subsection{Induced transition probabilities on FSA}
+\label{sec:TransProb}
 In this section, we show how to estimate the FSA probability distribution induced by the underlying belief evolution on FIRM edges. 
 
 The transitions in FSA are deterministic, i.e., FSA state $s_{i-1}$ with event $\sigma$ will always go to the same $s_{i}$. However, transitions in belief space are stochastic, i.e., belief $b_{i-1}$ with control input $u_{i}$ will not always go to the same $b_{i}$ due to stochasticity of observations.
+Thus, we need to compute the marginal distribution over the states of the FSA.
 %This is why we represent a belief as a probability distribution over the state space.
-The probability distribution on FSA states is induced because of the stochasticity of the belief states.
+% The probability distribution on FSA states is induced due to stochastic transitions in $\TS$.
 
 Starting from initial belief $b_{0}$, and running the FIRM edge controller $\mu^{ij}$, belief evolves randomly due to the stochasticity of the observations. We denote the random belief sequence under $\mu^{ij}$ by $b_{0:n}^{ij}\sim p(b_{0:n}^{ij}|\mu^{ij},b_0)$, where $b_{0:n}^{ij}=(b_0^{ij},b_1^{ij},\cdots,b_n^{ij})$ (top graph in Fig. \ref{fig:TransProb}).
 
@@ -942,9 +1012,10 @@ In this work, we only work with the marginal distribution over the terminal stat
 
 Figure \ref{fig:TransProb} shows a simple example illustrating how we compute the final FSA state distribution $p(s^{ij}_n|\mu^{ij},s_0)$.
 We start from the belief $b_0$ at FIRM node $B^i$ and simulate the belief trajectory $b^{ij}_{0:n}$ by executing controller $\mu^{ij}$. We do this multiple times to create multiple belief paths. For each belief trajectory $b^{ij}_{0:n}$, we obtain the induced FSA trajectory $s^{ij}_{0:n}$ by first generating the event $\sigma_k \asgn \{ f \,|\, f(b^{ij}_k) \leq 0, \forall f \in F_\phi \}$ and then using the transition function $s^{ij}_{k} = \delta(s^{ij}_{k-1},\sigma_k)$. Finally, we approximate the $p(s^{ij}_n)$ by the ratio of the number of particles landed in a particular FSA state to the total number of particles simulated.
+This procedure is similar to statistical model checking~\cite{Legay2010}.
 
-\sofie{[So actually, you use FIRM to find a good control sequence, which you then evaluate with a sampling based algorithm. Are you using any bounds on this? I added a reference \cite{Legay2010}. There has been done quite some work on this topic.]}
-%Given a transition $e=(B_u, B_v)$ on the FIRM graph and its associated local controller $ec_e$,
+% \sofie{[So actually, you use FIRM to find a good control sequence, which you then evaluate with a sampling based algorithm. Are you using any bounds on this? I added a reference \cite{Legay2010}. There has been done quite some work on this topic.]}
+% %Given a transition $e=(B_u, B_v)$ on the FIRM graph and its associated local controller $ec_e$,
 
 % Alg.~\ref{alg:compute-prob} computes the above-mentioned transition distributions from an initial state $s_0$ on Rabin Automaton 
 
@@ -988,8 +1059,9 @@ We start from the belief $b_0$ at FIRM node $B^i$ and simulate the belief trajec
 % where $X \in \{\CA{F}_i, \CA{B}_i, \CA{F}_i \cup \CA{B}_i\}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\DTL-FIRM Product MDP}\label{sec:DTL-FIRM}
-The goal of this framework is to find the policy that maximizes the probability of satisfaction of the \DTL specification. For a partially observable system, the policy will generate the action based on the current belief in FIRM and current state in FSA. Formally, the policy $\mu=\pi(s,B)$, where $s$ the current FSA node and $B$ is the current FIRM node. The returned action is the local controller $\mu$.
+\subsection{\DTL-FIRM Product MDP}
+\label{sec:DTL-FIRM}
+The goal of this framework is to find the policy that maximizes the probability of satisfaction of the \DTL specification. For a partially observable system, the policy will generate actions based on the current belief in FIRM and current state in FSA. Formally, the policy $\mu=\pi(s,B)$, where $s$ the current FSA node and $B$ is the current FIRM node. The returned action is the local controller $\mu$.
 %$\pi: \TSX \times S_\FSA \to \mathbb{E_\FSA}$ is a mapping from Cartesian product of the set of belief nodes in FIRM and FSA states to a FIRM edge, i.e., a feedback controller.
 %We have $\pi^{FIRM}:B\rightarrow \mu$
 To compute this policy in a computationally tractable manner, we define a construction procedure of the product MDP between the (belief) transition system (i.e., FIRM) $\TS$ and the FSA $\FSA$ generated from specifications.
@@ -1002,7 +1074,8 @@ $q_0^\PA = (B_0 , s_0^\FSA)$ is the initial state;
 $Q_\PA \subseteq \TSX \times S_\FSA $ is a finite set of states, which are reachable from the initial state; % by run of positive probability (see below);
 $\TSE$ is the set of actions available at each state;
 $\delta_\PA : Q_\PA \times \TSE \times Q_\PA \ra [0, 1]$ is the transition probability
-defined by $\delta_\PA((B^i, s^i), \mu^{ij}, (B^j, s^j))$. Goal set in the product space is defined as $Acc_\PA =  (\TSX \times Acc_\FSA) \cap Q_\PA$.
+defined by $\delta_\PA((B^i, s^i), \mu^{ij}, (B^j, s^j))$.
+The accepting set in the product space is defined as $Acc_\PA =  (\TSX \times Acc_\FSA) \cap Q_\PA$.
 %= p^{S_\RA}(s_j ; e_{ij}, s_i, \CA{C}_\TS(e_{ij}))$, $e_{ij} = (B_i, B_j)$;
 %and $\Omega_\PA$ is the set of tuples of good and bad transitions in the product automaton.
 
@@ -1038,7 +1111,7 @@ defined by $\delta_\PA((B^i, s^i), \mu^{ij}, (B^j, s^j))$. Goal set in the produ
 
 %A transition in $\PA$ is also denoted by $q_i \ra_\PA q_j$ if $(q_i, q_j) \in \Delta_\PA$. A trajectory (or run) of {\em positive probability} of $\PA$ is an infinite sequence $\BF{q} = q_0 q_1 \ldots$, where $q_0 = q^\PA_0$ and $q_k \ra_\PA q_{k+1}$ for all $k \geq 0$.
 
-The acceptance condition for a trajectory of product graph $\PA$ is encoded in
+The acceptance condition for a trajectory of product MDP $\PA$ is encoded in
 $Acc_\PA$, and is induced by the acceptance condition $Acc_\FSA$ of
 FSA $\FSA$.
 % Formally, $\Omega_\PA$ is a pair $(Acc_\PA, Bad_\PA)$,
@@ -1051,9 +1124,9 @@ if and only if the trajectory ends in a state from $Acc_\PA$.
 % \sofie{[The last statement does not make sense to me, the acceptance condition is defined as $Acc_\FSA$ which is a subset of the states $Q_\PA $ of $\PA$]}
 %It follows by construction that a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ of $\PA$ is accepting if and only if the trajectory $\BF{s}^0_{0:T_0-1} \BF{s}^1_{0:T_1-1} \ldots$ is accepting in $\FSA$, where $\BF{s}^i_{0:T_i}$ is the random trajectory of $\FSA$ obtained by traversing the transition $e = (B_i, B_{i+1})$ using the controller $\mu^{ij}$ and $s^i_{0} = s_i$ for all $i \geq 0$. Note that $\BF{s}^i_{T_i} = \BF{s}^{i+1}_0$. As a result, a trajectory of $\TS$ obtained from an accepting trajectory of $\PA$ satisfies the given specification encoded by $\FSA$ with positive probability. We denote the projection of a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ onto $\TS$ by $\proj{\BF{q}}{\TS} = B_0 B_1 \ldots$.
 
-\begin{remark}
-Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as both FIRM graph $\TS$ and the FSA $\FSA$ can be constructed incrementally \cite{Agha14,VaBe-IROS-2013}.
-\end{remark}
+% \begin{remark}
+% Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as both FIRM graph $\TS$ and the FSA $\FSA$ can be constructed incrementally \cite{Agha14,VaBe-IROS-2013}.
+% \end{remark}
 
 % \begin{remark}
 % Note that the product MDP in Def.~\ref{def:pa} is defined to be amenable to
@@ -1110,8 +1183,8 @@ Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as b
 % Efficient incremental algorithms to maintain these ECs were proposed
 % in~\cite{Haeupler2012}. %,Bender2015
 
-\begin{algorithm}[!h]
-\caption{SynthesizeRoverPolicy$(B_0,\phi,\varepsilon)$ }
+\begin{algorithm}[!ht]
+\caption{ControlSynthesis$(B_0,\phi,\varepsilon)$ }
 \label{alg:compute-mdp}
 \DontPrintSemicolon
 \KwIn{Initial belief node $B_0$, \DTL specification $\phi$, and lower bound $\varepsilon$ on the policy success probability}
@@ -1137,7 +1210,7 @@ Construct product MDP $\PA = \TS \times \FSA = (S_\PA = \TSX \times S_\FSA, (B_0
     $S_\PA \asgn S_\PA \cup (\{ B_n \} \times S_\FSA)$\;
     \ForEach{$\mu^{i j} \in \TSEE_n$}{
         \ForEach{$s^i \in S_\FSA$ s.t. $(B^i, s^i) \in S_\PA$}{
-            $p(b_{n}^{ij}), p(s_{n}^{ij}) \asgn transProb((b^i,s^i), \mu^{ij},\FSA)$ (using Sec. \ref{sec:TransProbSec})\;
+            $p(b_{n}^{ij}), p(s_{n}^{ij}) \asgn transProb((b^i,s^i), \mu^{ij},\FSA)$ (using Sec. \ref{sec:TransProb})\;
             %%%
             $\delta_\PA \asgn \delta_\PA \cup \{ p(b_{n}^{i j}) \times p(s_{n}^{i j}) \}$\;
         }
@@ -1164,34 +1237,34 @@ Construct product MDP $\PA = \TS \times \FSA = (S_\PA = \TSX \times S_\FSA, (B_0
 \Return $(\PA, \emptyset)$
 \end{algorithm}
 
-\begin{algorithm}
-\caption{ExecuteCampaign($B_0, \phi, \varepsilon$)}
-\label{alg:execute}
-\DontPrintSemicolon
-\KwIn{Initial belief node $B_0$, \DTL specification $\phi$, and lower bound $\varepsilon$ on the policy success probability}
-$m$ = $\emptyset$ \\
-$\bar{m} \asgn$ GetInitialExplorationDirection() \\
-\For{ever}{
-    $m \asgn$  ExploreMapUsingCopter($m,\bar{m}$) \\
-    $m^l \asgn$ UpdateLabels($m$) \\
-    $\phi \asgn$ UpdateRegionsInSpecification($m^l$) \\
-    $(\PA, \pi) \asgn$ $SynthesizeRoverPolicy(B_0,\phi,\varepsilon)$ \label{plan}\\
-    \If{$\pi \neq \emptyset$}{
-        $(success, health) \asgn$ ExecuteRoverPolicy$ (\PA, \pi^*,\phi)\ $\\
-        \If{$success = true$}{
-            \Return{success};
-        }
-        \Else{
-            $\phi \asgn$ UpdateSpecification($health$)\\
-            \textbf{Goto} line~\ref{plan}\\
-        }
-    }
-    \Else{
-        $\bar{m} \asgn$ GetExplorationDirection($\PA, \pi, m$)
-    }
-}
-\BlankLine
-\end{algorithm}
+% \begin{algorithm}
+% \caption{ExecuteCampaign($B_0, \phi, \varepsilon$)}
+% \label{alg:execute}
+% \DontPrintSemicolon
+% \KwIn{Initial belief node $B_0$, \DTL specification $\phi$, and lower bound $\varepsilon$ on the policy success probability}
+% $m$ = $\emptyset$ \\
+% $\bar{m} \asgn$ GetInitialExplorationDirection() \\
+% \For{ever}{
+%     $m \asgn$  ExploreMapUsingCopter($m,\bar{m}$) \\
+%     $m^l \asgn$ UpdateLabels($m$) \\
+%     $\phi \asgn$ UpdateRegionsInSpecification($m^l$) \\
+%     $(\PA, \pi) \asgn$ $SynthesizeRoverPolicy(B_0,\phi,\varepsilon)$ \label{plan}\\
+%     \If{$\pi \neq \emptyset$}{
+%         $(success, health) \asgn$ ExecuteRoverPolicy$ (\PA, \pi^*,\phi)\ $\\
+%         \If{$success = true$}{
+%             \Return{success};
+%         }
+%         \Else{
+%             $\phi \asgn$ UpdateSpecification($health$)\\
+%             \textbf{Goto} line~\ref{plan}\\
+%         }
+%     }
+%     \Else{
+%         $\bar{m} \asgn$ GetExplorationDirection($\PA, \pi, m$)
+%     }
+% }
+% \BlankLine
+% \end{algorithm}
 
 % \begin{algorithm}
 % \caption{$computeProb(e=(B_u, B_v), s_u, ec_e, \RA)$ TODO: Remove}
@@ -1235,13 +1308,14 @@ $\bar{m} \asgn$ GetInitialExplorationDirection() \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Finding the Maximum Probability policy}
+\label{sec:ValueIteration}
 The existence of satisfying policies results immediately from the construction,
 i.e., if the Alg.~\ref{alg:compute-mdp} returns a non-empty policy,
 then the memoryless policy on $\PA$ reaches a final state of $\PA$,
-and can be converted into a finite-memory policy on $\MDP$.
+and can be converted into a finite-memory policy on $\TS$.
 Since the policy reaches a final state of $\PA$, and therefore of $\FSA$,
 it follows that it satisfies the specification with positive probability.
-We only need to check if the product MDP $\PA$ has any accepting states $Acc_\PA$.
+We only need to check if the product MDP $\PA$ has any accepting states $Acc_\PA \neq \emptyset$.
 
 Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize the probability that a given formula $\phi$ is satisfied.  
 %%
@@ -1252,7 +1326,7 @@ Given a \DTL-FIRM MDP, we can compute the optimal switching policy to maximize t
 %	\underset{m \in \mathcal{F}(S_{\mathcal{P}},Act)}{\arg \max} \bigwedge_{i\in \Omega_{\mathcal{R}}}\bigwedge_{j=1}^\infty Pr_{m}( \bigvee_{k=1}^{\infty} s_{j+k} \cap \mathcal{F}_i \wedge s_{j+k} \in S_{\mathcal{P}} \setminus B_i) 
 %\end{equation}
 %
-In other words, we find a policy that maximizes the estimated probability of visiting the $Acc_\PA$ states which can be done by finding the smallest fixed point of the Bellman equation.
+In other words, we find a policy that maximizes the estimated probability of visiting the $Acc_\PA$ states by finding the smallest fixed point of the Bellman equation.
 % To find this policy, we first decompose $\mathcal{P}$ into a set of end components and find the accepting components. Since any sample path that satisfies $\phi$ must end in an accepting component, maximizing the probability of satisfying $\phi$ is equivalent to maximizing the probability of reaching such a component.
 %{\footnotesize
 % \begin{equation}
@@ -1281,28 +1355,25 @@ The smallest fixed point can be  found by initializing $J(s) = 0$ for all $s$ an
 %[Cite Bertsekas]
 
 
-%\subsection{Querying the FIRM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Execution, remapping, and replanning}
+\label{sec:replanning}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Algorithm}%Checking 
+As shown in Fig. \ref{fig:FuncArc}, the rover begins execution once it finds the policy described in section \ref{sec:ValueIteration}. 
+During execution the rover might detect a discrepancy between the labels in the map provided by the helicopter and environment. 
+For example, it might detect a untraversable region which had a larger CFA than what was estimated by the helicopter. 
+Now, the rover tries to replan the satisfying policy with the updated map label. If the rover does not find a satisfying solution, it asks the helicopter to map a new region. This process is repeated until the rover satisfies all the specifications.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Execution, remapping, and replanning} \label{replanning}
-
-\cristi{Need to add description of the execution copter and rover,
-remapping triggering and information passed between rover and copter, and replanning
-for the rover}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Complexity}\label{complexity}
-% The overall complexity of maintaining the ECs used for checking
-% for satisfying runs in $\PA$ is $O(\card{\Omega_\RA} \card{S_\PA}^{\frac{3}{2}})$~\cite{Haeupler2012} and is better by a polynomial factor
-% $\card{S_\PA}^{\frac{1}{2}}$ than computing the ECs at each
-% step using a linear algorithm.
-Checking for the existence of a satisfying run of positive probability
-can be done in $O(1)$ time.
-The dynamic programming algorithm is polynomial in
-$\card{S_\PA}$~\cite{papadimitriou1987}.
+% \subsubsection{Complexity}\label{complexity}
+% % The overall complexity of maintaining the ECs used for checking
+% % for satisfying runs in $\PA$ is $O(\card{\Omega_\RA} \card{S_\PA}^{\frac{3}{2}})$~\cite{Haeupler2012} and is better by a polynomial factor
+% % $\card{S_\PA}^{\frac{1}{2}}$ than computing the ECs at each
+% % step using a linear algorithm.
+% Checking for the existence of a satisfying run of positive probability
+% can be done in $O(1)$ time.
+% The dynamic programming algorithm is polynomial in
+% $\card{S_\PA}$~\cite{papadimitriou1987}.
 
 %{\color{blue} [To be written by Cristi]
 %
@@ -1327,27 +1398,29 @@ $\card{S_\PA}$~\cite{papadimitriou1987}.
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Results} \label{sec:simulation}
 
-\begin{figure*}[h]
-	\begin{center}
-		\includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_1.png} ~ \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_3.png} ~
-		\includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_5.png} ~ \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_7.png} 
-	\end{center}
-	\label{fig:planning}
-	\caption{Illustration of the incremental planning and re-planning procedure, where the shaded areas illustrate regions that have been explored by the copter. The first three figures illustrate how the roadmap is build until a trajectory that visits both \texttt{A} and \texttt{B} without entering \texttt{Obs} can be constructed. However, during execution (blue line), an additional obstacle \texttt{ObsLater} is encountered, which triggers a construction of a new roadmap. The rightmost figure shows the new roadmap together with an execution trajectory that fulfills the specification.}
-\end{figure*}
-
-\begin{figure*}[h]
-	\begin{center}
-		\includegraphics[width=0.15\textwidth]{figs/pdf1.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf2.png} ~
+\begin{figure*}[t!]
+	\centering
+	\subfigure[Rover starts by trying to plan in region explored by the helicopter (shaded in gray) but fails to find a solution. Hence, the rover asks the helicopter to map new regions.]{
+	\includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_1.png}}
+    ~
+    \subfigure[Rover gets the map from the copter and successfully finds a policy that satisfies the specification.]{
+    \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_3.png}}
+    ~
+    \subfigure[Rover starts executing (blue line) the policy but detects an additional obstacle \texttt{ObsLater} that was not labelled in the map obtained from the helicopter. Rover tries to re-plan but fails to find a solution and asks the copter to map new regions.]{
+    \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_5.png}}
+    ~
+    \subfigure[Rover uses the updated map to find a solution from it's current belief and state in FSA. Finally, it executes the solution and reaches the goal state.]{
+    \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_7.png}}
+	\subfigure[Visualization of the Mars environment \rohan{Add details of location on Mars and add labels for A, B and obstacles} and trajectory executed by the rover.]{	\includegraphics[width=0.15\textwidth]{figs/pdf1.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf2.png} ~
 		\includegraphics[width=0.15\textwidth]{figs/pdf4.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf5.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf6.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf7.png} 
-	\end{center}
-	\label{fig:rover_path}
-	\caption{TODO}
+	}
+	\caption{Illustration of the incremental planning, re-planning and re-mapping procedure.}
+	\label{fig:simulation}
 \end{figure*}
 
-We now present results from the proposed planner algorithm in a realistic mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
+We now present results from the proposed planner algorithm in a realistic Mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
 \begin{equation}
-    \bigwedge_{c \in \{A,B \}} \lozenge \xi_c \land \left( \xi_{keepout} \Until \xi_c \right).
+    \bigwedge_{s \in \{A,B \}} \lozenge \xi_s \land \left( \xi_{keepout} \Until \xi_s \right).
 \end{equation}
 For dynamics we opt for a unicycle model
 \begin{equation}
@@ -1355,34 +1428,34 @@ For dynamics we opt for a unicycle model
         x(t+1) \\
         y(t+1) \\
         \varphi(t+1)
-    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\varphi(t)) \\ y(t) + v \sin(\varphi(t)) \\ \varphi(t) + \omega \end{bmatrix} + w,
+    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\varphi(t)) \delta{t}\\ y(t) + v \sin(\varphi(t)) \delta{t}\\ \varphi(t) + \omega \delta{t} \end{bmatrix} + w,
 \end{equation}
-where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim \mathcal N(0, Q)$ is Gaussian process noise. We assume availability of state observations corrupted by Gaussian noise, and use an extended Kalman filter to update the belief state of the system. To control the belief state between FIRM belief nodes, we use the same switching controller as in \cite{Vasile2016} that first directs the heading angle $\varphi$ towards the target before starting to move. 
+where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim \mathcal N(0, Q)$ is Gaussian process noise. We assume availability of state observations corrupted by Gaussian noise, and use an extended Kalman filter to update the belief state of the system. To control the belief state between FIRM belief nodes, we use the same switching controller as in \cite{Cristi-CDC-2016} that first directs the heading angle $\varphi$ towards the target before starting to move. 
 
-In order to simulate an uncertain environment we assume that map labels are only available for the region surrounding the initial state. The rover can request that the copter explores a new area in order to extend the planning region. Furthermore, if the rover encounters a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure \ref{fig:planning_overview}.
+In order to simulate an uncertain environment we assume that map labels are only available for the region surrounding the initial state. The rover can request that the helicopter explores a new area in order to extend the planning region. Furthermore, if the rover encounters a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure~\ref{fig:FuncArc}.
 
-We defined a square environment with obstacles and science targets \texttt{A} and \texttt{B} in order to test the algorithm. Fig. \ref{fig:planning} illustrates the incremental construction of a road map, including a replanning step
+Figure~\ref{fig:simulation} shows results of the simulation along with a visualization in the Mars environment with obstacles, science target regions \texttt{A} and \texttt{B}. The planning phase took 19.4 seconds to compute the policy on a system running Ubuntu 14.04 with Intel Core i7-6820HQ CPU @ 2.7 Ghz. The product MDP graph had 393 vertices with 2752 edges and 15 Monte Carlo trials were performed to estimate the transition probabilities.
 
-\begin{figure}
-\begin{center}
-\begin{tikzpicture}
-	[mynode/.style = {draw, rounded corners, fill=blue!50, minimum width=12mm, minimum height=6mm}]
- 	\node[mynode] (sample) {Sample};
- 	\node[mynode, node distance=2cm, right of=sample] (solve) {Solve};
- 	\node[mynode, above right of=solve, node distance=2cm] (explore) {Explore};
- 	\node[mynode, below right of=solve, node distance=2cm] (replan) {Update map};
- 	\node[mynode, below right of=explore, node distance=2cm] (execute) {Execute};
- 	\draw[-latex] (solve) -- node[left] {$p < p^*$} (explore);
-  	\draw[-latex] (solve) -- node[above] {$p\geq p^*$} (execute);
-  	\draw[-latex] (execute) -- node[right] {Mismatch} (replan);
-  	\draw[-latex] (replan) -- (solve);
-  	\draw[-latex] (sample) -- (solve);
-  	\draw[-latex] (explore) to[out=180, in=45] (sample);
-\end{tikzpicture} 
-\end{center}
-\label{fig:planning_overview}
-\caption{Illustration of the sample-solve-explore planning algorithm. A plan is not executed unless the probability of specification satisfaction is estimated to be above a threshold $p^*$. If the rover encounters unexpected terrain during the execution, the map is updated and a new plan is computed.}
-\end{figure}
+% \begin{figure}
+% \begin{center}
+% \begin{tikzpicture}
+% 	[mynode/.style = {draw, rounded corners, fill=blue!50, minimum width=12mm, minimum height=6mm}]
+%  	\node[mynode] (sample) {Sample};
+%  	\node[mynode, node distance=2cm, right of=sample] (solve) {Solve};
+%  	\node[mynode, above right of=solve, node distance=2cm] (explore) {Explore};
+%  	\node[mynode, below right of=solve, node distance=2cm] (replan) {Update map};
+%  	\node[mynode, below right of=explore, node distance=2cm] (execute) {Execute};
+%  	\draw[-latex] (solve) -- node[left] {$p < p_{min}$} (explore);
+%   	\draw[-latex] (solve) -- node[above] {$p\geq p_{min}$} (execute);
+%   	\draw[-latex] (execute) -- node[right] {Mismatch} (replan);
+%   	\draw[-latex] (replan) -- (solve);
+%   	\draw[-latex] (sample) -- (solve);
+%   	\draw[-latex] (explore) to[out=180, in=45] (sample);
+% \end{tikzpicture} 
+% \end{center}
+% \label{fig:planning_overview}
+% \caption{Illustration of the sample-solve-explore planning algorithm. A plan is not executed unless the probability of specification satisfaction is estimated to be above a threshold $p_{min}$. If the rover encounters unexpected terrain during the execution, the map is updated and a new plan is computed.}
+% \end{figure}
 
 % 	\begin{figure}[ht!]
 % 		\centering
@@ -1397,12 +1470,7 @@ We defined a square environment with obstacles and science targets \texttt{A} an
 	\section{Conclusion} \label{sec:conclusion}
 	This paper proposes ...
 
-	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
