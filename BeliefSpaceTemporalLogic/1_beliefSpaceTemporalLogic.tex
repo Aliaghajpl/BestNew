@@ -824,7 +824,7 @@ Motion planning problems in belief space suffer from not only the curse of dimen
 A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TSX$ represents a set of nodes in belief space and each edge represents a local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to an $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
-FIRM iteratively grows a graph $\TS$ in belief space, where each node corresponds to a Gaussian belief and map state $b = (\hat{x},P, m) \in \TSX$ with pose mean $\hat{x}$ and covariance $P$ \cite{Ali14-IJRR}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
+FIRM iteratively grows a graph $\TS$ in belief space, where each node corresponds to a Gaussian belief and map state $b = (\hat{x},P, m) \in \TSX$ with pose mean $\hat{x}$ and covariance $P$ \cite{Ali14-IJRR}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11}\cite{VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
 
 
 % Prev Version --------
