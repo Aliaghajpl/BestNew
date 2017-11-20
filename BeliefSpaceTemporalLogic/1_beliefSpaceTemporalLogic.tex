@@ -136,7 +136,7 @@ of the algorithm.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 	\section{Introduction} \label{subsec:intro}
-	Future space missions will require much higher level of autonomy due to the growing complexity and uncertainty of missions and very short and delayed communication windows. At the same time, space missions are safety-critical, especially as it relates to surface exploration of planetary bodies like Mars. Despite this need, most of today’s missions still require frequent human intervention. One of main areas humans are needed is to bridge the gap between high-level discrete planning and low-level continuous control, in particular, when there is partial information and real-world perception noise.
+	Future space missions will require much higher level of autonomy due to the growing complexity and uncertainty of missions and very short and delayed communication windows. At the same time, space missions are safety-critical, especially as it relates to surface exploration of planetary bodies like Mars. Despite this need, most of today's missions still require frequent human intervention. One of main areas humans are needed is to bridge the gap between high-level discrete planning and low-level continuous control, in particular, when there is partial information and real-world perception noise.
 
     Focusing on two-asset missions such as the one shown in Fig.~\ref{fig:cover} for the Mars helicopter and Mars rover~\cite{traverse2020},~\cite{mars2012} navigation and coordination, this work is concerned with developing a mathematical language to principally bridge the gap between high-level mission specifications and low-level control under partial and uncertain environment representation.
     
@@ -147,7 +147,7 @@ of the algorithm.
     However, synthesis from temporal logic for continuous space stochastic systems is still very challenging.
     Additionally, little work exists on partially observable systems and specifications integrating
     temporal and uncertainty constraints.
-    Real-world system on the other had need to be able to operate in continuous environments, while able to reason
+    Real-world systems on the other had need to be able to operate in continuous environments, while able to reason
     about their states and the environment representations inferred from imperfect and noisy sensor measurements.
     
     % The majority of high-level specifications that expresses missions in terms of formulae in a temporal logic of choice has been developed and applied to planning problems in a deterministic setting. This includes the temporal logic planning~\cite{KB-TAC08-LTLCon}, and
@@ -174,14 +174,16 @@ of the algorithm.
 	In the rest of this section, we present contributions and related work.
 	In Sec.~\ref{sec:DTL}, we propose a formal specification framework that integrates uncertainty and temporal
 	properties in the decision makings.
-	Sec.~\ref{sec:misspec} shows the formulation in DTL of a full Mars mission.
-	Next, we proceed to solve a simplified version of the problem that tackles the challenges of:
-	(a) planning a rover with stochastic motion and perception and with partially known maps,
-	(b) reactive deployment,
-	and (c) coordination between the rover and helicopter for information gathering necessary
+	Sec.~\ref{sec:misspec} shows the formulation in DTL for an example Mars exploration mission.
+	Next, we proceed to solve a simplified version of the problem. The solver will tackles the challenges of:
+	(a) planning rover motions under motion and sensing uncertainty and with partially known maps,
+	and (b) coordination between the rover and helicopter for information gathering necessary
 	for control policy synthesis.
-	Simplifying assumptions that will be lifted in future work include deterministic environment maps
-	and deterministic copter dynamics.
+	%, and
+	%(c) reactive behaviors ,
+	%We discuss the further assumption 
+	%Simplifying assumptions that will be lifted in future work include deterministic environment maps
+	%and deterministic copter dynamics.
 	Sec.~\ref{sec:planner} details the process of synthesizing a control policy for unified mission
 	and motion problem planning.
 	Lastly, Sec.~\ref{sec:simulation} shows simulation results.
@@ -252,10 +254,10 @@ of the algorithm.
     Most of these are based on computing a finite abstraction for robots, and suffer from
     poor scalability with the robots' state spaces.
     
-    To deal with {\em the curse of dimension} and {\em the curse of history}, a class of randomized
-    algorithms has been developed~\cite{KF-IJRR11,Kav96,platt2010,bry2011} called sampling-based methods.
-    These have been adapted to deal with temporal logic goals without~\cite{bhatia2010sampling,VaBe-IROS-2013,vandenBerg11,Ali14-IJRR}
-    and with uncertainty~\cite{Morteza-HSCC-2013,Cristi-CDC-2016,prentice2009}.
+    To deal with {\em the curse of dimensionality} and {\em the curse of history}, a class of randomized
+    algorithms (referred to as sampling-based methods) has been developed for deterministic \cite{KF-IJRR11,Kav96} and stochastic systems ~\cite{Ali14-IJRR,bry2011}.
+    These have been adapted to deal with temporal logic goals without~\cite{bhatia2010sampling,VaBe-IROS-2013}
+    and with uncertainty~\cite{Morteza-HSCC-2013,Cristi-CDC-2016}.
 	
 % 	\cristi{TODO: related work on
 % 	(a) sampling-based methods for stochastic systems,}
@@ -281,18 +283,18 @@ of the algorithm.
 	Extensions to temporal logic planning for partially observable and stochastic systems have also been
 	proposed~\cite{Cristi-CDC-2016,dorsa-rss2016,fu2015integrating}.
 	However, these do not consider replanning replanning when the system faces unmodeled contingencies.
-	In other words, there exist a gap between planning and execution when it comes to real-world setup
-	when the modelling assumptions can be violated.
-	The closest work to our own is~\cite{Cristi-CDC-2016}, where the authors a ground vehicle tasks with
-	a mission with temporal and uncertainty constraints, and a quadrobot provides noisy pose measurements
+	In other words, there exists a gap between planning and execution when it comes to real-world setup
+	where the modelling assumptions can be violated.
+	In our previous work \cite{Cristi-CDC-2016}, a ground vehicle is tasked with
+	a mission with temporal and uncertainty constraints, and a quadrotor provides noisy pose measurements
 	to the ground vehicle.
 	However, there is no on-line replanning and the no explicit cooperation between the robots.
 	Further, in~\cite{Cristi-CDC-2016} the environment map is assumed to be fully known a priori.
-	In our application, the environment is only partially known, and this plays a crucial role in
+	In this work, the environment is only partially known, and this plays a crucial role in
 	deciding what path is optimal, and how the two-robot system needs to increase information to
 	provide higher level of mission accomplishment success.
-	The proposed approach team actively cooperate to achieve the mission, where the rover's planning
-	algorithms generates demands for the helicopter explore parts of the environment.
+	In the proposed approach, the robot team actively cooperate to accomplish the mission, where the rover's planning
+	algorithms generate demands for the helicopter to explore certain parts of the environment.
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Belief Space Temporal Logic}
@@ -795,13 +797,13 @@ initial text={}]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Sampling-based methods in belief space}
 \label{sec:FIRM}
-Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Agha14}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
+Motion planning problems in belief space $\CA{B}$ suffer from not only the curse of dimensionality but also the curse of history \cite{Pineau03a}. Further, planning in the joint belief and specification space (i.e., $\CA{B} \times \FSA$) makes this problem even harder. To ameliorate the curse of dimensionality and break the curse of history in POMDPs, we rely on recently developments in sampling-based methods in belief space. In particular, we use Feedback-based Information RoadMap (FIRM)~\cite{Ali14-IJRR}, that uses local feedback controllers to break the curse of history associated with the POMDP. 
 
 \begin{definition}[FIRM]
 A Feedback-based Information RoadMap (FIRM) is a graph in belief space $\TS = (\TSX, \TSE, B^0)$, where $\TS$ represents a set of nodes in belief space $\TSX$ and the edge corresponds to a local feedback controller $\mu^{ij} \in \TSE$, which drives the system from belief node $B^i$ to $\epsilon$-neighbourhood of $B^j$ in finite time. The initial belief node is denoted by $B^0$. Note that each FIRM edge is a local controller, i.e., $\mu^{ij}:\mathbb{B}\rightarrow\mathbb{U}$.
 \end{definition}
 
-FIRM iteratively grows a graph $\TS$ in belief space, where each node corresponds to a Gaussian belief and map state $b = (\hat{x},P, m) \in \TSX$ with pose mean $\hat{x}$ and covariance $P$ \cite{Agha14}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
+FIRM iteratively grows a graph $\TS$ in belief space, where each node corresponds to a Gaussian belief and map state $b = (\hat{x},P, m) \in \TSX$ with pose mean $\hat{x}$ and covariance $P$ \cite{Ali14-IJRR}. For more details about sampling-based algorithms, and their connection to formal methods see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}. %In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
 
 
 % Prev Version --------
@@ -815,19 +817,19 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each node correspond
 % %\cite{Lav06}.
 % The extension procedure is biased towards exploration of
 % uncovered regions of the state space.
-% Similar to~\cite{Agha14}, we adapt sampling-based
+% Similar to~\cite{Ali14-IJRR}, we adapt sampling-based
 % methods to produce finite abstractions (e.g., graphs) of the belief space.
 % Alg.~\ref{alg:compute-mdp} incrementally constructs
 % the transition belief graph FIRM $\TS = (\TSX, \BB{M}_\TS, B_0, \BB{E}_\TS)$,
 % where $\TSX$ is the set of generated belief nodes,
 % $ \BB{E}_\TS$ is the set of edges, and $\BB{M}_\TS$ is a set
 % of controllers associated with edges.
-% The belief nodes $b=(\hat{x}, P)\in\mathbb{V}$ are sampled from the reachable set of beliefs \cite{Agha14}.
+% The belief nodes $b=(\hat{x}, P)\in\mathbb{V}$ are sampled from the reachable set of beliefs \cite{Ali14-IJRR}.
 
 % For more details about sampling-based algorithms, and how the graph can be generated see~\cite{Lav06,KF-IJRR11,VaBe-IROS-2013}.
 % Transitions are enforced using local controllers which are stored
 % in $\BB{M}_\TS$. i.e., we assign to the $(i,j)$-th edge
-% a local controller denoted by $\mu^{ij} \in \BB{M}_\TS$. Under the assumptions of our model~\cite{Agha14}, the local controllers are guaranteed to stabilize the system to an $\epsilon$-neighborhood of belief nodes in finite time. Thus the transitions on the belief space is abstracted to transitions on the FIRM graph $\TS$. In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
+% a local controller denoted by $\mu^{ij} \in \BB{M}_\TS$. Under the assumptions of our model~\cite{Ali14-IJRR}, the local controllers are guaranteed to stabilize the system to an $\epsilon$-neighborhood of belief nodes in finite time. Thus the transitions on the belief space is abstracted to transitions on the FIRM graph $\TS$. In Alg.~\ref{alg:compute-mdp}, edge controllers are generated using the method $localController()$.
 
 % Prev Version --------
 
@@ -900,7 +902,7 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each node correspond
 
 %\subsection{Local controllers}
 %
-%Similar to FIRM~\cite{Agha14}, we use local controllers
+%Similar to FIRM~\cite{Ali14-IJRR}, we use local controllers
 %to drive the system between the belief nodes of the
 %transition system $\TS$, and to stabilize the belief about
 %the system's state around the destination nodes.
@@ -911,7 +913,7 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each node correspond
 %$e = (B_u, B_v) \in \Delta_\TS$ an edge controller $ec_e$.
 %The edge controller may simply be the node
 %controller $nc_v$ associated with the destination node $B_v$.
-%However, as suggested in~\cite{Agha14},
+%However, as suggested in~\cite{Ali14-IJRR},
 %two-stage local controllers are used instead.
 %In the first stage, a
 %pre-computed nominal trajectory is tracked until the system's state
@@ -922,9 +924,9 @@ FIRM iteratively grows a graph $\TS$ in belief space, where each node correspond
 %The design of the node controllers is presented Sec.~\ref{sec:caseStudy}. 
 %For brevity, we omit the details of the tracking controller.
 %{\color{blue} For more details about local controllers and examples using
-%linear quadratic Gaussian techniques see~\cite{Agha14}.
+%linear quadratic Gaussian techniques see~\cite{Ali14-IJRR}.
 %}
-%It is shown in~\cite[Lemma 3]{Agha14} that these
+%It is shown in~\cite[Lemma 3]{Ali14-IJRR} that these
 %controllers can reach their destination belief nodes
 %in finite (mean) time.
 
@@ -1125,7 +1127,7 @@ if and only if the trajectory ends in a state from $Acc_\PA$.
 %It follows by construction that a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ of $\PA$ is accepting if and only if the trajectory $\BF{s}^0_{0:T_0-1} \BF{s}^1_{0:T_1-1} \ldots$ is accepting in $\FSA$, where $\BF{s}^i_{0:T_i}$ is the random trajectory of $\FSA$ obtained by traversing the transition $e = (B_i, B_{i+1})$ using the controller $\mu^{ij}$ and $s^i_{0} = s_i$ for all $i \geq 0$. Note that $\BF{s}^i_{T_i} = \BF{s}^{i+1}_0$. As a result, a trajectory of $\TS$ obtained from an accepting trajectory of $\PA$ satisfies the given specification encoded by $\FSA$ with positive probability. We denote the projection of a trajectory $\BF{q} = (B_0, s_0) (B_1, s_1) \ldots$ onto $\TS$ by $\proj{\BF{q}}{\TS} = B_0 B_1 \ldots$.
 
 % \begin{remark}
-% Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as both FIRM graph $\TS$ and the FSA $\FSA$ can be constructed incrementally \cite{Agha14,VaBe-IROS-2013}.
+% Note that the product MDP in Def.~\ref{def:pa} can be created incrementally as both FIRM graph $\TS$ and the FSA $\FSA$ can be constructed incrementally \cite{Ali14-IJRR,VaBe-IROS-2013}.
 % \end{remark}
 
 % \begin{remark}
@@ -1204,8 +1206,8 @@ Construct product MDP $\PA = \TS \times \FSA = (S_\PA = \TSX \times S_\FSA, (B_0
 \TSE,\delta_\PA = \emptyset, Acc_\PA)$\;
 
 \For{$iteration = 1$ \KwTo $N$}{
-    Sample a belief node $B_n$ (using \cite{Agha14})\;
-    Connect $B_n$ to FIRM graph via constructing new edges $\TSEE_n$ (using \cite{Agha14})\;
+    Sample a belief node $B_n$ (using \cite{Ali14-IJRR})\;
+    Connect $B_n$ to FIRM graph via constructing new edges $\TSEE_n$ (using \cite{Ali14-IJRR})\;
     $\TSX \asgn \TSX \cup \{B_n\}$, $\TSE \asgn \TSE \cup \TSEE_n$\;
     $S_\PA \asgn S_\PA \cup (\{ B_n \} \times S_\FSA)$\;
     \ForEach{$\mu^{i j} \in \TSEE_n$}{
@@ -1469,6 +1471,8 @@ Figure~\ref{fig:simulation} shows results of the simulation along with a visuali
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Conclusion} \label{sec:conclusion}
 	This paper proposes ...
+	
+	In this work, we assumed the environment map is deterministic. Also, we have assume the copter dynamics are deterministic. We will relax these assumption in the future work.
 
 	
 	
