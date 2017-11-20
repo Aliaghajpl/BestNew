@@ -1,4 +1,23 @@
-\documentclass[conference]{IEEEtran}
+
+\def\year{2018}\relax
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article} %DO NOT CHANGE THIS
+\usepackage{aaai18}  %Required
+\usepackage{times}  %Required
+\usepackage{helvet}  %Required
+\usepackage{courier}  %Required
+\usepackage{url}  %Required
+\usepackage{graphicx}  %Required
+\frenchspacing  %Required
+\setlength{\pdfpagewidth}{8.5in}  %Required
+\setlength{\pdfpageheight}{11in}  %Required
+%PDF Info Is Required:
+  \pdfinfo{
+/Title (2018 Formatting Instructions for Authors Using LaTeX)
+/Author (AAAI Press Staff)}
+\setcounter{secnumdepth}{0}  
+
+%\documentclass[conference]{IEEEtran}
 \usepackage{standalone}
 \usepackage{times}
 \usepackage{float}
@@ -58,7 +77,7 @@ Belief Space Planning with Temporal Logic Constraints}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
 
-%\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Sofie Haesaert, Ali-Akbar Agha-Mohammadi}
+%\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Ali-Akbar Agha-Mohammadi, Sofie Haesaert, Richard Murray, Aaron Ames}
 
 % avoiding spaces at the end of the author lines is not a problem with
 % conference papers because we don't use \thanks or \IEEEmembership
@@ -130,7 +149,7 @@ of the algorithm.
 % network and ground robot.
 \end{abstract}
 
-\IEEEpeerreviewmaketitle
+%\IEEEpeerreviewmaketitle
 
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,16 +300,16 @@ of the algorithm.
 	
 	Extensions to temporal logic planning for partially observable and stochastic systems have also been
 	proposed~\cite{Cristi-CDC-2016,dorsa-rss2016,fu2015integrating}.
-	However, these do not consider replanning replanning when the system faces unmodeled contingencies.
+	However, these do not consider replanning when the system faces unmodeled contingencies.
 	In other words, there exists a gap between planning and execution when it comes to real-world setup
 	where the modelling assumptions can be violated.
-	In our previous work \cite{Cristi-CDC-2016}, a ground vehicle is tasked with
-	a mission with temporal and uncertainty constraints, and a quadrotor provides noisy pose measurements
-	to the ground vehicle.
+	In our previous work
+	More specifically, in \cite{Cristi-CDC-2016} a ground vehicle is tasked with
+	a mission with temporal and uncertainty constraints, and a quadrotor provides noisy pose measurements to the ground vehicle.
 	However, there is no on-line replanning and the no explicit cooperation between the robots.
-	Further, in~\cite{Cristi-CDC-2016} the environment map is assumed to be fully known a priori.
+	Further, in~\cite{Cristi-CDC-2016} the environment map is assumed to be fully known a-priori.
 	In this work, the environment is only partially known, and this plays a crucial role in
-	deciding what path is optimal, and how the two-robot system needs to increase information to
+	deciding which path is optimal, and how the two-robot system needs to increase information to
 	provide higher level of mission accomplishment success.
 	The proposed approach generates cooperative behavior to achieve the mission, where the rover's planning
 	algorithms generates demands for the helicopter explore unknown parts of the environment.
@@ -1488,7 +1507,7 @@ Figure~\ref{fig:simulation} shows results of the simulation along with a visuali
 	
 	%\bibliographystyle{ieeeTran} %\bibliographystyle{apalike}
 	
-	\bibliographystyle{plain}
+	\bibliographystyle{aaai}
 	\bibliography{AliAgha,references}
 	%\bibliography{references.bib}
 	
