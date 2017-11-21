@@ -1,7 +1,8 @@
 %% Additional packages
 \usepackage{times}
 \usepackage{amsmath}
-\usepackage{amsthm}
+
+
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{mathtools}
@@ -29,7 +30,13 @@
 %% Packages
 %\usepackage[margin=1in]{geometry}
 %\usepackage[abs]{overpic}
+
+\ifdefined\algorithm
+% Dont load theorem style
+\else
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e}
+\fi
+
 %\usepackage{multirow} % for cell tables spanning multiple rows
 \usepackage{tikz,pgf}%,tikz-3dplot}
 \usetikzlibrary{arrows,automata,shapes,calc,backgrounds,spy,positioning}
@@ -40,19 +47,7 @@
 %\usepackage{lipsum}
 \usepackage{epstopdf}
 
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}
-\newtheorem{cor}{Corollary}
-\newtheorem{prop}{Proposition}
-\newtheorem{lemma}{Lemma}
 
-\theoremstyle{definition}
-%\newtheorem{definition}{Definition}
-\newtheorem{remark}{Remark}
-\newtheorem{cond}{Condition}
-
-\newtheorem{example}{Example}
-\newtheorem{problem}{Problem}
 %\newtheorem{assumption}{Assumption}
 
 
@@ -69,11 +64,11 @@
 %\newcommand{\project}[1]{\! \upharpoonright_{#1}}
 
 
-%% Theorems 
+%% Theorems  => Patched to use with different cls style files
 %\newtheorem{theorem}{Theorem}[section]
 %\newtheorem{proposition}[theorem]{Proposition}
 %\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}[theorem]{Definition}
+
 %\newtheorem{lemma}[theorem]{Lemma}
 %\newtheorem{remark}[theorem]{Remark}
 %\newtheorem{remarks}[theorem]{Remarks}
@@ -165,7 +160,7 @@
 \newcommand{\TSE}{\BB{E}_\TS}
 \newcommand{\TSEE}{\BB{E}}
 
-\newcommand{\DTL}{DTL\xspace}
+\newcommand{\DTL}{DTL~}
 
 
 %% Short macros for arrows
@@ -202,4 +197,40 @@
 %\beamertemplategridbackground[1cm]
 %\usepackage[style=numeric-comp]{biblatex}
 %\usepackage{cite}
+\ifdefined\theoremstyle
+% Dont load theorem style:
+%% There are a number of predefined theorem-like environments in
+%% ifacconf.cls:
+%%
+%% \begin{thm} ... \end{thm}            % Theorem
+%% \begin{lem} ... \end{lem}            % Lemma
+%% \begin{claim} ... \end{claim}        % Claim
+%% \begin{conj} ... \end{conj}          % Conjecture
+%% \begin{cor} ... \end{cor}            % Corollary
+%% \begin{fact} ... \end{fact}          % Fact
+%% \begin{hypo} ... \end{hypo}          % Hypothesis
+%% \begin{prop} ... \end{prop}          % Proposition
+%% \begin{crit} ... \end{crit}          % Criterion
+\newtheorem{theorem}[thm]{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{definition}[thm]{Definition}
+
+\else
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{cor}{Corollary}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
+%\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{cond}{Condition}
+
+\newtheorem{example}{Example}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\fi
 
