@@ -2,6 +2,8 @@
 \usepackage{standalone}
 \usepackage{times}
 \usepackage{float}
+\usepackage{biblatex}
+\addbibresource{7_refs.bib}
 
 
 \input{TemplateFiles/def.tex}
@@ -51,118 +53,22 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-This paper provides a comprehensive review of the popular methods for space exploration.
 \end{abstract}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-As a world leader in space exploration, NASA advances deep space exploration missions and continues to uncover vast amount of new knowledge about the universe.
-In order to satisfy a set of high-level science and engineering goals for every space robotic mission, a step-by-step planning and scheduling of spacecraft operations is required. This involves generating a sequence of low-level spacecraft commands that according to the goal of the mission, describes the action plan of the robot. The action plans is a series of states, and actions in order to move from one state to another.
 
+\section{Related work}
+\cite{perception-aware-planning} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Features for Planning methods}
+\cite{Perception-Aware-Multiobjective-Search}
 
-Verifiable specification satisfaction:
+\cite{MapQualityEvaluation}
 
-Uncertainty: 
+\printbibliography
 
-Real-time Replanning:
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Planning method overview for space applications}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{ASPEN}\label{sec:aspen}
-ASPEN (Automated Scheduling and Planning ENvironment) encodes spacecraft operability constraints, flight rules, spacecraft hardware models, science experiment goals, and operations procedures to allow for automated generation of low-level spacecraft sequences. ASPEN contains a number of innovations including: 
-
-\begin{itemize}
-  \item an expressive but easy to use modeling language
-  \item multiple search (inference) engines
-  \item iterative repair suited for mixed-initiative human in loop operations
-  \item real-time replanning and response (in the CASPER system)
-  \item plan optimization
-\end{itemize}
- 
- ASPEN is being used for the Citizen Explorer (CX-1) (August 2000 launch) and the 2nd Antarctic Mapping Missions (AMM-2) (September 2000). ASPEN has also been used to automate ground communications stations – automating generation of tracking plans for the Deep Space Terminal (DS-T). ASPEN has been used to demonstrate automated command generation and onboard planning for rovers and is currently being evaluated for operational use for the Mars-01 Marie Curie rover mission. CASPER, the soft real-time versions of ASPEN, has been demonstrated with the Jet Propulsion Laboratory (JPL) Mission Data Systems (MDS) Control Architecture prototypes..
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Subsection Heading Here}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Summary Table}\label{sec:table}
-In this section, we summarize the ....
-
-\begin{center}
-\begin {tabular}{ c|c|c|c }
- \hline
-%  \multicolumn{4}{|c|}{Autonomous Planning Methods List} \\
- \hline
-Planning Method & ASPEN & Casper &MAPGEN\\
- \hline
-Scalability   &YES   &NA   &NA\\
-Uncertainty   &NA    &NA   &NA\\
-Optimization   &YES    &NA   &NA\\
-Verifiable    &NA &NA &NA\\
-Planing/ scheduling &YES  &NA   &NA\\
-Real-time Re-planning/rescheduling &YES    &NA   &NA\\
-Repair capability &YES    &NA   &NA\\
-Success/performance guarantees &YES &NA &NA\\
-Graphical User Interface &YES  &NA &NA\\
-Temporal reasoning system  &YES &NA &NA \\
- \hline
-\end{tabular}
-\end{center}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Related Work}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusion}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Acknowledgment}
-The authors would like to thank...
-
-
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:Chien1}
-Chien, S., Rabideau, G., Knight, R., Sherwood, R., Engelhardt, E., Mutz, D., Estlin, T., Smith, B., Fisher, F., Barrett, T., Stebbins, T., Tran, T. (2000). ASPEN - automating space mission operations using automated planning and scheduling. In Proceedings of SpaceOps-2000.
-
-\bibitem{IEEEhowto:Chien2}
-Chien, S., Knight, R., Stechert, A., Sherwood, R., Rabideau, G. 2000. Using Iterative Repair to Increase the Responsiveness of Planning and Scheduling for Autonomous Spacecraft. In Proc. 5th Intl. Conf. on Artificial Intelligence Planning and Scheduling (AIPS-00).
-
-\bibitem{IEEEhowto:Rabideau}
-Rabideau, G., Knight, R., Chien, S., Fukunaga, A., Govindjee, A. (1999). Iterative repair planning for spacecraft operations in the ASPEN system. In International Symposium on Artificial Intelligence Robotics and Automation in Space (i-SAIRAS).
-
-\bibitem{IEEEhowto:Ai-Chang}
-Ai-Chang, M.; Bresina, J.; Charest, L.; Chase, A.; jung Hsu, J. C.; Jonsson, A.; Kanefsky, B.; Morris, P.; Rajan, K.; Yglesias, J.; Chafin, B. G.; Dias, W. C.; and Maldague, P. F. 2004. Mapgen: Mixed-initiative planning and scheduling for the mars exploration rover mission. IEEE Intelligent Systems 8–12.
-
-\bibitem{IEEEhowto:Knight}
-S. Knight, G. Rabideau, S. Chien, B. Engelhardt, and R. Sherwood,
-“Casper: Space exploration through continuous planning,” Intelligent
-Systems, vol. 16, no. 5, pp. 70–75, 2001.
-
-\bibitem{IEEEhowto:Rocco}
-Di Rocco M, Pecora F, Saffiotti A. When robots are late: configuration planning for multiple robots with dynamic goals. IROS, 2013.
-
-
-\end{thebibliography}
-
-
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{picture}}]{John Doe}
-\end{IEEEbiography}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Acknowledgment}
-The authors would like to thank...
 
 \end{document}
 

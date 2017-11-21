@@ -76,8 +76,10 @@ Belief Space Planning with Temporal Logic Constraints}
 %\title{Safety-Critical Formal Methods for \newline Mars Exploration}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
-\author{ }
-%\author{Cristian-Ioan Vasile, Rohan Thakker, Petter Nilsson, Ali-Akbar Agha-Mohammadi, Sofie Haesaert, Richard Murray, Aaron Ames}
+%\author{ }
+\author{Cristian Vasile, Rohan Thakker, Petter Nilsson,
+Sofie Haesaert, \\ \bf \large Ali Agha,
+Richard Murray, Aaron Ames}
 
 % avoiding spaces at the end of the author lines is not a problem with
 % conference papers because we don't use \thanks or \IEEEmembership
@@ -303,7 +305,7 @@ of the algorithm.
 	However, these do not consider replanning when the system faces unmodeled contingencies.
 	In other words, there exists a gap between planning and execution when it comes to real-world setup
 	where the modelling assumptions can be violated.
-	In our previous work
+	%In our previous work
 	More specifically, in \cite{Cristi-CDC-2016} a ground vehicle is tasked with
 	a mission with temporal and uncertainty constraints, and a quadrotor provides noisy pose measurements to the ground vehicle.
 	However, there is no on-line replanning and the no explicit cooperation between the robots.
@@ -1384,7 +1386,7 @@ The smallest fixed point can be  found by initializing $J(s) = 0$ for all $s$ an
 
 As shown in Fig. \ref{fig:FuncArc}, the rover begins execution once it finds the policy described in section \ref{sec:ValueIteration}. 
 During execution the rover might detect a discrepancy between the labels in the map provided by the helicopter and environment. 
-For example, it might detect a untraversable region which had a larger CFA than what was estimated by the helicopter. 
+For example, it might detect an untraversable region which had a larger CFA than what was estimated by the helicopter. 
 Now, the rover tries to replan the satisfying policy with the updated map label. If the rover does not find a satisfying solution, it asks the helicopter to map a new region. This process is repeated until the rover satisfies all the specifications.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1442,10 +1444,15 @@ Now, the rover tries to replan the satisfying policy with the updated map label.
 \end{figure*}
 
 We now present results from the proposed planner algorithm in a realistic Mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
+\sofie{
 \begin{equation}
     \bigwedge_{X \in \{A,B \}} \lozenge \xi_X \land \left( \xi_{keepout} \Until \xi_X \right).
 \end{equation}
-For dynamics we opt for a unicycle model
+}
+\begin{equation}
+    \bigwedge_{X \in \{A,B \}}   \xi_{keepout} \Until \xi_X .
+ \end{equation}
+The dynamics of the rover are represented by a unicycle model
 \begin{equation}
     \begin{bmatrix}
         x(t+1) \\
@@ -1455,7 +1462,7 @@ For dynamics we opt for a unicycle model
 \end{equation}
 where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim \mathcal N(0, Q)$ is Gaussian process noise. We assume availability of state observations corrupted by Gaussian noise, and use an extended Kalman filter to update the belief state of the system. To control the belief state between FIRM belief nodes, we use the same switching controller as in \cite{Cristi-CDC-2016} that first directs the heading angle $\varphi$ towards the target before starting to move. 
 
-In order to simulate an uncertain environment we assume that map labels are initially only available for the region surrounding the initial state. The rover can request that the helicopter explores a new area in order to extend the planning region. Furthermore, if there is a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure~\ref{fig:FuncArc}.
+In order to simulate an uncertain environment, we assume that map labels are initially only available for the region surrounding the initial state. The rover can request that the helicopter explores a new area in order to extend the planning region. Furthermore, if there is a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure~\ref{fig:FuncArc}.
 
 Figure~\ref{fig:simulation} shows results of the simulation along with a visualization in the Mars environment with obstacles, science target regions \texttt{A} and \texttt{B}. The planning phase took 19.4 seconds to compute the policy on a system running Ubuntu 14.04 with Intel Core i7-6820HQ CPU @ 2.7 Ghz. The product MDP graph had 393 vertices with 2752 edges and 15 Monte Carlo trials were performed to estimate the transition probabilities.
 
@@ -1490,10 +1497,10 @@ Figure~\ref{fig:simulation} shows results of the simulation along with a visuali
 	
 	
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\section{Conclusion} \label{sec:conclusion}
-	This paper proposes ...
+% 	\section{Conclusion} \label{sec:conclusion}
+% 	This paper proposes ... \sofie{[Just remove the section.]}
 	
-	In this work, we assumed the environment map is deterministic. Also, we have assume the copter dynamics are deterministic. We will relax these assumption in the future work.
+% 	In this work, we assumed the environment map is deterministic. Also, we have assume the copter dynamics are deterministic. We will relax these assumption in the future work.
 
 	
 	
