@@ -63,7 +63,7 @@
 % paper title
 %\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
 
-\title{\huge Planetary Exploration with a Helicopter-Rover Team:\\
+\title{\huge Mars Exploration with a Helicopter-Rover Team:\\
 Belief Space Planning with Temporal Logic Constraints}
 % \title{
 % Belief Space Mission and Motion Planning with Temporal Logic Constraints:
@@ -76,10 +76,11 @@ Belief Space Planning with Temporal Logic Constraints}
 %\title{Safety-Critical Formal Methods for \newline Mars Exploration}
 
 % You will get a Paper-ID when submitting a pdf file to the conference system
-%\author{ }
-\author{Cristian Vasile, Rohan Thakker, Petter Nilsson,
-Sofie Haesaert, \\ \bf \large Ali Agha,
-Richard Murray, Aaron Ames}
+
+
+\author{\today}
+%\author{Cristian Vasile, Rohan Thakker, Petter Nilsson, Sofie Haesaert, \\ \bf \large Ali Agha, Richard Murray, Aaron Ames\\ \today}
+
 
 % avoiding spaces at the end of the author lines is not a problem with
 % conference papers because we don't use \thanks or \IEEEmembership
@@ -1436,22 +1437,28 @@ Now, the rover tries to replan the satisfying policy with the updated map label.
     ~
     \subfigure[Rover uses the updated map to find a solution from it's current belief and state in the FSA. Finally, it executes the solution and reaches the goal state.]{
     \includegraphics[trim=50 25 50 25,clip, width=0.225\textwidth]{figs/figure_7.png}}
-	\subfigure[Visualization of the Mars environment \rohan{Add details of location on Mars and add labels for A, B and obstacles} and trajectory executed by the rover.]{	\includegraphics[width=0.15\textwidth]{figs/pdf1.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf2.png} ~
-		\includegraphics[width=0.15\textwidth]{figs/pdf4.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf5.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf6.png} ~ \includegraphics[width=0.15\textwidth]{figs/pdf7.png} 
+	\subfigure[Visualization of the Mars environment and trajectory executed by the rover at Kimberly region in Gale Crater.]{	
+	    \includegraphics[width=0.18\textwidth]{figs/pdf_1.png} ~ \includegraphics[width=0.18\textwidth]{figs/pdf_2.png} ~
+		\includegraphics[width=0.18\textwidth]{figs/pdf_4.png} ~ \includegraphics[width=0.18\textwidth]{figs/pdf_5.png} ~ \includegraphics[width=0.18\textwidth]{figs/pdf_6.png} 
 	}
 	\caption{Illustration of the incremental planning, re-planning and re-mapping procedure.}
 	\label{fig:simulation}
 \end{figure*}
 
-We now present results from the proposed planner algorithm in a realistic Mars environment. For simplicity, we restrict attention to the rover and consider the following specification:
-\sofie{
+We now show the results of our planner for a campaign at the Kimberly region in Gale Crater on Mars, visited by Curiosity around Sol 607. 
+The task is to collect one sample from each region of type A (yellow) and type B (green) while avoiding all the obstacles (red) shown in Fig.~\ref{fig:simulation}.
+
+For simplicity, we restrict our attention to the rover and assume that the map is deterministic and the helicopter can fly to the desired location and generate a labelled map of the area requested by the rover. 
+However, there can be a discrepancy between the labels in the map pro
+Thed by the requireter which the rover will encounter only during execution. helicopements ovidf the campaign are specified using the following DTL specification:
+
 \begin{equation}
     \bigwedge_{X \in \{A,B \}} \lozenge \xi_X \land \left( \xi_{keepout} \Until \xi_X \right).
 \end{equation}
-}
-\begin{equation}
-    \bigwedge_{X \in \{A,B \}}   \xi_{keepout} \Until \xi_X .
- \end{equation}
+
+%\begin{equation}
+%    \bigwedge_{X \in \{A,B \}}   \xi_{keepout} \Until \xi_X .
+% \end{equation}
 The dynamics of the rover are represented by a unicycle model
 \begin{equation}
     \begin{bmatrix}
@@ -1464,7 +1471,11 @@ where $v$ (velocity) and $\omega$ (angular velocity) are the inputs and $w \sim 
 
 In order to simulate an uncertain environment, we assume that map labels are initially only available for the region surrounding the initial state. The rover can request that the helicopter explores a new area in order to extend the planning region. Furthermore, if there is a mismatch between the map and what it encounters during execution, the execution is aborted and a new plan is computed. These different phases of planning are illustrated in Figure~\ref{fig:FuncArc}.
 
-Figure~\ref{fig:simulation} shows results of the simulation along with a visualization in the Mars environment with obstacles, science target regions \texttt{A} and \texttt{B}. The planning phase took 19.4 seconds to compute the policy on a system running Ubuntu 14.04 with Intel Core i7-6820HQ CPU @ 2.7 Ghz. The product MDP graph had 393 vertices with 2752 edges and 15 Monte Carlo trials were performed to estimate the transition probabilities.
+Figure~\ref{fig:simulation} shows results of the simulation along with a visualization in the Mars environment. 
+The rover starts by collecting a sample from region A (yellow). Next, it moves towards region B (green) but detects a new obstacle (red) on the way. Thus, it re-plans and re-maps the environment until it finds a solution from its current belief and FSA state. After finding the solution, the rover executes it and completes the campaign by picking up a sample from region B.
+This is also shown in the video submitted with the paper.
+
+The planning phase took 19.4 seconds to compute the policy on a system running Ubuntu 14.04 with Intel Core i7-6820HQ CPU @ 2.7 Ghz. The product MDP graph had 393 vertices with 2752 edges and 15 Monte Carlo trials were performed to estimate the transition probabilities.
 
 % \begin{figure}
 % \begin{center}
