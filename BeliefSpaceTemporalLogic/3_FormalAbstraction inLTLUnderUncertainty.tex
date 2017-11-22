@@ -1,4 +1,4 @@
-\documentclass{TemplateFiles/ifacconf}
+\documentclass{ifacconf}
 \usepackage{standalone}
 \usepackage{times}
 \usepackage{float}
@@ -503,11 +503,86 @@ and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish
 
 
 
-\subsection{LTI Gaussian case}
+
+\section{Case studies}
+ We detail two cases. In the first, we give a standard Gaussian LTL model and we show that one can use a constant estimator even when the noise is not constant.
+ 
+\subsection{Flying in the wind: LTI Gaussian case}
 
 
 
-    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+\noindent\textbf{Point mass moving.}
+    
+Consider the linear time invariant system with Gaussian disturbance, given as 
+\begin{align}\begin{aligned}
+	x^m_{t+1} &= A x^m_{t}+B^mu_{t}+ F^m w_{t}\\
+	y^m_{t}&=C^m x^m_{t}+D^m u_{t}+E^m v_{t}\end{aligned}
+\end{align}
+with matrices $A,B,C,D$ and matrices $F,E$. 
+The disturbance signal $v$ is zero mean independently and identically  distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
+
+ 
+ \noindent\textbf{Wind disturbance.}
+We can model the dynamic variations of the wind as filtered noise. 
+There are two commonly used models  \citep{richardson2013quantifying},  this includes
+\begin{itemize}
+	\item the von Karman power spectral density,
+	\item the Dryden model.
+\end{itemize}
+ 
+ Though the former model matches experiment data more than the 
+ Dryden model, the Dryden model can be represented by  a lower order filter.
+ 
+Consider a filter model to be given as
+\begin{align}
+	\begin{aligned}
+	x_{t+1}^w &= A^w x_{t}^w+ F^w e_{t},\\
+	w_{t}&=C^w x_{t}^w+E^w e_{t}.
+	\end{aligned}
+\end{align}
+
+\textbf{Full model \& Belief space model.}
+The full model is given as follows
+\begin{align} 
+	\begin{bmatrix}
+	x^m_{t+1}	\\x^w_{t+1}
+	\end{bmatrix}
+ &= \begin{bmatrix}
+ 	A^m 	& F^mC^w\\
+ 	0 & A^w
+ \end{bmatrix}
+\begin{bmatrix}
+	x^m_{t}	\\x^w_{t}
+	\end{bmatrix}+\begin{bmatrix} B^m \\ 0~ \end{bmatrix} u_{t}+  \begin{bmatrix}
+	F^m E^w \\
+	F^w
+	\end{bmatrix}e_{t}\notag\\
+	y^m_{t}&=\begin{bmatrix} C^m& 0 \end{bmatrix}\begin{bmatrix}
+	x^m_{t}	\\x^w_{t}
+	\end{bmatrix}+D^m u_{t}+E^m v_{t}.
+\end{align}
+This can be written as 
+ \begin{align}  \begin{aligned}
+x_{t+1}&=A x_{t} + B u_t+ Fe_t\\
+y_t&=Cx_t+Du_t+Ev_t\end{aligned} \end{align}
+\begin{align}& \mbox{ with }  x_t	= \begin{bmatrix}
+	x^m_{t}	\\x^w_{t}
+	\end{bmatrix},
+A = \begin{bmatrix}
+ 	A^m 	& F^mC^w\\
+ 	0 & A^w
+ \end{bmatrix}, \ 
+B = \begin{bmatrix} B^m \\ 0~ \end{bmatrix}\notag \\
+&F=\begin{bmatrix}
+	F^m E^w \\
+	F^w
+	\end{bmatrix},\ 
+C = \begin{bmatrix} C^m& 0 \end{bmatrix} , \ 
+D= D^m, \  E = E^m.\notag
+\end{align}
+ 
+ 
+The belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized . For example, let $\CA{G}$ denote the Gaussian belief space
     of dimension $n$, i.e. the space of Gaussian
     probability measures over $\BB{R}^n$.
     For brevity, we identify the Gaussian measures
@@ -517,25 +592,20 @@ and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish
     $\CA{G} =  \BB{R}^n \times  \S^n$.
     
     
-    
-Consider the linear time invariant system with Gaussian disturbance, given as
-\begin{align}
-	x_{t+1} &= A x_{t}+Bu_{t}+ F w_{t}\\
-	y_{t}&=C x_{t}+D u_{t}+E w_{t}
-\end{align}
-with matrices $A,B,C,D$ and matrices $F,E$ such that $F^TE=0$. 
-The disturbance signal $w$ is zero mean independently and identically   distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
-
-
-\section{Case studies}
- We detail two cases. In the first, we give a standard Gaussian LTL model and we show that one can use a constant estimator even when the noise is not constant.
  
  In the second case, we leverage the developed simulation relation for FIRM. 
  
  \red{[SEARCHING FOR A GOOD CASE! What about the rover? Or rover driving over uncertain map elements?]}
 
-\bibliography{TemplateFiles/ifacconf.cls}             % bib file to produce the bibliography
-	\bibliography{AliAgha,references}
+
+
+%% Bibiliography %%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{AliAgha,references}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 \end{document}
 
