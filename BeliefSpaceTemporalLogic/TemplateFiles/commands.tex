@@ -1,0 +1,164 @@
+%% Additional packages
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage[usenames,x11names]{xcolor}
+
+\ifdefined\algorithm
+% Don't load theorem style
+\else
+\usepackage[linesnumbered,vlined,ruled]{algorithm2e}
+\fi
+
+\usepackage{tikz,pgf} 
+\usetikzlibrary{arrows,automata,shapes,calc,backgrounds,spy,positioning}
+\usetikzlibrary{fit}
+
+\usepackage{epstopdf}
+
+
+ 
+
+%%% figure path
+\graphicspath{{figures/}}
+ 
+ 
+%% Roman, calligraphic, boldface, double barred letters
+\newcommand{\RM}[1]{\mathrm{#1}}
+\newcommand{\CA}[1]{\mathcal{#1}}
+\newcommand{\BF}[1]{\mathbf{#1}}
+\newcommand{\IT}[1]{\mathit{#1}}
+\newcommand{\BB}[1]{\mathbb{#1}}
+\newcommand{\TT}[1]{\mathtt{#1}}
+\newcommand{\FK}[1]{\mathfrak{#1}}
+\newcommand{\BS}[1]{\boldsymbol{#1}}
+
+
+%% spaces 
+\newcommand{\Real}{\BB{R}}
+\renewcommand{\S}{\mathbb S}
+\newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
+
+
+%%% Probability
+\newcommand{\po}{\mathbb{P}}     % Probability of an event
+\newcommand{\p}[1]{\po\left(#1\right)}     % Probability of an event
+\renewcommand{\P}{\BF{P}}
+\newcommand{\pd}[1]{p\left(#1\right)}     % Probability density  
+
+
+
+%% Modelling symbols
+%-------------MDP----------------------------
+\newcommand{\MDP}{\mathcal{M}}
+\newcommand{\M}{{\mathbf{M}}}
+\newcommand{\X}{{\mathbb{X}}}  % State
+\newcommand{\Z}{{\mathbb{Z}}}	% Observation space
+\newcommand{\U}{{\mathbb{U}}} % Action space
+\newcommand{\init}{\rho}
+\newcommand{\tr}{t}
+
+
+%-------------POMDP-----------------------------
+\newcommand{\Hist}{{\mathsf{H}}}  %  History
+\newcommand{\I}{{\mathsf{I}}}  %  History
+\newcommand{\trb}{\hat{t}}
+
+
+% -----------------Refinement relation----------
+\newcommand{\InF}{\mathcal{U}_{v}}
+\newcommand{\Wt}{\mathbb{W}_{\mathbb{T}}}
+
+
+
+%%% Logic 
+%------------------Predicates-----------------------------------
+\newcommand{\Fpred}{{\mathcal F}}
+
+
+
+%%% Temporal logic symbols
+\newcommand{\notltl}{\neg}
+\newcommand{\andltl}{\wedge}
+\newcommand{\orltl}{\vee}
+\newcommand{\Next}{\ensuremath{\bigcirc}}
+\newcommand{\Always}{\ensuremath{\ \square\ }}
+\newcommand{\Event}{\ensuremath{\ \diamondsuit\ }}
+\newcommand{\Until}{\ \CA{U}\ }
+\newcommand{\Implies}{\Rightarrow}
+\newcommand{\Equiv}{\Leftrightarrow}
+\newcommand{\True}{\top}
+\newcommand{\False}{\perp}
+\newcommand{\AP}{AP}
+\newcommand{\pred}{\xi}
+
+
+\newcommand{\eps}{\epsilon} \newcommand{\rel}{\mathcal{R}} % numbers option provides compact numerical references in the text. 
+
+%----- Exotic words----- 
+\newcommand{\buchi}{B\"uchi\ }
+
+%% Symbols of automata
+\newcommand{\PA}{\mathcal{P}} 
+\newcommand{\BA}{\mathcal{B}}
+\newcommand{\TS}{\mathcal{F}}
+\newcommand{\LA}{\mathcal{L}}
+\newcommand{\KA}{\mathcal{K}}
+\newcommand{\RA}{\mathcal{R}}
+\newcommand{\FSA}{\mathcal{A}}
+
+\newcommand{\TSX}{\BB{V}_\TS}
+\newcommand{\TSE}{\BB{E}_\TS}
+\newcommand{\TSEE}{\BB{E}}
+
+\newcommand{\DTL}{DTL~}
+
+ % Custom operators
+\newcommand{\norm}[1]{\left\| {#1} \right\|}
+\newcommand{\norminf}[1]{\left\| {#1} \right\|_{\infty}}
+\newcommand{\normeucl}[1]{\left\| {#1} \right\|_{2}}
+\newcommand{\abs}[1]{\left| {#1} \right|} 
+\DeclareMathOperator{\diag}{diag}
+
+
+
+\ifdefined\theoremstyle
+% Don't load theorem style:
+%% There are a number of predefined theorem-like environments in
+%% ifacconf.cls:
+%%
+%% \begin{thm} ... \end{thm}            % Theorem
+%% \begin{lem} ... \end{lem}            % Lemma
+%% \begin{claim} ... \end{claim}        % Claim
+%% \begin{conj} ... \end{conj}          % Conjecture
+%% \begin{cor} ... \end{cor}            % Corollary
+%% \begin{fact} ... \end{fact}          % Fact
+%% \begin{hypo} ... \end{hypo}          % Hypothesis
+%% \begin{prop} ... \end{prop}          % Proposition
+%% \begin{crit} ... \end{crit}          % Criterion
+\newtheorem{theorem}[thm]{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{definition}[thm]{Definition}
+
+
+\newtheorem{example}{Example}
+
+\else
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{cor}{Corollary}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{cond}{Condition}
+
+\newtheorem{example}{Example}
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\fi
+
