@@ -146,7 +146,7 @@ Polish spaces are complete separable metric spaces, c.f. \cite{bogachev2007measu
     $\BB{E}[\cdot]$ is the expectation operator.
 
     
-    
+ 
 \section{Partially observable Markov decision Processes}
 In this section, we  analyze the formulation of distribution temporal logics as originally given in \cite{JonesDTL2013} for POMDPS. 
 First, we give the definition of POMDPs. Then,  we  give the definition of distribution temporal logic. 
@@ -154,6 +154,31 @@ First, we give the definition of POMDPs. Then,  we  give the definition of distr
 
 The reachability problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function 
 
+
+\subsection{Markov Decision Processes and Control Policies}
+Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
+\begin{definition}[general Markov decision process (gMDP)]\label{def:MDP} \mbox{ }\\
+  A discrete-time gMDP is a tuple $\M\!=\!(\X,\!\init,\!\tr,\!\U)$ with
+  \begin{itemize}
+    \item $\X$,  an uncountable Polish state space with states $x\in\X$ as its elements;
+    \item $\init$, the initial probability distribution $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
+    \item $\U$, the set of control inputs with $u\in\U$ as its elements;
+    \item $\tr:\X\times\U\times\mathcal B(\X)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \U$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$;
+  \end{itemize}
+\end{definition}
+For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x(t+1)\in A)=\int_A \tr(dy\mid x(t)=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot{\mid} x,u)$.
+At every state the state transition depends non-deterministically on the choice of $u\in \U$.
+When chosen according to
+a distribution  $\mu_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\mu_u$. Moreover
+the transition kernel is denoted as $\tr(\cdot| x, \mu_u)=\int_\U \tr(\cdot| x, u) \mu_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
+Given a string of inputs
+$u(0), u(1), \ldots, u(N)$,
+over a finite time horizon $\{0,1,\ldots, N\}$,
+and an initial condition  $x_0$ (sampled from distribution $\pi$),
+the state at the $(t+1)$-st time instant, $x(t+1)$,
+is obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot\mid x(t), u(t) \right)$ --
+these semantics induce paths (or executions) of the MDP.
+ 
 
  
 
@@ -235,28 +260,9 @@ A control policy developed for the Belief space model is a mapping from belief s
 
 
 
-\subsection{Parametrized Belief space: LTI Gaussian case}
+\red{[MDP description of COMDP]}
 
-
-
-    In this work, we assume the belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
-    of dimension $n$, i.e. the space of Gaussian
-    probability measures over $\BB{R}^n$.
-    For brevity, we identify the Gaussian measures
-    with their finite parametrization, mean and
-    covariance matrix.
-     Thus,
-    $\CA{G} =  \BB{R}^n \times  \S^n$.
-    
-    
-    
-Consider the linear time invariant system with Gaussian disturbance, given as
-\begin{align}
-	x_{t+1} &= A x_{t}+Bu_{t}+ F w_{t}\\
-	y_{t}&=C x_{t}+D u_{t}+E w_{t}
-\end{align}
-with matrices $A,B,C,D$ and matrices $F,E$ such that $F^TE=0$. 
-The disturbance signal $w$ is zero mean independently and identically   distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
+ 
 
 \section{Belief Space Temporal Logic}
 
@@ -342,8 +348,123 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
 
 
 
-\section{Formal abstractions}
+\section{Approximate control synthesis}
+\subsection{Synthesis problem}
+Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, how now question
+\begin{itemize}
+	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
+	\item How can we refine an abstract controller designed for $\tilde\MB$ to $\MB$.
+\end{itemize}
 
+
+We introduce a notion  of approximate probabilistic simulation relations which naturally leads to control refinement.
+
+
+
+\subsection{Lifting based simulation}
+
+%\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
+	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
+	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_1,\mathcal B(\X_2)) $ be two probability distributions. 
+	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
+	
+For a given 
+	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
+	satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
+		\begin{description}
+			\item[\textbf{L1.}] for all $X_1\in \mathcal{B}(\X_1)$: $\mathbb W(X_1\times \X_2)=\Delta(X_1)$;
+			\item [\textbf{L2.}] for all $X_2\in \mathcal{B}(\X_2)$:  $\mathbb W(\X_1\times X_2)=\Theta(X_2)$;
+			\item[\textbf{L3.}] for the probability space  $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2), \mathbb W)$ it holds that
+			$x_1\rel x_2$ with probability at least $1-\delta$, or equivalently that $\mathbb{W}\left(\rel\right)\geq1-\delta$.
+	\end{description}}%
+	
+We refer to  $\mathbb W$ as the lifting. We define 
+%\end{definition}
+the set of related, or equivalently lifted, probabilities as 
+	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\] 
+
+
+Hence based on \textbf{L1-3.}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
+
+\subsection{Synthesis problem}
+Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, how now question
+\begin{itemize}
+	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
+	\item How can we refine an abstract controller designed for $\tilde\MB$ to $\MB$.
+\end{itemize}
+
+
+We introduce a notion  of approximate probabilistic simulation relations which naturally leads to control refinement.
+
+
+\begin{figure}[htp]
+	\centering
+
+\begin{tikzpicture}
+
+\tikzset{model/.style={
+  rectangle,
+  inner sep=0pt,
+  text width=25mm,
+  align=center,
+  draw=black, fill=white,
+  minimum height = 10mm
+  }}
+  
+  \node[model] (C) at (0,2.25) {$\tilde{ \mathbf{ C}}$}; 
+\node[model] (Bhat) at (0,.75) {$\tilde{ \mathbf{ B}}$}; 
+
+%\node[label=below:$u$](bl) at (-2,.75) {};
+%\node[label=below:$x$](br) at (2,.75) {};
+\node(be) at (.75,1.25) {};
+\node(bw) at (-.75,1.25) {};
+
+\path[draw,<-] (be.center) -- node[label=right:$\tilde u$]{} (.75,1.75);
+\path[draw,->] (bw.center) -- node[left] {$\tilde b$} (-.75,1.75);
+%\path[draw,<-] (bl.center)--(Bhat);
+%\path[draw,<-] (Bhat)--(br);
+\node[model, fill=white](m) at (0,-2) {$\M$};
+\node[](ml) at (-.75,-1.5) {};
+\node[label=below:$y$](mr) at (2,-2) {};
+\path[draw,->] (-.75,-1.125) -- node[left] {$\tilde b$}(-.75,0);
+\path[draw,<-] (.75,-1.5) -- node[left] {$\tilde u$}(.75,.25);
+\path[draw,->] (m)--(mr);
+\begin{scope}[on background layer]
+\node[model, fit=(ml) (mr) (m),inner sep=2.5mm,label=below:$\mathbf B$, fill=gray!30](B) {};
+\node[model, fit=(C) (Bhat),inner sep=2.5mm, fill=gray!30](B) {};
+\end{scope}			
+\end{tikzpicture}
+
+\caption{Control synthesis}
+\end{figure}
+
+
+ For this, we build on the notion of \emph{interface function} \cite{Girard2009} to define probabilistic simulation relations that allow for
+the hierarchical control refinement of two gMDPs
+\begin{align*}\InF: \U_1\times \X_1\times\X_2 \rightarrow \mathcal{P}(\U_2,\mathcal B(\U_2)).\end{align*}
+This interface function  $\InF$  is required  %in addition
+to be a Borel measurable function.
+%Thus given $(u_1,x_1,x_2)\in\A_1\times \X_1\times\X_2$, $\InF$ induces a Borel measurable stochastic kernel over $\A_2$.
+Intuitively, an interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
+
+
+%
+\begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
+	Consider two gMDPs $\M_i=(\X_i,\init_i ,\mathbb T_i,\U_i),$ $i =1,2$,  with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.
+	$\M_1$ is $(\epsilon,\delta)$-stochastically simulated by $\M_2$ if there exists an interface function $\InF$ and
+	a relation $\rel\subseteq \X_1\times \X_2$, for which there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} u_1,x_1,x_2)$ on $\X_1\times\X_2$ given $\U_1\times\X_1\times\X_2$,
+	such that. \textbf{SR.1-3} hold.
+	{ \setlength{\parskip}{-2pt}\setlength{\parsep}{-1pt}
+		\begin{description}
+			\item[\textbf{SR2.}] $\forall (x_1,x_2)\in \rel$, $\forall u_1\in\U_1$:
+			\[\mathbb T_1(\cdot| x_1, u_1)\ \bar \rel_\delta \  \mathbb T_2(\cdot| x_2, \InF(u_1,x_1,x_2)),\] with lifted probability measure $\Wt(\,\cdot\,{\mid}u_1,x_1,x_2)$;
+						\item[\textbf{SR3.}] $\forall (x_1,x_2)\in \rel$,  $f(b_1)\leq0\rightarrow f(b_2)\leq 0$.
+	\end{description} }
+	\noindent \red{The simulation relation is denoted as $\M_1\preceq^{\delta}_\eps\M_2$.}
+\end{definition}
+This definition extends the known exact notions of probabilistic simulation in \cite{larsen1991bisimulation},
+and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish spaces as elaborated in \cite{haesaert2017verification}.
+%
  Introduce a concept of similarity which relaxes the requirement of equality of the output space. 
  Instead we can  require that for 
  \[\forall (\tilde b,b)\in \rel: f(\tilde b)\leq 0\rightarrow f( b)\leq 0.\]
@@ -356,49 +477,6 @@ As an alternative we can require that there exist  $\tilde f$ such that
  
 Hence by replacing the strict requirement on (approximate) equality, with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$. 
  
-
-
-\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
-	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)), (\X_2,\mathcal B(\X_2))$,
-	and let  $\rel\subseteq \X_1\times \X_2$ be a relation for which $\rel\in \mathcal B(\X_1\times \X_2)$.
-	We denote by
-	$\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))$ the corresponding lifted relation so that $\Delta \bar \rel_\delta \Theta$ holds if there exists a probability space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2), \mathbb W)$  (equivalently, a lifting $\mathbb W$) satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
-		\begin{enumerate}
-			\item[\textbf{L1.}] for all $X_1\in \mathcal{B}(\X_1)$: $\mathbb W(X_1\times \X_2)=\Delta(X_1)$;
-			\item [\textbf{L2.}] for all $X_2\in \mathcal{B}(\X_2)$:  $\mathbb W(\X_1\times X_2)=\Theta(X_2)$;
-			\item[\textbf{L3.}] for the probability space  $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2), \mathbb W)$ it holds that
-			$x_1\rel x_2$ with probability at least $1-\delta$, or equivalently that $\mathbb{W}\left(\rel\right)\geq1-\delta$.
-	\end{enumerate}}%
-\end{definition}
-
-
-
-
-
-
-
-
-
-%
-\begin{definition}[$\delta$-predicate  simulation relation]\label{def:apbsim}
-	Consider two gMDPs $\M_i=(\X_i,\pi_i ,\mathbb T_i,\U_i,h_i,\Z),$ $i =1,2$,  over a shared {metric} output space  $(\Z,\mathbf{d}_\Z)$.
-	$\M_1$ is $(\epsilon,\delta)$-stochastically simulated by $\M_2$ if there exists an interface function $\InF$ and
-	a relation $\rel\subseteq \X_1\times \X_2$, for which there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} u_1,x_1,x_2)$ on $\X_1\times\X_2$ given $\U_1\times\X_1\times\X_2$,
-	such that:
-	{ \setlength{\parskip}{-2pt}\setlength{\parsep}{-1pt}
-		\begin{description}
-			\item[\textbf{PS1.}] $\forall (x_1,x_2)\in \rel$,  $f(b_1)\leq0\rightarrow f(b_2)\leq 0$;
-			\item[\textbf{PS2.}] $\forall (x_1,x_2)\in \rel$, $\forall u_1\in\U_1$:
-			\[\mathbb T_1(\cdot| x_1, u_1)\ \bar \rel_\delta \  \mathbb T_2(\cdot| x_2, \InF(u_1,x_1,x_2)),\] with lifted probability measure $\Wt(\,\cdot\,{\mid}u_1,x_1,x_2)$;
-			\item[\textbf{PS3.}] $\pi_1\bar \rel_\delta \pi_2$.
-	\end{description} }
-	\noindent The simulation relation is denoted as $\M_1\preceq^{\delta}_\eps\M_2$.
-\end{definition}
-This definition extends the known exact notions of probabilistic simulation in \cite{larsen1991bisimulation},
-and the approximate notions of \cite{Desharnais2008,cDAK12} to gMDPs over Polish spaces as elaborated in \cite{haesaert2017verification}.
-%
-
-
 
 
 \section{Distribution LTL control of POMDPs. }
