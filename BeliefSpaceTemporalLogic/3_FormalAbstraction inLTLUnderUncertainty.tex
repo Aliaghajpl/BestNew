@@ -83,6 +83,8 @@ Some of the questions to be tackled are as follows:
 \subsection{Literature}
 This section contains a summary of related literature.
 
+
+
 \subsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 \cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
@@ -101,7 +103,9 @@ Most of the work (including the references given above) has been developed for a
 In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
 In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
 
-
+\subsection{Contributions}
+\red{Connect with work submitted to TACAS \citep{tech_report_TACAS} and \citep{haesaert2017verification}.  }
+In this work, we apply the results to belief models. For this,  we newly give an approximate stochastic simulation relation which is based on the relaxation of the labelling function.
 \subsection{Notation}
 
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
@@ -264,28 +268,32 @@ A control policy developed for the Belief space model is a mapping from belief s
 
  
 
-\section{Belief Space Temporal Logic}
+\section{Linear Temporal Logic for Belief Spaces}
 
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. 
 	
 	
-	
+	\red{[Write about the fact that in DTL one would use predicates to define exactly the same thing. We cannot use the predicate based logic as it seems to be more difficult to define a practical approximate simulation relations for it. ]}
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{Predicates}\label{sec:DTL}  
-    
-  
-    
-     Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints). 
-     We require that the predicate functions $f$ are Borel measurable, that is we require that the induced sets  are Borel measurable
-     \[B_f:=\{b|f(b)\leq 0\}\in \borel{\mathbb B}\] 
+	\subsection{Belief space labelling}\label{sec:DTL}  
+%    I kicked out the predicate based logic. Cause it didnt work.
+%  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
+Consider a set of atomic propositions $p\in \AP$, the alphabet $\alphabeth := 2^{\AP}$, and
+infinite words that are string composed of elements from $\alphabeth$, $\word=\word(0),\word(1),\word(2),\ldots\in\alphabeth^{\mathbb{N}}$.
+Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
+
+%
+     We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
+     \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\mathbb B}\] 
      
 
      
-     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then examples of predicate functions are  \begin{enumerate}
+     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
+     \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
  	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
    \item   Bounds on state mean $\hat{x}$ to specify
@@ -294,25 +302,31 @@ A control policy developed for the Belief space model is a mapping from belief s
     to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
     \end{enumerate}
  
-    The Borel measurability of typical operations in linear algebra 
-   has been proven in \cite{azoff1974borel}.
-For maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \cite[page 116]{lang1993real}.
-
-\red{[Require $f$ to belong to a finite set $\Fpred$. ]}
+    The Borel measurability of typical operations in linear algebra has been proven in \citep{azoff1974borel}.
+For maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \citep[page 116]{lang1993real}.
+ 
   
-    \subsection{DTL}    
-    If $\BF{b} = b^0b^1 \ldots \in \CA{G}^{\omega}$,
-    we denote the suffix sequence $b^i b^{i+1} \ldots$ by
-    $\BF{b}^i$, $i \geq 0$.  \red{[Even when finitely parameterized this is not a finite set, hence $\CA{G}^{\omega}$ operator is not defined. ]}
-   We  combine the predicates via operators to create specifications. Operators include boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
+    \subsection{Linear Temporal Logic}
+    
+    %Via its trivial extension,  output traces  $\{x_{t}\}_{t\geq 0}\in \X^{\mathbb N} $ can be mapped to the
+    Define the set of infinite
+    words $\alphabeth^{\mathbb N}$,  with elements 
+$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_t),\Lab(x_{t+1}), \ldots$ as $\word_t$.
+
+   
+%Define $\BF{b} = b^0b^1 \ldots $%\in \CA{G}^{\omega}$,     and denote the suffix sequence $b^i b^{i+1} \ldots$ by  $\word_i$, $i \geq 0$. 
+ % We  combine the predicates via operators to create specifications.
+ We define properties as formulas composed of atomic propositions and operators, which includes boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
       For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied.
     
-    \begin{definition}[\DTL Syntax]
+    \begin{definition}[LTL Syntax]
     \label{def:gdtl-syntax}
-    The {\em syntax} of \DTL includes the minimum number of operators to define the logic:
+    The {\em syntax} of LTL includes the minimum number of operators to define the logic:
     \begin{equation*}
-     \phi :=  \True \ |\ f \leq 0 \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
-    \end{equation*} where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
+     \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+    \end{equation*} 
+    where $p\in \AP$.
+    %where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
     \end{definition}
 
     For convenience, we define the additional operators:
@@ -326,26 +340,67 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     %\end{align*}
     where $\equiv$ denotes semantic equivalence. \DTL syntax defines the symbols and their correct ordering to form a formulae. In the following, we define \DTL semantics, i.e., the meaning of those symbols.
 
-    \begin{definition}[\DTL Semantics]
+
+    \begin{definition}
     \label{def:gdtl-semantics}
-    Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
-    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$.
-    
-     Accordingly, the {\em semantics} of \DTL is defined recursively as
+%    Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
+%    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$.
+%    
+    % Accordingly, 
+     The {\em semantics} of LTL  are defined recursively as
     \begin{align*}
-    &\BF{b}^i \models  \top  & \\
-    &\BF{b}^i \models f \leq 0 & \Equiv\quad & f(b^i) \leq 0\\ % \forall (x,P) \in b^i \\
-    &\BF{b}^i \models \notltl \phi & \Equiv\quad & \notltl (\BF{b}^i \models \phi) \\
-    &\BF{b}^i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \andltl ( \BF{b}^i \models \phi_2 ) \\
-    &\BF{b}^i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \BF{b}^i \models \phi_1 ) \orltl ( \BF{b}^i \models \phi_2 ) \\
-    &\BF{b}^i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } ( \BF{b}^j \models \phi_2 ) \\
+    &\word_i \models  \top  & \\
+    &\word_i \models p \leq 0 & \Equiv\quad &p\in\word(i)\\ % \forall (x,P) \in b^i \\
+    &\word_i \models \notltl \phi & \Equiv\quad & \notltl (\word_i \models \phi) \\
+    &\word_i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) \\
+    &\word_i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) \\
+    &\word_i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } ( \BF{b}^j \models \phi_2 ) \\
     & & & \andltl (\BF{b}^k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
-    &\BF{b}^i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. } \BF{b}^j \models \phi \\
-    &\BF{b}^i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. } \BF{b}^j \models \phi
+    &\word_i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. } \BF{b}^j \models \phi \\
+    &\word_i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. } \BF{b}^j \models \phi
     \end{align*}
     
     \end{definition}
 
+
+
+Of interest are properties in the syntactically co-safe subset of \DTL, given as
+    \begin{equation*}
+     \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+    \end{equation*}     where $p\in \AP$.
+     
+\red{Write about temporal logics versus DFA. And give info on the satisfaction of syntactically co-safe properties which can be written as a DFA.}
+
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}
+	\node (l0) at (-1,0) {};
+	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$s_1$}};
+		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$s_2$}};
+	\node[circle, draw, fill=blue!40!gray] (ru) at (2,1.5) {\textcolor{white}{$s_3$}};
+	\node[circle, draw, fill=blue!40!gray]  (lu) at (0,2) {\textcolor{white}{$s_4$}};
+\node[circle, draw, fill=gray]  (lut) at (3.7,.7) {\textcolor{white}{$s_5$}};
+\path[->,draw]  (l0.center)-> (ll);
+\path[->,draw] (ll) edge[bend right] node[below]  {$p$} (rl)
+(ll) edge[bend left]  node[right]   {$\notltl p$} (lu)
+			   (rl) edge[bend right] node[below right]  {$\notltl p$} (ru)
+			   (lut) edge[bend right] (lu);
+\path[->,draw] (rl) edge[bend right] (ru)
+			   (ru) edge[bend right] node[above] {$p$} (lut)
+	       (ru) edge[bend right] node[above] {$\notltl p$} (ll)
+			   (rl) edge[bend right] node[below]  {$p$} (lut);
+\end{tikzpicture}
+\caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
+\end{figure}
+\subsection{Control synthesis}
+
+
+
+\red{[Define cross product MDP with DFA]}
+
+
+
+\red{[Define Value iteration and policy optimization]}
 
 
 \section{Approximate control synthesis}
@@ -361,7 +416,7 @@ In \citet{tech_report_TACAS}, the difference between the models is quantified ba
 To allow for working with Belief space models, we relax the bound on the output deviation.
 
 
-\subsection{Lifting based simulation}
+\subsection{Lifting based simulation  and approximate similarity}
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
@@ -386,9 +441,8 @@ the set of related, or equivalently lifted, probabilities as
 
 Hence based on \textbf{L1-3.}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
 
-\subsection{Approximate similarity}
-
-We tailor the $\eps,\delta$ notion of approximate probabilistic simulation relations for general MDPs to the Belief space MDPs.
+ 
+We tailor the   notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the Belief space MDPs.
   The former notion is defined as follows. 
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.  
 Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy
@@ -407,7 +461,7 @@ Thus the interface function implements (or refines) any control action synthesiz
 As in \citep{haesaert2017verification},  we give a notion of probabilistic simulation for  general MDPs over Polish spaces.
 %
 \begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
+Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
 	$\tilde\M$ is $(\epsilon,\delta)$-stochastically simulated by $\M$, that is $\tilde\M\preceq^{\delta}_\eps\M$,  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
@@ -415,41 +469,56 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings 
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
-Condition \textbf{SR$\epsilon$} over conservative for the purpose of this paper.  As an alternative, one can require the for every predicate $f$, there is a predicate $\tilde f$ such that 
- \begin{equation}
-  \forall (\tilde b,b)\in \rel: \tilde f(\tilde b)\leq 0\rightarrow f( b)\leq 0.
-  \end{equation} 
-  Consider the case that $b$ is defined by $\hat x$ and $P$. 
-Consider the choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
- $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$,then it suffices to show that
- for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
+Condition \textbf{SR$\epsilon$.} is over conservative for the purpose of this paper. 
+Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
+ $\Labset(b)=\{\Lab(b)\}$.
  
-Hence by replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$. 
+We now require that \begin{equation}
+  \forall (\tilde b,b)\in \rel:  \Labset(b)\subset \tilde{\Labset}(b).
+  \end{equation} 
+%  Consider the case that $b$ is defined by $\hat x$ and $P$. 
+%The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
+% $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$, then it suffices to show that
+% for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
+By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$. 
 
 \red{[Add example based definition]}
  
-\red{[Add set based mapping $\mathcal F$.]}
+ 
 
-Let $\mathcal F$ be a set of predicates
-\[\mathcal F:= \{f_i \mbox{ for } i\in [0, K]\}\]
 \begin{definition}[$\delta$-predicate simulation relation]\label{def:apbsim}
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with predicate sets $\mathcal F$ and $\tilde {\mathcal{F}}$.   
-We say that	$\tilde\M$ is $\delta$-stochastically simulated by $\M$, that is $\tilde{\M}\preceq^{\delta}_{\tilde{\mathcal{F}},\mathcal{F}}\M$, with respect to $(\tilde{\mathcal{F}},\mathcal{F})$  if there exists an interface function $\InF$ and
-	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which for $i \in \{1,\ldots, K\} $  
-	\begin{equation}
-	  \forall (\tilde b,b)\in \rel: \tilde f(\tilde b)\leq 0\rightarrow f( b)\leq 0.
-\tag{\textbf{SR.~$\CA F$}}
+Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
+We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
+	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
+	  \forall (\tilde b,b)\in \rel:  \Labset(b)\subset \tilde{\Labset}(b).
+\tag{\textbf{SR~$\CA F$.}}
 	\end{equation} 
-with $\tilde f_i \in \tilde{\mathcal{F}},$ and $f_i\in \mathcal F$. \hfill\mbox{ }\qed
+\hfill\mbox{ }\qed
 \end{definition}
 
 
 
 
 
-\section{Robust control synthesis}
+\subsection{Robust control synthesis}
 
+Consider a property in a subset of \DTL\!,  defined by
+the following {\em syntax} 
+    \begin{equation*}
+     \phi :=  \True \ |\ f \leq 0% \ |\ \notltl \phi
+      \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+    \end{equation*} where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
+\begin{figure}[htp]
+\centering
+\begin{tikzpicture}
+	\node[circle, draw, fill=blue!40!gray] at (0,0) {\textcolor{white}{$s_1$}};
+		\node[circle, draw, fill=blue!40!gray]at (1,0) {\textcolor{white}{$s_1$}};
+	\node[circle, draw, fill=blue!40!gray]at (1,1) {\textcolor{white}{$s_1$}};
+	\node[circle, draw, fill=blue!40!gray] {\textcolor{white}{$s_1$}};
 
+\end{tikzpicture}
+
+\end{figure}
 
 \begin{figure}[htp]
 	\centering
