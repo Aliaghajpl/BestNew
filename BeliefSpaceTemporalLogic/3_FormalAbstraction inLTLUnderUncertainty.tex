@@ -354,10 +354,10 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
     &\word_i \models \notltl \phi & \Equiv\quad & \notltl (\word_i \models \phi) \\
     &\word_i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) \\
     &\word_i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) \\
-    &\word_i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } ( \BF{b}^j \models \phi_2 ) \\
-    & & & \andltl (\BF{b}^k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
-    &\word_i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. } \BF{b}^j \models \phi \\
-    &\word_i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. } \BF{b}^j \models \phi
+    &\word_i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } (\word_j \models \phi_2 ) \\
+    & & & \andltl (\word_k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
+    &\word_i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. }\word_j \models \phi \\
+    &\word_i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. }\word_j \models \phi
     \end{align*}
     
     \end{definition}
@@ -365,9 +365,9 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
 
 
 Of interest are properties in the syntactically co-safe subset of \DTL, given as
-    \begin{equation*}
+    \begin{equation}\label{eq:scLTL}
      \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
-    \end{equation*}     where $p\in \AP$.
+    \end{equation}     where $p\in \AP$.
      
 \red{Write about temporal logics versus DFA. And give info on the satisfaction of syntactically co-safe properties which can be written as a DFA.}
 
@@ -375,11 +375,11 @@ Of interest are properties in the syntactically co-safe subset of \DTL, given as
 \centering
 \begin{tikzpicture}
 	\node (l0) at (-1,0) {};
-	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$s_1$}};
-		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$s_2$}};
-	\node[circle, draw, fill=blue!40!gray] (ru) at (2,1.5) {\textcolor{white}{$s_3$}};
-	\node[circle, draw, fill=blue!40!gray]  (lu) at (0,2) {\textcolor{white}{$s_4$}};
-\node[circle, draw, fill=gray]  (lut) at (3.7,.7) {\textcolor{white}{$s_5$}};
+	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$q_1$}};
+		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$q_2$}};
+	\node[circle, draw, fill=blue!40!gray] (ru) at (2,1.5) {\textcolor{white}{$q_3$}};
+	\node[circle, draw, fill=blue!40!gray]  (lu) at (0,2) {\textcolor{white}{$q_4$}};
+\node[circle, draw, fill=gray]  (lut) at (3.7,.7) {\textcolor{white}{$q_5$}};
 \path[->,draw]  (l0.center)-> (ll);
 \path[->,draw] (ll) edge[bend right] node[below]  {$p$} (rl)
 (ll) edge[bend left]  node[right]   {$\notltl p$} (lu)
@@ -392,16 +392,59 @@ Of interest are properties in the syntactically co-safe subset of \DTL, given as
 \end{tikzpicture}
 \caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
 \end{figure}
+
+
+\begin{definition}[Finite State Machine]
+A (deterministic) Finite State Machine is a tuple $\FSA = (Q_\FSA, s_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$, where %:
+$Q_\FSA$ is a finite set of states, $q_0^\FSA \in S_\FSA$ is the initial state,
+$\Sigma$ is the input alphabet with $\sigma\in\Sigma$ being a letter (or event) that triggers the transition between the states of the FSA.   
+$\delta_\FSA : Q_\FSA \times \Sigma \rightarrow Q_\FSA$ is the transition function, and
+$Acc_\FSA\subset Q_\FSA$ is a set of accepting states.
+%\begin{itemize}
+%    \item $S_\RA$ is a finite set of states;
+%    \item $s_0^\RA \in S_\RA$ is the initial state;
+%    \item $\Sigma$ is the input alphabet;
+%    \item $\delta : S_\RA \times \Sigma \ra S_\RA$ is the transition function;
+%    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
+%\end{itemize}
+\end{definition}
+
+\red{[Notation of DFA is different in the used product automaton.]}
 \subsection{Control synthesis}
-
-
+We define the cross product as in \cite{tech_report_TACAS}.
+\begin{definition}[Product between automaton and MDP]
+\label{def:product}
+Given a MDP $\MDP=(\X,\pi,\mathbb T,\U)$,
+a finite alphabet $\Sigma$,
+a labeling function $\Lab:\X\rightarrow\Sigma$
+and a DFA $\mathcal A_\psi = (Q,q_0,\Sigma,F,\tr)$,
+we define the product between $\MDP$ and $\mathcal A_\psi$ to be another MDP denoted as
+$\M\otimes\mathcal A_\psi = (\S,\bar\pi,\bar{\mathbb T},\U)$.
+Here $\S= \X\times Q$, $\bar\pi(dx,q) = \pi(dx)\cdot \mathbf{1}(q = q_0)$, $\bar h(x,q) = h(x)$ for any $(x,q)\in\bar{\X}$, and
+\begin{equation*}
+  \bar{\mathbb T}(A\times\{q'\}|x,q,u) = \int_{\tilde x\in A}\mathbf{1}(q' = \tr(q,\mathsf L(h(\tilde x))))\cdot\mathbb T(d\tilde  x|x,u).
+\end{equation*}
+initialized with  $\bar\pi(dx,q) = \pi(dx) \tr(q_0,\mathsf L(h(x))))$. 
+\end{definition}
 
 \red{[Define cross product MDP with DFA]}
 
 
 
 \red{[Define Value iteration and policy optimization]}
-
+For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\mu (V)(x) =\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}}(d\bar s|s,\mu(s)),
+\end{align}
+and the optimal Bellman 
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\ast (V)(x) =\sup_\mu\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)).
+\end{align}
+The optimal probability of reaching $Acc_\FSA$, that is $\P^\mu(\MDP\vDash\psi) $, is defined as
+\begin{align}
+	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)),
+\end{align}
+with $V=0$.
 
 \section{Approximate control synthesis}
 \subsection{Synthesis problem}
@@ -491,9 +534,9 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
 	  \forall (\tilde b,b)\in \rel:  \Labset(b)\subset \tilde{\Labset}(b).
-\tag{\textbf{SR~$\CA F$.}}
+\tag{\textbf{SR~$\CA L$.}}
 	\end{equation} 
-\hfill\mbox{ }\qed
+holds. \hfill\mbox{ }\qed
 \end{definition}
 
 
@@ -502,12 +545,7 @@ We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is
 
 \subsection{Robust control synthesis}
 
-Consider a property in a subset of \DTL\!,  defined by
-the following {\em syntax} 
-    \begin{equation*}
-     \phi :=  \True \ |\ f \leq 0% \ |\ \notltl \phi
-      \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
-    \end{equation*} where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
+Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}
