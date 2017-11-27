@@ -440,7 +440,7 @@ and the optimal Bellman
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\ast (V)(x) =\sup_\mu\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)).
 \end{align}
-The optimal probability of reaching $Acc_\FSA$, that is $\P^\mu(\MDP\vDash\psi) $, is defined as
+The optimal probability of reaching $Acc_\FSA$, that is $\P^{\mu_\ast}(\MDP\vDash\psi) $, is defined as
 \begin{align}
 	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)),
 \end{align}
@@ -545,7 +545,33 @@ holds. \hfill\mbox{ }\qed
 
 \subsection{Robust control synthesis}
 
-Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
+%Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
+For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\mu^\Labset (V)(x) =\int_{\S}\min_{\alpha \in \Labset(x)}\left[\mathbf 1_{K_\S}(\bar x,\bar q)+ \mathbf 1_{\S\setminus K_\S}(\bar x,\bar q) V(\bar x,\bar q)\right]\notag\\&\hspace{4cm}\hfill \times{\mathbb{T}}(d\bar x|x,\mu(x,q)),
+\end{align}
+and the optimal Bellman 
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\ast^\Labset (V)(x) =\sup_\mu\int_{\S}\min_{\alpha \in \Labset(x)}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\notag \\&\hspace{4cm}\times\bar{\mathbb{T}} (d\bar s|s,\mu(s)).
+\end{align}
+
+
+
+Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
+\begin{align}\label{eq:V_recopt_inf}
+& \BelR_\mu (V)(x) = \trunc{[0,1]}{\Bel_\mu^\Labset (V)(x)-\delta},
+\end{align}
+and the robust version of the optimal Bellman operator is given as 
+\begin{align}\label{eq:V_recopt_inf}
+& \BelR_\ast (V)(x)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x)-\delta}
+\end{align}
+The robustified optimal probability of reaching $Acc_\FSA$ is given as
+\begin{align}
+	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \BelR^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s))-\delta,
+\end{align}
+with $V=0$.
+
+
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}
