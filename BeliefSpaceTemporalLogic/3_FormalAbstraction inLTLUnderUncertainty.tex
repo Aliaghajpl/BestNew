@@ -543,16 +543,17 @@ holds. \hfill\mbox{ }\qed
 
 
 
-\subsection{Robust control synthesis}
+\subsection{Robust control computation}
 
 %Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
-For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
+For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\mu^\Labset (V)(x) =\int_{\S}\min_{\alpha \in \Labset(x)}\left[\mathbf 1_{K_\S}(\bar x,\bar q)+ \mathbf 1_{\S\setminus K_\S}(\bar x,\bar q) V(\bar x,\bar q)\right]\notag\\&\hspace{4cm}\hfill \times{\mathbb{T}}(d\bar x|x,\mu(x,q)),
+& \Bel_\mu^\Labset (V)(x) \!\!=\!\!\int%_{\X}
+\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\mathbb{T}}(d\bar x|x,\mu(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x) =\sup_\mu\int_{\S}\min_{\alpha \in \Labset(x)}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\notag \\&\hspace{4cm}\times\bar{\mathbb{T}} (d\bar s|s,\mu(s)).
+& \Bel_\ast^\Labset (V)(x) =\sup_\mu\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\mathbb{T}}(d\bar x|x,\mu(x,q)).
 \end{align}
 
 
@@ -567,9 +568,15 @@ and the robust version of the optimal Bellman operator is given as
 \end{align}
 The robustified optimal probability of reaching $Acc_\FSA$ is given as
 \begin{align}
-	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \BelR^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s))-\delta,
+	\lim_{N\rightarrow \infty}\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) \BelR^N_\ast V(\bar x, \bar q)\right]\notag\\\times\bar{\mathbb{T}} (d\bar x|s,\mu(x,q))-\delta,
 \end{align}
 with $V=0$.
+
+
+For the proof of this robustified set of operators see \cite{tech_report_TACAS}.
+
+\red{[Comment of the implication of this robustified operator.]}
+
 
 
 \begin{figure}[htp]
@@ -759,7 +766,7 @@ D= D^m, \  E = E^m.\notag
 \end{align}
  
  
-The belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized . For example, let $\CA{G}$ denote the Gaussian belief space
+The belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
     of dimension $n$, i.e. the space of Gaussian
     probability measures over $\BB{R}^n$.
     For brevity, we identify the Gaussian measures
@@ -770,7 +777,7 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     
     
  
- In the second case, we leverage the developed simulation relation for FIRM. 
+ In the second case, we leverage the developed simulation relation for FIRM. \red{This wont fit into one paper}
  
  \red{[SEARCHING FOR A GOOD CASE! What about the rover? Or rover driving over uncertain map elements?]}
 
