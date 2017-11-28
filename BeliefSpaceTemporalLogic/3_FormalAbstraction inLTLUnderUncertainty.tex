@@ -258,7 +258,7 @@ A control policy developed for the Belief space model is a mapping from belief s
 	\subsubsection{Belief space labelling.}\label{sec:DTL}  
 %    I kicked out the predicate based logic. Cause it didnt work.
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
-Define words a strings composed of elements from $\alphabeth$, $\word=\word(0),\word(1),\word(2),\ldots\in\alphabeth^{\mathbb{N}}$.
+Define words a strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
 Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
 
 %
@@ -286,7 +286,7 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     %Via its trivial extension,  output traces  $\{x_{t}\}_{t\geq 0}\in \X^{\mathbb N} $ can be mapped to the
     Define the set of infinite
     words $\alphabeth^{\mathbb N}$,  with elements 
-$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_t),$ $\Lab(x_{t+1}), \ldots$ as $\word_t$.
+$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_i),$ $\Lab(x_{i+1}), \ldots$ as $\word_i$.
 
    
 %Define $\BF{b} = b^0b^1 \ldots $%\in \CA{G}^{\omega}$,     and denote the suffix sequence $b^i b^{i+1} \ldots$ by  $\word_i$, $i \geq 0$. 
@@ -309,33 +309,27 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
     $\Event \phi \equiv \True \Until \phi$, and
     $\Always \phi \equiv \notltl \Event \notltl \phi$,
     %\begin{align*}
-    %\phi_1 \orltl \phi_2 & \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2) \\
-    %\LTLEVENTUALLY \phi & \equiv \True \LTLUNTIL \phi \\
-    %\LTLALWAYS \phi & \equiv \notltl \LTLEVENTUALLY \notltl \phi
+    %\phi_1 \orltl \phi_2  \Equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2) \\
+    %\LTLEVENTUALLY \phi  \Equiv \True \LTLUNTIL \phi \\
+    %\LTLALWAYS \phi  \Equiv \notltl \LTLEVENTUALLY \notltl \phi
     %\end{align*}
-    where $\equiv$ denotes semantic equivalence. \DTL syntax defines the symbols and their correct ordering to form a formulae. In the following, we define \DTL semantics, i.e., the meaning of those symbols.
-
-
-    \begin{definition}
-    \label{def:gdtl-semantics}
+    where $\equiv$ denotes semantic equivalence. The LTL syntax defines the symbols and their correct ordering to form a formulae. %In the following, we define LTL semantics, i.e., the meaning of those symbols.
+% \begin{definition}
+   % \label{def:gdtl-semantics}
 %    Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
 %    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$.
 %    
     % Accordingly, 
      The {\em semantics} of LTL  are defined recursively as
-    \begin{align*}
-    &\word_i \models  \top  & \\
-    &\word_i \models p  & \Equiv\quad &p\in\word(i)\\ % \forall (x,P) \in b^i \\
-    &\word_i \models \notltl \phi & \Equiv\quad & \notltl (\word_i \models \phi) \\
-    &\word_i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) \\
-    &\word_i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) \\
-    &\word_i \models  \phi_1 \Until \phi_2 & \Equiv\quad & \exists j \geq i \text{ s.t. } (\word_j \models \phi_2 ) \\
-    & & & \andltl (\word_k \models \phi_1, \forall k \in \{i, \ldots j-1\})\\
-    &\word_i \models \Event \phi  & \Equiv\quad & \exists j \geq i \text{ s.t. }\word_j \models \phi \\
-    &\word_i \models \Always \phi  & \Equiv\quad & \forall j \geq i \text{ s.t. }\word_j \models \phi
-    \end{align*}
-    
-    \end{definition}
+$\word_i \models p   \Equiv p\in\letter_i$, 
+    $\word_i \models \notltl \phi  \Equiv\notltl (\word_i \models \phi) $, 
+    $\word_i \models \phi_1 \andltl  \phi_2   \Equiv  ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) $, 
+    $\word_i \models \phi_1 \orltl  \phi_2   \Equiv  ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) $, 
+    $\word_i \models  \phi_1 \Until \phi_2  \Equiv \exists j \geq i \text{ s.t. } (\word_j \models \phi_2 ) $, 
+    $  \andltl (\word_k \models \phi_1, \forall k \in \{i, \ldots j-1\})$
+    $\word_i \models \Event \phi   \Equiv \exists j \geq i \text{ s.t. }\word_j \models \phi $, and 
+    $\word_i \models \Always \phi   \Equiv  \forall j \geq i \text{ s.t. }\word_j \models \phi$.
+   % \end{definition}
 
 
 
@@ -437,8 +431,7 @@ The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vD
 with $V=0$.
 
 \section{Approximate control synthesis}
-\subsection{Synthesis problem}
-Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, how now question
+ Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, how now question
 \begin{itemize}
 	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
 	\item How can we refine an abstract controller designed for $\tilde\MB$ to $\MB$.
@@ -564,64 +557,7 @@ with $V=0$.
 
 
 For the proof of this robustified set of operators see \cite{tech_report_TACAS}.
-
-\red{[Comment of the implication of this robustified operator.]}
-
-
-
-\begin{figure}[htp]
-\centering
-\begin{tikzpicture}
-	\node[circle, draw, fill=blue!40!gray] at (0,0) {\textcolor{white}{$s_1$}};
-		\node[circle, draw, fill=blue!40!gray]at (1,0) {\textcolor{white}{$s_1$}};
-	\node[circle, draw, fill=blue!40!gray]at (1,1) {\textcolor{white}{$s_1$}};
-	\node[circle, draw, fill=blue!40!gray] {\textcolor{white}{$s_1$}};
-
-\end{tikzpicture}
-
-\end{figure}
-
-\begin{figure}[htp]
-	\centering
-
-\begin{tikzpicture}
-
-\tikzset{model/.style={
-  rectangle,
-  inner sep=0pt,
-  text width=25mm,
-  align=center,
-  draw=black, fill=white,
-  minimum height = 10mm
-  }}
-  
-  \node[model] (C) at (0,2.25) {$\tilde{ \mathbf{ C}}$}; 
-\node[model] (Bhat) at (0,.75) {$\tilde{ \mathbf{ B}}$}; 
-
-%\node[label=below:$u$](bl) at (-2,.75) {};
-%\node[label=below:$x$](br) at (2,.75) {};
-\node(be) at (.75,1.25) {};
-\node(bw) at (-.75,1.25) {};
-
-\path[draw,<-] (be.center) -- node[label=right:$\tilde u$]{} (.75,1.75);
-\path[draw,->] (bw.center) -- node[left] {$\tilde b$} (-.75,1.75);
-%\path[draw,<-] (bl.center)--(Bhat);
-%\path[draw,<-] (Bhat)--(br);
-\node[model, fill=white](m) at (0,-2) {$\M$};
-\node[](ml) at (-.75,-1.5) {};
-\node[label=below:$y$](mr) at (2,-2) {};
-\path[draw,->] (-.75,-1.125) -- node[left] {$\tilde b$}(-.75,0);
-\path[draw,<-] (.75,-1.5) -- node[left] {$\tilde u$}(.75,.25);
-\path[draw,->] (m)--(mr);
-\begin{scope}[on background layer]
-\node[model, fit=(ml) (mr) (m),inner sep=2.5mm,label=below:$\mathbf B$, fill=gray!30](B) {};
-\node[model, fit=(C) (Bhat),inner sep=2.5mm, fill=gray!30](B) {};
-\end{scope}			
-\end{tikzpicture}
-
-\caption{Control synthesis}
-\end{figure}
-
+ 
 
 
 
