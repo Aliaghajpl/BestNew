@@ -149,22 +149,20 @@ In this work,  we only consider Polish spaces, which are complete separable metr
  
 \section{Partially Observable Markov Decision Processes}
 
-First, we give the definition of a Partially Observable Markov Decision Process (POMDP). In this section, we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logics as originally given in \citep{JonesDTL2013} for POMDPS. 
+First, we give the definition of a Partially Observable Markov Decision Process (POMDP). In this section, we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logics as originally given in \citep{JonesDTL2013} for POMDPs. 
 
-
-
-
-\subsection{Markov Decision Processes and Control Policies}
+\subsection{Partially Observable Markov  Decision Processes}
 Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
 \begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
   A discrete-time gMDP is a tuple $\MDP = (\X, \init, \tr, \U)$ with
   \begin{itemize}
-    \item $\X$,  an uncountable Polish state space with states $x\in\X$ as its elements;
+    \item $\X$,  a state space with states $x\in\X$ as its elements;
     \item $\init$, the initial probability distribution $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
     \item $\tr:\X\times\U\times\mathcal B(\X)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \U$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$;
   \end{itemize}
-\end{definition}
+  for which $\X$ and $\U$ are (uncountable) Polish spaces.
+ \end{definition}
 For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x(t+1)\in A)=\int_A \tr(dy\mid x(t)=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot{\mid} x,u)$.
 At every state the state transition depends non-deterministically on the choice of $u\in \U$.
 When chosen according to
@@ -181,18 +179,18 @@ these semantics induce paths (or executions) of the MDP.
 
  
 
-\subsection{Partially observable Markov Decision process (POMDP)}\label{sec:POMDP}
+\subsubsection{Partially observable Markov Decision process (POMDP)}\label{sec:POMDP}
 \begin{definition}[Partially Observable  MDP (POMDP)] \label{def:MDP}\mbox{ }\\
-A discrete-time partially observable Markov decision process (POMDP) with Borel spaces
+A partially observable Markov decision process $\POMDP$ (POMDP) is a MDP $\MDP = (\X, \init, \tr, \U)$  which is partially observable via  
 \begin{enumerate}
-	\item $\X$, the state space with states $x\in\X$ as its element;
-	\item $\U$, the action space;
-	\item $\Z$, observation space.
-\end{enumerate}
-with 
-\begin{enumerate}
-\item $\init$, the initial probability distribution,
-\item $\tr(\cdot|x,a)$, the stochastic transition kernel of the next state given the current state-action pair,
+%	\item $\X$, the state space with states $x\in\X$ as its element;
+%	\item $\U$, the action space;
+	\item observations $z$ in $\Z$,  which is a Polish space referred to as the observation space, % which is a Borel space.
+%\end{enumerate}
+%with 
+%\begin{enumerate}
+%\item $\init$, the initial probability distribution,
+%\item $\tr(\cdot|x,a)$, the stochastic transition kernel of the next state given the current state-action pair,
 \item $r(\cdot|x)$,  the observation kernel giving the probability of the current observation,  $z\sim r(\cdot|x)$,  for the current state variable $x$.
 \end{enumerate}
 
@@ -201,9 +199,9 @@ with
 
 An execution of the POMDP  up to time $k$ is given as
 \begin{align}\label{eq:history} (x_0,z_0,u_0,x_1,z_1,u_1,\ldots,x_k,z_k,u_k).\end{align}
-This sequence is referred to as the history sequence.
-The sequence  \eqref{eq:history} grows with number of observations  $k$ and will take values in the history space $\Hist_k$, which defined as
-$\Hist_0=\X\times\Z\times \U$ and $\Hist_{k+1}=\Hist_{k}\times\X\times\Z\times \U$.
+This sequence is also referred to as the history sequence.
+The sequence  \eqref{eq:history} grows with number of observations  $k$ and takes values in the history space $\Hist_k$, which defined as
+  $\Hist_{k+1}=\Hist_{k}\times\X\times\Z\times \U$ with $\Hist_0=\X\times\Z\times \U$.
 
 
 The control can be designed based on the history of inputs and observed outputs.  
@@ -218,14 +216,14 @@ We denote with $\Pi$ the set of all policies.
 
 \begin{definition}
 	A policy for $\MDP$ is a sequence $\pi=(\mu_0,\ldots,\mu_{N-1})$ such that, for each $k$, $\mu_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
-	We say that $\pi$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\mu_k(du_k|\init, i_k)$ is a singleton distribution.
+	We say that $\pi$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\mu_k(du_k|\init, i_k)$ is a dirac distribution.
 \end{definition}
- Given the distribution $\init$ for the initial state $x_0$,  the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. Thus for a given policy the POMDP defines a stochastic process on the probability space  
+ Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. Thus for a given policy the POMDP defines a stochastic process on the probability space  
  $(\Omega,\mathcal F,\P_\pi^\mu)$.
 % \begin{align*}
 %   P_\pi^\mu(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
 % \end{align*}
-\begin{example}
+\begin{example}[\red{[to be deleted for submission]}]
 	As a special case of the POMDP, we consider a POMDP represented via difference equations which are subject to process noise and observation noise.
 \begin{align*}
 x_{k+1}&=f(x_k,u_k,w_k)\\
@@ -236,7 +234,7 @@ where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ are independent real
 
 \end{example}
 
- \subsection{Belief space}
+ \subsubsection{Belief space models as MDPs}
 \begin{align}
 	b_k(\cdot)=\P(x_k\in \cdot|\I_k)\in \mathcal P (\X)
 \end{align}
@@ -260,9 +258,9 @@ A control policy developed for the Belief space model is a mapping from belief s
 
 \red{[MDP description of COMDP]}
 
- 
+ The partially observable MDP can be written as a completely observable MDP, whose state space is the belief space.
 
-\section{Linear Temporal Logic for Belief Spaces}
+\subsection{Linear Temporal Logic for Belief Space Models}
 
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. 
 	
@@ -273,11 +271,10 @@ A control policy developed for the Belief space model is a mapping from belief s
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{Belief space labelling}\label{sec:DTL}  
+	\subsubsection{Belief space labelling.}\label{sec:DTL}  
 %    I kicked out the predicate based logic. Cause it didnt work.
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
-Consider a set of atomic propositions $p\in \AP$, the alphabet $\alphabeth := 2^{\AP}$, and
-infinite words that are string composed of elements from $\alphabeth$, $\word=\word(0),\word(1),\word(2),\ldots\in\alphabeth^{\mathbb{N}}$.
+Define words a strings composed of elements from $\alphabeth$, $\word=\word(0),\word(1),\word(2),\ldots\in\alphabeth^{\mathbb{N}}$.
 Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
 
 %
@@ -297,7 +294,7 @@ Of interest are atomic propositions that are connected to the MDP via a measurab
     \end{enumerate}
  
     The Borel measurability of typical operations in linear algebra has been proven in \citep{azoff1974borel}.
-For maps on the Euclidean spaces, we also have that the simple algebraic operations are preserve measurability \citep[page 116]{lang1993real}.
+For maps on the Euclidean spaces, we also have that the simple algebraic operations  preserve measurability \citep[page 116]{lang1993real}.
  
   
     \subsection{Linear Temporal Logic}
@@ -305,7 +302,7 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     %Via its trivial extension,  output traces  $\{x_{t}\}_{t\geq 0}\in \X^{\mathbb N} $ can be mapped to the
     Define the set of infinite
     words $\alphabeth^{\mathbb N}$,  with elements 
-$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_t),\Lab(x_{t+1}), \ldots$ as $\word_t$.
+$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_t),$ $\Lab(x_{t+1}), \ldots$ as $\word_t$.
 
    
 %Define $\BF{b} = b^0b^1 \ldots $%\in \CA{G}^{\omega}$,     and denote the suffix sequence $b^i b^{i+1} \ldots$ by  $\word_i$, $i \geq 0$. 
@@ -367,7 +364,7 @@ Of interest are properties in the syntactically co-safe subset of \DTL, given as
 
 \begin{figure}[htp]
 \centering
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=.8]
 	\node (l0) at (-1,0) {};
 	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$q_1$}};
 		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$q_2$}};
@@ -387,9 +384,10 @@ Of interest are properties in the syntactically co-safe subset of \DTL, given as
 \caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
 \end{figure}
 
-
-\begin{definition}[Finite State Machine]
-A (deterministic) Finite State Machine is a tuple $\FSA = (Q_\FSA, s_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$, where %:
+\red{[Define accepting language]}
+\begin{definition}[Deterministic Finite-State Automaton]
+A Deterministic Finite-State Automaton is a tuple
+ \[\FSA = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA),\] where %:
 $Q_\FSA$ is a finite set of states, $q_0^\FSA \in S_\FSA$ is the initial state,
 $\Sigma$ is the input alphabet with $\sigma\in\Sigma$ being a letter (or event) that triggers the transition between the states of the FSA.   
 $\delta_\FSA : Q_\FSA \times \Sigma \rightarrow Q_\FSA$ is the transition function, and
@@ -403,16 +401,25 @@ $Acc_\FSA\subset Q_\FSA$ is a set of accepting states.
 %\end{itemize}
 \end{definition}
 
-\red{[Notation of DFA is different in the used product automaton.]}
+
+
+
+
+%\begin{definition}
+For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property. \red{[Add reference]} That is a DFA represents the specification $\psi$ if a word $\pi$ satisfies a LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
+	 \[\psi\vDash\pi \Leftrightarrow \pi\in \Language_\psi.\]
+%\end{definition}
+
+
 \subsection{Control synthesis}
 We define the cross product as in \cite{tech_report_TACAS}.
 \begin{definition}[Product between automaton and MDP]
 \label{def:product}
-Given a MDP $\MDP=(\X,\pi,\mathbb T,\U)$,
+Given a MDP  $\MDP = (\X, \init, \tr, \U)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
-and a DFA $\mathcal A_\psi = (Q,q_0,\Sigma,F,\tr)$,
-we define the product between $\MDP$ and $\mathcal A_\psi$ to be another MDP denoted as
+and a DFA  $\FSA = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$,
+we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
 $\M\otimes\mathcal A_\psi = (\S,\bar\pi,\bar{\mathbb T},\U)$.
 Here $\S= \X\times Q$, $\bar\pi(dx,q) = \pi(dx)\cdot \mathbf{1}(q = q_0)$, $\bar h(x,q) = h(x)$ for any $(x,q)\in\bar{\X}$, and
 \begin{equation*}
@@ -771,9 +778,8 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     
     
  
- In the second case, we leverage the developed simulation relation for FIRM. \red{This wont fit into one paper}
- 
- \red{[SEARCHING FOR A GOOD CASE! What about the rover? Or rover driving over uncertain map elements?]}
+ In the second case, we leverage the developed simulation relation for FIRM. \red{This is the next step and wont be submitted to the conference. }
+  
 
 
 
