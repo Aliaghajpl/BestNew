@@ -85,7 +85,8 @@ Some of the questions to be tackled are as follows:
 
 
 \subsection{Literature}
-This section contains a summary of related literature.
+\subsubsection{Verification and synthesis problems over Markov decision processes}
+\red{cite finite, continuous, approximate continuous results}.
 
 
 
@@ -107,7 +108,9 @@ In \cite{LESSER20141989}, the analysis of partially observable systems with as o
 The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
 The state extensions model the satisfaction of failing of reachability properties.
 
-\subsubsection{Belief space properties.} By defining properties directly on the belief space models, more complex properties can be defined. in \cite{JonesDTL2013}, the idea of defining properties over the probabilistic belief space of a POMDP was first introduced. In this work we show that we can leverage formal abstraction of belief space models to synthesize controllers with guarantees.
+\subsubsection{Belief space properties.} By defining properties directly on the belief space models, more complex properties can be defined. in \cite{JonesDTL2013}, the idea of defining properties over the probabilistic belief space of a POMDP was first introduced.  \red{[say that this work relies on empirical estimates of probability and does not come with guarantees.]}
+In this work we show that we can leverage formal abstraction of belief space models to synthesize controllers with guarantees.
+
 
 \red{Connect with work submitted to TACAS \citep{tech_report_TACAS} and \citep{haesaert2017verification}.  }
 In this work, we apply the results to belief models. For this,  we newly give an approximate stochastic simulation relation which is based on the relaxation of the labelling function.
@@ -137,7 +140,7 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field. That is,  $\borel{\Y}$ is the  
 collection of all sets that can be formed from countable unions and intersections of open sets.
 We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures on $(\Y,\borel{\Y})$.
-Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\BB{E}[\cdot]$.
+Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
 In this work,  we only consider Polish spaces, which are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
 
 
@@ -154,7 +157,7 @@ First, we give the definition of a Partially Observable Markov Decision Process 
 \subsection{Markov Decision Processes and Control Policies}
 Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
 \begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
-  A discrete-time gMDP is a tuple $\M\!=\!(\X,\!\init,\!\tr,\!\U)$ with
+  A discrete-time gMDP is a tuple $\MDP = (\X, \init, \tr, \U)$ with
   \begin{itemize}
     \item $\X$,  an uncountable Polish state space with states $x\in\X$ as its elements;
     \item $\init$, the initial probability distribution $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
