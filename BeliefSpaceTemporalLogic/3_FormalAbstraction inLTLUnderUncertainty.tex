@@ -52,10 +52,14 @@ letters, not all uppercase.}
    Pasadena, CA 91109 USA}% (e-mail: rohan.a.thakker@jpl.nasa.gov)} 
 \maketitle
 \begin{abstract}
-Currently this report mainly includes copies of the  original paper on pulled by Cristi on Temporal logics with beliefs for planning problems.  Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then we will include this in the original paper, before starting continuing with the development of this report. 
+In this work, we consider synthesis of controllers guaranteeing  specifications given in linear time properties on belief space models.
+For this we leverage the use of approximate Markov decision processes, suitable for computational efficient control synthesis. By designing controls over the abstracted model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be avoided. 
+We leverage the notion of approximate stochastic simulation  to quantify the accuracy of the approximate models. The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
+By compensating for these errors a-priori in the control synthesis for the abstract model, the control synthesis is robust. 
+
 \end{abstract}
 \begin{keyword}
-Five to ten keywords, preferably chosen from the IFAC keyword list.
+Formal verification, correct-by-design controller synthesis, stochastic systems, linear temporal logic
 \end{keyword}
 
 \end{frontmatter}
@@ -85,7 +89,7 @@ This section contains a summary of related literature.
 
 
 
-\subsection{Technical math results for POMDPs}
+\subsubsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 \cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
 
@@ -102,6 +106,7 @@ Most of the work (including the references given above) has been developed for a
 
 In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
 In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
+The reachability problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability problem.
 
 \subsection{Contributions}
 \red{Connect with work submitted to TACAS \citep{tech_report_TACAS} and \citep{haesaert2017verification}.  }
@@ -110,10 +115,6 @@ In this work, we apply the results to belief models. For this,  we newly give an
 
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
 %We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
-%
-%
-%
-%
 %    Let $\Sigma$ be a finite set. The cardinality,
 %    power set, Kleene- and $\omega$-closures
 %    of $\Sigma$ are denoted by $|\Sigma|$,
@@ -129,34 +130,25 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 %    
 %    
     The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $\S^n$.    The $m \times n$ zero matrix and
-    the $n \times n$ identity matrix are denoted by
-    $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
-    The supremum and Euclidean norms are denoted by
-    $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.
-    For a given set $\Z$ a metric or distance function $\mathbf d_\Z$ is a function $\mathbf{d}_\Z: \Z\times \Z\rightarrow \mathbb R_{\ge 0}$ 
-satisfying the following conditions: 
-$\forall y_1,y_2,y_3\in\Z$:
-$\mathbf d_\Z(y_1,y_2)=0$ iff $y_1=y_2$; 
-$\mathbf d_\Z(y_1,y_2)=\mathbf d_{\Z}(y_2,y_1)$;  and
-$\mathbf d_\Z(y_1,y_3)\leq \mathbf d_\Z(y_1,y_2) +\mathbf d_\Z(y_2,y_3)$. 
+    $n \times n$, $n \geq 1$, is denoted by $\S^n$.    The $m \times n$ zero matrix and the $n \times n$ identity matrix are denoted by $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+   
+%    The supremum and Euclidean norms are denoted by     $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.     For a given set $\Z$ a metric or distance function $\mathbf d_\Z$ is a function $\mathbf{d}_\Z: \Z\times \Z\rightarrow \mathbb R_{\ge 0}$  satisfying the following conditions:  $\forall y_1,y_2,y_3\in\Z$: $\mathbf d_\Z(y_1,y_2)=0$ iff $y_1=y_2$;  $\mathbf d_\Z(y_1,y_2)=\mathbf d_{\Z}(y_2,y_1)$;  and $\mathbf d_\Z(y_1,y_3)\leq \mathbf d_\Z(y_1,y_2) +\mathbf d_\Z(y_2,y_3)$. 
  %
-For metric space $\mathbb S$, we denote with  $\mathcal{B}(\mathbb S)$ its Borel $\sigma$-field. That is  $\mathcal{B}(\mathbb S)$ is the  
+For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field. That is,  $\borel{\Y}$ is the  
 collection of all sets that can be formed from countable unions and intersections of open sets.
-We refer to  $(\mathbb S,\mathcal{B}(\mathbb S))$ as a Borel measurable space and we denote with $\mathcal P(\mathbb S)$ the set of probability measures on $(\mathbb S,\mathcal{B}(\mathbb S))$.
-Together with the measurable space $(\mathbb S,\mathcal{B}(\mathbb S))$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s\sim \po$.   
-Polish spaces are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
+We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures on $(\Y,\borel{\Y})$.
+Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\BB{E}[\cdot]$.
+In this work,  we only consider Polish spaces, which are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
 
-    $\BB{E}[\cdot]$ is the expectation operator.
+
 
     
  
-\section{Partially observable Markov decision Processes}
-In this section, we  analyze the formulation of distribution temporal logics as originally given in \cite{JonesDTL2013} for POMDPS. 
-First, we give the definition of POMDPs. Then,  we  give the definition of distribution temporal logic. 
+\section{Partially Observable Markov Decision Processes}
+
+First, we give the definition of a Partially Observable Markov Decision Process (POMDP). In this section, we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logics as originally given in \citep{JonesDTL2013} for POMDPS. 
 
 
-The reachability problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function 
 
 
 \subsection{Markov Decision Processes and Control Policies}
