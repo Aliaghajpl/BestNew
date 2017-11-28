@@ -47,9 +47,9 @@ letters, not all uppercase.}
 \address[cal]{California Institute of Technology, 
    Pasadena, CA 91125 USA (e-mail: \{haesaert,pettni,ames,murray\}@caltech ).}
 \address[mit]{Massachusetts Institute of Technology, 
-   Cambridge, MA 02139 USA (e-mail:  cvasile@mit.edu)}
+   Cambridge, MA 02139 USA}% (e-mail:  cvasile@mit.edu)}
 \address[jpl]{Jet Propulsion Laboratory, 
-   Pasadena, CA 91109 USA (e-mail: rohan.a.thakker@jpl.nasa.gov)} 
+   Pasadena, CA 91109 USA}% (e-mail: rohan.a.thakker@jpl.nasa.gov)} 
 \maketitle
 \begin{abstract}
 Currently this report mainly includes copies of the  original paper on pulled by Cristi on Temporal logics with beliefs for planning problems.  Goal is to first see how the temporal logic specifications can be defined with measurability in mind. Then we will include this in the original paper, before starting continuing with the development of this report. 
@@ -161,7 +161,7 @@ The reachability problem can be formulated with a multiplicative cost function o
 
 \subsection{Markov Decision Processes and Control Policies}
 Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
-\begin{definition}[general Markov decision process (gMDP)]\label{def:MDP} \mbox{ }\\
+\begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
   A discrete-time gMDP is a tuple $\M\!=\!(\X,\!\init,\!\tr,\!\U)$ with
   \begin{itemize}
     \item $\X$,  an uncountable Polish state space with states $x\in\X$ as its elements;
@@ -242,7 +242,6 @@ where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ are independent real
 \end{example}
 
  \subsection{Belief space}
-Due to the noisy and partial observation of the state, the best one can infer about the system state at time  $t$ is a probability distribution over its possible states
 \begin{align}
 	b_k(\cdot)=\P(x_k\in \cdot|\I_k)\in \mathcal P (\X)
 \end{align}
@@ -350,7 +349,7 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
      The {\em semantics} of LTL  are defined recursively as
     \begin{align*}
     &\word_i \models  \top  & \\
-    &\word_i \models p \leq 0 & \Equiv\quad &p\in\word(i)\\ % \forall (x,P) \in b^i \\
+    &\word_i \models p  & \Equiv\quad &p\in\word(i)\\ % \forall (x,P) \in b^i \\
     &\word_i \models \notltl \phi & \Equiv\quad & \notltl (\word_i \models \phi) \\
     &\word_i \models \phi_1 \andltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) \\
     &\word_i \models \phi_1 \orltl  \phi_2  & \Equiv\quad & ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) \\
@@ -695,7 +694,7 @@ For the proof of this robustified set of operators see \cite{tech_report_TACAS}.
 
 
 
-\noindent\textbf{Point mass moving.}
+\noindent\textbf{Moving point mass.}
     
 Consider the linear time invariant system with Gaussian disturbance, given as 
 \begin{align}\begin{aligned}
@@ -765,7 +764,7 @@ C = \begin{bmatrix} C^m& 0 \end{bmatrix} , \
 D= D^m, \  E = E^m.\notag
 \end{align}
  
- 
+ \noindent{\textbf{}}
 The belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
     of dimension $n$, i.e. the space of Gaussian
     probability measures over $\BB{R}^n$.
