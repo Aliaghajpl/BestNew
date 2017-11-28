@@ -73,11 +73,11 @@ Some of the questions to be tackled are as follows:
 	\item[Framework:] Does it make sense to formulate the DLTL on a specific choice of belief space or sufficient statistic? Can we instead first formulate it on the POMDP and then show that it  is equivalent to a problem on a COMDP?
 	\item[Technical:]  What are the minimal measurability conditions that are required such that for given a POMDP and its reduced COMDP  the LTL problem is ``well"-defined (measurable).
 	\item[Technical:] Beyond well-definedness, do we also keep soundness and completeness?
-	\item[Technical:] When are optimal policies non-randomized?
+	\item[Technical:] When are optimal policies non-randomized? 
 	\item[Simulation relations]  Use $(\epsilon,\delta)$- simulation relation for doing formal abstractions on the COMDP model.
 	Show that it can be used for control refinement.
 	\item[Interesting:] How does system identification fit into this picture?
-	\item[Simulation relations:] Can we quantify an $(\epsilon,\delta)$-simulation relation between the sampling based model and the original COMDP?
+	\item[Simulation relations:] Can we quantify an $(\epsilon,\delta)$-simulation relation between the FIRM  (sampling based model) and the original COMDP?
 	\item[Computation results:] Improve results for the computation of $(\epsilon,\delta)$-simulation relations for LTI systems. Reformulate LMI requirement from S-procedure to requirements over Polytopes. 
 	\item[Scalable computations:] Can we  tackle the computations in a modular fashion. Split up requirements for e.g. the helicopter and the rover and show that the combined system still behaves as required.
 	 
@@ -91,24 +91,24 @@ This section contains a summary of related literature.
 
 \subsubsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
-\cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions.
+\cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions. It is also extensively discussed in \citep[Chapter 11]{bertsekas2004stochastic}.
 
-In \cite{feinberg2016partially} and in \cite{feinberg2014optimality} the optimality conditions for POMDP problems solved via COMDPs are analyzed. 
-
-In \cite{saldi2017finite}, the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs is analyzed. 
-
-
-Most of the work (including the references given above) has been developed for additive cost functions. 
+Often, the notion of POMDP comes toghether with a cost or reward structure. 
+In recent work of \cite{feinberg2014optimality}  and \cite{feinberg2016partially} the optimality conditions for POMDP problems solved via \red{COMDPs} are analyzed in ;ore detail. 
+In \cite{saldi2017finite}, conditions for the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs are analyzed. 
+Most of the work (including the references given above) has been developed for additive cost functions or terminal cost functions defined via cost functions associated to the model. 
 
 
-\subsection{POMDP reachability and safety verification}
+\subsubsection{POMDP reachability and safety verification}
 
 
 In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
 In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
-The reachability problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability problem.
+The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
+The state extensions model the satisfaction of failing of reachability properties.
 
-\subsection{Contributions}
+\subsubsection{Belief space properties.} By defining properties directly on the belief space models, more complex properties can be defined. in \cite{JonesDTL2013}, the idea of defining properties over the probabilistic belief space of a POMDP was first introduced. In this work we show that we can leverage formal abstraction of belief space models to synthesize controllers with guarantees.
+
 \red{Connect with work submitted to TACAS \citep{tech_report_TACAS} and \citep{haesaert2017verification}.  }
 In this work, we apply the results to belief models. For this,  we newly give an approximate stochastic simulation relation which is based on the relaxation of the labelling function.
 \subsection{Notation}
@@ -165,8 +165,8 @@ Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined
 For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x(t+1)\in A)=\int_A \tr(dy\mid x(t)=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot{\mid} x,u)$.
 At every state the state transition depends non-deterministically on the choice of $u\in \U$.
 When chosen according to
-a distribution  $\mu_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\mu_u$. Moreover
-the transition kernel is denoted as $\tr(\cdot| x, \mu_u)=\int_\U \tr(\cdot| x, u) \mu_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
+a distribution  $\mu_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\mu_u$. 
+The corresponding transition kernel is denoted as $\tr(\cdot| x, \mu_u)=\int_\U \tr(\cdot| x, u) \mu_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
 Given a string of inputs
 $u(0), u(1), \ldots, u(N)$,
 over a finite time horizon $\{0,1,\ldots, N\}$,
@@ -178,7 +178,7 @@ these semantics induce paths (or executions) of the MDP.
 
  
 
-\subsection{POMDP}\label{sec:POMDP}
+\subsection{Partially observable Markov Decision process (POMDP)}\label{sec:POMDP}
 \begin{definition}[Partially Observable  MDP (POMDP)] \label{def:MDP}\mbox{ }\\
 A discrete-time partially observable Markov decision process (POMDP) with Borel spaces
 \begin{enumerate}
