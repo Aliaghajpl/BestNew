@@ -67,22 +67,7 @@ Formal verification, correct-by-design controller synthesis, stochastic systems,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 \section{Introduction} \label{subsec:intro}
-In this work, we use a language for specifying behavior under uncertainty using formal methods. 
-Some of the questions to be tackled are as follows:
-\begin{description}
-	\item[Framework:] Does it make sense to formulate the DLTL on a specific choice of belief space or sufficient statistic? Can we instead first formulate it on the POMDP and then show that it  is equivalent to a problem on a COMDP?
-	\item[Technical:]  What are the minimal measurability conditions that are required such that for given a POMDP and its reduced COMDP  the LTL problem is ``well"-defined (measurable).
-	\item[Technical:] Beyond well-definedness, do we also keep soundness and completeness?
-	\item[Technical:] When are optimal policies non-randomized? 
-	\item[Simulation relations]  Use $(\epsilon,\delta)$- simulation relation for doing formal abstractions on the COMDP model.
-	Show that it can be used for control refinement.
-	\item[Interesting:] How does system identification fit into this picture?
-	\item[Simulation relations:] Can we quantify an $(\epsilon,\delta)$-simulation relation between the FIRM  (sampling based model) and the original COMDP?
-	\item[Computation results:] Improve results for the computation of $(\epsilon,\delta)$-simulation relations for LTI systems. Reformulate LMI requirement from S-procedure to requirements over Polytopes. 
-	\item[Scalable computations:] Can we  tackle the computations in a modular fashion. Split up requirements for e.g. the helicopter and the rover and show that the combined system still behaves as required.
-	 
-\end{description}
-
+ \textbf{TO BE WRITTEN}
 
 \subsection{Literature}
 \subsubsection{Verification and synthesis problems over Markov decision processes}
@@ -133,7 +118,7 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 %    
 %    
     The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $\S^n$.    The $m \times n$ zero matrix and the $n \times n$ identity matrix are denoted by $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+    $n \times n$, $n \geq 1$, is denoted by $\Symb^n$.    The $m \times n$ zero matrix and the $n \times n$ identity matrix are denoted by $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
    
 %    The supremum and Euclidean norms are denoted by     $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.     For a given set $\Z$ a metric or distance function $\mathbf d_\Z$ is a function $\mathbf{d}_\Z: \Z\times \Z\rightarrow \mathbb R_{\ge 0}$  satisfying the following conditions:  $\forall y_1,y_2,y_3\in\Z$: $\mathbf d_\Z(y_1,y_2)=0$ iff $y_1=y_2$;  $\mathbf d_\Z(y_1,y_2)=\mathbf d_{\Z}(y_2,y_1)$;  and $\mathbf d_\Z(y_1,y_3)\leq \mathbf d_\Z(y_1,y_2) +\mathbf d_\Z(y_2,y_3)$. 
  %
@@ -149,7 +134,7 @@ In this work,  we only consider Polish spaces, which are complete separable metr
  
 \section{Partially Observable Markov Decision Processes}
 
-First, we give the definition of a Partially Observable Markov Decision Process (POMDP). In this section, we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logics as originally given in \citep{JonesDTL2013} for POMDPs. 
+In this section, we give the definition of a Partially Observable Markov Decision Process (POMDP). Then we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logic as originally given in \citep{JonesDTL2013} for POMDPs. 
 
 \subsection{Partially Observable Markov  Decision Processes}
 Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
@@ -163,11 +148,10 @@ Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined
   \end{itemize}
   for which $\X$ and $\U$ are (uncountable) Polish spaces.
  \end{definition}
-For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x(t+1)\in A)=\int_A \tr(dy\mid x(t)=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot{\mid} x,u)$.
+For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x(t+1)\in A)=\int_A \tr(dy{\,\mid\,} x(t)=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot\,{\mid}\, x,u)$.
 At every state the state transition depends non-deterministically on the choice of $u\in \U$.
-When chosen according to
-a distribution  $\mu_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\mu_u$. 
-The corresponding transition kernel is denoted as $\tr(\cdot| x, \mu_u)=\int_\U \tr(\cdot| x, u) \mu_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
+%When chosen according toa distribution  $\pol_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\pol_u$. 
+The corresponding transition kernel is denoted as $\tr(\cdot| x, \pol_u)=\int_\U \tr(\cdot| x, u) \pol_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
 Given a string of inputs
 $u(0), u(1), \ldots, u(N)$,
 over a finite time horizon $\{0,1,\ldots, N\}$,
@@ -215,24 +199,24 @@ We denote with $\Pi$ the set of all policies.
 \citep[Def. 10.4]{bertsekas2004stochastic}  
 
 \begin{definition}
-	A policy for $\MDP$ is a sequence $\pi=(\mu_0,\ldots,\mu_{N-1})$ such that, for each $k$, $\mu_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
-	We say that $\pi$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\mu_k(du_k|\init, i_k)$ is a dirac distribution.
+	A policy for $\MDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that, for each $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
+	We say that $\pi$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a dirac distribution.
 \end{definition}
  Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. Thus for a given policy the POMDP defines a stochastic process on the probability space  
- $(\Omega,\mathcal F,\P_\pi^\mu)$.
+ $(\Omega,\mathcal F,\P_\init^\pi)$.
 % \begin{align*}
-%   P_\pi^\mu(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
+%   P_\pi^\pol(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
 % \end{align*}
-\begin{example}[\red{[to be deleted for submission]}]
-	As a special case of the POMDP, we consider a POMDP represented via difference equations which are subject to process noise and observation noise.
-\begin{align*}
-x_{k+1}&=f(x_k,u_k,w_k)\\
-z_k&=h(x_k,v_k)
-\end{align*}
-where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ are independent realizations of the the process noise and the observation noise.
-
-
-\end{example}
+%\begin{example}[\red{[to be deleted for submission]}]
+%	As a special case of the POMDP, we consider a POMDP represented via difference equations which are subject to process noise and observation noise.
+%\begin{align*}
+%x_{k+1}&=f(x_k,u_k,w_k)\\
+%z_k&=h(x_k,v_k)
+%\end{align*}
+%where $w_k\sim p_w(\cdot|x_k)$ and $v_k\sim p_v(\cdot|x_k)$ are independent realizations of the the process noise and the observation noise.
+%
+%
+%\end{example}
 
  \subsubsection{Belief space models as MDPs}
 \begin{align}
@@ -355,13 +339,12 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
 
 
 
-Of interest are properties in the syntactically co-safe subset of \DTL, given as
+Of interest are properties in the syntactically co-safe subset of LTL given as
     \begin{equation}\label{eq:scLTL}
      \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
     \end{equation}     where $p\in \AP$.
      
-\red{Write about temporal logics versus DFA. And give info on the satisfaction of syntactically co-safe properties which can be written as a DFA.}
-
+ 
 \begin{figure}[htp]
 \centering
 \begin{tikzpicture}[scale=.8]
@@ -406,44 +389,50 @@ $Acc_\FSA\subset Q_\FSA$ is a set of accepting states.
 
 
 %\begin{definition}
-For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property. \red{[Add reference]} That is a DFA represents the specification $\psi$ if a word $\pi$ satisfies a LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
-	 \[\psi\vDash\pi \Leftrightarrow \pi\in \Language_\psi.\]
+For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property. \red{[Add reference]} That is a DFA represents the specification $\psi$ if a word $\word$ satisfies a LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
+	 \[\psi\vDash\word \Leftrightarrow \word\in \Language_\psi.\]
 %\end{definition}
 
+We can
+reduce $\P_\init^\polb
+(\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\M$ to the reachability problem
+ over another gMDP   $\M\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\M$ and the automaton $\mathcal A_\psi$. This was originally derived in \cite{tmka2013} for MDPs. We give a similar definition of the product construction as.
 
 \subsection{Control synthesis}
-We define the cross product as in \cite{tech_report_TACAS}.
+
+
+To solve the \red{(currently undefined)} synthesis problem, we define the product of the DFA automaton and an MDP, 
+%We define the  product  
+as in \cite{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \cite{tmka2013}. }} .
 \begin{definition}[Product between automaton and MDP]
 \label{def:product}
 Given a MDP  $\MDP = (\X, \init, \tr, \U)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
-and a DFA  $\FSA = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$,
+and a DFA  $\FSA_\psi = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$,
 we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
-$\M\otimes\mathcal A_\psi = (\S,\bar\pi,\bar{\mathbb T},\U)$.
-Here $\S= \X\times Q$, $\bar\pi(dx,q) = \pi(dx)\cdot \mathbf{1}(q = q_0)$, $\bar h(x,q) = h(x)$ for any $(x,q)\in\bar{\X}$, and
+$\MDP\otimes\FSA_\psi = (\bar \X, \bar\pi,\bar{\tr},\U)$.
+Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx) \tr(q_0,\mathsf L(x)))$, and
 \begin{equation*}
-  \bar{\mathbb T}(A\times\{q'\}|x,q,u) = \int_{\tilde x\in A}\mathbf{1}(q' = \tr(q,\mathsf L(h(\tilde x))))\cdot\mathbb T(d\tilde  x|x,u).
-\end{equation*}
-initialized with  $\bar\pi(dx,q) = \pi(dx) \tr(q_0,\mathsf L(h(x))))$. 
+  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta_\FSA(q,\Lab(\tilde x)),\\ 0 & \text{else.}  \end{array}\right.
+\end{equation*} 
 \end{definition}
 
-\red{[Define cross product MDP with DFA]}
-
+ 
 
 
 \red{[Define Value iteration and policy optimization]}
 For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\mu (V)(x) =\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}}(d\bar s|s,\mu(s)),
+& \Bel_\pol (V)(x) =\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}}(d\bar s|s,\pol(s)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x) =\sup_\mu\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)).
+& \Bel_\ast (V)(x) =\sup_\pol\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\pol(s)).
 \end{align}
-The optimal probability of reaching $Acc_\FSA$, that is $\P^{\mu_\ast}(\MDP\vDash\psi) $, is defined as
+The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vDash\psi) $, is defined as
 \begin{align}
-	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\mu(s)),
+	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\pol(s)),
 \end{align}
 with $V=0$.
 
@@ -549,19 +538,19 @@ holds. \hfill\mbox{ }\qed
 %Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
 For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\mu^\Labset (V)(x) \!\!=\!\!\int%_{\X}
-\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\mathbb{T}}(d\bar x|x,\mu(x,q)),
+& \Bel_\pol^\Labset (V)(x) \!\!=\!\!\int%_{\X}
+\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\mathbb{T}}(d\bar x|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x) =\sup_\mu\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\mathbb{T}}(d\bar x|x,\mu(x,q)).
+& \Bel_\ast^\Labset (V)(x) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\mathbb{T}}(d\bar x|x,\pol(x,q)).
 \end{align}
 
 
 
 Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\mu (V)(x) = \trunc{[0,1]}{\Bel_\mu^\Labset (V)(x)-\delta},
+& \BelR_\pol (V)(x) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x)-\delta},
 \end{align}
 and the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
@@ -569,7 +558,7 @@ and the robust version of the optimal Bellman operator is given as
 \end{align}
 The robustified optimal probability of reaching $Acc_\FSA$ is given as
 \begin{align}
-	\lim_{N\rightarrow \infty}\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) \BelR^N_\ast V(\bar x, \bar q)\right]\notag\\\times\bar{\mathbb{T}} (d\bar x|s,\mu(x,q))-\delta,
+	\lim_{N\rightarrow \infty}\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) \BelR^N_\ast V(\bar x, \bar q)\right]\notag\\\times\bar{\mathbb{T}} (d\bar x|s,\pol(x,q))-\delta,
 \end{align}
 with $V=0$.
 

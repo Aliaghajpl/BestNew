@@ -39,7 +39,7 @@
 
 %% spaces 
 \newcommand{\Real}{\BB{R}}
-\renewcommand{\S}{\mathbb S}
+\newcommand{\Symb}{\mathcal S}
 \newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
 
 
@@ -56,8 +56,11 @@
 %% Modelling symbols
 %-------------MDP----------------------------
 \newcommand{\MDP}{\mathcal{M}}
+\newcommand{\POMDP}{\MDP_{\Z}}
+\newcommand{\C}{\mathbf{C}}
 \newcommand{\MB}{\mathcal{B}}
 
+ 
 \newcommand{\M}{{\mathbf{M}}}
 \newcommand{\X}{{\mathbb{X}}}  % State
 \newcommand{\Z}{{\mathbb{Z}}}	% Observation space
@@ -65,13 +68,19 @@
 \newcommand{\init}{\rho}
 \newcommand{\tr}{t}
 
+
+% product MDP
+\renewcommand{\S}{{\mathbb{S}}}	% Observation space
+
+\newcommand{\polb}{{\boldsymbol{\mu}}}
+\renewcommand{\pol}{{\mu}}
+
 \newcommand{\Y}{{\mathbb{Y}}}  % State
 
 %-------------POMDP-----------------------------
 \newcommand{\Hist}{{\mathsf{H}}}  %  History
 \newcommand{\I}{{\mathsf{I}}}  %  History
 \newcommand{\trb}{\hat{t}}
-\newcommand{\POMDP}{\MDP_{\Z}}
 
 
 % -----------------Refinement relation----------
