@@ -73,7 +73,9 @@ Formal verification, correct-by-design controller synthesis, stochastic systems,
 \subsubsection{Verification and synthesis problems over Markov decision processes}
 \red{cite finite, continuous, approximate continuous results}.
 
-
+For finite state Markov decision processes properties expressed in PCTL and CSL can be verified by tools such as \cite{KNP11} and  \cite{dehnert2017storm}. 
+ 	For Markov processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications (PLTL) that can be formulated as automata specifications. By reformulation the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton 
+ 	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. Still, for continuous state spaces its computational implementation  hinges on formal abstraction of the stochastic system to a finite state Markov decision chain \citep{soudjani2015faust}.  In \cite{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to linear time temporal logic properties. 
 
 \subsubsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
@@ -240,7 +242,8 @@ A control policy developed for the Belief space model is a mapping from belief s
 
 
 
-\red{[MDP description of COMDP]}
+\red{[Define belief space mode $\MB$ with state space $\mathbb B$ and show/claim that it is a Markov Decision  process.]}
+\
 
  The partially observable MDP can be written as a completely observable MDP, whose state space is the belief space.
 
@@ -260,8 +263,6 @@ A control policy developed for the Belief space model is a mapping from belief s
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
 Define words a strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
 Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
-
-%
      We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
      \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\mathbb B}\] 
      
@@ -291,75 +292,73 @@ $\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  
    
 %Define $\BF{b} = b^0b^1 \ldots $%\in \CA{G}^{\omega}$,     and denote the suffix sequence $b^i b^{i+1} \ldots$ by  $\word_i$, $i \geq 0$. 
  % We  combine the predicates via operators to create specifications.
- We define properties as formulas composed of atomic propositions and operators, which includes boolean "and" $\andltl$, "or" $\orltl$, "not" $\notltl$, and temporal operators: "until" $\Until$, "eventually" $\Event$, "always" $\Always$, "next" $\Next$.
-      For the language grammar we will rely on Bakus-Naur form. $\True$ and $\False$ are Boolean constants that respectively describe specifications that are always satisfied or can never be satisfied.
-    
+ We define properties as formulas composed of atomic propositions and operators, which includes boolean ``and" $\andltl$, ``or" $\orltl$, ``not" $\notltl$, and temporal operators: ``until" $\Until$, ``eventually" $\Event$, ``always" $\Always$, ``next" $\Next$.
     \begin{definition}[LTL Syntax]
     \label{def:gdtl-syntax}
     The {\em syntax} of LTL includes the minimum number of operators to define the logic:
     \begin{equation*}
-     \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+     \psi :=  \True \ |\ p \ |\ \notltl \psi \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation*} 
     where $p\in \AP$.
     %where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
     \end{definition}
 
-    For convenience, we define the additional operators:
-    $\phi_1 \orltl \phi_2 \equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2)$,
-    $\Event \phi \equiv \True \Until \phi$, and
-    $\Always \phi \equiv \notltl \Event \notltl \phi$,
+    For convenience, we often use the additional operators 
+    ``or"  $\psi_1 \orltl \psi_2 \equiv  \notltl (\notltl \psi_1 \andltl \notltl \psi_2)$, ``eventually"
+    $\Event \psi \equiv \True \Until \psi$, and
+   ``always"  $\Always \psi \equiv \notltl \Event \notltl \psi$,
     %\begin{align*}
-    %\phi_1 \orltl \phi_2  \Equiv  \notltl (\notltl \phi_1 \andltl \notltl \phi_2) \\
-    %\LTLEVENTUALLY \phi  \Equiv \True \LTLUNTIL \phi \\
-    %\LTLALWAYS \phi  \Equiv \notltl \LTLEVENTUALLY \notltl \phi
+    %\psi_1 \orltl \psi_2  \Equiv  \notltl (\notltl \psi_1 \andltl \notltl \psi_2) \\
+    %\LTLEVENTUALLY \psi  \Equiv \True \LTLUNTIL \psi \\
+    %\LTLALWAYS \psi  \Equiv \notltl \LTLEVENTUALLY \notltl \psi
     %\end{align*}
     where $\equiv$ denotes semantic equivalence. The LTL syntax defines the symbols and their correct ordering to form a formulae. %In the following, we define LTL semantics, i.e., the meaning of those symbols.
 % \begin{definition}
    % \label{def:gdtl-semantics}
 %    Let $\BF{b} = b^0b^1 \ldots \in \mathbb{B}^{\omega}$
-%    be an infinite sequence of belief states. $\BF{b} \models \phi$ denotes the event that the word $\BF{b}$ satisfies specification $\phi$.
+%    be an infinite sequence of belief states. $\BF{b} \models \psi$ denotes the event that the word $\BF{b}$ satisfies specification $\psi$.
 %    
     % Accordingly, 
      The {\em semantics} of LTL  are defined recursively as
 $\word_i \models p   \Equiv p\in\letter_i$, 
-    $\word_i \models \notltl \phi  \Equiv\notltl (\word_i \models \phi) $, 
-    $\word_i \models \phi_1 \andltl  \phi_2   \Equiv  ( \word_i \models \phi_1 ) \andltl ( \word_i \models \phi_2 ) $, 
-    $\word_i \models \phi_1 \orltl  \phi_2   \Equiv  ( \word_i \models \phi_1 ) \orltl ( \word_i \models \phi_2 ) $, 
-    $\word_i \models  \phi_1 \Until \phi_2  \Equiv \exists j \geq i \text{ s.t. } (\word_j \models \phi_2 ) $, 
-    $  \andltl (\word_k \models \phi_1, \forall k \in \{i, \ldots j-1\})$
-    $\word_i \models \Event \phi   \Equiv \exists j \geq i \text{ s.t. }\word_j \models \phi $, and 
-    $\word_i \models \Always \phi   \Equiv  \forall j \geq i \text{ s.t. }\word_j \models \phi$.
+    $\word_i \models \notltl \psi  \Equiv\notltl (\word_i \models \psi) $, 
+    $\word_i \models \psi_1 \andltl  \psi_2   \Equiv  ( \word_i \models \psi_1 ) \andltl ( \word_i \models \psi_2 ) $, 
+    $\word_i \models \psi_1 \orltl  \psi_2   \Equiv  ( \word_i \models \psi_1 ) \orltl ( \word_i \models \psi_2 ) $, 
+    $\word_i \models  \psi_1 \Until \psi_2  \Equiv \exists j \geq i \text{ s.t. } (\word_j \models \psi_2 ) $, 
+    $  \andltl (\word_k \models \psi_1, \forall k \in \{i, \ldots j-1\})$
+    $\word_i \models \Event \psi   \Equiv \exists j \geq i \text{ s.t. }\word_j \models \psi $, and 
+    $\word_i \models \Always \psi   \Equiv  \forall j \geq i \text{ s.t. }\word_j \models \psi$.
    % \end{definition}
 
 
 
-Of interest are properties in the syntactically co-safe subset of LTL given as
+Of interest are properties in the syntactically co-safe subset of LTL (scLTL) given as
     \begin{equation}\label{eq:scLTL}
-     \phi :=  \True \ |\ p \ |\ \notltl \phi \ |\ \phi_1 \andltl \phi_2 \ |\ \phi_1 \Until \phi_2 \ |\ \Next \phi
+     \psi :=  \True \ |\ p \ |\ \notltl \psi \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation}     where $p\in \AP$.
      
- 
-\begin{figure}[htp]
-\centering
-\begin{tikzpicture}[scale=.8]
-	\node (l0) at (-1,0) {};
-	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$q_1$}};
-		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$q_2$}};
-	\node[circle, draw, fill=blue!40!gray] (ru) at (2,1.5) {\textcolor{white}{$q_3$}};
-	\node[circle, draw, fill=blue!40!gray]  (lu) at (0,2) {\textcolor{white}{$q_4$}};
-\node[circle, draw, fill=gray]  (lut) at (3.7,.7) {\textcolor{white}{$q_5$}};
-\path[->,draw]  (l0.center)-> (ll);
-\path[->,draw] (ll) edge[bend right] node[below]  {$p$} (rl)
-(ll) edge[bend left]  node[right]   {$\notltl p$} (lu)
-			   (rl) edge[bend right] node[below right]  {$\notltl p$} (ru)
-			   (lut) edge[bend right] (lu);
-\path[->,draw] (rl) edge[bend right] (ru)
-			   (ru) edge[bend right] node[above] {$p$} (lut)
-	       (ru) edge[bend right] node[above] {$\notltl p$} (ll)
-			   (rl) edge[bend right] node[below]  {$p$} (lut);
-\end{tikzpicture}
-\caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
-\end{figure}
+% 
+%\begin{figure}[htp]
+%\centering
+%\begin{tikzpicture}[scale=.8]
+%	\node (l0) at (-1,0) {};
+%	\node[circle, draw, fill=blue!40!gray]  (ll) at (0,0) {\textcolor{white}{$q_1$}};
+%		\node[circle, draw, fill=blue!40!gray] (rl) at (1.5,0) {\textcolor{white}{$q_2$}};
+%	\node[circle, draw, fill=blue!40!gray] (ru) at (2,1.5) {\textcolor{white}{$q_3$}};
+%	\node[circle, draw, fill=blue!40!gray]  (lu) at (0,2) {\textcolor{white}{$q_4$}};
+%\node[circle, draw, fill=gray]  (lut) at (3.7,.7) {\textcolor{white}{$q_5$}};
+%\path[->,draw]  (l0.center)-> (ll);
+%\path[->,draw] (ll) edge[bend right] node[below]  {$p$} (rl)
+%(ll) edge[bend left]  node[right]   {$\notltl p$} (lu)
+%			   (rl) edge[bend right] node[below right]  {$\notltl p$} (ru)
+%			   (lut) edge[bend right] (lu);
+%\path[->,draw] (rl) edge[bend right] (ru)
+%			   (ru) edge[bend right] node[above] {$p$} (lut)
+%	       (ru) edge[bend right] node[above] {$\notltl p$} (ll)
+%			   (rl) edge[bend right] node[below]  {$p$} (lut);
+%\end{tikzpicture}
+%\caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
+%\end{figure}
 
 \red{[Define accepting language]}
 \begin{definition}[Deterministic Finite-State Automaton]
@@ -442,6 +441,12 @@ In \citet{tech_report_TACAS}, the difference between the models is quantified ba
 To allow for working with Belief space models, we relax the bound on the output deviation.
 
 
+We approach control synthesis of the belief space model in three? steps:
+\begin{enumerate}
+\item Compute labelling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
+\item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
+\item Refine the $\delta$-robust policy for the abstract model to the concrete model.
+\end{enumerate}
 \subsection{Lifting based simulation  and approximate similarity}
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
@@ -506,13 +511,10 @@ We now require that \begin{equation}
 %The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
 % $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$, then it suffices to show that
 % for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
-By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$. 
-
-\red{[Add example based definition]}
- 
+By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$.  
  
 
-\begin{definition}[$\delta$-predicate simulation relation]\label{def:apbsim}
+\begin{definition}[Labelling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
@@ -549,14 +551,24 @@ and the robust version of the optimal Bellman operator is given as
 \begin{align}\label{eq:V_recopt_inf}
 & \BelR_\ast (V)(x)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x)-\delta}
 \end{align}
+
+
 The robustified optimal probability of reaching $Acc_\FSA$ is given as
 \begin{align}
-	\lim_{N\rightarrow \infty}\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) \BelR^N_\ast V(\bar x, \bar q)\right]\notag\\\times\bar{\mathbb{T}} (d\bar x|s,\pol(x,q))-\delta,
+	V^\infty_\ast & =\lim_{N\rightarrow \infty}\BelR_\ast^N (V) \\
+	\pol^\infty_\ast(x)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x) 
 \end{align}
 with $V=0$.
 
 
-For the proof of this robustified set of operators see \cite{tech_report_TACAS}.
+The robustified optimal probability of reaching $Acc_\FSA$ is given as
+\begin{align}
+\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) V^\infty_\ast \right]\notag\\\times\bar{\init} (d\bar x|s,\pol(x,q))-\delta,
+\end{align}
+with $V=0$.
+
+
+For the proof of this robustified set of operators follows straight from the proofs in \citep{tech_report_TACAS}.
  
 
 
@@ -612,12 +624,9 @@ For the proof of this robustified set of operators see \cite{tech_report_TACAS}.
 
 
 
+\subsection{Control refinement}
 
-
-\section{Case studies}
- We detail two cases. In the first, we give a standard Gaussian LTL model and we show that one can use a constant estimator even when the noise is not constant.
- 
-\subsection{Flying in the wind: LTI Gaussian case}
+\section{Flying in the wind:  LTI Gaussian case study}
 
 
 
