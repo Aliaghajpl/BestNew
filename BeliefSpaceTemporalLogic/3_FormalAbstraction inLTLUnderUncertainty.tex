@@ -249,13 +249,10 @@ It can be shown that the transitions of this belief state evolve based on a fixe
 \begin{align}
 	 b_{k+1}(\cdot)\sim \trb(b_{k+1}\in \cdot|b_k,u_k).
 \end{align}
-At each time step the belief state can also be computed using a 
+At each time step, the belief state can also be computed using a 
 recursive filter denoted by $\tau$ as 
 \[b_{k+1}=\tau(b_k,u_k,z_{k+1}).\]
 
-
-
-A control policy developed for the Belief space model is a mapping from belief space to the action space, i.e., $u_k=\pi(b_k)$. 
 
 \red{[Write about the Borel space etcetera based on \cite{bertsekas2004stochastic}.]}
 
@@ -264,19 +261,24 @@ A control policy developed for the Belief space model is a mapping from belief s
 \red{[Define belief space mode $\MB$ with state space $\mathbb B$ and show/claim that it is a Markov Decision  process.]}
 \
 
- The partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model.
- 
- 
- \begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
-  A discrete-time MDP is a tuple $\MB = (\X, \init, \tr, \U)$ with
+ The partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model, which is a
+discrete-time MDP defined by the tuple $\MB = (\Xb, \initb, \trb, \U)$ with
   \begin{itemize}
-    \item $\X$,  a state space with states $x\in\X$; % as its elements;
-    \item $\init$, the initial probability distribution $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
+    \item $\Xb$,  a state space with states $b\in\Xb$; % as its elements;
+    \item $\initb$, the initial probability distribution $\initb:=\init$;
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
-    \item $\tr:\X\times\U\times\mathcal B(\X)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \U$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$;
+    \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure $\tr(\cdot\mid b,u)$ over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\X$ and $\U$ are (uncountable) Polish spaces.
- \end{definition}
+  for which $\Xb$ and $\U$ are (uncountable) Polish spaces \cite{bertsekas2004stochastic}.
+
+Since $\MB$ is a completely observable MDP, its information sequence at time $k$ is given as  
+\[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k)\]
+Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
+	%We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
+	We say that $\polb=(\pol_0,\ldots,\pol_{N-1})$ is a Markov policy if for each $k$, the policy only depends on the current state $b\in\Xb$, that is $\pol_k(du_k|b)$.
+	Furthermore 	 $\polb$ is a stationary Markov policy if $\pol(du_k|b)= \pol_k(du_k|b)$ for all $k$, and $b$.
+	
+	
 
 \subsection{Linear Temporal Logic for Belief Space Models}
 
