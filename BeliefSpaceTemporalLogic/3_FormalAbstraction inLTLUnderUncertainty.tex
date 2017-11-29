@@ -31,7 +31,7 @@
 
 \begin{frontmatter}
 
-\title{\huge Formal abstraction of POMDPs for Distribution LTL}
+\title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
 \thanks[footnoteinfo]{Sponsor and financial support acknowledgment
 goes here. Paper titles should be written in uppercase and lowercase
 letters, not all uppercase.}
@@ -45,21 +45,22 @@ letters, not all uppercase.}
 \author[cal]{Aaron Ames}
 
 \address[cal]{California Institute of Technology, 
-   Pasadena, CA 91125 USA (e-mail: \{haesaert,pettni,ames,murray\}@caltech ).}
+   Pasadena, CA 91125 USA} % (e-mail: \{haesaert,pettni,ames,murray\}@caltech ).}
 \address[mit]{Massachusetts Institute of Technology, 
    Cambridge, MA 02139 USA}% (e-mail:  cvasile@mit.edu)}
 \address[jpl]{Jet Propulsion Laboratory, 
    Pasadena, CA 91109 USA}% (e-mail: rohan.a.thakker@jpl.nasa.gov)} 
 \maketitle
 \begin{abstract}
-In this work, we consider synthesis of controllers guaranteeing  specifications given in linear time properties on belief space models.
-For this we leverage the use of approximate Markov decision processes, suitable for computational efficient control synthesis. By designing controls over the abstracted model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be avoided. 
-We leverage the notion of approximate stochastic simulation  to quantify the accuracy of the approximate models. The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
-By compensating for these errors a-priori in the control synthesis for the abstract model, the control synthesis is robust. 
-
+The stochastic evolution of the partially observable Markov decision process (POMDP) can be modeled by transitions in the associated belief space model.
+In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear time temporal logic on belief space models.
+For this, we use an approximate model abstraction%of the belief space model
+, suitable for computational efficient control synthesis. By designing a control policy over the abstracted model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be avoided. 
+We leverage the notion of approximate stochastic simulation  to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
+By compensating a-priori for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
 \end{abstract}
-\begin{keyword}
-Formal verification, correct-by-design controller synthesis, stochastic systems, linear temporal logic
+\begin{keyword} Belief space models,
+correct-by-design controller synthesis, Markov decision processes, partially observable
 \end{keyword}
 
 \end{frontmatter}
@@ -69,13 +70,31 @@ Formal verification, correct-by-design controller synthesis, stochastic systems,
 \section{Introduction} \label{subsec:intro}
  \textbf{TO BE WRITTEN}
 
-\subsection{Literature}
-\subsubsection{Verification and synthesis problems over Markov decision processes}
-\red{cite finite, continuous, approximate continuous results}.
+The use of belief space models  to design controllers is commonly used for navigation problems.   These navigation problems have also been shown to be well expressible via temporal logic specifications \red{[add citation]}. 
+As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
+Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
 
-For finite state Markov decision processes properties expressed in PCTL and CSL can be verified by tools such as \cite{KNP11} and  \cite{dehnert2017storm}. 
- 	For Markov processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications (PLTL) that can be formulated as automata specifications. By reformulation the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton 
- 	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. Still, for continuous state spaces its computational implementation  hinges on formal abstraction of the stochastic system to a finite state Markov decision chain \citep{soudjani2015faust}.  In \cite{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to linear time temporal logic properties. 
+
+
+Given a specification $\psi$ in written in linear temporal logic defined on $\MB$, we are interested 
+in the design of a policy $\pol$ such that 
+\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
+
+In this paper, we approach the synthesis problem as follows. 
+Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\hat \MB$ is computed.
+Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
+ Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function of the associated stochastic optimal control problem.
+  Finally, the policy of the concrete belief space model is computed  as its refinement.
+
+
+
+
+
+\subsubsection{Literature.}For probabilistic temporal logic properties  over finite state Markov decision processes %expressed in PCTL and CSL 
+there exist several tools for policy synthesis and verification such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. 
+ 	For Markov decision processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications that can be formulated as automata specifications. 
+ 	%By reformulating the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton 	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. 
+	For Markov decision processes over uncountable state spaces,  its computational implementation  hinges on formal abstraction of the process to a finite state Markov decision process \citep{soudjani2015faust}.  In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to linear time temporal logic properties \citep{tech_report_TACAS}. 
 
 \subsubsection{Technical math results for POMDPs}
 The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
@@ -391,7 +410,7 @@ reduce $\P_\init^\polb
 (\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\M$ to the reachability problem
  over another gMDP   $\M\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\M$ and the automaton $\mathcal A_\psi$. This was originally derived in \cite{tmka2013} for MDPs. We give a similar definition of the product construction as.
 
-\subsection{Control synthesis}
+\subsection{Exact control synthesis}
 
 
 To solve the \red{(currently undefined)} synthesis problem, we define the product of the DFA automaton and an MDP, 
@@ -430,8 +449,7 @@ The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vD
 with $V=0$.
 
 \section{Approximate control synthesis}
- Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, how now question
-\begin{itemize}
+ Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$,  \begin{itemize}
 	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
 	\item How can we refine an abstract controller designed for $\tilde\MB$ to $\MB$.
 \end{itemize}
