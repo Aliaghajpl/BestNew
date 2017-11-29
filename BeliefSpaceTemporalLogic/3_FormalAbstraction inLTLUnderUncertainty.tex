@@ -127,8 +127,8 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field. That is,  $\borel{\Y}$ is the  
 collection of all sets that can be formed from countable unions and intersections of open sets.
 We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures on $(\Y,\borel{\Y})$.
-Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\X,\mathcal{B}(\mathbb S),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
-In this work,  we only consider Polish spaces, which are complete separable metric spaces, c.f. \cite{bogachev2007measure}. 
+Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\Y,\mathcal{B}(\Y),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
+In this work,  we only consider Polish spaces, which are complete separable metric spaces see \citep{bogachev2007measure}. 
 
 
 
@@ -441,7 +441,7 @@ In \citet{tech_report_TACAS}, the difference between the models is quantified ba
 To allow for working with Belief space models, we relax the bound on the output deviation.
 
 
-We approach control synthesis of the belief space model in three? steps:
+We approach control synthesis of the belief space model in three steps:
 \begin{enumerate}
 \item Compute labelling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
 \item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
@@ -500,7 +500,7 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings 
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
-Condition \textbf{SR$\epsilon$.} is over conservative for the purpose of this paper. 
+Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. 
 Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
  $\Labset(x)=\{\Lab(x)\}$.
  
@@ -563,7 +563,8 @@ with $V=0$.
 
 The robustified optimal probability of reaching $Acc_\FSA$ is given as
 \begin{align}
-\int \min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) V^\infty_\ast \right]\notag\\\times\bar{\init} (d\bar x|s,\pol(x,q))-\delta,
+\int\!\!\min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) V^\infty_\ast \right]%\notag\\\times
+\bar{\init} (d\bar x|s,\pol(x,q))-\delta,
 \end{align}
 with $V=0$.
 
@@ -655,7 +656,7 @@ Consider the linear time invariant system with Gaussian disturbance, given as
 	y^m_{t}&=C^m x^m_{t}+D^m u_{t}+E^m v_{t}\end{aligned}
 \end{align}
 with matrices $A,B,C,D$ and matrices $F,E$. 
-The disturbance signal $v$ is zero mean independently and identically  distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
+The disturbance signal $v$ is zero -mean, independently and identically  distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
 
  
  \noindent\textbf{Wind disturbance.}
@@ -725,13 +726,11 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     with their finite parametrization, mean and
     covariance matrix.
      Thus,
-    $\CA{G} =  \BB{R}^n \times  \S^n$.
+    $\CA{G} =  \BB{R}^n \times  \Symb^n$.
     
     
- 
- In the second case, we leverage the developed simulation relation for FIRM. \red{This is the next step and wont be submitted to the conference. }
   
-
+\section{Conclusions}
 
 
 %% Bibiliography %%%%%%%%%%%%%%%%%%%%%%%%
