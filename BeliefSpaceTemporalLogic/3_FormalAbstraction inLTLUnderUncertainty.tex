@@ -404,7 +404,7 @@ a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
 and a DFA  $\FSA_\psi = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$,
 we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
-$\MDP\otimes\FSA_\psi = (\bar \X, \bar\pi,\bar{\tr},\U)$.
+$\MDP\otimes\FSA_\psi = (\bar \X, \bar\init,\bar{\tr},\U)$.
 Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx) \tr(q_0,\mathsf L(x)))$, and
 \begin{equation*}
   \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta_\FSA(q,\Lab(\tilde x)),\\ 0 & \text{else.}  \end{array}\right.
@@ -417,15 +417,15 @@ Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx) \tr(q_0,\mathsf L(x)))$
 \red{[Define Value iteration and policy optimization]}
 For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol (V)(x) =\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}}(d\bar s|s,\pol(s)),
+& \Bel_\pol (V)(x) =\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x) =\sup_\pol\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\pol(s)).
+& \Bel_\ast (V)(x) =\sup_\pol\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr} (d\bar s|s,\pol(s)).
 \end{align}
 The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vDash\psi) $, is defined as
 \begin{align}
-	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\mathbb{T}} (d\bar s|s,\pol(s)),
+	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\tr} (d\bar s|s,\pol(s)),
 \end{align}
 with $V=0$.
 
@@ -496,16 +496,16 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings 
 	$\tilde\M$ is $(\epsilon,\delta)$-stochastically simulated by $\M$, that is $\tilde\M\preceq^{\delta}_\eps\M$,  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
-		\forall (x_1,x_2)\in \rel:\mathbf{d}_\Y(\tilde h(x_1),h(x_2))  \leq \epsilon\tag{\textbf{SR$\epsilon$}.}
+		\forall (x_1,x_2)\in \rel:\mathbf{d}_\Y(\tilde h(x_1),h(x_2))  \leq \epsilon\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
 Condition \textbf{SR$\epsilon$.} is over conservative for the purpose of this paper. 
 Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
- $\Labset(b)=\{\Lab(b)\}$.
+ $\Labset(x)=\{\Lab(x)\}$.
  
 We now require that \begin{equation}
-  \forall (\tilde b,b)\in \rel:  \Labset(b)\subset \tilde{\Labset}(b).
+  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(x).
   \end{equation} 
 %  Consider the case that $b$ is defined by $\hat x$ and $P$. 
 %The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
@@ -518,8 +518,8 @@ By replacing the strict requirement on (approximate) equality with that of order
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
-	  \forall (\tilde b,b)\in \rel:  \Labset(b)\subset \tilde{\Labset}(b).
-\tag{\textbf{SR~$\CA L$.}}
+	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(x).
+\tag{\textbf{SR$\,\boldsymbol{\CA{L}}$.}}
 	\end{equation} 
 holds. \hfill\mbox{ }\qed
 \end{definition}
@@ -534,11 +534,11 @@ holds. \hfill\mbox{ }\qed
 For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\pol^\Labset (V)(x) \!\!=\!\!\int%_{\X}
-\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\mathbb{T}}(d\bar x|x,\pol(x,q)),
+\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\mathbb{T}}(d\bar x|x,\pol(x,q)).
+& \Bel_\ast^\Labset (V)(x) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\tr}(d\bar x|x,\pol(x,q)).
 \end{align}
 
 
@@ -622,9 +622,26 @@ For the proof of this robustified set of operators follows straight from the pro
 %\caption{Control synthesis}
 %\end{figure}
 
-
-
 \subsection{Control refinement}
+\red{[New contribution]}
+Given a value function 
+	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ and abstract policy 	$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
+	\begin{align}\label{eq:Valuebased_refined}
+		\pol_\ast(x,q):= &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\rel(x)} \bar V^\infty_\ast(\tilde x,q).
+	\end{align}
+If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
+	
+	\red{[Notation not introduced:]}
+	Furthermore
+\begin{align}
+  \mathbf R^{\tilde \pol_\ast}_{\tilde\rho}\left(
+\tilde{\mathcal{B}}
+ \vDash \psi \right)\leq   \mathbf P^{ \pol_\ast} _{ \rho}\left(
+ {\mathcal{B}}
+ \vDash \psi \right)
+\end{align}
+	
+
 
 \section{Flying in the wind:  LTI Gaussian case study}
 
