@@ -523,9 +523,9 @@ Given a relation over the state spaces of the MDPs we require that the initial d
 	\tag{\textbf{SR 1.}}
 \end{equation}
   
-Furthermore, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} u_1,x_1,x_2)$ on $\X_1\times\X_2$ such that $\forall (x_1,x_2)\in \rel$, $\forall u_1\in\U_1$:
-\begin{equation}\mathbb T_1(\cdot| x_1, u_1)\ \bar \rel_\delta \  \mathbb T_2(\cdot| x_2, \InF(u_1,x_1,x_2)),\tag{\textbf{SR 2.}}\end{equation} with $\InF$, a given interface function mapping the action and state pair to a refined action for $\MDP$
-\begin{align*}\InF: \U_1\times \X_1\times\X_2 \rightarrow \mathcal{P}(\U_2,\mathcal B(\U_2)). \end{align*}
+Furthermore, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \X\times\X$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \U$:
+\begin{equation}\tilde \tr(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \tr(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}\end{equation} with $\InF$, a given interface function mapping the action and state pair to a refined action for $\MDP$
+\begin{align*}\InF: \tilde \U\times \tilde \X\times\X \rightarrow \mathcal{P}(\U,\mathcal B(\U)). \end{align*}
 
 Thus the interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
 
@@ -535,9 +535,9 @@ As in \citep{haesaert2017verification},  we give a notion of probabilistic simul
 \begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
 	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, that is $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
-	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 
+	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
-		\forall (x_1,x_2)\in \rel:\mathbf{d}_\Y(\tilde h(x_1),h(x_2))  \leq \epsilon\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
+		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
@@ -546,7 +546,7 @@ Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rig
  $\Labset(x)=\{\Lab(x)\}$.
  
 We now require that \begin{equation}
-  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(x).
+  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
   \end{equation} 
 %  Consider the case that $b$ is defined by $\hat x$ and $P$. 
 %The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
@@ -558,8 +558,8 @@ By replacing the strict requirement on (approximate) equality with that of order
 \begin{definition}[Labelling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
-	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
-	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(x)
+	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
+	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x)
 \tag{\textbf{SR$\,\boldsymbol{\CA{L}}$.}}
 	\end{equation} 
 holds. \hfill\mbox{ }\qed
