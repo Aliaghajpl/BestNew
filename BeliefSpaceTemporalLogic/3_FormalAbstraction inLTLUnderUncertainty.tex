@@ -55,9 +55,9 @@ letters, not all uppercase.}
 The stochastic evolution of the partially observable Markov decision process (POMDP) can be modeled by transitions in the associated belief space model.
 In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear time temporal logic on belief space models.
 For this, we use an approximate model abstraction%of the belief space model
-, suitable for computational efficient control synthesis. By designing a control policy over the abstracted model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be avoided. 
-We leverage the notion of approximate stochastic simulation  to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
-By compensating a-priori for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
+ suitable for computationally efficient control synthesis. By designing a control policy over the abstract model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be circumvented. 
+We leverage the notion of approximate stochastic simulation to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
+By compensating a priori for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
 \end{abstract}
 \begin{keyword} Belief space models,
 correct-by-design controller synthesis, Markov decision processes, partially observable
@@ -243,7 +243,7 @@ Elements of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in\I_k$ 
 \begin{align}
 	b_k(\cdot)=\P(x_k\in \cdot|\init,\I_k)\in \mathcal P (\X)
 \end{align}
-This state distribution is referred to as the belief state $b_t(\cdot)$. 
+This state distribution is referred to as the belief state $b_k(\cdot)$. 
 The Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}\subset \mathcal P(\X)$.
 It can be shown that the transitions of this belief state evolve based on a fixed stochastic kernel
 \begin{align}
@@ -269,7 +269,7 @@ discrete-time MDP defined by the tuple $\MB = (\Xb, \initb, \trb, \U)$ with
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
     \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure $\tr(\cdot\mid b,u)$ over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\Xb$ and $\U$ are (uncountable) Polish spaces \cite{bertsekas2004stochastic}.
+  for which $\Xb$ and $\U$ are (uncountable) Polish spaces \citep{bertsekas2004stochastic}.
 
 Since $\MB$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k)\]
@@ -296,12 +296,10 @@ Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such th
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
 Define words a strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
 Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
-     We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
-     \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\mathbb B}\] 
-     
-
-     
-     Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
+We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
+{\color{blue} Is $L$ labeling of belief states or ``normal'' states?}
+\[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\mathbb B}\]      
+Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
      \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
  	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
@@ -320,12 +318,12 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     %Via its trivial extension,  output traces  $\{x_{t}\}_{t\geq 0}\in \X^{\mathbb N} $ can be mapped to the
     Define the set of infinite
     words $\alphabeth^{\mathbb N}$,  with elements 
-$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffice sequence  $\Lab(x_i),$ $\Lab(x_{i+1}), \ldots$ as $\word_i$.
+$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffix sequence  $\Lab(x_i),$ $\Lab(x_{i+1}), \ldots$ as $\word_i$.
 
    
 %Define $\BF{b} = b^0b^1 \ldots $%\in \CA{G}^{\omega}$,     and denote the suffix sequence $b^i b^{i+1} \ldots$ by  $\word_i$, $i \geq 0$. 
  % We  combine the predicates via operators to create specifications.
- We define properties as formulas composed of atomic propositions and operators, which includes boolean ``and" $\andltl$, ``or" $\orltl$, ``not" $\notltl$, and temporal operators: ``until" $\Until$, ``eventually" $\Event$, ``always" $\Always$, ``next" $\Next$.
+ We define properties as formulas composed of atomic propositions and operators, which includes boolean ``and" $\andltl$, ``or" $\orltl$, ``not" $\notltl$, and the temporal operators ``until" $\Until$, ``eventually" $\Event$, ``always" $\Always$, and ``next" $\Next$.
     \begin{definition}[LTL Syntax]
     \label{def:gdtl-syntax}
     The {\em syntax} of LTL includes the minimum number of operators to define the logic:
@@ -415,7 +413,7 @@ $Acc_\FSA\subset Q_\FSA$ is a set of accepting states.
 
 
 %\begin{definition}
-For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property. \red{[Add reference]} That is a DFA represents the specification $\psi$ if a word $\word$ satisfies a LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
+For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property \citep{Belta2017}. Specifically, a DFA represents the specification $\psi$ if a word $\word$ satisfies a LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
 	 \[\psi\vDash\word \Leftrightarrow \word\in \Language_\psi.\]
 %\end{definition}
 
