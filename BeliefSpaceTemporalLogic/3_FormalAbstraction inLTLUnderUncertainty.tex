@@ -32,9 +32,9 @@
 \begin{frontmatter}
 
 \title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
-\thanks[footnoteinfo]{Sponsor and financial support acknowledgment
-goes here. Paper titles should be written in uppercase and lowercase
-letters, not all uppercase.}
+%\thanks[footnoteinfo]{Sponsor and financial support acknowledgment
+%goes here. Paper titles should be written in uppercase and lowercase
+%letters, not all uppercase.}
 
 \author[cal]{S. Haesaert} 
 \author[cal]{Lars Petter P.  Nilsson} 
@@ -68,19 +68,25 @@ correct-by-design controller synthesis, Markov decision processes, partially obs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
-\section{Introduction} \label{subsec:intro}
- \textbf{TO BE WRITTEN}
+\section{Introduction }\label{subsec:intro}
 
-The use of belief space models  to design controllers is commonly used for navigation problems.   These navigation problems have also been shown to be well expressible via temporal logic specifications \red{[add citation]}. 
+
+    
+These navigation problems have also been shown to be well expressible via temporal logic specifications \citep{Murray2009}. 
 As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect to their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
 Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
+    To represent the low-level control and decision making under motion and sensing uncertainty, we model the system
+    in its most generic and principled form as a Partially-Observable Markov Decision Process
+    (POMDP)~\citep{Kaelbling98,Smallwood73}.
+%We define the belief space models of these POMDPs  to design controllers is commonly used for navigation problems.   
+    
+    
+    
 
-
-
-Given a specification $\psi$ in written in linear temporal logic defined on $\MB$, we are interested 
-in the design of a policy $\pol$ such that 
-\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
-
+Given a specification $\psi$ in written in linear temporal logic defined on a belief space model $\MB$ of a POMDP, we are interested 
+in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability at least $p$.
+%\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
+%
 In this paper, we approach the synthesis problem as follows. 
 Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\hat \MB$ is computed.
 Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
@@ -93,10 +99,11 @@ Secondly,  we compute a labelling-based approximate stochastic  simulation relat
 
 \subsubsection{Literature.}For probabilistic temporal logic properties  over finite state Markov decision processes %expressed in PCTL and CSL 
 there exist several tools for policy synthesis and verification such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. 
- 	%For Markov decision processes over uncountable state spaces, most results deal with  probabilistic evaluations of temporal logic specifications that can be formulated as automata specifications. 
- 	%By reformulating the formal verification and synthesis problem to a probabilistic reachability problem over the product between the original stochastic model and a deterministic finite-state automaton 	as introduced in \cite{AbateQuanti}, \cite{tmka2013} has shown that controlled discrete-time Markov Processes can be formally verified. 
-	For Markov decision processes over uncountable state spaces,  its computational implementation  hinges on the formal abstraction of the process to a finite state Markov decision process \citep{soudjani2015faust}.  In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to linear time temporal logic properties \citep{tech_report_TACAS}.  \red{[Add references to older simulation relations cf. majid, pappas, ... ]}
-
+For Markov decision processes over uncountable state spaces,  the characterization of properties cannot in general beattained analytically , \citep{Abate1} so an alternative is to approximate these models by simplerprocesses that are prone to be mathematically analyzed or algorithmically verifiedsuch as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{ZMMAL14}.	
+ In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
+ 
+ 
+ Within the formal methods literature,  the synthesis of controllers over models without full-state observations is a more difficult problem. For finite state POMDP there are results on the verification and policy synthesis  for PCTL properties \cite{Norman2017, Chatterjee2014}.
 %\subsubsection{Technical math results for POMDPs.}
 %The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 %\cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions. It is also extensively discussed in \citep[Chapter 11]{bertsekas2004stochastic}.
@@ -104,33 +111,33 @@ there exist several tools for policy synthesis and verification such as PRISM \c
 %In \cite{saldi2017finite}, conditions for the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs are analyzed. 
 %Most of the work (including the references given above) has been developed for additive cost functions or terminal cost functions defined via cost functions associated to the model. 
 
-
-\subsubsection{POMDP reachability and safety verification.}
+Result for specifications defined on continuous states of the POMDP have been focused mainly on reachability and safety problems. 
 In  \cite{ding2013optimal} and \cite{LESSER20141989}, reachability and safety  are defined with respect to the hidden state of the POMDP.
 %
 In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
 In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
-The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
-The state extensions model the satisfaction of failing of reachability properties.
+%The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
+%The state extensions model the satisfaction of failing of reachability properties.
 
-\subsubsection{Observer-based temporal logic control of  linear time invariant systems.}
-\red{[Add citations]}
 
-\subsubsection{Belief state temporal logic properties.} %By defining properties directly on the belief state of the POMDP, it is possible to compute and verify more complex properties.  
-In \cite{JonesDTL2013}, the properties have been defined on  the belief state of the POMDP.  \red{[say that this work relies on empirical estimates of probability and does not come with guarantees.]}
-In contrast to the algorithmic controllers synthesized in \cite{JonesDTL2013} and \cite{Vasile2016},  we show that we can leverage stochastic similarity between the belief space models to synthesize controllers with guarantees.
 
-\red{Connect with work submitted to TACAS \citep{tech_report_TACAS} and \citep{haesaert2017verification}.  }
-In this work, we apply the results to belief models. For this,  we newly give an approximate stochastic simulation relation which is based on the relaxation of the labelling function.
+ In this paper, the properties of interest are defined directly on the belief space, as such that can express requirements on estimation quality or uncertainty. 
+ We solve the synthesis problems in a correct-by-design fashion. For this we leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede any discretization to a finite abstraction with model order reductions and simplifications.  Since we work over belief space models, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we  refine the control policy via the abstract value function.
+
+
+ In contrast to the work in \cite{JonesDTL2013}, and  \cite{Vasile2016},  the  controllers are synthesized in a correcty-by-design fashion by leveraging formal similarity relations.
+  
+  
+  
  
 \section{Partially Observable Markov Decision Processes}
 
 In this section, we give the definition of a Partially Observable Markov Decision Process (POMDP). Then we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logic as originally given in \citep{JonesDTL2013} for POMDPs. 
 
-
-\subsection{Notation}
-
-For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$.
+%
+%\subsection{Notation}
+%
+%
 %We use the following notation for the mappings $\rel(\tilde A):=\{y: x\rel y,\  x\in \tilde A\}$ and $\rel^{-1}(\tilde B):=\{x: x\rel y,\  y\in \tilde B\}$  for $\tilde A\subseteq A$ and $\tilde B\subseteq B$.
 %    Let $\Sigma$ be a finite set. The cardinality,
 %    power set, Kleene- and $\omega$-closures
@@ -146,11 +153,14 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 %    respect to the Lebesgue measure of $\BB{R}^n$.
 %    
 %    
-    The set of all positive semi-definite matrices of size
-    $n \times n$, $n \geq 1$, is denoted by $\Symb^n$.    The $m \times n$ zero matrix and the $n \times n$ identity matrix are denoted by $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
+%    The set of all positive semi-definite matrices of size
+%    $n \times n$, $n \geq 1$, is denoted by $\Symb^n$.    The $m \times n$ zero matrix and the $n \times n$ identity matrix are denoted by $\BF{0}_{m, n}$ and $\BF{I}_n$, respectively.
    
 %    The supremum and Euclidean norms are denoted by     $\norminf{\cdot}$ and $\normeucl{\cdot}$, respectively.     For a given set $\Z$ a metric or distance function $\mathbf d_\Z$ is a function $\mathbf{d}_\Z: \Z\times \Z\rightarrow \mathbb R_{\ge 0}$  satisfying the following conditions:  $\forall y_1,y_2,y_3\in\Z$: $\mathbf d_\Z(y_1,y_2)=0$ iff $y_1=y_2$;  $\mathbf d_\Z(y_1,y_2)=\mathbf d_{\Z}(y_2,y_1)$;  and $\mathbf d_\Z(y_1,y_3)\leq \mathbf d_\Z(y_1,y_2) +\mathbf d_\Z(y_2,y_3)$. 
  %
+
+
+\subsection{Partially Observable Markov  Decision Processes}
 For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field, i.e., the  
 collection of all sets that can be formed from countable unions and intersections of open sets in $\Y$.
 We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures on $(\Y,\borel{\Y})$.
@@ -160,8 +170,6 @@ In this work,  we only consider Polish spaces, which are complete separable metr
 
 
     
-
-\subsection{Partially Observable Markov  Decision Processes}
 Consider Markov decision processes \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
 \begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
   A discrete-time MDP is a tuple $\MDP = (\X, \init, \tr, \U)$ with
@@ -481,12 +489,13 @@ We approach control synthesis of the belief space model in three steps:
 \item Refine the $\delta$-robust policy for the abstract model to the concrete model.
 \end{enumerate}
 \subsection{Lifting based simulation  and approximate similarity}
+For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
 	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_1,\mathcal B(\X_2)) $ be two probability distributions. 
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
-	
+%	
 For a given 
 	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
 	satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
@@ -497,16 +506,16 @@ For a given
 			$x_1\rel x_2$ with probability at least $1-\delta$, or equivalently that $\mathbb{W}\left(\rel\right)\geq1-\delta$.
 	\end{description}}%
 	
-We refer to  $\mathbb W$ as the lifting. We define 
+We refer to  $\mathbb W$ as the lifting. %We define 
 %\end{definition}
-the set of related, or equivalently lifted, probabilities as 
-	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\] 
+The set of related, or equivalently lifted, probabilities is defined as 
+	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2)).\] 
 
 
 Hence based on \textbf{L1-3.}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
 
  
-We tailor the   notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the Belief space MDPs.
+We tailor the   notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the belief space MDPs.
   The former notion is defined as follows. 
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.  
 Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy
@@ -551,7 +560,7 @@ By replacing the strict requirement on (approximate) equality with that of order
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
-	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(x).
+	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(x)
 \tag{\textbf{SR$\,\boldsymbol{\CA{L}}$.}}
 	\end{equation} 
 holds. \hfill\mbox{ }\qed
@@ -564,7 +573,7 @@ holds. \hfill\mbox{ }\qed
 \subsection{Robust control computation}
 
 %Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
-For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator
+\red{For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator}
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\pol^\Labset (V)(x) \!\!=\!\!\int%_{\X}
 \min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
