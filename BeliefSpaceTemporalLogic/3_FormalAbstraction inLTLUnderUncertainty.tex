@@ -71,7 +71,7 @@ correct-by-design controller synthesis, Markov decision processes, partially obs
  \textbf{TO BE WRITTEN}
 
 The use of belief space models  to design controllers is commonly used for navigation problems.   These navigation problems have also been shown to be well expressible via temporal logic specifications \red{[add citation]}. 
-As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
+As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect to their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
 Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
 
 
@@ -84,7 +84,7 @@ In this paper, we approach the synthesis problem as follows.
 Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\hat \MB$ is computed.
 Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
  Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function of the associated stochastic optimal control problem.
-  Finally, the policy of the concrete belief space model is computed  as its refinement.
+  Finally, the policy for the concrete belief space model is computed  as its refinement.
 
 
 
@@ -660,7 +660,7 @@ For the proof of this robustified set of operators follows straight from the pro
 Given a value function 
 	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ and abstract policy 	$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
 	\begin{align}\label{eq:Valuebased_refined}
-		\pol_\ast(x,q):= &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\rel(x)} \bar V^\infty_\ast(\tilde x,q).
+		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\rel(x)} \bar V^\infty_\ast(\tilde x,q).
 	\end{align}
 If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
 	
@@ -763,10 +763,10 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     \red{[STEPS to do]
   \begin{enumerate}
   	\item Define innovation model as belief space model
-  	\item Use upper bound on covariance to define standard LTI gaussian fully observable system
+  	\item Use upper bound on covariance to define standard LTI gaussian fully observable system (if exists )
   	\item For observable LTI system design controller
   	\item translate scLTL to DFA
-  	\item copute cross product
+  	\item compute cross product
   	\item Value iteration
   	\item implementation
   \end{enumerate}
