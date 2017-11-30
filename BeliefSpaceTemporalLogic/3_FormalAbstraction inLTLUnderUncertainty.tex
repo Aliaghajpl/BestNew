@@ -402,11 +402,11 @@ Of interest are properties in the syntactically co-safe subset of LTL (scLTL) gi
 \red{[Define accepting language]}
 \begin{definition}[Deterministic Finite-State Automaton]
 A Deterministic Finite-State Automaton is a tuple
- \[\FSA = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA),\] where %:
-$Q_\FSA$ is a finite set of states, $q_0^\FSA \in S_\FSA$ is the initial state,
+ \[\FSA = (Q, q_0, \Sigma, \delta, Acc),\] where %:
+$Q$ is a finite set of states, $q_0 \in S$ is the initial state,
 $\Sigma$ is the input alphabet with $\sigma\in\Sigma$ being a letter (or event) that triggers the transition between the states of the FSA.   
-$\delta_\FSA : Q_\FSA \times \Sigma \rightarrow Q_\FSA$ is the transition function, and
-$Acc_\FSA\subset Q_\FSA$ is a set of accepting states.
+$\delta_\FSA : Q \times \Sigma \rightarrow Q$ is the transition function, and
+$Acc\subset Q$ is a set of accepting states.
 %\begin{itemize}
 %    \item $S_\RA$ is a finite set of states;
 %    \item $s_0^\RA \in S_\RA$ is the initial state;
@@ -441,33 +441,33 @@ as in \cite{tech_report_TACAS}\footnote{\red{This is very similar to the definit
 Given a MDP  $\MDP = (\X, \init, \tr, \U)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
-and a DFA  $\FSA_\psi = (Q_\FSA, q_0^\FSA, \Sigma, \delta_\FSA, Acc_\FSA)$,
+and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta, Acc)$,
 we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
 $\MDP\otimes\FSA_\psi = (\bar \X, \bar\init,\bar{\tr},\U)$.
-Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx) \tr(q_0,\mathsf L(x)))$, and
+Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta(q_0,\mathsf L(x))))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as
 \begin{equation*}
-  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta_\FSA(q,\Lab(\tilde x)),\\ 0 & \text{else.}  \end{array}\right.
+  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(\tilde x)),\\ 0 & \text{else.}  \end{array}\right.
 \end{equation*} 
+\hfill \mbox{ }\qed
 \end{definition}
 
- 
-
-
- For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
+\red{[Write about how the policy can now be verified or synthesized via a stochastic reachability problem. And that this can be formulated as a Dynamic programming problem.  ]}
+Denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol (V)(x) =\!\!\int  \left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
+& \Bel_\pol (V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')V( y, q'))\right]\notag\\&\hspace{3cm}\hfill 
+\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)),
 \end{align}
-
 %\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 %\end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x) =\sup_\pol\int_{\X}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)).
+& \Bel_\ast (V)(x,q) =\sup_\pol\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)),
 \end{align}
-The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vDash\psi) $, is defined as
-\begin{align}
-	\lim_{N\rightarrow \infty}\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) \Bel^N_\ast V(\bar s)\right]\bar{\tr} (d\bar s|s,\pol(s)),
-\end{align}
+The optimal probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
+\begin{align*}
+&\P_\init^\polb
+(\word \in\mathcal L(\mathcal A_\psi))= 	\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q_0)\right.\\ &\hspace{3cm} \left.+ \mathbf 1_{Q\setminus Acc}(q_0) \Bel^N_\ast\left( V\right)(x_0,q_0)\right] {\init} (d \bar x_0),
+\end{align*}
 with $V=0$.
 
 \section{Approximate control synthesis}
@@ -537,7 +537,7 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings 
 	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, that is $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
-		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
+		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon.\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
@@ -575,42 +575,39 @@ holds. \hfill\mbox{ }\qed
 \red{For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator}
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\pol^\Labset (V)(x,q) \!\!=\!\!\int%_{\X}
-\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
+\min_{q' \in \delta_\FSA(q, \Labset( x'))}\left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}(q')V( x',q'))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d x'|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\tr}(d\bar x|x,\pol(x,q)).
+& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\X}\min_{ q' \in \delta_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc}( q')\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]\notag {\tr}(d x'
+|x,\pol(x,q)).
 \end{align}
 
 
 
 Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x)-\delta},
+& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta},
 \end{align}
 and the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x)-\delta}
+& \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x,q)-\delta}
 \end{align}
 
 
-The robustified optimal probability of reaching $Acc_\FSA$ is given as
+The ``robustified'' optimal probability of reaching $Acc_\FSA$ is given as
 \begin{align}
 	V^\infty_\ast & =\lim_{N\rightarrow \infty}\BelR_\ast^N (V) \\
-	\pol^\infty_\ast(x)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x) 
+	\pol^\infty_\ast(x,q)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x,q) 
 \end{align}
 with $V=0$.
-
-
-The robustified optimal probability of reaching $Acc_\FSA$ is given as
+The robustified optimal probability of reaching $Acc$ is given as
 \begin{align}
-\int\!\!\min_{\bar q \in t(q,\Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA }(\bar q)+ \mathbf 1_{Q \setminus Acc_\FSA }(\bar q) V^\infty_\ast \right]%\notag\\\times
-\bar{\init} (d\bar x|s,\pol(x,q))-\delta,
-\end{align}
-with $V=0$.
-
-
-For the proof of this robustified set of operators follows straight from the proofs in \citep{tech_report_TACAS}.
+&\BelR_\init^\polb
+(\word \in\mathcal L(\mathcal A_\psi))=\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(\bar x))}\left[\mathbf 1_{Acc}(\bar q)+ \mathbf 1_{Q \setminus Acc}(\bar q) V^\infty_\ast(x_0) \right]%\notag\\\times
+\init (d x_0)-\delta.
+\end{align} 
+The proof of this set of operators follows straight from the proofs in \citep{tech_report_TACAS}.
  
 
 
