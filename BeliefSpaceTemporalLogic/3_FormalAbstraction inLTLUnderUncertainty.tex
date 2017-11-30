@@ -226,7 +226,7 @@ The sequence  \eqref{eq:history} grows with number of observations  $k$ and take
 The control actions $u_k$ can be chosen as a function of the history of inputs and observed outputs.  
 Define for $k=0,\ldots,N-1,$ the information spaces as
 \[\I_k=\Z_0\times\U_0\times\dots\times\U_{k-1}\times\Z_k.\]
-Elements of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in\I_k$ and are referred to as the $k$-th information vector. 
+Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in\I_k$ and are referred to as the $k$-th information vector. 
  %A policy $\polb$ is a sequence of stochastic kernels on $\U$ given $\I_k$. 
 %We denote with $\Pi$ the set of all policies  \citep[Def. 10.4]{bertsekas2004stochastic}  
 %\begin{definition}
@@ -251,12 +251,14 @@ Elements of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in\I_k$ 
 %
 %\end{example}
 
- \subsubsection{Belief space models as MDPs}
+ \subsubsection{Belief MDP of POMDP}
+ Given an information sequence $i_k$,  the conditional probability distribution expresses the belief of a state 
 \begin{align}
-	b_k(\cdot)=\P(x_k\in \cdot|\init,\I_k)\in \mathcal P (\X)
+	b_k(\cdot)=\P(x_k\in \cdot|\init,i_k)\in \mathcal P (\X),
 \end{align}
+thus $	b_k(x_k\in A) $ defines the likelihood that $x_k$ is in $A$.  %expresses the likelihood of the state
 This state distribution is referred to as the belief state $b_k(\cdot)$. 
-The Belief space (i.e., the set of all beliefs) is denoted by $\mathbb{B}\subset \mathcal P(\X)$.
+The Belief space (i.e., the set of all beliefs) is denoted by $\Xb\subset \mathcal P(\X)$.
 It can be shown that the transitions of this belief state evolve based on a fixed stochastic kernel
 \begin{align}
 	 b_{k+1}(\cdot)\sim \trb(b_{k+1}\in \cdot|b_k,u_k).
@@ -265,25 +267,18 @@ At each time step, the belief state can also be computed using a
 recursive filter denoted by $\tau$ as 
 \[b_{k+1}=\tau(b_k,u_k,z_{k+1}).\]
 
-
-\red{[Write about the Borel space etcetera based on \cite{bertsekas2004stochastic}.]}
-
-
-
-\red{[Define belief space mode $\MB$ with state space $\mathbb B$ and show/claim that it is a Markov Decision  process.]}
-\
-
- The partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model, which is a
-discrete-time MDP defined by the tuple $\MB(\POMDP_\Z) = (\Xb, \initb, \trb, \U)$ with
+Therefore for a POMDP $\POMDP$ we can construct a belief MDP. 
+ That is, partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model of belief MDP, which is a
+discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \U)$ with
   \begin{itemize}
     \item $\Xb$,  a state space with states $b\in\Xb$; % as its elements;
     \item $\initb$, the initial probability distribution $\initb:=\init$;
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
     \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure $\tr(\cdot\mid b,u)$ over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\Xb$ and $\U$ are (uncountable) Polish spaces \citep{bertsekas2004stochastic}.
+  for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic}.
 
-Since $\MB$ is a completely observable MDP, its information sequence at time $k$ is given as  
+Since $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k)\]
 Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
 	%We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
