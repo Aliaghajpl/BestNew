@@ -88,7 +88,7 @@ in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability
 %\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
 %
 In this paper, we approach the synthesis problem as follows. 
-Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\hat \MB$ is computed.
+Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\tilde \MB$ is computed.
 Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
  Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function of the associated stochastic optimal control problem.
   Finally, the policy for the concrete belief space model is computed  as its refinement.
@@ -100,7 +100,7 @@ Secondly,  we compute a labelling-based approximate stochastic  simulation relat
 \subsubsection{Literature.}For probabilistic temporal logic properties  over finite state Markov decision processes %expressed in PCTL and CSL 
 there exist several tools for policy synthesis and verification such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. 
 For Markov decision processes over uncountable state spaces,  the characterization of properties cannot in general be
-attained analytically , \citep{Abate1} so an alternative is to approximate these models by simpler
+attained analytically, \citep{Abate1} so an alternative is to approximate these models by simpler
 processes that are prone to be mathematically analyzed or algorithmically verified
 such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{ZMMAL14}.	
  In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
@@ -115,10 +115,10 @@ such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transiti
 %Most of the work (including the references given above) has been developed for additive cost functions or terminal cost functions defined via cost functions associated to the model. 
 
 Result for specifications defined on continuous states of the POMDP have been focused mainly on reachability and safety problems. 
-In  \cite{ding2013optimal} and \cite{LESSER20141989}, reachability and safety  are defined with respect to the hidden state of the POMDP.
+In  \citep{ding2013optimal} and \citep{LESSER20141989}, reachability and safety  are defined with respect to the hidden state of the POMDP.
 %
-In \cite{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
-In \cite{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
+In \citep{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
+In \citep{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
 %The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
 %The state extensions model the satisfaction of failing of reachability properties.
 
@@ -260,23 +260,23 @@ thus $	b_k(x_k\in A) $ defines the likelihood that $x_k$ is in $A$.  %expresses 
 This state distribution is referred to as the belief state $b_k(\cdot)$. 
 The Belief space (i.e., the set of all beliefs) is denoted by $\Xb\subset \mathcal P(\X)$.
 It can be shown that the transitions of this belief state evolve based on a fixed stochastic kernel
-\begin{align}
+\begin{align}\label{eq:trb}
 	 b_{k+1}(\cdot)\sim \trb(b_{k+1}\in \cdot|b_k,u_k).
 \end{align}
 At each time step, the belief state can also be computed using a 
 recursive filter denoted by $\tau$ as 
 \[b_{k+1}=\tau(b_k,u_k,z_{k+1}).\]
 
-Therefore for a POMDP $\POMDP$ we can construct a belief MDP. 
- That is, partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model of belief MDP, which is a
+Therefore for a POMDP $\POMDP$, we can construct a belief MDP. 
+ That is, a partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model of belief MDP, which is a
 discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \U)$ with
   \begin{itemize}
     \item $\Xb$,  a state space with states $b\in\Xb$; % as its elements;
     \item $\initb$, the initial probability distribution $\initb:=\init$;
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
-    \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure $\tr(\cdot\mid b,u)$ over $(\Xb,\mathcal B(\Xb))$;
+    \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure \eqref{eq:trb} over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic}.
+  for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.
 
 Since $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k)\]
@@ -427,8 +427,8 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 
 We can
 reduce $\P_\init^\polb
-(\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\M$ to the reachability problem
- over another gMDP   $\M\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\M$ and the automaton $\mathcal A_\psi$. This was originally derived in \cite{tmka2013} for MDPs. We give a similar definition of the product construction as.
+(\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to the reachability problem
+ over another MDP   $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \cite{tmka2013} for MDPs. We give a similar definition of the product construction as.
 
 \subsection{Exact control synthesis}
 
@@ -534,7 +534,7 @@ As in \citep{haesaert2017verification},  we give a notion of probabilistic simul
 %
 \begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
-	$\tilde\M$ is $(\epsilon,\delta)$-stochastically simulated by $\M$, that is $\tilde\M\preceq^{\delta}_\eps\M$,  if there exists an interface function $\InF$ and
+	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, that is $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \X_1\times \X_2$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
 		\forall (x_1,x_2)\in \rel:\mathbf{d}_\Y(\tilde h(x_1),h(x_2))  \leq \epsilon\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
@@ -669,10 +669,11 @@ For the proof of this robustified set of operators follows straight from the pro
 Given a value function 
 	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ and abstract policy 	$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
 	\begin{align}\label{eq:Valuebased_refined}
-		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\rel(x)} \bar V^\infty_\ast(\tilde x,q).
+		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\red
+		{\rel(x)}} \bar V^\infty_\ast(\tilde x,q).
 	\end{align}
 If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
-	
+	\red{[Check whether it should be $\rel()$ or $\rel^{-1}()$] }
 	\red{[Notation not introduced:]}
 	Furthermore
 \begin{align}
