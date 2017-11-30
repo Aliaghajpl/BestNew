@@ -302,10 +302,10 @@ Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such th
 %    I kicked out the predicate based logic. Cause it didnt work.
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
 Define words a strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
-Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\mathbb X\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
+Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\Xb\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
 We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
-{\color{blue} Is $L$ labeling of belief states or ``normal'' states?}
-\[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\mathbb B}\]      
+{\color{blue} Is $L$ labeling of belief states or ``normal'' states? [it is over belief states, which are also "normal" states within the belief MDP.]}
+\[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]      
 Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
      \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
