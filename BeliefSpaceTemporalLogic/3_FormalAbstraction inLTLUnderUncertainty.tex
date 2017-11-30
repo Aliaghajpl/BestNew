@@ -287,7 +287,7 @@ Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such th
 	
 	
 
-\subsection{Linear Temporal Logic for Belief Space Models}
+\subsection{Linear Temporal Logic for Belief MDPs}
 
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. 
 	
@@ -306,7 +306,8 @@ Of interest are atomic propositions that are connected to the MDP via a measurab
 We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
 {\color{blue} Is $L$ labeling of belief states or ``normal'' states? [it is over belief states, which are also "normal" states within the belief MDP.]}
 \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]      
-Consider a belief state defined by the mean $\hat x\in \mathbb R^n $ and variance $P\in \S^n$ on state $x$. More specifically $\mathbb B:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
+Consider a belief state characterized by  a Gaussian distribution with the mean $\hat x\in \mathbb R^n $ and variance $P\in\S^n$. %,  on state $x$.
+ More specifically, suppose  $\Xb:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
      \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
  	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
@@ -452,14 +453,16 @@ Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx) \tr(q_0,\mathsf L(x)))$
  
 
 
-\red{[Define Value iteration and policy optimization]}
-For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
+ For the product MDP with hybrid state as $s=(b, q)$, denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol (V)(x) =\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
+& \Bel_\pol (V)(x) =\!\!\int  \left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
 \end{align}
+
+%\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
+%\end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x) =\sup_\pol\int_{\S}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr} (d\bar s|s,\pol(s)).
+& \Bel_\ast (V)(x) =\sup_\pol\int_{\X}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)).
 \end{align}
 The optimal probability of reaching $Acc_\FSA$, that is $\P^{\polb_\ast}(\MDP\vDash\psi) $, is defined as
 \begin{align}
@@ -571,23 +574,23 @@ holds. \hfill\mbox{ }\qed
 %Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
 \red{For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator}
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol^\Labset (V)(x) \!\!=\!\!\int%_{\X}
+& \Bel_\pol^\Labset (V)(x,q) \!\!=\!\!\int%_{\X}
 \min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d\bar x|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\tr}(d\bar x|x,\pol(x,q)).
+& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\S}\min_{\bar q \in t_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc_\FSA}(\bar q)\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc_\FSA}(\bar q)V(\bar x,\bar q))\right]\notag {\tr}(d\bar x|x,\pol(x,q)).
 \end{align}
 
 
 
 Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\pol (V)(x) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x)-\delta},
+& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x)-\delta},
 \end{align}
 and the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\ast (V)(x)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x)-\delta}
+& \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x)-\delta}
 \end{align}
 
 
@@ -769,7 +772,7 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     \red{[STEPS to do]
   \begin{enumerate}
   	\item Define innovation model as belief space model
-  	\item Use upper bound on covariance to define standard LTI gaussian fully observable system (if exists )
+  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists )
   	\item For observable LTI system design controller
   	\item translate scLTL to DFA
   	\item compute cross product
