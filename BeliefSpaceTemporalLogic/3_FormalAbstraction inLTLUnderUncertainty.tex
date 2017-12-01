@@ -70,25 +70,25 @@ correct-by-design controller synthesis, Markov decision processes, partially obs
  
 \section{Introduction }\label{subsec:intro}
 \red{[Add relaxer intro]}
-The specification and design of controllers for navigation problems has  been shown to be well expressible via temporal logic specifications \citep{Murray2009}. 
-As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect to their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
-Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
-    To represent the low-level control and decision making under motion and sensing uncertainty, we model the system
+The specification and design of controllers for navigation problems has  been shown to be well expressible via temporal logic specifications \citep{Murray2009}.      To represent the low-level control and decision making under motion and sensing uncertainty common in navigation problems, we model the system
     in its most generic and principled form as a Partially-Observable Markov Decision Process
     (POMDP)~\citep{Kaelbling98,Smallwood73}.
+As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect to their likelihood or uncertainty over the belief space of a POMDP.
+Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
+
 %We define the belief space models of these POMDPs  to design controllers is commonly used for navigation problems.   
     
     
     
 
-Given a specification $\psi$  written in linear temporal logic defined on a belief space model $\MB$ of a POMDP, we are interested 
+Given a specification $\psi$  written in linear temporal logic with propositions over the belief state of a POMDP, we are interested 
 in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability at least $p$.
 %\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
 %
 In this paper, we approach the synthesis problem as follows. 
-Firstly,  for a given belief space model $\MB$ a finite state abstraction  $\tilde \MB$ is computed.
+Firstly,  for a given belief MDP $\MB$ a finite state abstraction  $\tilde \MB$ is computed.
 Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
- Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function of the associated stochastic optimal control problem.
+ Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem.
   Finally, the policy for the concrete belief space model is computed  as its refinement.
 
 
@@ -111,8 +111,8 @@ such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transiti
 %In recent work of \cite{feinberg2014optimality}  and \cite{feinberg2016partially} the optimality conditions for POMDP problems solved via \red{COMDPs} are analyzed in more detail. 
 %In \cite{saldi2017finite}, conditions for the convergence of solutions of finite abstractions of COMPDs to the optimal solutions of POMDPs are analyzed. 
 %Most of the work (including the references given above) has been developed for additive cost functions or terminal cost functions defined via cost functions associated to the model. 
-
-Result for specifications defined on continuous states of the POMDP have been focused mainly on reachability and safety problems. 
+%
+Results for specifications defined on the continuous states of a POMDP have been focused mainly on reachability and safety problems. 
 In  \citep{ding2013optimal} and \citep{LESSER20141989}, reachability and safety  are defined with respect to the hidden state of the POMDP.
 %
 In \citep{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
@@ -122,8 +122,9 @@ In \citep{LESSER20141989}, the analysis of partially observable systems with as 
 
 
 
- In this paper, the properties of interest are defined directly on the belief space, as such that can express requirements on estimation quality or uncertainty. 
- We solve the synthesis problems in a correct-by-design fashion. For this we leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede any discretization to a finite abstraction with model order reductions and simplifications.  Since we work over belief space models, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we  refine the control policy via the abstract value function.
+ In this paper, the properties of interest are defined directly on the belief space, as such they can express requirements on estimation quality or uncertainty. 
+ We solve the synthesis problems in a correct-by-design fashion. For this we leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretizations %to a finite abstraction
+  with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we newly refine the control policy via the abstract value function.
 
 
  In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-design fashion by leveraging formal similarity relations.
@@ -131,7 +132,7 @@ In \citep{LESSER20141989}, the analysis of partially observable systems with as 
   
   
  
-\section{Partially Observable Markov Decision Processes}
+\section{POMDPs and temporal logic specifications.}
 
 In this section, we give the definition of a Partially Observable Markov Decision Process (POMDP). Then we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logic as originally given in \citep{JonesDTL2013} for POMDPs. 
 
@@ -467,7 +468,7 @@ The optimal probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\p
 \end{align*}
 with $V=0$.
 
-\section{Approximate control synthesis}
+\section{Refinement-based control synthesis}
  Let a belief space model $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$,  \begin{itemize}
 	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
 	\item How can we refine an abstract controller designed for $\tilde\MB$ to $\MB$.
@@ -803,8 +804,8 @@ Using this notation the dynamics of the fully time-varying Kalman filter are giv
 	&&L_{k}&=P_{k|k-1}C^TS_k^{-1}\\
 	&&\hat x_{k|k}&=\hat x_{k|k-1}+L_ke_k\\
 	&&P_{k|k}&=(I-L_kC)P_{k|k-1}\\
-	\end{align}
-	\begin{align}
+	\end{align*}
+	\begin{align*}
 	&&\mbox{Joseph Formula  }P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
 	&&\mbox{Observability based } P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
 	\end{align*}
