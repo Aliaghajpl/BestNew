@@ -53,9 +53,9 @@
    Pasadena, CA 91109 USA}% (e-mail: rohan.a.thakker@jpl.nasa.gov)} 
 \maketitle
 \begin{abstract}
-The stochastic evolution of the partially observable Markov decision process (POMDP) can be modeled by transitions in the associated belief space model.
-In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear time temporal logic on belief space models.
-For this, we use an approximate model abstraction%of the belief space model
+The stochastic evolution of the partially observable Markov decision process (POMDP) can be modeled by transitions in an associated belief Markov decision process.
+In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear temporal logic on belief space models.
+For this, we use an approximate model abstraction %of the belief space model
  suitable for computationally efficient control synthesis. By designing a control policy over the abstract model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be circumvented. 
 We leverage the notion of approximate stochastic simulation to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
 By compensating a priori for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
@@ -69,10 +69,8 @@ correct-by-design controller synthesis, Markov decision processes, partially obs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 \section{Introduction }\label{subsec:intro}
-
-
-    
-These navigation problems have also been shown to be well expressible via temporal logic specifications \citep{Murray2009}. 
+\red{[Add relaxer intro]}
+The specification and design of controllers for navigation problems has  been shown to be well expressible via temporal logic specifications \citep{Murray2009}. 
 As in \citep{JonesDTL2013}, we specify the temporal logic properties with respect to their likelihood or uncertainty over the belief space of the Partially Observable Markov Decision Process.
 Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees.
     To represent the low-level control and decision making under motion and sensing uncertainty, we model the system
@@ -102,11 +100,11 @@ there exist several tools for policy synthesis and verification such as PRISM \c
 For Markov decision processes over uncountable state spaces,  the characterization of properties cannot in general be
 attained analytically, \citep{Abate1} so an alternative is to approximate these models by simpler
 processes that are prone to be mathematically analyzed or algorithmically verified
-such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{ZMMAL14}.	
+such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{Zamani2014}.	
  In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
  
  
- Within the formal methods literature,  the synthesis of controllers over models without full-state observations is a more difficult problem. For finite state POMDP there are results on the verification and policy synthesis  for PCTL properties \cite{Norman2017, Chatterjee2014}.
+ Within the formal methods literature,  the synthesis of controllers over models without full-state observations is a more difficult problem. For finite state POMDP there are results on the verification and policy synthesis  for PCTL properties \citep{Norman2017, Chatterjee2014}.
 %\subsubsection{Technical math results for POMDPs.}
 %The reduction of Markov decision problems with incomplete information to problems with complete information has been tackled in
 %\cite{yushkevich_reduction_1976,rhenius_incomplete_1974}, with respect to Borel states and Borel actions. It is also extensively discussed in \citep[Chapter 11]{bertsekas2004stochastic}.
@@ -128,7 +126,7 @@ In \citep{LESSER20141989}, the analysis of partially observable systems with as 
  We solve the synthesis problems in a correct-by-design fashion. For this we leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede any discretization to a finite abstraction with model order reductions and simplifications.  Since we work over belief space models, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we  refine the control policy via the abstract value function.
 
 
- In contrast to the work in \cite{JonesDTL2013}, and  \cite{Vasile2016},  the  controllers are synthesized in a correcty-by-design fashion by leveraging formal similarity relations.
+ In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-design fashion by leveraging formal similarity relations.
   
   
   
@@ -290,9 +288,8 @@ Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such th
 \subsection{Linear Temporal Logic for Belief MDPs}
 
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. 
-	
-	
-	\red{[Write about the fact that in DTL one would use predicates to define exactly the same thing. We cannot use the predicate based logic as it seems to be more difficult to define a practical approximate simulation relations for it. ]}
+ 
+ \red{build up is perhaps more intuitive if first LTL is defined and then Belief space labelling is defined.}
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
     
@@ -428,14 +425,14 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 We can
 reduce $\P_\init^\polb
 (\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to the reachability problem
- over another MDP   $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \cite{tmka2013} for MDPs. We give a similar definition of the product construction as.
+ over another MDP   $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of the product construction as.
 
 \subsection{Exact control synthesis}
 
 
 To solve the \red{(currently undefined)} synthesis problem, we define the product of the DFA automaton and an MDP, 
 %We define the  product  
-as in \cite{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \cite{tmka2013}. }} .
+as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
 \begin{definition}[Product between automaton and MDP]
 \label{def:product}
 Given a MDP  $\MDP = (\X, \init, \tr, \U)$,
@@ -607,7 +604,7 @@ The robustified optimal probability of reaching $Acc$ is given as
 (\word \in\mathcal L(\mathcal A_\psi))=\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(\bar x))}\left[\mathbf 1_{Acc}(\bar q)+ \mathbf 1_{Q \setminus Acc}(\bar q) V^\infty_\ast(x_0) \right]%\notag\\\times
 \init (d x_0)-\delta.
 \end{align} 
-The proof of this set of operators follows straight from the proofs in \citep{tech_report_TACAS}.
+The proof of this set of operators can be derived based on the the proofs in \citep{tech_report_TACAS}.
  
 
 
