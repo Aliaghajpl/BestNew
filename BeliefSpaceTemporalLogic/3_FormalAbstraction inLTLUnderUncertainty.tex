@@ -370,7 +370,7 @@ $\word_i \models p   \Equiv p\in\letter_i$,
 
 Of interest are properties in the syntactically co-safe subset of LTL (scLTL) given as
     \begin{equation}\label{eq:scLTL}
-     \psi :=  \True \ |\ p \ |\ \notltl \psi \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
+     \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation}     where $p\in \AP$.
      
 % 
@@ -767,7 +767,8 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
     \red{[STEPS to do]
   \begin{enumerate}
   	\item Define innovation model as belief space model
-  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists )
+  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists ) 
+  	\item The covariance of the innovation sequence is given in Anderson, Optimal filtering 4.13.
   	\item For observable LTI system design controller
   	\item translate scLTL to DFA
   	\item compute cross product
