@@ -81,7 +81,7 @@ Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize co
     
     
 
-Given a specification $\psi$ in written in linear temporal logic defined on a belief space model $\MB$ of a POMDP, we are interested 
+Given a specification $\psi$  written in linear temporal logic defined on a belief space model $\MB$ of a POMDP, we are interested 
 in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability at least $p$.
 %\[\po^\pol_\init(\MB\vDash \psi)\geq p.\]
 %
@@ -370,7 +370,7 @@ $\word_i \models p   \Equiv p\in\letter_i$,
 
 Of interest are properties in the syntactically co-safe subset of LTL (scLTL) given as
     \begin{equation}\label{eq:scLTL}
-     \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
+     \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation}     where $p\in \AP$.
      
 % 
@@ -789,7 +789,25 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\appendix
 
+\section{Kalman filtering}
+
+Using this notation the dynamics of the fully time-varying Kalman filter are given as
+	\begin{align*}
+	&&\textbf{Predict} \qquad \hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_k\\
+	&&P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W
+\\
+	&&\textbf{Update} \  \qquad e_{k}&=y_k-C \hat x_{k|k-1}\\
+	&&S_k&=CP_{k|k-1}C^T+\mathcal V\\
+	&&L_{k}&=P_{k|k-1}C^TS_k^{-1}\\
+	&&\hat x_{k|k}&=\hat x_{k|k-1}+L_ke_k\\
+	&&P_{k|k}&=(I-L_kC)P_{k|k-1}\\
+	\end{align}
+	\begin{align}
+	&&\mbox{Joseph Formula  }P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
+	&&\mbox{Observability based } P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
+	\end{align*}
 
 \end{document}
 
