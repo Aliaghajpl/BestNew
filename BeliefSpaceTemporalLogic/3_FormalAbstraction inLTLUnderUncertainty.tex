@@ -37,7 +37,7 @@
 %letters, not all uppercase.}
 
 \author[cal]{S. Haesaert} 
-\author[cal]{Lars Petter P.  Nilsson} 
+\author[cal]{Petter Nilsson} 
 \author[mit]{Cristian-Ioan Vasile}
 \author[jpl]{Rohan Thakker}
 \author[jpl]{Ali Agha}
@@ -400,7 +400,7 @@ Of interest are properties in the syntactically co-safe subset of LTL (scLTL) gi
 \red{[Define accepting language]}
 \begin{definition}[Deterministic Finite-State Automaton]
 A Deterministic Finite-State Automaton is a tuple
- \[\FSA = (Q, q_0, \Sigma, \delta, Acc),\] where %:
+ \[\FSA = (Q, q_0, \Sigma, \delta_\FSA, Acc),\] where %:
 $Q$ is a finite set of states, $q_0 \in S$ is the initial state,
 $\Sigma$ is the input alphabet with $\sigma\in\Sigma$ being a letter (or event) that triggers the transition between the states of the FSA.   
 $\delta_\FSA : Q \times \Sigma \rightarrow Q$ is the transition function, and
@@ -449,6 +449,8 @@ Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta(q_0,\mat
 \hfill \mbox{ }\qed
 \end{definition}
 
+{\color{blue} Remove tilde over x?}
+
 \red{[Write about how the policy can now be verified or synthesized via a stochastic reachability problem. And that this can be formulated as a Dynamic programming problem.  ]}
 Denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
@@ -493,6 +495,9 @@ For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the C
 	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_1,\mathcal B(\X_2)) $ be two probability distributions. 
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
 %	
+
+{\color{blue} Can we put this in definition environment?}
+
 For a given 
 	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
 	satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
@@ -542,6 +547,8 @@ Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings 
 Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. 
 Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
  $\Labset(x)=\{\Lab(x)\}$.
+
+{\color{blue}A little confusing to use $\Labset$ for both language and labelling map} 
  
 We now require that \begin{equation}
   \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
