@@ -793,22 +793,89 @@ The belief space $\mathbb{B}$ is  a finite dimensional space and can be paramete
 \appendix
 
 \section{Kalman filtering}
+Consider a Gaussian LTI system:
+ \begin{align}  \begin{aligned}
+x_{k+1}&=A x_{k} + B u_t+ w_k,\\
+z_k&=Cx_k+Du_k+v_k.\end{aligned} \end{align}
+with $w_k\sim \mathcal N(0, \mathcal W)$ and $v_k\sim \mathcal N (0,\mathcal V)$.
 
-Using this notation the dynamics of the fully time-varying Kalman filter are given as
+At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
+Thus,  before receiving a measurement $z_0$, the distribution of the belief is defined as $\CA N(x_{0|-}, P_{0|-})$
+\begin{align}
+	\hat x_{0|-}&:= x_\init\\
+	P_{0|-}&:= P_{\init}
+\end{align}
+After receiving the measurement $z_0$, this is updated to $\CA N(\hat x_{0|0}, P_{0|0})$
+\begin{align}
+	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init)\\
+	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T\\
+	& \mbox{ with } L_0=P_{\init}C^T\left(CP_{\init}C^T+\mathcal V\right)^{-1}
+\end{align}
+We represent the belief state  $\CA N(\hat x_{0|0}, P_{0|0})$ by $b_0:=(\hat x_{0|0}, P_{0|0})\in\mathbb R^n\times \mathbb S^n$.
+
+The dynamics of the Kalman filter are given as
 	\begin{align*}
-	&&\textbf{Predict} \qquad \hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_k\\
+	&&\textbf{Predict} \qquad \hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_{k-1}\\
 	&&P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W
 \\
-	&&\textbf{Update} \  \qquad e_{k}&=y_k-C \hat x_{k|k-1}\\
+	&&\textbf{Update} \  \qquad e_{k}&=z_k-C \hat x_{k|k-1}\\
 	&&S_k&=CP_{k|k-1}C^T+\mathcal V\\
 	&&L_{k}&=P_{k|k-1}C^TS_k^{-1}\\
 	&&\hat x_{k|k}&=\hat x_{k|k-1}+L_ke_k\\
 	&&P_{k|k}&=(I-L_kC)P_{k|k-1}\\
 	\end{align*}
+	\mbox{Joseph Formula  }
 	\begin{align*}
-	&&\mbox{Joseph Formula  }P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
-	&&\mbox{Observability based } P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
+	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
+		\end{align*}
+\mbox{Observability based }
+	\begin{align*}
+	&& P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
 	\end{align*}
+
+Though the covariance of the belief state is defined as 
+	\begin{align*}
+	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T, \\
+		\end{align*}
+		The update equations for $P_{k|k-1}$ are more well know:
+			\begin{align*}
+	&&P_{k+1|k}&=(A-K_kC)P_{k|k-1}(A-K_kC_k)^T+K_k\mathcal V_kK_k^T 
+		\end{align*}
+		with $K_k=AL_k$.
+		
+Hence, the belief state is updated as
+\begin{align}
+	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+L_ke_k\\
+	&&P_{k|k}&=f(P_{k-1|k-1})
+\end{align}
+We now want to model the random variable $s_k=L_ke_k$. We know that $s_k$ evolves as a zero mean Gaussian distributed stochastic process.
+Further 
+\begin{align*}
+	\Ex [s_k]=0\\
+	\Ex [s_ks_k^T]=L_k	\Ex [e_ke_k^T]L_k^T, \mbox{ and } \Ex [e_ke_k^T]=S_k \\
+	e_k = C\left(x_k- \hat x_{k|k-1}\right)+v_k\\
+	\Ex [e_ke_k^T] = C P_{k|k-1} C^T + \CA V\\
+		\Ex [s_ks_k^T]=L_k S_k L_k^T,\\
+				\Ex [s_ks_k^T]= P_{k|k-1} C^T S_k^{-1} C P_{k|k-1},\\
+								\Ex [s_ks_k^T]= P_{k|k-1} C^T \left(CP_{k|k-1}C^T+\mathcal V\right)^{-1} C P_{k|k-1},\notag\\
+\Ex [s_ks_k^T]= P_{k|k-1}-P_{k|k}\notag
+\end{align*}
+
+
+\begin{align}
+	&\text{concrete:}\left\{\begin{aligned}
+		&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+ P_{k|k-1} C^T  \bar{s}_k\notag \\
+		&&&\mbox{with } \bar{s}_k\sim \CA N (0,S_k^{-1}) \notag 
+	\end{aligned}\right.	\\
+&		\text{abstract 1:}\left\{\begin{aligned}
+		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k\notag \\
+		&&&\mbox{with } \hat{s}_k\sim \CA N (0,\hat{S}_{inv}) \notag 
+	\end{aligned}\right.	
+\end{align}
+Define  $\Delta_k:=P_{k|k-1} -\bar P $,  then  $S_k=\left(C\bar PC^T+C\Delta_kC^T+\mathcal V\right)$.
+Find maximal $\hat{S}_{inv}$ such that $\hat{S}_{inv}\preceq S_k^{-1}$
+
+
 
 \end{document}
 
