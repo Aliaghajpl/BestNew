@@ -739,51 +739,59 @@ This defines a belief MDP $\MB{(\POMDP)}$ with stochastic transitions of the bel
 with $e_k\sim \mathcal N (0, S_k^{-1})$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V\right)$.
 
  
- We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
+% We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
+As a first simplification, we can replace the stochastic transitions  in \eqref{eq:beliefx} by
 \begin{align}  
 		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract} 
 \end{align}
 with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$.
-%Define  $\Delta_k:=P_{k|k-1} -\bar P $,  then  $S_k=\left(C\bar PC^T+C\Delta_kC^T+\mathcal V\right)$.
-%Find maximal $\hat{S}_{inv}$ such that $\hat{S}_{inv}\preceq S_k^{-1}$
-%
-Remark that \eqref{eq:beliefx} also can be rewritten as 
-%\begin{align}
-%	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+ \bar P  C^Ts_k+\Delta_k s_k
-%\end{align}
-%. 
-\begin{align}
-	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+  \bar P   C^T(  \hat{s}_k+s^\Delta_k)\notag\\&&&\qquad+\Delta_k( \hat{s}_k+ s^\Delta_k)\label{eq:beliefx2}
-\end{align}
- with $\Delta_k:=(P_{k|k-1}C^T-  \bar P   C^T)$ and with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_k\sim  \CA N (0,\  S_k^{-1}-\hat{S}_{inv}). $
-
-We compute a simulation relation with respect to
-  the lifted transitions 
-	$\Wt((\hat x_k, \hat x_{k|k})\in \cdot| (\hat x_{k-1}, \hat x_{k-1|k-1}, \hat u_{k-1}))$ defined via \eqref{eq:abstract} and \eqref{eq:beliefx2},
-and a simulation relation 
-	\begin{align}\label{eq:rel}
-\rel := \left\{(\hat x_k,b_k)| (\hat x_k-\hat x_{k|k})^T M(\hat x_k,-\hat x_{k|k})\leq \eps, \right.\\\qquad\left.  P^-\preceq P_{k|k} \preceq   P^+ \mbox{ with } b_k=(\hat x_{k|k}, P_{k|k} ) \right\}.\notag
-	\end{align}
-
-The abstract belief model $\hat\MB$ \eqref{eq:abstract} can be further abstracted as to a finite state model $\hat\MB_{grid}$ with states $s\in S=1,2,..., $. Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to
+These stochastic transitions \eqref{eq:abstract} can then be further abstracted to a finite state model $\hat\MB$ with states $s\in S=1,2,..., $. Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to a 
 cell $\Delta_s=\{x_s\} \oplus \prod_n [-\grid, \grid]$.
 Further $\hat\MB_{grid}$  has transitions 
-\[
-t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)\]
-where $\hat t$ is the stochastic transition kernel associated with $\hat\MB$.
+\begin{align}\label{eq:tgrid}
+t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
+\end{align}where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}.
 
-Suppose that the interface is defined as
-\[\InF(\hat u, \hat x, \hat x_{\,|\,}):=K( \hat x_{\,|\,} -\hat x)+\hat u.\]
-We can quantify the difference between $\MB$ and $\hat\MB_{grid}$via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1}\in \rel$. The difference expression in \eqref{eq:}
-evolves as
+
+Consider a simulation relation defined as 
+	\begin{align}\label{eq:rel}
+\rel := \left\{(s,b_k)| (\hat x_{k|k}-x_s)^T M(\hat x_{k|k}-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P_{k|k} \preceq   P^+ \mbox{ with } b_k=(\hat x_{k|k}, P_{k|k} ) \right\},\notag
+	\end{align}
+and an interface 
+\[\InF(\hat u, \hat x, \hat x_{\,|\,}):=K( \hat x_{\,|\,} -\hat x)+\hat u\]
+for some matrices $M, K,P^+,P^-$.
+
+
+We can quantify the difference between $\MB$ and $\hat\MB$ via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. 
+Consider a choice for the lifted stochastic  transitions  for \eqref{eq:abstract} and \eqref{eq:beliefx2},  denoted 
+	$ \mathbb W_{x}((\hat x_k, \hat x_{k|k})\in \cdot| \hat u_{k-1}, \hat x_{k-1}, \hat x_{k-1|k-1})$, based on the combined stochastic difference equation given as
+\begin{align*}
+		&&\hat x_{k+1} &=A\hat x_{k} +B\hat u_{k} + \bar P  C^T  \hat{s}_{k+1},\\%\label{eq:abstract3} \\
+	&&\hat x_{k+1|k+1}&=A\hat x_{k|k}+Bu_{k}+  \bar P   C^T(  \hat{s}_{k+1}+s^\Delta_{k+1})\notag\\&&&\qquad+\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})%\label{eq:beliefx3}
+\end{align*}
+ with $\Delta_k:=(P_{k|k-1}C^T-  \bar P   C^T)$ and with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_k\sim  \CA N (0,\  S_k^{-1}-\hat{S}_{inv}). $
+
+We can now choose the lifted stochastic transition kernel 	$\Wt$ for the concrete belief MDP $\MB$ and the abstracted finite MDP $\hat\MB$ as follows.
+Denote $b=(\hat x_{\,|\,}, P)$ and $b_+=(\hat x_{+\,|\,+}, P_+)$, then 	$\Wt$ is computed as 
+ \begin{align*}
+ &	\Wt((s_+,b_+)\in \cdot\,| \hat u, s ,b)\\&:= \left\{\begin{array}{ll} \mathbb W_{x}((\Delta_{s_+}, \hat x_{+|+})\in \cdot\,|  \hat u,x_s , \hat x_{\,|\,}) &\text{ for }  P_+=f(P)\\
+ 	0 & \text{ else } \end{array}\right.
+ \end{align*}
+
+For this choice of  	$\mathbb W_x$, the difference expression in \eqref{eq:rel} evolves   as 
 \begin{align}
-	\hat x_{k+1}-\hat x_{k+1|k+1}:= 
+ \hat x_{k+1|k+1}-	\hat x_{k+1}=(A+BK)(\hat x_{k|k}-\hat x_{k-1})\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}
 \end{align}
+ with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P   C^T)$, and with $ \hat{s}_{k+1}\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv}). $
+For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ such that   $\hat x_{k+1}-\mathbf r \in \{x_s| s \in S\}$. Therefore we can write the update of the difference expression as  \begin{align}
+ \hat x_{+|+}-	\hat x_{s_+}=(A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}.
+\end{align}
+Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ as defined in \eqref{eq:rel}.
 
 \begin{figure}[htp]
 \centering
 	\includegraphics[width = .8\columnwidth]{figs/grid}
-	\caption{Gridded state space}
+	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition. }
 \end{figure}
 
 \subsection{Flying in the wind}
