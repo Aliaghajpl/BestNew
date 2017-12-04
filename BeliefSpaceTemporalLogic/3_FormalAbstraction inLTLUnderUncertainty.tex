@@ -444,12 +444,12 @@ we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted a
 $\MDP\otimes\FSA_\psi = (\bar \X, \bar\init,\bar{\tr},\U)$.
 Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta(q_0,\mathsf L(x))))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as
 \begin{equation*}
-  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(\tilde x)),\\ 0 & \text{else.}  \end{array}\right.
+  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(y)),\\ 0 & \text{else.}  \end{array}\right.
 \end{equation*} 
 \hfill \mbox{ }\qed
 \end{definition}
 
-{\color{blue} Remove tilde over x?}
+%{\color{blue} Remove tilde over x?}==> Done
 
 \red{[Write about how the policy can now be verified or synthesized via a stochastic reachability problem. And that this can be formulated as a Dynamic programming problem.  ]}
 Denote the Bellman operator
@@ -489,6 +489,7 @@ We approach control synthesis of the belief space model in three steps:
 \end{enumerate}
 \subsection{Lifting based simulation  and approximate similarity}
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
+We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
@@ -688,32 +689,120 @@ If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in \eqref{e
 	
 
 
-\section{Flying in the wind:  LTI Gaussian case study}
+\section{LTI Gaussian}
+
+Consider a LTI system
+ \begin{align} \label{eq:LTI} \begin{aligned}
+x_{k+1}&=A x_{k} + B u_k+ w_k\\
+z_k&=Cx_k+Du_k+v_k\end{aligned} \end{align}
+with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$,  and $v_t\sim \mathcal N(0,\CA V)$. 
+ \eqref{eq:LTI}  defines a MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
+ 
+ 
+%At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
+Before receiving a measurement $z_0$, the initial state is distributed  as $\CA N(x_{0|-}, P_{0|-})$, 	with $\hat x_{0|-}:= x_\init$ and $P_{0|-}:= P_{\init}$.
+After receiving the measurement $z_0$, this is updated to \begin{align*}
+	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init),\\
+	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T,\\
+	& \mbox{ with } L_0=P_{\init}C^T\left(CP_{\init}C^T+\mathcal V\right)^{-1},
+\end{align*}
+with $\po(x_t\in \cdot\,|\,\rho,z_0):=\CA N(\hat x_{0|0}, P_{0|0})$.
+This probability distribution defines a belief state as $b_0:=(\hat x_{0|0}, P_{0|0})\in\mathbb R^n\times \mathbb S^n$. The belief space $\Xb$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
+    of dimension $n$, i.e. the space of Gaussian
+    probability measures over $\BB{R}^n$.
+    For brevity, we identify the Gaussian measures
+    with their finite parametrization, mean and
+    covariance matrix.
+     Thus,
+    $\Xb =  \BB{R}^n \times  \Symb^n$.
 
 
+The dynamics of  $b_k:=(\hat x_{k|k}, P_{k|k})$ are defined via the 
+ Kalman filter, that is
+	\begin{align*}
+	&\text{\it predict: }&\hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_{k-1} \\
+	&&P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W,
+\\
+	%&&\textbf{Update} %\  \qquad e_{k}&=z_k-C \hat x_{k|k-1}\\
+	%&&S_k&=CP_{k|k-1}C^T+\mathcal V\\
+	%&&
+	&\text{\it update: }&\hat x_{k|k}&=\hat x_{k|k-1}+L_k\left(z_k-C \hat x_{k|k-1}\right)\\
+	&&P_{k|k}&=(I-L_kC)P_{k|k-1}
+	\end{align*}
+	with  $L_{k}=P_{k|k-1}C^T\left(CP_{k|k-1}C^T+\mathcal V\right)^{-1}$.
+ 
+This defines a belief MDP $\MB{(\POMDP)}$ with stochastic transitions of the belief state given as 
+\begin{align}
+	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+P_{k|k-1}C^Ts_k\label{eq:beliefx}\\
+	&&P_{k|k}&=f(P_{k-1|k-1})
+\end{align}
+with $e_k\sim \mathcal N (0, S_k^{-1})$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V\right)$.
 
+ 
+ We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
+\begin{align}  
+		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract} 
+\end{align}
+with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$.
+%Define  $\Delta_k:=P_{k|k-1} -\bar P $,  then  $S_k=\left(C\bar PC^T+C\Delta_kC^T+\mathcal V\right)$.
+%Find maximal $\hat{S}_{inv}$ such that $\hat{S}_{inv}\preceq S_k^{-1}$
+%
+Remark that \eqref{eq:beliefx} also can be rewritten as 
+%\begin{align}
+%	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+ \bar P  C^Ts_k+\Delta_k s_k
+%\end{align}
+%. 
+\begin{align}
+	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+  \bar P   C^T(  \hat{s}_k+s^\Delta_k)\notag\\&&&\qquad+\Delta_k( \hat{s}_k+ s^\Delta_k)\label{eq:beliefx2}
+\end{align}
+ with $\Delta_k:=(P_{k|k-1}C^T-  \bar P   C^T)$ and with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_k\sim  \CA N (0,\  S_k^{-1}-\hat{S}_{inv}). $
+
+We compute a simulation relation with respect to
+  the lifted transitions 
+	$\Wt((\hat x_k, \hat x_{k|k})\in \cdot| (\hat x_{k-1}, \hat x_{k-1|k-1}, \hat u_{k-1}))$ defined via \eqref{eq:abstract} and \eqref{eq:beliefx2},
+and a simulation relation 
+	\begin{align}\label{eq:rel}
+\rel := \left\{(\hat x_k,b_k)| (\hat x_k-\hat x_{k|k})^T M(\hat x_k,-\hat x_{k|k})\leq \eps, \right.\\\qquad\left.  P^-\preceq P_{k|k} \preceq   P^+ \mbox{ with } b_k=(\hat x_{k|k}, P_{k|k} ) \right\}.\notag
+	\end{align}
+
+The abstract belief model $\hat\MB$ \eqref{eq:abstract} can be further abstracted as to a finite state model $\hat\MB_{grid}$ with states $s\in S=1,2,..., $. Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to
+cell $\Delta_s=\{x_s\} \oplus \prod_n [-\grid, \grid]$.
+Further $\hat\MB_{grid}$  has transitions 
+\[
+t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)\]
+where $\hat t$ is the stochastic transition kernel associated with $\hat\MB$.
+
+Suppose that the interface is defined as
+\[\InF(\hat u, \hat x, \hat x_{\,|\,}):=K( \hat x_{\,|\,} -\hat x)+\hat u.\]
+We can quantify the difference between $\MB$ and $\hat\MB_{grid}$via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1}\in \rel$. The difference expression in \eqref{eq:}
+evolves as
+\begin{align}
+	\hat x_{k+1}-\hat x_{k+1|k+1}:= 
+\end{align}
+
+\begin{figure}[htp]
+\centering
+	\includegraphics[width = .8\columnwidth]{figs/grid}
+	\caption{Gridded state space}
+\end{figure}
+
+\subsection{Flying in the wind}
 \noindent\textbf{Moving point mass.}
     
 Consider the linear time invariant system with Gaussian disturbance, given as 
 \begin{align}\begin{aligned}
-	x^m_{t+1} &= A x^m_{t}+B^mu_{t}+ F^m w_{t}\\
-	y^m_{t}&=C^m x^m_{t}+D^m u_{t}+E^m v_{t}\end{aligned}
+	x^m_{k+1} &= A x^m_{k}+B^mu_{k}+ F^m w_{k}\\
+	y^m_{k}&=C^m x^m_{k}+D^m u_{k}+E^m v_{k}\end{aligned}
 \end{align}
 with matrices $A,B,C,D$ and matrices $F,E$. 
-The disturbance signal $v$ is zero -mean, independently and identically  distributed noise, i.e, $w_k\sim \mathcal{N}(0,I)$.
-
- 
- \noindent\textbf{Wind disturbance.}
+The measurement boise signal $v$ is zero-mean, independently and identically  distributed noise, i.e, $v_k\sim \mathcal{N}(0,I)$.
+% \noindent\textbf{Wind disturbance.}
+The state transitions are affected by the wind $w_k$. 
 We can model the dynamic variations of the wind as filtered noise. 
-There are two commonly used models  \citep{richardson2013quantifying},  this includes
-\begin{itemize}
-	\item the von Karman power spectral density,
-	\item the Dryden model.
-\end{itemize}
- 
- Though the former model matches experiment data more than the 
- Dryden model, the Dryden model can be represented by  a lower order filter.
- 
+There are two commonly used models  \citep{richardson2013quantifying},  this includes the von Karman power spectral density,
+and the Dryden model.
+The former model matches experiment data more than the 
+ Dryden model, but the Dryden model can be represented by  a lower order filter.
 Consider a filter model to be given as
 \begin{align}
 	\begin{aligned}
@@ -722,59 +811,51 @@ Consider a filter model to be given as
 	\end{aligned}
 \end{align}
 
-\textbf{Full model \& Belief space model.}
+%\textbf{Full model \& Belief space model.}
 The full model is given as follows
-\begin{align} 
-	\begin{bmatrix}
-	x^m_{t+1}	\\x^w_{t+1}
-	\end{bmatrix}
- &= \begin{bmatrix}
- 	A^m 	& F^mC^w\\
- 	0 & A^w
- \end{bmatrix}
-\begin{bmatrix}
-	x^m_{t}	\\x^w_{t}
-	\end{bmatrix}+\begin{bmatrix} B^m \\ 0~ \end{bmatrix} u_{t}+  \begin{bmatrix}
-	F^m E^w \\
-	F^w
-	\end{bmatrix}e_{t}\notag\\
-	y^m_{t}&=\begin{bmatrix} C^m& 0 \end{bmatrix}\begin{bmatrix}
-	x^m_{t}	\\x^w_{t}
-	\end{bmatrix}+D^m u_{t}+E^m v_{t}.
-\end{align}
-This can be written as 
+%\begin{align} 
+%	\begin{bmatrix}
+%	x^m_{t+1}	\\x^w_{t+1}
+%	\end{bmatrix}
+% &= \begin{bmatrix}
+% 	A^m 	& F^mC^w\\
+% 	0 & A^w
+% \end{bmatrix}
+%\begin{bmatrix}
+%	x^m_{t}	\\x^w_{t}
+%	\end{bmatrix}+\begin{bmatrix} B^m \\ 0~ \end{bmatrix} u_{t}+  \begin{bmatrix}
+%	F^m E^w \\
+%	F^w
+%	\end{bmatrix}e_{t}\notag\\
+%	y^m_{t}&=\begin{bmatrix} C^m& 0 \end{bmatrix}\begin{bmatrix}
+%	x^m_{t}	\\x^w_{t}
+%	\end{bmatrix}+D^m u_{t}+E^m v_{t}.
+%\end{align}
+%This can be written as 
  \begin{align}  \begin{aligned}
 x_{t+1}&=A x_{t} + B u_t+ Fe_t\\
 y_t&=Cx_t+Du_t+Ev_t\end{aligned} \end{align}
 \begin{align}& \mbox{ with }  x_t	= \begin{bmatrix}
 	x^m_{t}	\\x^w_{t}
 	\end{bmatrix},
-A = \begin{bmatrix}
+A = \begin{bsmallmatrix}
  	A^m 	& F^mC^w\\
  	0 & A^w
- \end{bmatrix}, \ 
-B = \begin{bmatrix} B^m \\ 0~ \end{bmatrix}\notag \\
-&F=\begin{bmatrix}
+ \end{bsmallmatrix}\!, \ 
+B = \begin{bsmallmatrix} B^m \\ 0~ \end{bsmallmatrix}\!,\notag \\
+&F=\begin{bsmallmatrix}
 	F^m E^w \\
 	F^w
-	\end{bmatrix},\ 
-C = \begin{bmatrix} C^m& 0 \end{bmatrix} , \ 
+	\end{bsmallmatrix}\!,\ 
+C = \begin{bmatrix} C^m& 0 \end{bmatrix}\!, \ 
 D= D^m, \  E = E^m.\notag
 \end{align}
  
  \noindent{\textbf{}}
-The belief space $\mathbb{B}$ is  a finite dimensional space and can be parameterized. For example, let $\CA{G}$ denote the Gaussian belief space
-    of dimension $n$, i.e. the space of Gaussian
-    probability measures over $\BB{R}^n$.
-    For brevity, we identify the Gaussian measures
-    with their finite parametrization, mean and
-    covariance matrix.
-     Thus,
-    $\CA{G} =  \BB{R}^n \times  \Symb^n$.
+
     
     \red{[STEPS to do]
   \begin{enumerate}
-  	\item Define innovation model as belief space model
   	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists ) 
   	\item The covariance of the innovation sequence is given in Anderson, Optimal filtering 4.13.
   	\item For observable LTI system design controller
