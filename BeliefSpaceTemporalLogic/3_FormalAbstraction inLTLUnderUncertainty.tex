@@ -397,14 +397,13 @@ Of interest are properties in the syntactically co-safe subset of LTL (scLTL) gi
 %\caption{DFA \red{[write text]}, grey states are  accepting states. Blue states are normal states. }
 %\end{figure}
 
-\red{[Define accepting language]}
 \begin{definition}[Deterministic Finite-State Automaton]
 A Deterministic Finite-State Automaton is a tuple
  \[\FSA = (Q, q_0, \Sigma, \delta_\FSA, Acc),\] where %:
 $Q$ is a finite set of states, $q_0 \in S$ is the initial state,
 $\Sigma$ is the input alphabet with $\sigma\in\Sigma$ being a letter (or event) that triggers the transition between the states of the FSA.   
 $\delta_\FSA : Q \times \Sigma \rightarrow Q$ is the transition function, and
-$Acc\subset Q$ is a set of accepting states.
+$Acc\subset Q$ is a set of accepting states. \hfill \mbox{ }\qed
 %\begin{itemize}
 %    \item $S_\RA$ is a finite set of states;
 %    \item $s_0^\RA \in S_\RA$ is the initial state;
@@ -413,6 +412,9 @@ $Acc\subset Q$ is a set of accepting states.
 %    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
 %\end{itemize}
 \end{definition}
+
+\red{[Define accepting language]}
+
 
 
 
@@ -425,7 +427,7 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 
 We can
 reduce $\P_\init^\polb
-(\word \in\mathcal L(\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to the reachability problem
+(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to the reachability problem
  over another MDP   $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of the product construction as.
 
 \subsection{Exact control synthesis}
@@ -497,8 +499,8 @@ We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
 %	
 
-{\color{blue} Can we put this in definition environment?}
-
+%{\color{blue} Can we put this in definition environment?} > done=
+\begin{definition}[$\delta$-lifting]\label{def:dellifting}
 For a given 
 	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
 	satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
@@ -512,10 +514,11 @@ For a given
 We refer to  $\mathbb W$ as the lifting. %We define 
 %\end{definition}
 The set of related, or equivalently lifted, probabilities is defined as 
-	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2)).\] 
+	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2)). \hfill \mbox{ }\qed\] 
 
+\end{definition}
 
-Hence based on \textbf{L1-3.}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
+Hence based on \textbf{L1-3.} in Definition \ref{def:dellifting}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
 
  
 We tailor the   notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the belief space MDPs.
@@ -786,7 +789,7 @@ For this choice of  	$\mathbb W_x$, the difference expression in \eqref{eq:rel} 
 For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ such that   $\hat x_{k+1}-\mathbf r \in \{x_s| s \in S\}$. Therefore we can write the update of the difference expression as  \begin{align}
  \hat x_{+|+}-	\hat x_{s_+}=(A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}.
 \end{align}
-Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ as defined in \eqref{eq:rel}.
+Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ cf.  \eqref{eq:rel}.
 
 \begin{figure}[htp]
 \centering
