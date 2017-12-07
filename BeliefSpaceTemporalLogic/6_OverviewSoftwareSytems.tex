@@ -63,13 +63,6 @@ For V\&V purpose, we have built a ROS (Robot Operating System)-based system. Eac
 
 \section{Software Architecture}
 
-\begin{figure*}
-    \centering
-    \includegraphics[width=\textwidth]{BeliefSpaceTemporalLogic/figs/SoftwareArch.jpg}
-    \caption{Software architecture}
-    \label{fig:software_arch}
-\end{figure*}
-
 A high-level software architecture is shown in Fig.~\ref{fig:software_arch}. Each node in the grpah roughly corresponding to a single ROS node (process). The background color represents the status of node development. 
 
 \textit{Belief space planner} is a core planning node running on the ground vehicle. It takes a map from the copter (and possibly from rover's navigation cameras) as input, and generates a policy for the rover's motion and a next measurement plan for the copter. 
@@ -102,11 +95,29 @@ Our focus in the simulation is sorely on the validation of the planning pipeline
 
 We use Martian terrain models from the JPL OnSight project. Their map processing pipeline produces photo-realistic terrain geometry from MSL Curiosity's surface imagery. An example scene is shown in Fig.~\ref{fig:gazebo_scene}.
 
-
 \subsection{Robot Models}
-
 TBD
 
+\section{Scenario}
+\begin{itemize}
+  \item Map Building
+  \item Map Labelling
+\end{itemize}
+
+\begin{figure}[th!]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/FunctionalArcV4.png}
+	\caption{Architecture showing mapping, planning and execution framework.}
+	\label{fig:FuncArc}
+\end{figure}    	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{BeliefSpaceTemporalLogic/figs/SoftwareArch.jpg}
+    \caption{Software architecture}
+    \label{fig:software_arch}
+\end{figure*}
 
 
 \section{Hardware Testbed}
