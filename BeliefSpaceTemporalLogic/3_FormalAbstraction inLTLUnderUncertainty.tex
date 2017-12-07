@@ -78,9 +78,6 @@ As in \citep{JonesDTL2013}, we specify the temporal logic properties with respec
 Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees. \axx{the last sentence need to be updated. let's talk about it in the meeting.}
 
 %We define the belief space models of these POMDPs  to design controllers is commonly used for navigation problems.   
-    
-    
-    
 
 Given a specification $\psi$  written in linear temporal logic with propositions over the belief state of a POMDP, we are interested 
 in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability at least $p$.
@@ -117,15 +114,15 @@ Results for specifications defined on the continuous states of a POMDP have been
 In  \citep{ding2013optimal} and \citep{LESSER20141989}, reachability and safety  are defined with respect to the hidden state of the POMDP.
 %
 In \citep{ding2013optimal}, the optimal control of partially observable systems over safety specifications is analyzed. 
-In \citep{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. 
+In \citep{LESSER20141989}, the analysis of partially observable systems with as objective reachability is analyzed. \axx{grammar issue in the last sentence.}
 %The reachability/safety problem can be formulated with a multiplicative cost function or by using a terminal cost function. In the latter case, the terminal function specifies fully the reachability/safety problem over an extended state space.
 %The state extensions model the satisfaction of failing of reachability properties.
 
 
-
- In this paper, the properties of interest are defined directly on the belief space, as such they can express requirements on estimation quality or uncertainty. 
- We solve the synthesis problems in a correct-by-design fashion. For this we leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretizations %to a finite abstraction
-  with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we newly refine the control policy via the abstract value function.
+%In this paper, the properties of interest are defined directly on the belief space, as such they can express requirements on estimation quality or uncertainty. 
+In this paper, the properties of interest are defined directly on the belief space (i.e., the space of probability distributions - belief - over all possible states). The properties over belief space directly express requirements on the estimation quality or uncertainty. 
+We solve the synthesis problems in a correct-by-design fashion. We leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretizations %to a finite abstraction
+with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further we also define the simulation relations via non-determinism in the labelling, and we newly refine the control policy via the abstract value function.
 
 
  In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-design fashion by leveraging formal similarity relations.
