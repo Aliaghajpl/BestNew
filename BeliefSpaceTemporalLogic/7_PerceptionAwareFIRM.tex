@@ -76,15 +76,12 @@ Let $P \in \mathbb{R}^{3}$ represent a 3-d point, $p \in \mathbb{R}^2$ represent
 
 The equation below projects a point $P$ in the world frame to image space of $k^{th}$ camera frame:
 \begin{equation} p=\pi_\theta(^{w}P) \end{equation}
-We can retrieve the 3-d point in the world frame from a point in the image space and known depth using: 
+We can retrieve the 3-d point in the world frame from a point in the image space and known depth, using: 
 \begin{equation} ^{w}P=\pi^{-1}_\theta(p,d) \end{equation}
-
-% \begin{equation}
-%     \theta = argmin p_z - 
-% \end{equation}
+The pose of the camera $\theta$ can be estimated by minimizing the re-projection error, as shown in the equation below. Where, $\theta_{kf}$ represents the pose of the keyframe and $p_z$ represents the measure location of the feature point in the image space.
+\begin{equation}
+     \theta = \underset{\theta}{\arg\min}~~||p_z - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d))||^2
+\end{equation}
 \printbibliography
 
 \end{document}
-
-
-

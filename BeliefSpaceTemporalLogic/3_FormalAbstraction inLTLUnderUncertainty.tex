@@ -187,7 +187,7 @@ Consider a Markov decision process \citep{bertsekas2004stochastic,mt1993,hll1996
   A discrete-time MDP is a tuple $\MDP = (\X, \init, \tr, \U)$ with
   \begin{itemize}
     \item $\X$,  a state space with states $x\in\X$; % as its elements;
-    \item $\init$, the initial probability distribution $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
+    \item $\init$, the initial probability distribution \axx{the same as measure. right?} $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
     \item $\tr:\X\times\U\times\mathcal B(\X)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \U$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$;
   \end{itemize}
@@ -199,10 +199,10 @@ Consider a Markov decision process \citep{bertsekas2004stochastic,mt1993,hll1996
 Given a string of inputs
 $u(0),$ $u(1), $ $\ldots, $ $u(N)$,
 over a finite time horizon $\{0,1,\ldots, N\}$,
-and an initial state  $x_0$ (sampled from distribution $\pi$),
+and an initial state  $x_0$ (sampled from distribution $\pi$ \axx{or $\rho$?}),
 the state $x_{k+1}$
 is obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,} x_k, u_k \right)$ --
-these semantics induce paths (or executions) of the MDP.
+these semantics induce paths (or executions) of the MDP. \axx{relation between N and k?}
  
 
  
@@ -213,13 +213,14 @@ A partially observable Markov decision process $\POMDP$ (POMDP) is an MDP $\MDP 
 \begin{enumerate}
 %	\item $\X$, the state space with states $x\in\X$ as its element;
 %	\item $\U$, the action space;
-	\item observations $z$ in $\Z$,  which is a Polish space referred to as the observation space, % which is a Borel space.
+	\item observations $z$ in $\Z$,  which is a Polish space \axx{what specific feature of Polish speace do you need?} referred to as the observation space, % which is a Borel space.
 %\end{enumerate}
 %with 
 %\begin{enumerate}
 %\item $\init$, the initial probability distribution,
 %\item $\tr(\cdot|x,a)$, the stochastic transition kernel of the next state given the current state-action pair,
 \item $r(\cdot|x)$,  the observation kernel giving the probability of the current observation,  $z\sim r(\cdot|x)$,  for the current state variable $x$.
+\axx{why $r$? in robotic-pomdp literature, this is not common.}
 \end{enumerate}
 
 
@@ -231,6 +232,12 @@ This sequence is also referred to as the history sequence.
 The sequence  \eqref{eq:history} grows with number of observations  $k$ and takes values in the history space $\Hist_k$, which is defined as
   $\Hist_{k+1}=\Hist_{k}\times\X\times\Z\times \U$ with $\Hist_0=\X\times\Z\times \U$.
   %
+  
+  \axx{why history has x? typically it does not, since x is not observable. Information and "data history" are typically the same. Since you have defined information, why do we even need the H definition?}
+  
+  
+  
+  \axx{you defined all spaces wiht "blackboard" style. I suggest you do the same for history and information spaces $\mathbb{H}$ and $\mathbb{I}$}
 The control actions $u_k$ can be chosen as a function of the history of inputs and observed outputs.  
 Define for $k=0,\ldots,N-1,$ the information spaces as
 \[\I_k=\Z_0\times\U_0\times\dots\times\U_{k-1}\times\Z_k.\]
@@ -241,10 +248,10 @@ Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in
 	An \emph{observation-based} policy for $\POMDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that, for each $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
 	We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
 %\end{definition}
+\axx{why du and not just u?}
 
-
- Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. Thus for a given policy the POMDP defines a stochastic process on the probability space  
- $(\Omega,\mathcal F,\P_\init^\polb)$.
+Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. \axx{I see where you use history now.} Thus for a given policy the POMDP defines a stochastic process on the probability space  
+ $(\Omega,\mathcal F,\P_\init^\polb)$. \axx{definition of F?}
 % \begin{align*}
 %   P_\pi^\pol(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
 % \end{align*}
@@ -260,13 +267,13 @@ Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in
 %\end{example}
 
  \subsubsection{Belief MDP of POMDP}
- Given an information sequence $i_k$,  the conditional probability distribution expresses the belief of a state 
+ Given an information sequence $i_k$ \axx{$I_k$ would be much more common. },  the conditional probability distribution expresses the belief of a state 
 \begin{align}
 	b_k(\cdot)=\P(x_k\in \cdot|\init,i_k)\in \mathcal P (\X),
 \end{align}
 thus $	b_k(A) $ defines the likelihood that $x_k$ is in $A$.  %expresses the likelihood of the state
 This state distribution is referred to as the belief state $b_k$.  \red{[unresolved comment of Richard. {\it replace . with A ?}]}
-The Belief space (i.e., the set of all beliefs) is denoted by $\Xb\subset \mathcal P(\X)$.
+The Belief space (i.e., the set of all beliefs) is denoted by $\Xb\subset \mathcal P(\X)$. \axx{why not $\mathbb{B}$}
 It can be shown that the transitions of this belief state evolve based on a fixed stochastic kernel
 \begin{align}\label{eq:trb}
 	 b_{k+1}(\cdot)\sim \trb(b_{k+1}\in \cdot|b_k,u_k).
@@ -284,7 +291,7 @@ discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \U)$ w
     \item $\U$, the set of control inputs with $u\in\U$ as its elements;
     \item $\trb:\Xb\times\U\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \U$ a probability measure \eqref{eq:trb} over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.
+  for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping. \axx{can you assume Polish-ness for teh belief space?}
 
 Since $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k).\]
