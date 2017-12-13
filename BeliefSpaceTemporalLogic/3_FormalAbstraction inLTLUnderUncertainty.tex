@@ -25,7 +25,7 @@
 \allowdisplaybreaks[1]
 %% commenting
 \newcommand{\red}[1]{{\color{red} #1}}
-\newcommand{\axx}[1]{{\color{orange} Ali:#1}}
+\renewcommand{\axx}[1]{{\color{orange} Ali:#1}}
 
 \begin{document}
 
@@ -38,12 +38,12 @@
 %letters, not all uppercase.}
 
 \author[cal]{S. Haesaert} 
-\author[cal]{Petter Nilsson} 
-\author[mit]{Cristian-Ioan Vasile}
-\author[jpl]{Rohan Thakker}
-\author[jpl]{Ali Agha}
-\author[cal]{Aaron Ames}
-\author[cal]{Richard Murray}
+\author[cal]{P. Nilsson} 
+\author[mit]{C.I. Vasile}
+\author[jpl]{R. Thakker}
+\author[jpl]{Al.A. Agha}
+\author[cal]{A.D.  Ames}
+\author[cal]{R. M. Murray}
 
 
 \address[cal]{California Institute of Technology, 
@@ -57,12 +57,12 @@
 The stochastic evolution of the partially observable Markov decision process (POMDP) can be modeled by transitions in an associated belief Markov decision process.
 In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear temporal logic on these belief models.
 For this, we use an approximate  abstraction %of the belief space model
- suitable for the correct-by-design control synthesis. By designing a control policy over the abstract model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be circumvented. 
-We leverage the notion of approximate stochastic simulation to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labelling of the Markov decision processes.
-By compensating a priori for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
+ suitable for the correct-by-construction control synthesis. By designing a control policy over the abstract model and refining it back to the original model, the computational issues involved with control synthesis on the original model can be circumvented. 
+We leverage the notion of approximate stochastic simulation to quantify the deviation of the approximate models.  % The accuracy is expressed by the deviations in transition probability and by increasing non-determinism in the labeling of the Markov decision processes.
+By compensating {\it a priori} for these deviations in the control synthesis for the abstract model, the guarantees are preserved for the refined control policy.
 \end{abstract}
 \begin{keyword} Belief space models,
-correct-by-design controller synthesis, Markov decision processes, partially observable
+correct-by-construction controller synthesis, Markov decision processes, partially observable
 \end{keyword}
 
 \end{frontmatter}
@@ -70,7 +70,7 @@ correct-by-design controller synthesis, Markov decision processes, partially obs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 \section{Introduction }\label{subsec:intro}
-\red{[Add relaxer intro]}
+\red{[Start with motivating the big picture (maybe with a picture)]}
 The specification and design of controllers for navigation problems has  been shown to be well expressible via temporal logic specifications \citep{Murray2009}.      To represent the low-level control and decision making under motion and sensing uncertainty common in navigation problems, we model the system
     in its most generic and principled form as a Partially-Observable Markov Decision Process
     (POMDP)~\citep{Kaelbling98,Smallwood73}.
@@ -88,7 +88,7 @@ in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability
 %
 In this paper, we approach the synthesis problem as follows. 
 Firstly,  for a given belief MDP $\MB$ a finite state abstraction  $\tilde \MB$ is computed.
-Secondly,  we compute a labelling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
+Secondly,  we compute a labeling-based approximate stochastic  simulation relation between the abstract belief space model  $\tilde{\MB}$ and the concrete model $\MB$.
  Then,  a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem.
   Finally, the policy for the concrete belief space model is computed  as its refinement.
 
@@ -99,10 +99,10 @@ Secondly,  we compute a labelling-based approximate stochastic  simulation relat
 \subsubsection{Literature.}For probabilistic temporal logic properties  over finite state Markov decision processes %expressed in PCTL and CSL 
 there exist several tools for policy synthesis and verification such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. 
 For Markov decision processes over uncountable state spaces,  the characterization of properties cannot in general be
-attained analytically, \citep{Abate1} so an alternative is to approximate these models by simpler
+attained analytically \citep{Abate1}, so an alternative is to approximate these models by simpler
 processes that are prone to be mathematically analyzed or algorithmically verified
 such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{Zamani2014}.	
- In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-design control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
+ In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-construction control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
  
  
 Without full-state observations, the formal synthesis of controllers over hidden state models
@@ -127,10 +127,10 @@ in \citep{LESSER20141989}. %, the analysis of partially observable systems with 
 % Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees. \axx{the last sentence need to be updated. let's talk about it in the meeting.}
  
 In this paper, the properties of interest are defined directly on the belief space (i.e., the space of probability distributions - belief - over all possible states) as in \citep{Vasile2016,JonesDTL2013}. The properties over belief space express requirements on the estimation quality or uncertainty. 
-We solve the synthesis problems in a correct-by-design fashion. We leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretization %to a finite abstraction
-with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further, we also define an approximate stochastic simulation relation via non-determinism in the labelling, and we newly refine the control policy via the abstract value function.
+We solve the synthesis problems in a correct-by-construction fashion. We leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretization %to a finite abstraction
+with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further, we also define an approximate stochastic simulation relation via non-determinism in the labeling, and we newly refine the control policy via the abstract value function.
 
-% In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-design fashion by leveraging formal similarity relations.
+% In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-construction fashion by leveraging formal similarity relations.
  
   
   %  STRUCTURE
@@ -174,12 +174,12 @@ For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field, i.
 collection of all sets that can be formed from countable unions and intersections of open sets in $\Y$.
 We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures on $(\Y,\borel{\Y})$.
 Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\Y,\mathcal{B}(\Y),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability distribution, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
-In this work,  we only consider Polish spaces, which are complete separable metric spaces see \citep{bogachev2007measure}. 
+In this work,  we only consider Polish spaces, which are complete separable metric spaces; see \citep{bogachev2007measure}. 
 
 
 
     
-Consider a Markov decision process \citep{Bertsekas2012,mt1993,hll1996}, defined as follows.%
+Consider a Markov decision process \citep{bertsekas2004stochastic,mt1993,hll1996}, defined as follows.%
 \begin{definition}[Markov decision process (MDP)]\label{def:MDP} \mbox{ }\\
   A discrete-time MDP is a tuple $\MDP = (\X, \init, \tr, \U)$ with
   \begin{itemize}
@@ -206,7 +206,7 @@ these semantics induce paths (or executions) of the MDP.
 
 %\subsubsection{Partially observable Markov decision process (POMDP)}\label{sec:POMDP}
 \begin{definition}[Partially Observable  MDP (POMDP)] \label{def:MDP}\mbox{ }\\
-A partially observable Markov decision process $\POMDP$ (POMDP) is a MDP $\MDP = (\X, \init, \tr, \U)$  that is partially observable via  
+A partially observable Markov decision process $\POMDP$ (POMDP) is an MDP $\MDP = (\X, \init, \tr, \U)$  that is partially observable via  
 \begin{enumerate}
 %	\item $\X$, the state space with states $x\in\X$ as its element;
 %	\item $\U$, the action space;
@@ -261,8 +261,8 @@ Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in
 \begin{align}
 	b_k(\cdot)=\P(x_k\in \cdot|\init,i_k)\in \mathcal P (\X),
 \end{align}
-thus $	b_k(x_k\in A) $ defines the likelihood that $x_k$ is in $A$.  %expresses the likelihood of the state
-This state distribution is referred to as the belief state $b_k(\cdot)$. 
+thus $	b_k(A) $ defines the likelihood that $x_k$ is in $A$.  %expresses the likelihood of the state
+This state distribution is referred to as the belief state $b_k$.  \red{[unresolved comment of Richard. {\it replace . with A ?}]}
 The Belief space (i.e., the set of all beliefs) is denoted by $\Xb\subset \mathcal P(\X)$.
 It can be shown that the transitions of this belief state evolve based on a fixed stochastic kernel
 \begin{align}\label{eq:trb}
@@ -273,7 +273,7 @@ recursive filter denoted by $\tau$ as
 \[b_{k+1}=\tau(b_k,u_k,z_{k+1}).\]
 
 Therefore for a POMDP $\POMDP$, we can construct a belief MDP. 
- That is, a partially observable MDP can be written as a completely observable MDP, whose state space is the belief space. We refer to the latter as a belief space model of belief MDP, which is a
+ That is, a partially observable MDP can be written as a completely observable MDP whose state space is the belief space. We refer to the latter as a belief space model of belief MDP, which is a
 discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \U)$ with
   \begin{itemize}
     \item $\Xb$,  a state space with states $b\in\Xb$; % as its elements;
@@ -284,7 +284,7 @@ discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \U)$ w
   for which $\Xb$ and $\U$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.
 
 Since $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
-\[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k)\]
+\[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k).\]
 Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\U$  given $\mathcal{P}(\X)\times \I_k$.
 	%We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
 	We say that $\polb=(\pol_0,\ldots,\pol_{N-1})$ is a Markov policy if for each $k$, the policy only depends on the current state $b\in\Xb$, that is $\pol_k(du_k|b)$.
@@ -296,22 +296,21 @@ Thus	a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such th
 
 	In this section, we define a language for specifying behavior under uncertainty using formal methods. 
  
- \red{build up is perhaps more intuitive if first LTL is defined and then Belief space labelling is defined.}
+ \red{build up is perhaps more intuitive if first LTL is defined and then Belief space labeling is defined.}
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsubsection{Belief space labelling.}\label{sec:DTL}  
+	\subsubsection{Belief space labeling.}\label{sec:DTL}  
 %    I kicked out the predicate based logic. Cause it didnt work.
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
-Define words a strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
-Of interest are atomic propositions that are connected to the MDP via a measurable labelling function $\Lab:\Xb\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
-We require that the labelling function is measurable, that is we require that the induced sets  are Borel measurable
-{\color{blue} Is $L$ labeling of belief states or ``normal'' states? [it is over belief states, which are also "normal" states within the belief MDP.]}
+Define words as strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
+Of interest are atomic propositions that are connected to the MDP via a measurable labeling function $\Lab:\Xb\rightarrow \alphabeth$ from the state space to the alphabet to letters in the alphabet $\alphabeth$. 
+We require that the labeling function is measurable, that is we require that the induced sets  are Borel measurable
 \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]      
 Consider a belief state characterized by  a Gaussian distribution with the mean $\hat x\in \mathbb R^n $ and variance $P\in\S^n$. %,  on state $x$.
- More specifically, suppose  $\Xb:=\mathbb R^n\times \S^n$,  then a labelling function  can be for example composed of %level functions based on
+ More specifically, suppose  $\Xb:=\mathbb R^n\times \S^n$,  then a labeling function  can be for example composed of %level functions based on
      \begin{enumerate}
  	\item Bounds on determinant or trace of of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
  	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction.
@@ -444,7 +443,7 @@ To solve the \red{(currently undefined)} synthesis problem, we define the produc
 as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
 \begin{definition}[Product between automaton and MDP]
 \label{def:product}
-Given a MDP  $\MDP = (\X, \init, \tr, \U)$,
+Given an MDP  $\MDP = (\X, \init, \tr, \U)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
 and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta, Acc)$,
@@ -467,6 +466,7 @@ Denote the Bellman operator
 \end{align}
 %\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 %\end{align}
+\red{[Richard: Give an explanation of what T represents in words]}
 and the optimal Bellman 
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\ast (V)(x,q) =\sup_\pol\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)),
@@ -489,12 +489,12 @@ with $V=0$.
 
 In \citet{tech_report_TACAS}, a method for the robust computation of control policies on abstract MDPs has been given.  Since these controllers are robust to the approximation error,  they can be refined to the original MDPs controllers, while preserving the satisfaction guarantees. 
 In \citet{tech_report_TACAS}, the difference between the models is quantified based on both a probabilistic error and metric error in an output space of interest. 
-To allow for working with Belief space models, we relax the bound on the output deviation.
+To allow for working with belief space models, we relax the bound on the output deviation.
 
 
 We approach control synthesis of the belief space model in three steps:
 \begin{enumerate}
-\item Compute labelling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
+\item Compute labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
 \item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
 \item Refine the $\delta$-robust policy for the abstract model to the concrete model.
 \end{enumerate}
@@ -561,7 +561,7 @@ Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this 
 Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
  $\Labset(x)=\{\Lab(x)\}$.
 
-% {\color{blue}A little confusing to use $\Labset$ for both language and labelling map}  => fixed
+% {\color{blue}A little confusing to use $\Labset$ for both language and labeling map}  => fixed
  
 We now require that \begin{equation}
   \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
@@ -573,8 +573,8 @@ We now require that \begin{equation}
 By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$.  
  
 
-\begin{definition}[Labelling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labelling maps $\Labset$ and  $\tilde{\Labset}$.   
+\begin{definition}[labeling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
+Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labeling maps $\Labset$ and  $\tilde{\Labset}$.   
 We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
 	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x)
@@ -687,7 +687,7 @@ Given a value function
 		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in\red
 		{\rel(x)}} \bar V^\infty_\ast(\tilde x,q).
 	\end{align}
-If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
+If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
 	\red{[Check whether it should be $\rel()$ or $\rel^{-1}()$] }
 	\red{[Notation not introduced:]}
 	Furthermore
@@ -708,7 +708,7 @@ Consider a LTI system
 x_{k+1}&=A x_{k} + B u_k+ w_k\\
 z_k&=Cx_k+Du_k+v_k\end{aligned} \end{align}
 with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$,  and $v_t\sim \mathcal N(0,\CA V)$. 
- \eqref{eq:LTI}  defines a MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
+ \eqref{eq:LTI}  defines an MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
  
  
 %At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
@@ -752,7 +752,7 @@ with $e_k\sim \mathcal N (0, S_k^{-1})$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V
 
  
 % We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
-As a first simplification, we can replace the stochastic transitions  in \eqref{eq:beliefx} by
+As a first simplification, we can replace the stochastic transitions  in equation \eqref{eq:beliefx} by
 \begin{align}  
 		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract} 
 \end{align}
@@ -815,7 +815,7 @@ Consider the linear time invariant system with Gaussian disturbance, given as
 	y^m_{k}&=C^m x^m_{k}+D^m u_{k}+E^m v_{k}\end{aligned}
 \end{align}
 with matrices $A,B,C,D$ and matrices $F,E$. 
-The measurement boise signal $v$ is zero-mean, independently and identically  distributed noise, i.e, $v_k\sim \mathcal{N}(0,I)$.
+The measurement noise signal $v$ is zero-mean, independently and identically  distributed noise, i.e, $v_k\sim \mathcal{N}(0,I)$.
 % \noindent\textbf{Wind disturbance.}
 The state transitions are affected by the wind $w_k$. 
 We can model the dynamic variations of the wind as filtered noise. 
