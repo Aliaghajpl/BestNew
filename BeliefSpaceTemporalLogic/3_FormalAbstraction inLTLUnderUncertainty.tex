@@ -127,8 +127,8 @@ in \citep{LESSER20141989}. %, the analysis of partially observable systems with 
 % Unlike the available work \citep{Vasile2016,JonesDTL2013}, we will synthesize control policies formally with guarantees. \axx{the last sentence need to be updated. let's talk about it in the meeting.}
  
 In this paper, the properties of interest are defined directly on the belief space (i.e., the space of probability distributions - belief - over all possible states) as in \citep{Vasile2016,JonesDTL2013}. The properties over belief space express requirements on the estimation quality or uncertainty. 
-We solve the synthesis problems in a correct-by-construction fashion. We leverage the result in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretization %to a finite abstraction
-with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further, we also define an approximate stochastic simulation relation via non-determinism in the labeling, and we newly refine the control policy via the abstract value function.
+We newly solve this type of synthesis problem in a correct-by-construction fashion.  For this we leverage the results in \citep{haesaert2017verification, tech_report_TACAS}, as such we can precede  discretization %to a finite abstraction
+with model order reductions and simplifications.  Since we work over belief MDPs, this is crucial.  Further, and new in this paper, we also define an approximate stochastic simulation relation via non-determinism in the labeling, and we newly refine the control policy via the abstract value function.
 
 % In contrast to the work in \citep{JonesDTL2013}, and  \citep{Vasile2016},  the  controllers are synthesized in a correct-by-construction fashion by leveraging formal similarity relations.
  
@@ -876,13 +876,12 @@ D= D^m, \  E = E^m.\notag
     
     \red{[STEPS to do]
   \begin{enumerate}
-  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists ) 
-  	\item The covariance of the innovation sequence is given in Anderson, Optimal filtering 4.13.
-  	\item For observable LTI system design controller
-  	\item translate scLTL to DFA
-  	\item compute cross product
-  	\item Value iteration
-  	\item implementation
+  	\item[V] For observable LTI system design controller
+  	\item[V] translate scLTL to DFA
+  	\item[V] compute cross product
+  	\item[V] Value iteration
+  	\item[V] implementation
+  	  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists )  
   \end{enumerate}
   
   
