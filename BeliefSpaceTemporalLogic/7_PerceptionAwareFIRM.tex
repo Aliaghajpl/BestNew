@@ -45,7 +45,7 @@
 % paper title
 %\title{\large From Mission Specification to Safe Control Logic Under Uncertainty:\\ Application to Mars Copter-Rover Navigation-Coordination}
 
-\title{\huge Perception Aware FIRM}
+\title{\huge Vision Aware FIRM}
 
 \author{Rohan, Ali, Kamak, Cristi, Petter, Sofie, Richard, Murray, Aaron Ames}
 
@@ -61,14 +61,28 @@
 \section{Introduction}
 
 \section{Related work}
+\cite{achtelik2014motion}
+
+\cite{costante2018exploiting}
+
 \cite{perception-aware-planning} 
 
 \cite{Perception-Aware-Multiobjective-Search}
 
 \cite{MapQualityEvaluation}
 
-\printbibliography
+\section{Sensor Model}
+Let $P \in \mathbb{R}^{3}$ represent a 3-d point, $p \in \mathbb{R}^2$ represent represent a point in the image space and $\pi_\theta:\mathbb{R}^3\to\mathbb{R}^2$ be the camera projection model assuming that the intrinsic camera parameters are known and $\theta$ represents the pose of the camera in the world frame.
 
+The equation below projects a point $P$ in the world frame to image space of $k^{th}$ camera frame:
+\begin{equation} p=\pi_\theta(^{w}P) \end{equation}
+We can retrieve the 3-d point in the world frame from a point in the image space and known depth using: 
+\begin{equation} ^{w}P=\pi^{-1}_\theta(p,d) \end{equation}
+
+% \begin{equation}
+%     \theta = argmin p_z - 
+% \end{equation}
+\printbibliography
 
 \end{document}
 
