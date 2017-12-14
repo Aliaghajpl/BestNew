@@ -509,7 +509,7 @@ The optimal probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\p
 (\word \in\Language(\mathcal A_\psi))= 	\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q_0)\right.\\ &\hspace{3cm} \left.+ \mathbf 1_{Q\setminus Acc}(q_0) \Bel^N_\ast\left( V\right)(x_0,q_0)\right] {\init} (d \bar x_0),
 \end{align*}
 with $V=0$.
-\axx{what is L(A) ? }\red{SOfie: old symbol of lanugage has been changed into the currrenmty used symbol.}
+\axx{what is L(A) ? }\red{Sofie: old symbol of language has been changed into the currently used symbol.}
 \axx{deinft $T^N$}
 \axx{here you have $d\bar{x}$, which makes it more accessible than previous two equations.}
 
@@ -534,11 +534,11 @@ We approach control synthesis of the belief space model in three steps:
 \end{enumerate}
 \subsection{Lifting based simulation  and approximate similarity}
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
-We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel^-{-1}( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
+We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel^{-1}( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
-	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_1,\mathcal B(\X_2)) $ \axx{should be $\X_2$?} be two probability distributions \axx{measures?}. 
+	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability distributions \axx{measures?}. 
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
 %	
 
@@ -556,7 +556,7 @@ For a given
 	
 We refer to  $\mathbb W$ as the lifting. %We define 
 %\end{definition}
-The set of related, or equivalently lifted, probabilities is defined as 
+The set of related, or equivalently, lifted probabilities is defined as 
 	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2)). \hfill \mbox{ }\qed\] 
 
 \end{definition}
@@ -564,10 +564,10 @@ The set of related, or equivalently lifted, probabilities is defined as
 Hence based on \textbf{L1-3.} in Definition \ref{def:dellifting}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
 \axx{at this point: it is not clear to a reader like me that why this relation has been defined. And how it really quantify the different between to distributions. Maybe one "example relation" can make the definion more intuitive.}
  
-We tailor the   notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the belief space MDPs.
+We tailor the notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the belief space MDPs.
   The former notion is defined as follows. 
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.  
-Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy
+Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$. \axx{Define $\Y$, and mention that $\mathbf{d}_\Y$ is the distance metric on $\Y$. When definition $\Y$ explain a bit more the notion of mapping to output space. Are you mapping the latent variable of the MDP? i.e., $y=h(x)\in\Y$. You can state it in equations.} 
+Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy \axx{under which relation? any relation?}
 \begin{equation}
 \tilde\init \bar \rel_\delta \init.
 	\tag{\textbf{SR 1.}}
@@ -578,6 +578,7 @@ Furthermore, we require that there exists a Borel measurable stochastic kernel $
 \begin{align*}\InF: \tilde \A\times \tilde \X\times\X \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
 
 Thus the interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
+\axx{I am lost here :) i do not understand how the interface funciton refines the control action. Even more basic question: what precisely "control action refinement" in this context mean?. Even more basic question: why do we need control action refinement... I think this is how we should start (i.e., by pointing out an issue and menioning that we need refinement to solve that issue). then propose the interface function.}
 
 
 As in \citep{haesaert2017verification},  we give a notion of probabilistic simulation for  general MDPs over Polish spaces.
