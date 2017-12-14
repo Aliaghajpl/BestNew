@@ -28,7 +28,7 @@
 \allowdisplaybreaks[1]
 %% commenting
 \newcommand{\red}[1]{{\color{red} #1}}
-\renewcommand{\axx}[1]{{\color{orange} Ali:#1}}
+\renewcommand{\axx}[1]{{\color{orange} Ali: #1}}
 
 \newcommand{\new}[1]{{\color{blue}#1}}
 
@@ -532,7 +532,17 @@ We approach control synthesis of the belief space model in three steps:
 \item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
 \item Refine the $\delta$-robust policy for the abstract model to the concrete model.
 \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Lifting based simulation  and approximate similarity}
+\axx{I think in this paper what can help a lot is that:
+
+In each section, start by saying the puprpose of the section, like, In this section, we will ....
+
+And then at the end of the section, in a couple of lines re-emphaize the findings of the section and motivate the next section...
+
+}
+
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
 We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel^{-1}( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
 
@@ -578,35 +588,39 @@ Furthermore, we require that there exists a Borel measurable stochastic kernel $
 \begin{align*}\InF: \tilde \A\times \tilde \X\times\X \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
 
 Thus the interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
-\axx{I am lost here :) i do not understand how the interface funciton refines the control action. Even more basic question: what precisely "control action refinement" in this context mean?. Even more basic question: why do we need control action refinement... I think this is how we should start (i.e., by pointing out an issue and menioning that we need refinement to solve that issue). then propose the interface function.}
+\axx{I am lost here :) i do not understand how the interface funciton refines the control action. Even more basic question: what precisely "control action refinement" in this context mean?. Even more-more basic question: why do we need control action refinement? I think the answer to this last question is how we should start writing this part  (i.e., by pointing out an issue and menioning that we need refinement to solve that issue). then propose the interface function.}
 
 
 As in \citep{haesaert2017verification},  we give a notion of probabilistic simulation for  general MDPs over Polish spaces.
 %
 \red{[I propose to delete the next definition]}
+\axx{If you end up not deleting it, we should start with some intuition. Why do we need this simulation relation? what does it mean? Is it good for to MDP to be stochastically simulated?}
 \begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
-	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, that is $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
+	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, denoted by $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 
 	\begin{equation}
 		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon.\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
 	\end{equation} 
 \mbox{ }	\hfill\mbox{ }\qed
 \end{definition}
-Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. 
+Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. \axx{why?}
 Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
  $\Labset(x)=\{\Lab(x)\}$.
-
 % {\color{blue}A little confusing to use $\Labset$ for both language and labeling map}  => fixed
  
 We now require that \begin{equation}
   \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
   \end{equation} 
+  \axx{Is this requirement the result of SR epsilon equation? how? We were talking about relations... what is the connection between "relations" and the "labelling" function? Is labelling function being treated as a mapping to the output space? If yes, I was thinking a bit wrong... when I read output space, I thought we are referring to measurement (e.g., sensory measurement) space. Like the common notion of "output" in basic control theory. Can you just call it "label space" instead of "output space" ?}
+
+\axx{And I still don't get what is the relation yet? it is quite abstract? an example earlier will help so that the reader can project the abstract definition in his/her mind to a concrete example.}
 %  Consider the case that $b$ is defined by $\hat x$ and $P$. 
 %The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
 % $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$, then it suffices to show that
 % for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
 By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$.  
+\axx{I dont understand this paragraph.}
  
 
 \begin{definition}[labeling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
@@ -620,10 +634,12 @@ holds. \hfill\mbox{ }\qed
 \end{definition}
 
 
+\axx{summarize the findings of the section, adn say how it connects to the next section...}
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Robust control computation}
+\axx{In this section, we will ...
+}
 
 %Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
 \red{For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator}
@@ -637,25 +653,30 @@ and the optimal Bellman
 |x,\pol(x,q)).
 \end{align}
 
+\axx{Here is a good place to contrast the above operators with the ones intriduced in the previous section, to remind the reader about concepts and create a coherent stroy.}
 
-
-Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
+\axx{start paragrphas by the purpose of it, like, "To create a robust controller, we introduce a robust Bellman operator R ..."}Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
 & \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta},
 \end{align}
+\axx{provide more intution about the meaning of R. Why do we have trunctation here?}
 and the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
 & \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x,q)-\delta}
 \end{align}
-
+\axx{better motivate robustness. why can't we just go with optimal? why do we need this robustness notion?}
 
 The ``robustified'' optimal probability of reaching $Acc_\FSA$ is given as
+\axx{why?}
 \begin{align}
 	V^\infty_\ast & =\lim_{N\rightarrow \infty}\BelR_\ast^N (V) \\
 	\pol^\infty_\ast(x,q)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x,q) 
 \end{align}
 with $V=0$.
+\axx{what do you mean by $V=0$ ?}
+
 The robustified optimal probability of reaching $Acc$ is given as
+\axx{needs a bit more explanation of the terms in the equation}
 \begin{align}
 &\BelR_\init^\polb
 (\word \in\mathcal L(\mathcal A_\psi))=\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(\bar x))}\left[\mathbf 1_{Acc}(\bar q)+ \mathbf 1_{Q \setminus Acc}(\bar q) V^\infty_\ast(x_0) \right]%\notag\\\times
@@ -715,14 +736,17 @@ The proof of this set of operators can be derived based on the the proofs in \ci
 %\caption{Control synthesis}
 %\end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Control refinement}
 \red{[New contribution]}
+\axx{since this is a new contribution of this paper, we should have a nice introduction for this section.... you can start by saying what the control refinement is and why do we need it. Then show how we do it.}
 Given a value function 
-	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ and abstract policy 	$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
+	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ \axx{I am still a bit confused about the range of the value function. Why do we limit it to 0 to 1. Can we state this is with no loss of generality?} and abstract policy 	$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$ \axx{shouldn't the range of policy be the "control space"}. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
 	\begin{align}\label{eq:Valuebased_refined}
 		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in
 		\rel^{-1}(x)} \bar V^\infty_\ast(\tilde x,q).
 	\end{align}
+\axx{I need to go back to previous sections and make connections in my mind... it is not clear to me how we reached to this conclusion.}
 If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 	\red{[Notation not introduced:]}
 	Furthermore
 \begin{align}
@@ -732,21 +756,22 @@ If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation
  {\mathcal{B}}
  \vDash \psi \right)
 \end{align}
-	
+\axx{define varialbes and give intuition in this last equation.}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{LTI Gaussian}\label{sec:case}
+\axx{In this section, we will ...}
 
-Consider a LTI system
+Consider an LTI system
  \begin{align} \label{eq:LTI} \begin{aligned}
 x_{k+1}&=A x_{k} + B u_k+ w_k\\
 z_k&=Cx_k+Du_k+v_k\end{aligned} \end{align}
-with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$,  and $v_t\sim \mathcal N(0,\CA V)$. 
- \eqref{eq:LTI}  defines an MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
+with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$, and $v_t\sim \mathcal N(0,\CA V)$. 
+Eq. \eqref{eq:LTI}  defines an MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
  
  
 %At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
-Before receiving a measurement $z_0$, the initial state is distributed  as $\CA N(x_{0|-}, P_{0|-})$, 	with $\hat x_{0|-}:= x_\init$ and $P_{0|-}:= P_{\init}$.
+Before receiving a measurement $z_0$, the initial state is distributed  as $\CA N(x_{0|-}, P_{0|-})$ \axx{hat is missing?}, with $\hat x_{0|-}:= x_\init$ and $P_{0|-}:= P_{\init}$.
 After receiving the measurement $z_0$, this is updated to \begin{align*}
 	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init),\\
 	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T,\\
@@ -782,17 +807,24 @@ This defines a belief MDP $\MB{(\POMDP)}$ with stochastic transitions of the bel
 	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+P_{k|k-1}C^Ts_k\label{eq:beliefx}\\
 	&&P_{k|k}&=f(P_{k-1|k-1})
 \end{align}
-with $e_k\sim \mathcal N (0, S_k^{-1})$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V\right)$.
+with $e_k\sim \mathcal N (0, S_k^{-1})$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V\right)$. \axx{I dont see e? is e=s?}
 
  
 % We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
-As a first simplification, we can replace the stochastic transitions  in equation \eqref{eq:beliefx} by
+As a first simplification \axx{simplication for what? what are we doing and why do we need simiplication? why not just using the original model?}, we can replace the stochastic transitions  in equation \eqref{eq:beliefx} by
 \begin{align}  
 		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract} 
 \end{align}
 with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$.
-These stochastic transitions \eqref{eq:abstract} can then be further abstracted to a finite state model $\hat\MB$ with states $s\in S=1,2,..., $. Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to a 
+These stochastic transitions \eqref{eq:abstract} can then be further abstracted to a finite state model $\hat\MB$ with states $s\in S=1,2,..., $.
+\axx{This S is different form S in above equations. right?}
+
+\axx{The set S is just a set of numbers? Please provide more intuition. and maybe a figure (if you dont have time, you can draw by hand and take a picture and we can convert it to a nice one.}
+
+Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to a 
 cell $\Delta_s=\{x_s\} \oplus \prod_n [-\grid, \grid]$.
+\axx{define the notation please. And provide intuition. maybe refer to the figure.}
+
 Further $\hat\MB_{grid}$  has transitions 
 \begin{align}\label{eq:tgrid}
 t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
@@ -800,17 +832,24 @@ t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
 
 
 Consider a simulation relation defined as 
+\axx{I am very happy now :))) finally, i see an example of relation...}
 	\begin{align}\label{eq:rel}
 \rel := \left\{(s,b_k)| (\hat x_{k|k}-x_s)^T M(\hat x_{k|k}-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P_{k|k} \preceq   P^+ \mbox{ with } b_k=(\hat x_{k|k}, P_{k|k} ) \right\},\notag
 	\end{align}
+\axx{$x_s$ belongs to belief space. So, it has convariance in it. So, you cannot subtract it from $\hat{x}$.}
+\axx{should P+ and P- be in the neighborhoood of covariance part of $x_s$ ?}
 and an interface 
 \[\InF(\hat u, \hat x, \hat x_{\,|\,}):=K( \hat x_{\,|\,} -\hat x)+\hat u\]
+\axx{the notation $\hat x_{\,|\,}$ is weired! what does it represent?}
+\axx{interface deserve more explanation and intuition. It is a very key equation/example.}
 for some matrices $M, K,P^+,P^-$.
+
 
 
 We can quantify the difference between $\MB$ and $\hat\MB$ via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. 
 Consider a choice for the lifted stochastic  transitions  for \eqref{eq:abstract} and \eqref{eq:beliefx2},  denoted 
 	$ \mathbb W_{x}((\hat x_k, \hat x_{k|k})\in \cdot| \hat u_{k-1}, \hat x_{k-1}, \hat x_{k-1|k-1})$, based on the combined stochastic difference equation given as
+\axx{I am staring to understand some of the abstract concepts now.}
 \begin{align*}
 		&&\hat x_{k+1} &=A\hat x_{k} +B\hat u_{k} + \bar P  C^T  \hat{s}_{k+1},\\%\label{eq:abstract3} \\
 	&&\hat x_{k+1|k+1}&=A\hat x_{k|k}+Bu_{k}+  \bar P   C^T(  \hat{s}_{k+1}+s^\Delta_{k+1})\notag\\&&&\qquad+\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})%\label{eq:beliefx3}
