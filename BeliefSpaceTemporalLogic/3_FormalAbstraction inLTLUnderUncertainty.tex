@@ -191,7 +191,7 @@ Consider a Markov decision process \citep{bertsekas2004stochastic,mt1993,hll1996
   A discrete-time MDP is a tuple $\MDP = (\X, \init, \tr, \A)$ with
   \begin{itemize}
     \item $\X$,  a state space with states $x\in\X$; % as its elements;
-    \item $\init$, the initial probability distribution \axx{the same as measure. right?} $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
+    \item $\init$, the initial probability distribution \marginpar{\tiny \axx{the same as measure. right?}  } $\init:\mathcal{B}(\X)\rightarrow [0,1]$;
     \item $\A$, the set of control inputs with $u\in\A$ as its elements;
     \item $\tr:\X\times\A\times\mathcal B(\X)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \A$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$;
   \end{itemize}
@@ -245,17 +245,16 @@ The control actions $u_k$ can be chosen as a function of the history of inputs a
 Define for $k=0,\ldots,N-1,$ the information spaces as
 \[\I_k=\Z_0\times\A_0\times\dots\times\A_{k-1}\times\Z_k.\]
 Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in\I_k$ and are referred to as the $k$-th information vector. 
- %A policy $\polb$ is a sequence of stochastic kernels on $\A$ given $\I_k$. 
+
 %We denote with $\Pi$ the set of all policies  \citep[Def. 10.4]{bertsekas2004stochastic}  
 %\begin{definition}
 	An \emph{observation-based} policy for $\POMDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that, for each $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  given $\mathcal{P}(\X)\times \I_k$.
-	We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution.
-%\end{definition}
-\axx{why du and not just u?}\red{it is a measure/d, not a pdf}
+	We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution. Remark that unless otherwise mentioned, we will assume thay a policy represents a sequence of  stochastic kernels on $\A$. 
+ \marginpar{\tiny \axx{why du and not just u?}\red{it is a measure, not a function or a pdf}}
 
 Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. \axx{I see where you use history now.} Thus for a given policy the POMDP defines a stochastic process on the probability space  
- $(\Omega,\borel{\Omega},\P_\init^\polb)$. \axx{definition of F?}
-% \begin{align*}
+ $(\Omega,\borel{\Omega},\P_\init^\polb)$.  
+ % \begin{align*}
 %   P_\pi^\pol(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
 % \end{align*}
 %\begin{example}[\red{[to be deleted for submission]}]
@@ -294,16 +293,17 @@ discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ w
     \item $\A$, the set of control inputs with $u\in\A$ as its elements;
     \item $\trb:\Xb\times\A\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \A$ a probability measure \eqref{eq:trb} over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
-  for which $\Xb$ and $\A$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.\footnote{In this work, we  require without loss of generality that the belief spaces are Polish. Remark that for finitely parameterizable spaces this always holds. } \axx{can you assume Polish-ness for teh belief space?}
+  for which $\Xb$ and $\A$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.\footnote{In this work, we  require without loss of generality that the belief spaces are Polish. Remark that for finitely parameterizable spaces this always holds. } \marginpar{\tiny \axx{can you assume Polish-ness for teh belief space?} \red{see new footnote}}
+  \new{In the sequel, we will omit the POMDP $\POMDP$ from which the belief MDP $\MB(\POMDP)$ is generated  denote it instead as $\MB$. }
 
 Since the MDP $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k).\]
 Thus a policy for $\MB(\POMDP)$ %\axx{has $\MB$ defined as a standalone symbol?}
- is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  given $\mathcal{P}(\X)\times \I_k$. \axx{I have a little bit of challenge with this product space here.}
+ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  \new{parameterized with the initial state distribution and the information sequence, that is  $(\init, i_k)\mathcal{P}(\X)\times \I_k$.} \marginpar{\tiny \axx{I have a little bit of challenge with this product space here.} better?}
 	%We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
-	We say that $\polb=(\pol_0,\ldots,\pol_{N-1})$ is a Markov policy if for each $k$, the policy only depends on the current state $b_k\in\Xb$, that is $\pol_k(du_k|b_k)$. \axx{maybe sth like $\pol_k(du_k|b_k)=\pol_k(du_k|b_{0:k})$ is better?}
+	We say that $\polb=(\pol_0,\ldots,\pol_{N-1})$ is a Markov policy if for each $k$, the policy only depends on the current state $b_k\in\Xb$, that is $\pol_k(du_k|b_k)$. \marginpar{\tiny\axx{maybe sth like $\pol_k(du_k|b_k)=\pol_k(du_k|b_{0:k})$ is better?} \red{}}
 	Furthermore 	 $\polb$ is a stationary Markov policy if $\pol(du_k|b)= \pol_k(du_k|b)$ for all $k$, and $b$.
-\new{In the sequel, we will omit the argument in $\MB(\POMDP)$ and denote belief models as $\MB$. }
+
 	
 
 
@@ -315,32 +315,35 @@ Thus a policy for $\MB(\POMDP)$ %\axx{has $\MB$ defined as a standalone symbol?}
 	\subsection{Belief space labeling.}\label{sec:DTL}  
 %    I kicked out the predicate based logic. Cause it didnt work.
 %  Predicate $f\leq 0$ is defined as a function $f:\mathbb{B}\rightarrow \mathbb{R}$ that encodes constraints or properties over belief space. Defining predicates over the belief space allows us to enforce properties directly on the probability distribution of the system (and hence its chance constraints).  
-\red{...story ...}
-\red{[Define AP and alphabet ]}
-Of interest are atomic propositions that are connected to the MDP via a measurable labeling function $\Lab:\Xb\rightarrow \alphabeth$ from the state space to letters in the alphabet $\alphabeth$.
-
-
-We require that the labeling function is measurable, that is we require that the induced sets  are Borel measurable
-\[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]      
-Consider a belief state characterized by  a Gaussian distribution with the mean $\hat x\in \mathbb R^n $ and variance $P\in\S^n$. %,  on state $x$.
- More specifically, suppose  $\Xb:=\mathbb R^n\times \S^n$,  then a labeling function  can be for example composed of %level functions based on
- \axx{$X_b$ was a infinite-dimensional function space. Now, we overloaded it with the finite-dimensional parameter space. I think it is okay. But, we just need to be careful which one we are referring to when we work wiht it.}
- 
+\new{To analyze the behavior of the belief MDP, we introduce some atomic propositions. These propositions are the basic building blocks from which we will build our specifications in the next paragraph.  Consider a set of atomic propositions, denoted $AP$, with elements $p_i$. Each $p_i$ encodes a property on the belief state.  }  
+For a belief state characterized by  a Gaussian distribution with the mean $\hat x\in \mathbb R^n $ and variance $P\in\S^n$, examples of such atomic propositions are  
+% \new{Parameterize the space of Gaussian distributions with this mean and variance, that is } 
+%  $\Xb:=\mathbb R^n\times \S^n$,  then a labeling function  can be for example be composed of level functions based on
+ %\axx{$X_b$ was a infinite-dimensional function space. Now, we overloaded it with the finite-dimensional parameter space. I think it is okay. But, we just need to be careful which one we are referring to when we work wiht it.}
      \begin{enumerate}
- 	\item Bounds on determinant or trace of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
- 	\axx{when i saw the label, I thought you are going to assign semantic values such as sand, rock, ... But, it is different. So, is "label" the right/common word for this in the LTL world? To me "attribute" or "feature" seems better. }\red{Sofie: labeling is the right word within LTL, we can specify  the type of features that is isolated with the used labeling?}
- 	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction. 
-    \item   Bounds on state mean $\hat{x}$ to specify
-    where in the state space the system should be. 
-    \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$
-    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
+         \item \new{a position based proposition which is evaluated as true, when the  state mean $\hat{x}$ is in a specific (Borel measurable) set  in $\mathbb R^n $. The set could define a region of interest containing rocks.}
+   % where in the state space the system should be. 
+ 	\item \new{a proposition on the uncertainty of the current state, which is evaluated as true when the state determinant of the state variance is less than a given constant $c_1$, that is   $det(P)\leq c_1$; } %or when the trace of the state variance is bounded 
+ %	\item Bounds on determinant or trace of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
+	\item \new{ a proposition $ p_i$ which assigns a lower or upper bound to  the chance of an event $A$,  that is $ p_i \leftrightarrow b_k(A)=\po\left(x_k\in A{\,\mid\,}\rho, i_k\right)>c$. }
+% 	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction. 
+%    \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$
+%    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
     \end{enumerate}
+     	\axx{when i saw the label, I thought you are going to assign semantic values such as sand, rock, ... But, it is different. So, is "label" the right/common word for this in the LTL world? To me "attribute" or "feature" seems better. }\red{Sofie: labeling is the right word within LTL, we can specify  the type of features that is isolated with the used labeling?} \red{Sofie: I think the above set of examples is easier to understand?}
+      \new{At each state, several  atomic propositions can hold. For example, while staying in a region of interest as given in (1), the uncertainty on the current state could also be very low.  }
+   \new{We say that a combination of propositions $p_i\in AP$ define an alphabet $\Sigma := 2^{AP}$. Each letter $\letter$ of the alphabet is defined as a set of atomic propositions.  Consider  a labeling function which maps states in the state space to letters in the alphabet. This labeling function is denoted as $\Lab:\Xb\rightarrow \alphabeth$.  }
+We require that the labeling function is measurable, that is we require that the induced sets  are Borel measurable
+\[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]    
+ Due to the Borel measurability of typical operations in linear algebra,  as been proven in \citep{azoff1974borel},\citep[page 116]{lang1993real}, the examples in this subsection are all Borel measurable.
+%For maps on the Euclidean spaces, we also have that the simple algebraic operations  preserve measurability \citep[page 116]{lang1993real}.
  
-    The Borel measurability of typical operations in linear algebra has been proven in \citep{azoff1974borel}.
-For maps on the Euclidean spaces, we also have that the simple algebraic operations  preserve measurability \citep[page 116]{lang1993real}.
- 
-  
-  
+ \new{ To analyze the dynamic behavior of the system, we capture the evolution of the letters generated by the system (and hence the evolution of the truth value of the atomic propositions) as 
+infinite strings. We refer to these strings as words, and denote them as $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$ with $\mathbb N$ the set of natural numbers.
+ %\axx{word repetition} fixed
+Of interest to us is the probabilistic evaluation of events over the words generated by traces of the belief models, that is 
+$\word:=\Lab(b_0),\Lab(b_1),\Lab(b_2), \ldots$. % and denote the suffix sequence  $\Lab(x_i),$ $\Lab(x_{i+1}), \ldots$ as $\word_i$.
+In the next paragraph, we define these events via trace properties given in temporal logic formulae.}
   
   \subsection{Linear temporal logic formulae}
     %Via its trivial extension,  output traces  $\{x_{t}\}_{t\geq 0}\in \X^{\mathbb N} $ can be mapped to the
@@ -356,7 +359,7 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
     \begin{equation*}
      \psi :=  \True \ |\ p \ |\ \notltl \psi \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation*} 
-    where $p\in \AP$. \axx{\AP definition}
+    where $p\in \AP$.  
     %where the predicates belong to $\Fpred$, that is $f \in \Fpred$. 
     \end{definition}
     For convenience, we often use the additional operators 
@@ -376,15 +379,9 @@ For maps on the Euclidean spaces, we also have that the simple algebraic operati
 %    be an infinite sequence of belief states. $\BF{b} \models \psi$ denotes the event that the word $\BF{b}$ satisfies specification $\psi$.
 %    
 
-    Define words as strings composed of elements from $\alphabeth$, $\word=\letter_0,\letter_1,\letter_2,\ldots\in\alphabeth^{\mathbb{N}}$.
- %\axx{word repetition} fixed
-    Define the set of infinite
-    words $\alphabeth^{\mathbb N}$ \axx{define $\mathbb N$}, with elements 
-$\word:=\Lab(x_0),\Lab(x_1),\Lab(x_2), \ldots$ and denote the suffix sequence  $\Lab(x_i),$ $\Lab(x_{i+1}), \ldots$ as $\word_i$.
-
-   
+In contrast the semantics define the interpretation of the formula. For this denote with  $\word_i$ the suffix sequence  $\word_i:= \letter_i, letter_{i+1}, \letter_{i+2}, \ldots$, 
     % Accordingly, 
-     The {\em semantics} of LTL  are defined recursively as
+     then, the {\em semantics} of LTL  formula are defined recursively  over $\word_i$ as
 $\word_i \models p   \Equiv p\in\letter_i$, 
     $\word_i \models \notltl \psi  \Equiv\notltl (\word_i \models \psi) $, 
     $\word_i \models \psi_1 \andltl  \psi_2   \Equiv  ( \word_i \models \psi_1 ) \andltl ( \word_i \models \psi_2 ) $, 
@@ -403,15 +400,24 @@ $\word_i \models p   \Equiv p\in\letter_i$,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exact control synthesis for scLTL formulae}
-\axx{I cannot fully appreciate what is going on in the last two paragraphs here. Needs a story first I guess.} \red{Anticipate this issue, by writing story here.}
+We are interested in the design of a policy for the belief MDP, such that specification given in temporal logics are satisifed with a given probability. 
+%\axx{I cannot fully appreciate what is going on in the last two paragraphs here. Needs a story first I guess.} \red{Anticipate this issue, by writing story here.}
+\new{
+The probability measure $\P_\init^\polb$ over the traces $b_0, b_1, b_2, \ldots\in \Xb^{\mathbb N}$ induces a probability measure over the words $\word:= \Lab(b_0), \Lab(b_1), \Lab(b_2), \ldots\in \Sigma^{\mathbb N}$ generated by the belief MDP.}
 
+Consider the problem to design $\polb$ such that  
+\[\P_\init^\polb
+(\word \in\Language (\mathcal A_\psi))\geq p\]
+where $p$ is either given or to be maximized.
 
-
-Of interest are properties in the syntactically co-safe subset of LTL (scLTL) given as
+To tackle this problem, we limit ourselves to the syntactically co-safe subset of LTL properties, which can be solved via reachability.  %These properties are of interest as they can be 
+%Of interest are properties in the
+Consider the syntax of the syntactically co-safe subset of LTL (scLTL) given as
     \begin{equation}\label{eq:scLTL}
      \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation}     where $p\in \AP$.
-     
+\new{ Remark that based on this syntax properties that enforce invariance such as $\Always\psi$ and properties that define liveness specifications, such as $\Always\lozenge \psi$, cannot be formed.  } \new{In fact for words that satisfy these properties there always exists a finite time in which the satisfaction of the property is reached, and after which the remaining behavior becomes of no importance for the satisfaction of the property.  This allows us to reformulate the satisfaction as a reachability problem over a DFA. %For this consider the definition of a DFA as given next.
+}
 % 
 %\begin{figure}[htp]
 %\centering
@@ -450,16 +456,16 @@ $Acc\subset Q$ is a set of accepting states. \hfill \mbox{ }\qed
 %    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
 %\end{itemize}
 \end{definition}
-A word $\word = \letter_0, \letter_1,\ldots,$ is accepted by the DFA if there exists a sequence $q_0,q_1, q_2, .., q_f$ with $q_f\in Acc$, that starts with the start state $q_0$  and for which $q_{i+1}=\delta_{\CA A}(q_i,\letter_i)$.
-In other words, a sequence of letters is accepted if the corresponding trace in the DFA {\it reaches} the set of accept states. We denote the set of words accepted by a DFA $\CA A$ as $\Language (\mathcal A_\psi))$.
+\new{A word $\word = \letter_0, \letter_1,\ldots,$ is accepted by the DFA if there exists a sequence $q_0,q_1, q_2, .., q_f$ with $q_f\in Acc$, that starts with the start state $q_0$  and for which $q_{i+1}=\delta_{\CA A}(q_i,\letter_i)$.
+In other words, a sequence of letters is accepted if the corresponding trace in the DFA {\it reaches} the set of accept states. We denote the set of words accepted by a DFA $\CA A$ as $\Language (\mathcal A)$.}
 
 
 
 
 
 %\begin{definition}
-For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property \citep{Belta2017}. Specifically, a DFA represents the specification $\psi$ if a word $\word$ satisfies an LTL property $\psi$ if and only if it belongs to the accepting language the DFA, that is,
-	 \[\psi\vDash\word \Leftrightarrow \word\in \Language_\psi.\]
+For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property \citep{Belta2017}. Specifically, a DFA represents the specification $\psi$ if a word $\word$ satisfies an LTL property $\psi$ if and only if it belongs to the accepting language of the DFA, that is,
+	 \[\psi\vDash\word \Leftrightarrow \word\in \Language(\mathcal A_\psi).\]
 %\end{definition}
 
 We can
