@@ -193,18 +193,18 @@ Consider a Markov decision process \citep{bertsekas2004stochastic,mt1993,hll1996
   \end{itemize}
   for which $\X$ and $\U$ are (uncountable) Polish spaces.
  \end{definition}
+ \red{[measure/distribution $=>$ measure (troughout the paper ]}
 %For any set $A\in \mathcal{B}(\X)$, $\po_{x,u}(x_{t+1}\in A)$ $=\int_A \tr(dy{\,\mid\,} x_{t}=x,u)$, where $\po_{x,u}$ denotes the conditional probability $\po(\cdot\,{\mid}\, x,u)$. At every state the state transition depends non-deterministically on the choice of $u\in \U$.
 %When chosen according to a distribution  $\pol_u:\mathcal{B}(\U)\rightarrow [0,1]$, we refer to the stochastic control input as $\pol_u$. 
 %The corresponding transition kernel is denoted as $\tr(\cdot| x, \pol_u)=\int_\U \tr(\cdot| x, u) \pol_u(du)\in \mathcal P(\X,\mathcal B(\X))$.
 Given a string of inputs
 $u(0),$ $u(1), $ $\ldots, $ $u(N)$,
 over a finite time horizon $\{0,1,\ldots, N\}$,
-and an initial state  $x_0$ (sampled from distribution $\pi$ \axx{or $\rho$?}),
+and an initial state  $x_0$ (sampled from distribution $\init$ \axx{or $\rho$?}),
 the state $x_{k+1}$
-is obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,} x_k, u_k \right)$ --
+is obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,t} x_k, u_k \right)$ --
 these semantics induce paths (or executions) of the MDP. \axx{relation between N and k?}
  
-
  
 
 %\subsubsection{Partially observable Markov decision process (POMDP)}\label{sec:POMDP}
@@ -906,6 +906,8 @@ D= D^m, \  E = E^m.\notag
   
   
   }
+    
+    \section{Case study}
     
   
 \section{Conclusions}
