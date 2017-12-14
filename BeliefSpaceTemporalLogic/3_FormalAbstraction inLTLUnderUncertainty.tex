@@ -450,9 +450,8 @@ $Acc\subset Q$ is a set of accepting states. \hfill \mbox{ }\qed
 %    \item $\Omega_\RA$ is a set of tuples $(\CA{F}_i, \CA{B}_i)$ of disjoint subsets of $S_\RA$ which correspond to good ($\CA{F}_i$) and bad ($\CA{B}_i$) states.
 %\end{itemize}
 \end{definition}
-
-\red{[Define accepting language]}
-
+A word $\word = \letter_0, \letter_1,\ldots,$ is accepted by the DFA if there exists a sequence $q_0,q_1, q_2, .., q_f$ with $q_f\in Acc$, that starts with the start state $q_0$  and for which $q_{i+1}=\delta_{\CA A}(q_i,\letter_i)$.
+In other words, a sequence of letters is accepted if the corresponding trace in the DFA {\it reaches} the set of accept states. We denote the set of words accepted by a DFA $\CA A$ as $\Language (\mathcal A_\psi))$.
 
 
 
@@ -465,8 +464,8 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 
 We can
 reduce $\P_\init^\polb
-(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to the reachability problem
- over another MDP   $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the gMDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of the product construction.
+(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to a reachability problem
+ over another MDP,  denoted  $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the MDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of this product construction.
 %
 %We define the  product  
 %as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
