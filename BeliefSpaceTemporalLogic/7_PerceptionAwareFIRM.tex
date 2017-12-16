@@ -71,23 +71,50 @@
 
 \cite{MapQualityEvaluation}
 
+\section{Motivation}
+Talk about degenerate configurations with figures.
+
 \section{Sensor Model}
+
 Let $P \in \mathbb{R}^{3}$ represent a 3-d point, $p \in \mathbb{R}^2$ represent represent a point in the image space and $\pi_\theta:\mathbb{R}^3\to\mathbb{R}^2$ be the camera projection model assuming that the intrinsic camera parameters are known and $\theta$ represents the pose of the camera in the world frame.
 
 The equation below projects a point $P$ in the world frame to image space of $k^{th}$ camera frame:
 \begin{equation} p=\pi_\theta(^{w}P) \end{equation}
 We can retrieve the 3-d point in the world frame from a point in the image space and known depth, using: 
 \begin{equation} ^{w}P=\pi^{-1}_\theta(p,d) \end{equation}
-The pose of the camera $\theta$ can be estimated by minimizing the re-projection error, as shown in the equation below. Where, $\theta_{kf}$ represents the pose of the keyframe and $p_z$ represents the measure location of the feature point in the image space.
+
+The sensor model is obtained by using the following equation, where $\Sigma_o$ is covariance of the image noise (estimation of location of the feature points).
 \begin{equation}
-     \theta = \underset{\theta}{\arg\min}~~||p_z - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d))||^2
+     z_p = h(\theta,v)=
+     \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d)) + v,~~~ v\sim \mathcal{N}(0,\Sigma_{o})
 \end{equation}
 
-Talk about max log likelihood estimation intuition to find covariance from information matrix...
 
-Talk about degenerate configurations with figures...
+The pose of the camera $\theta$ can be estimated by minimizing the re-projection error, as shown in the equation below. Where, $\theta_{kf}$ represents the pose of the keyframe and $p_z$ represents the measure location of the feature point in the image space.
+\begin{equation}
+     \theta = \underset{\theta}{\arg\min}~||z_p - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d))||^2_{\Sigma_o}
+\end{equation}
 
-Indirectly capture the effect of appearance by weighting this with the number of features...
+Information $\mathcal{I}$ can be found using the following equation:
+\begin{equation}
+     \mathcal{I} = J^{T}\Sigma^{-1}_{o}J
+\end{equation}
+for
+\begin{equation}
+     J = \frac{dh}{d\theta}(?)
+\end{equation}
+
+Advantages:
+\begin{itemize}
+    \item Computationally more efficient than direct or homography based approaches.
+    \item Does not require homography assumptions like planar scenes, etc.
+\end{itemize}
+
+Challenges:
+\begin{itemize}
+    \item Efficiently finding all the feature points in the field for a give camera pose $\theta$.
+    \item Acquiring set of keyframes from an elevation map of the environment.
+\end{itemize}
 
 \printbibliography
 
