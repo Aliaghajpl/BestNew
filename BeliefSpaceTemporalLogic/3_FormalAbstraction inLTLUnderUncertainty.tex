@@ -470,8 +470,8 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 
 We can
 reduce $\P_\init^\polb
-(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MDP$ to a reachability problem
- over another MDP,  denoted  $\MDP\otimes\mathcal A_\psi$, which we refer to as a product of the MDP $\MDP$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of this product construction.
+(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MB$ to a reachability problem
+ over another MDP,  denoted  $\MB\otimes\mathcal A_\psi$, which we refer to as a product of the MDP $\MB$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of this product construction.
 %
 %We define the  product  
 %as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
@@ -480,27 +480,67 @@ reduce $\P_\init^\polb
 Given an MDP  $\MDP = (\X, \init, \tr, \A)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
-and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta, Acc)$,
+and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta_{\CA A}, Acc)$,
 we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
 $\MDP\otimes\FSA_\psi = (\bar \X, \bar\init,\bar{\tr},\A)$.
-Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta(q_0,\mathsf L(x))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as \axx{$\delta$ had a subscript when you first defined it.}
-\axx{$q_0$ should be $q$. right?}\red{ no, $\bar\init$ defines the initial distribution of the product MDP}
+Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta_{\CA A}(q_0,\mathsf L(x))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as  
 \begin{equation*}
   \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(y)),\\ 0 & \text{else.}  \end{array}\right.
 \end{equation*} 
 \hfill \mbox{ }\qed
 \end{definition}
 
-%{\color{blue} Remove tilde over x?}==> Done
 
-\red{[Write about how the policy can now be verified or synthesized via a stochastic reachability problem. And that this can be formulated as a Dynamic programming problem.  ]}
+
+We say that a trajectory $
+\{\bar x(t)\}_{t\geq 0}$  represents an accepted word for specification $\psi$ if the trace reaches the set of accept states $K:=\X\times Acc$.
+This reachability property can be evaluated over a   trajectory with length $N_s$ as 
+\begin{align*}\textstyle
+\exists j \in [0,N_s]: \bar x(j) \in K.\end{align*}
+The probability associated to this finite-time reach-avoid event can be characterized as a boolean expression using indicator functions \cite{Abate1},
+which leads to 
+%its expression as 
+an expectation over the state trajectories as 
+\newcommand{\ind}{\mathbf{1}}
+\begin{align*} 
+r_{\bar x }^\polb(K)=\mathbb{E}_{\bar x(0)}^{\bar \polb}\bigg[\sum\limits_{\mathclap{\qquad j\in[0,N_s]}}\ind_{K}(\bar x(j))\prod_{i=0}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg],
+\end{align*} 
+where $\ind_{B}(x) = 1$ if $x \in B$, 
+and otherwise it is equal to $0$.  
+
+For a given
+%property and
+policy $\polb$, the time-dependent value function $\!\mathbf V^\polb_k:\X\rightarrow [0,1]$,  is defined as 
+\begin{align*}\mathbf V_k^\polb(\bar x)=\mathbb{E}^\polb\!\left[\,\sum\limits_{\mathclap{\qquad \ j\in [k+1,N_s]}} \,\, \ind_K(\bar x(j)) \prod\limits_{\mathclap{i=k+1}}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg|\bar x(k)=\bar x\right]\!,\end{align*}
+For a given policy $\mathbf V^\polb_k$ 
+expresses the probability that the state trajectory $\{\bar x({k+1}),\ldots, x({N_s})\}$,
+starting from $\bar x(k)$, will reach the target set $K$ within the time horizon $[k,N_s]$,
+while staying within the safe set $A$. 
+Hence it expresses the probability of reaching $K$ in $N_s-k$ time steps.
+This function allows expressing the discounted reach-avoid probability backward recursively,
+as follows. 
 Denote the Bellman operator
-\axx{For explanationfo the T operator, you can divide it to two pieces an explain the meaning of each piece.}
-\axx{Also, please explain the dummy variable of the integral. Maybe you can also define $d\bar{x}=dy\times\{q'\}$ for clarity?}\red{Dummy variable?}
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol (V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')V( y, q'))\right]\notag\\&\hspace{3cm}\hfill 
-\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)),
+& \Bel_\pol (\mathbf  V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{K}(\bar x')+  \mathbf 1_{\bar \X\setminus K}( \bar x')\mathbf V( \bar x'))\right]\notag\\&\hspace{5cm}\hfill 
+\times \bar{\tr}(d \bar x' |\bar x,\pol(\bar x)),
 \end{align}
+with $K:=\X \times Acc$.
+Then
+\begin{align}
+\mathbf V^\polb_{k-1} = 
+ \Bel_\pol \mathbf V^\polb_{k}  \end{align}
+Thus if $\mathbf V^\polb_k$ expresses the probability of reaching the accept states in $N_s-k$ then $ \Bel_\pol \mathbf V^\polb_{k} $ expresses the probability of reaching them in $N_s-k+1$.
+In other words, every recursion combines the probability to reach the accept states with the probability of reaching it in the future.
+For the product MDP, this Bellman operator reduces to 
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\pol (V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]\notag\\&\hspace{3cm}\hfill 
+\times \bar{\tr}(d \bar x' |x,q,\pol(x,q))
+\end{align}
+with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the product MDP, that is, it defines a control action as a function of the state $(q,x)\in\bar\X$.
+
+
+\axx{For explanation for the T operator, you can divide it to two pieces an explain the meaning of each piece.} 
+
 %\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 %\end{align}
 \red{[Richard: Give an explanation of what T represents in words]}
@@ -777,7 +817,7 @@ If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation
 Consider an LTI system
  \begin{align} \label{eq:LTI} \begin{aligned}
 x_{k+1}&=A x_{k} + B u_k+ w_k\\
-z_k&=Cx_k+Du_k+v_k\end{aligned} \end{align}
+z_k&=Cx_k+v_k\end{aligned} \end{align}
 with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$, and $v_t\sim \mathcal N(0,\CA V)$. 
 Eq. \eqref{eq:LTI}  defines an MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
  
@@ -842,7 +882,12 @@ Further $\hat\MB_{grid}$  has transitions
 t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
 \end{align}where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}.
 
-
+\begin{figure}[htp]
+\centering
+	\includegraphics[width = .8\columnwidth]{figs/grid}
+	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition. }
+\end{figure}
+ 
 Consider a simulation relation defined as 
 \axx{I am very happy now :))) finally, i see an example of relation...}
 	\begin{align}\label{eq:rel}
@@ -885,107 +930,93 @@ For this choice of  	$\mathbb W_x$, the difference expression in \eqref{eq:rel} 
 For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ such that   $\hat x_{k+1}-\mathbf r \in \{x_s| s \in S\}$. Therefore we can write the update of the difference expression as  \begin{align}
  \hat x_{+|+}-	\hat x_{s_+}=(A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}.
 \end{align}
-Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ cf.  \eqref{eq:rel}.
+Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ see equation \eqref{eq:rel}.
 
-\begin{figure}[htp]
-\centering
-	\includegraphics[width = .8\columnwidth]{figs/grid}
-	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition. }
-\end{figure}
-\subsection{Without belief space}
-\begin{figure}
-\definecolor{color1}{rgb}{1,0.498039215686275,0.0549019607843137}
-\definecolor{color0}{rgb}{0.12156862745098,0.466666666666667,0.705882352941177}
-\definecolor{color3}{rgb}{0.83921568627451,0.152941176470588,0.156862745098039}
-\definecolor{color2}{rgb}{0.172549019607843,0.627450980392157,0.172549019607843}
-\definecolor{color5}{rgb}{0.549019607843137,0.337254901960784,0.294117647058824}
-\definecolor{color4}{rgb}{0.580392156862745,0.403921568627451,0.741176470588235}
-	\input{figs/mytikz}
-	\caption{\red{Refined control on LTI Gaussian system satisfying $(\neg {\color{color2}\square } \Until {\color{color0}\square }) \wedge {\color{color2}\square } $ }}
-\end{figure}
-\subsection{Flying in the wind}
-\noindent\textbf{Moving point mass.}
-    
-Consider the linear time invariant system with Gaussian disturbance, given as 
-\begin{align}\begin{aligned}
-	x^m_{k+1} &= A x^m_{k}+B^mu_{k}+ F^m w_{k}\\
-	y^m_{k}&=C^m x^m_{k}+D^m u_{k}+E^m v_{k}\end{aligned}
+
+\new{More precisely, compute a lower bound on \begin{align}
+&\po\left((A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\right.\\&\left.+  \bar P   C^T s^\Delta_{k+1} + \Delta_{k+1} s^\Delta_{k+1}+\Delta_{k+1} \hat{s}_{k+1} \in \rel\right)\label{eq:condition1}
 \end{align}
-with matrices $A,B,C,D$ and matrices $F,E$. 
-The measurement noise signal $v$ is zero-mean, independently and identically  distributed noise, i.e, $v_k\sim \mathcal{N}(0,I)$.
-% \noindent\textbf{Wind disturbance.}
-The state transitions are affected by the wind $w_k$. 
-We can model the dynamic variations of the wind as filtered noise. 
-There are two commonly used models  \citep{richardson2013quantifying},  this includes the von Karman power spectral density,
-and the Dryden model.
-The former model matches experiment data more than the 
- Dryden model, but the Dryden model can be represented by  a lower order filter.
-Consider a filter model to be given as
+given that $(\hat x_{\,|\,},\hat x_s)\in \rel$.  
+Given bounded sets $X_\Delta$, $\hat C_\Delta$, and  $C_\Delta$, we replace the probability condition \eqref{eq:condition1} with  
 \begin{align}
-	\begin{aligned}
-	x_{t+1}^w &= A^w x_{t}^w+ F^w e_{t},\\
-	w_{t}&=C^w x_{t}^w+E^w e_{t}.
-	\end{aligned}
+&  (A+BK)x_\delta+\mathbf r  + c_{\Delta} +\hat c_{\Delta} \in \rel 
 \end{align}
+for all $x_\Delta\in X_\Delta :=\{(\hat x_{\,|\,}-\hat x_s)\in \rel\}$, $\hat c_{\Delta} \in \hat C_\Delta$ and for all $ c_{\Delta} \in  C_\Delta$.
+ 
+}
 
-%\textbf{Full model \& Belief space model.}
-The full model is given as follows
-%\begin{align} 
-%	\begin{bmatrix}
-%	x^m_{t+1}	\\x^w_{t+1}
-%	\end{bmatrix}
-% &= \begin{bmatrix}
+
+
+%    
+%Consider the linear time invariant system with Gaussian disturbance, given as 
+%\begin{align}\begin{aligned}
+%	x^m_{k+1} &= A x^m_{k}+B^mu_{k}+ F^m w_{k}\\
+%	y^m_{k}&=C^m x^m_{k}+D^m u_{k}+E^m v_{k}\end{aligned}
+%\end{align}
+%with matrices $A,B,C,D$ and matrices $F,E$. 
+%The measurement noise signal $v$ is zero-mean, independently and identically  distributed noise, i.e, $v_k\sim \mathcal{N}(0,I)$.
+%% \noindent\textbf{Wind disturbance.}
+%The state transitions are affected by the wind $w_k$. 
+%We can model the dynamic variations of the wind as filtered noise. 
+%There are two commonly used models  \citep{richardson2013quantifying},  this includes the von Karman power spectral density,
+%and the Dryden model.
+%The former model matches experiment data more than the 
+% Dryden model, but the Dryden model can be represented by  a lower order filter.
+%Consider a filter model to be given as
+%\begin{align}
+%	\begin{aligned}
+%	x_{t+1}^w &= A^w x_{t}^w+ F^w e_{t},\\
+%	w_{t}&=C^w x_{t}^w+E^w e_{t}.
+%	\end{aligned}
+%\end{align}
+%
+%%\textbf{Full model \& Belief space model.}
+%The full model is given as follows
+%%\begin{align} 
+%%	\begin{bmatrix}
+%%	x^m_{t+1}	\\x^w_{t+1}
+%%	\end{bmatrix}
+%% &= \begin{bmatrix}
+%% 	A^m 	& F^mC^w\\
+%% 	0 & A^w
+%% \end{bmatrix}
+%%\begin{bmatrix}
+%%	x^m_{t}	\\x^w_{t}
+%%	\end{bmatrix}+\begin{bmatrix} B^m \\ 0~ \end{bmatrix} u_{t}+  \begin{bmatrix}
+%%	F^m E^w \\
+%%	F^w
+%%	\end{bmatrix}e_{t}\notag\\
+%%	y^m_{t}&=\begin{bmatrix} C^m& 0 \end{bmatrix}\begin{bmatrix}
+%%	x^m_{t}	\\x^w_{t}
+%%	\end{bmatrix}+D^m u_{t}+E^m v_{t}.
+%%\end{align}
+%%This can be written as 
+% \begin{align}  \begin{aligned}
+%x_{t+1}&=A x_{t} + B u_t+ Fe_t\\
+%y_t&=Cx_t+Du_t+Ev_t\end{aligned} \end{align}
+%\begin{align}& \mbox{ with }  x_t	= \begin{bmatrix}
+%	x^m_{t}	\\x^w_{t}
+%	\end{bmatrix},
+%A = \begin{bsmallmatrix}
 % 	A^m 	& F^mC^w\\
 % 	0 & A^w
-% \end{bmatrix}
-%\begin{bmatrix}
-%	x^m_{t}	\\x^w_{t}
-%	\end{bmatrix}+\begin{bmatrix} B^m \\ 0~ \end{bmatrix} u_{t}+  \begin{bmatrix}
+% \end{bsmallmatrix}\!, \ 
+%B = \begin{bsmallmatrix} B^m \\ 0~ \end{bsmallmatrix}\!,\notag \\
+%&F=\begin{bsmallmatrix}
 %	F^m E^w \\
 %	F^w
-%	\end{bmatrix}e_{t}\notag\\
-%	y^m_{t}&=\begin{bmatrix} C^m& 0 \end{bmatrix}\begin{bmatrix}
-%	x^m_{t}	\\x^w_{t}
-%	\end{bmatrix}+D^m u_{t}+E^m v_{t}.
+%	\end{bsmallmatrix}\!,\ 
+%C = \begin{bmatrix} C^m& 0 \end{bmatrix}\!, \ 
+%D= D^m, \  E = E^m.\notag
 %\end{align}
-%This can be written as 
- \begin{align}  \begin{aligned}
-x_{t+1}&=A x_{t} + B u_t+ Fe_t\\
-y_t&=Cx_t+Du_t+Ev_t\end{aligned} \end{align}
-\begin{align}& \mbox{ with }  x_t	= \begin{bmatrix}
-	x^m_{t}	\\x^w_{t}
-	\end{bmatrix},
-A = \begin{bsmallmatrix}
- 	A^m 	& F^mC^w\\
- 	0 & A^w
- \end{bsmallmatrix}\!, \ 
-B = \begin{bsmallmatrix} B^m \\ 0~ \end{bsmallmatrix}\!,\notag \\
-&F=\begin{bsmallmatrix}
-	F^m E^w \\
-	F^w
-	\end{bsmallmatrix}\!,\ 
-C = \begin{bmatrix} C^m& 0 \end{bmatrix}\!, \ 
-D= D^m, \  E = E^m.\notag
-\end{align}
+% 
+% \noindent{\textbf{}}
+%
+%    
  
- \noindent{\textbf{}}
-
-    
-    \red{[STEPS to do]
-  \begin{enumerate}
-  	\item[V] For observable LTI system design controller
-  	\item[V] translate scLTL to DFA
-  	\item[V] compute cross product
-  	\item[V] Value iteration
-  	\item[V] implementation
-  	  	\item Use upper\&lower bound on covariance to define standard LTI gaussian fully observable system (if exists )  
-  \end{enumerate}
-  
-  
-  }
     
     \section{Case study}
-    
+    \input{Casestudy}
   
 \section{Conclusions}
 

@@ -1,0 +1,26 @@
+As a case study, we consider a simple illustrative example in which an autonomous rover is send on a mission to identify and collect samples.
+As in depicted in Figure \ref{fig:Scenario}, we consider an environment with labelled regions. 
+\begin{figure}
+\input{figs/regions}
+\caption{A labelled map of the rovers environment. }\label{fig:Scenario}
+\end{figure}
+
+
+\textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass affected by stochastic disturbances on the state transitions. We assume that the position of the rover cannot be measured exactly. 
+We model its dynamics as
+\begin{align}
+	x_{k+1}&=\begin{bmatrix}
+		1&0\\
+		0&1
+	\end{bmatrix} x_{k} + \begin{bmatrix}
+		1&0\\
+		0&1
+	\end{bmatrix} u_k+ w_k\\
+z_k&=\begin{bmatrix}
+		1&0\\
+		0&1
+	\end{bmatrix}x_k+v_k
+\end{align}
+with $w_k\sim \CA N \left(0,\begin{bmatrix}.4&-.2\\-.2&.4\end{bmatrix}\right)$ and $c_k\sim \CA N \left(0,\begin{bmatrix}1&.1\\.1&1\end{bmatrix}\right)$
+\textbf{Environment model.} 
+

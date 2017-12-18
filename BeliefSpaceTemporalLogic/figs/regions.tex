@@ -1,0 +1,46 @@
+% This file was created by matplotlib2tikz v0.6.14.
+\begin{tikzpicture}
+\newlength\figurewidtha
+\newlength\figureheighta
+\setlength\figurewidtha{\columnwidth}
+\setlength\figureheighta{\columnwidth}
+
+\definecolor{color0}{rgb}{0.12156862745098,0.466666666666667,0.705882352941177}
+\definecolor{color3}{rgb}{0.83921568627451,0.152941176470588,0.156862745098039}
+\begin{axis}[scale=.8,
+xmin=-5, xmax=13,
+ymin=-5, ymax=12,
+width=\figurewidtha,
+height=\figureheighta,
+tick align=outside,
+tick pos=left,
+x grid style={lightgray!92.026143790849673!black},
+y grid style={lightgray!92.026143790849673!black}
+]
+\path [fill=color0, draw opacity=0] (axis cs:2.5,-5)
+--(axis cs:2.5,1)
+--(axis cs:-2.5,1)
+--(axis cs:-2.5,-5)
+--cycle;
+
+\path [fill=color3, draw opacity=0] (axis cs:10,5)
+--(axis cs:10,10)
+--(axis cs:5,10)
+--(axis cs:5,5)
+--cycle;
+
+\node at (axis cs:2.5,1)[
+  scale=1,
+  anchor=base west,
+  text=black,
+  rotate=0.0
+]{ A};
+\node at (axis cs:10,10)[
+  scale=1,
+  anchor=base west,
+  text=black,
+  rotate=0.0
+]{ B};
+\end{axis}
+
+\end{tikzpicture}
