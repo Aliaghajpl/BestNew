@@ -581,14 +581,18 @@ In this work, we will tackle this problem by assuming that there exists an appro
 
 
 \section{Refinement-based control synthesis} \label{sec:refinement}
- Let a belief MDP $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, we question \begin{itemize}
-	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
-	\item How  can an abstract controller designed for $\tilde\MB$ can be refined to a controller for $\MB$.
-\end{itemize}
+\new{ Let a belief MDP $\MB$ and its abstraction $\tilde \MB$ be given.  
+We assume that control synthesis for $\MB$ is intractable, whereas $\tilde \MB$ is computationally amiable for the control synthesis.
+In this section, we show  how we can leverage computations performed on the abstract model to verify and control the concrete model. For this we first quantify the accuracy of the abstraction. Then we design a control policy for the abstract model that satisfies the probabilistic scLTL property robustly. Finally, we show that this control policy can be used to construct a control policy for the concrete belief MDP. We will refer to this construction as control refinement. In the next section, we will detail the abstraction for Gaussian  LTI models with partial observations.}
 
 
+\color{orange} [to be rewritten: ( and shortened)]
+Given a specification $\psi$ defined on $\MB$, we are interested in a robust quantification of the probability that a specification $\psi$is satisfied 
+ \begin{align}
+ \mathbf R _\init^\polb(\tilde \MB\vDash\psi)\geq p.
+\end{align}
 
-We approach control synthesis of the belief space model in three steps:
+We approach control synthesis of the belief MDP in three steps:
 \begin{enumerate}
 \item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
 \item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
@@ -600,7 +604,7 @@ We leverage the results in
  \citet{tech_report_TACAS} to compute a  robust control policy on abstract MDPs.  Since these controllers are robust to the approximation error,  they can be refined to the original MDPs' controllers, while preserving the satisfaction guarantees. In this work we will newly use the computed value function to obtain a refinement.
 
 In this section, we will first introduce the labeling based $\delta$-stochastic simulation relation. Then, in the next subsection we will give a computation which is robust for models in this $\delta$-stochastic simulation relations.  In subsection \ref{sec:control}, we introduce the new concept of value-based control refinement.
-
+\color{black}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Lifting based simulation  and approximate similarity}
 \marginpar{\axx{I think in this paper what can help a lot is that:
@@ -610,6 +614,7 @@ In each section, start by saying the puprpose of the section, like, In this sect
 And then at the end of the section, in a couple of lines re-emphaize the findings of the section and motivate the next section...
 
 }}
+
 \new{In this subsection, we introduce a similarity relation between MDPs, that is amiable for belief MDPs. 
 Let us anticipated this with the introduction of the concept of a relation between two spaces. }
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
@@ -641,60 +646,44 @@ The set of related, or equivalently, $\delta$-lifted probabilities is defined as
 Hence based on \textbf{L1-3.} in Definition \ref{def:dellifting}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.  \new{Examples of relations are the diagonal $\rel_{\Delta}=\{(x_1,x_2){\mid} x_1=x_2\}$, or a norm based relations $\rel_{\|\cdot\|}=\{(x_1,x_2){\mid} \|Px_1-x_2\|_2\leq \epsilon\}$ with  $P$  a projection matrix and $\epsilon$ a quantification of the precision. }
 %\axx{at this point: it is not clear to a reader like me that why this relation has been defined. And how it really quantify the different between to distributions. Maybe one "example relation" can make the definion more intuitive.}
  
- Of interest is the quantification of similarity between two belief MDPs, for this we leverage the approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} which also 
- uses  the notion of $\delta$-lifting to quantify the differences between the stochastic transition kernels.  
-  The former notion is defined as follows. 
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$. \axx{Define $\Y$, and mention that $\mathbf{d}_\Y$ is the distance metric on $\Y$. When definition $\Y$ explain a bit more the notion of mapping to output space. Are you mapping the latent variable of the MDP? i.e., $y=h(x)\in\Y$. You can state it in equations.} 
-Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy \axx{under which relation? any relation?}
+ Of interest is the quantification of similarity between two belief MDPs, for this we  will leverage the approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification}, which also 
+ use  the notion of $\delta$-lifting to quantify the differences between the stochastic transition kernels.  First we analyze the relation $\rel$ over the (belief) state spaces.
+\color{blue} Consider two belief MDPs, the concrete belief MDP $\MB= (\Xb, \initb, \trb, \A)$  and its abstraction $\tilde \MB=(\tilde\Xb, \tilde\initb, \tilde\trb, \tilde\A)$. 
+We now want to quantify the similarity between these two stochastic processes.
+
+  For the moment we will assume that a relation $\rel\subset \tilde \Xb \times \Xb$ is given, and we give the requirements for the two systems to be approximately stochastically simulated with respect to this relation. In the next section, we will give an example of such a relation for LTI Gaussian systems. 
+
+As a first requirement, we need that the states in $\rel$ are pair-wise similar, that is, if a certain atomic proposition holds for the concrete model, it should also hold for the abstract model. To this end, we enable set-valued labelings for the abstract model denoted as  $ \tilde{\Labset}(\tilde x):\Xb\rightarrow2^\alphabeth$ and we require that  \begin{equation}\label{req:lab}
+  \forall (\tilde x,x )\in \rel:  \Lab(x)\in \tilde{\Labset}(\tilde x)
+  \end{equation} with $\Lab:\Xb\rightarrow\alphabeth$ the labeling function of the concrete belief MDP.
+Consider 
+ the trivial set-valued extension of  the labeling function, that is,  $\Labset:\X\rightarrow2^\alphabeth$ with
+ $\Labset(x)=\{\Lab(x)\}$.
+Requirement \eqref{req:lab} can now be written as  \begin{equation}
+  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
+  \end{equation} 
+  
+Secondly, we require that there exists a $\delta$-lifting for the initial distributions $\initb$ and $\tilde\init$, that is,
 \begin{equation}
 \tilde\init \bar \rel_\delta \init.
 	\tag{\textbf{SR 1.}}
 \end{equation}
-  
-Furthermore, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \X\times\X$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
-\begin{equation}\tilde \tr(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \tr(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}\end{equation} with $\InF$, a given interface function mapping the action and state pair to a refined action for $\MDP$
-\begin{align*}\InF: \tilde \A\times \tilde \X\times\X \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
 
-Thus the interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
-\axx{I am lost here :) i do not understand how the interface funciton refines the control action. Even more basic question: what precisely "control action refinement" in this context mean?. Even more-more basic question: why do we need control action refinement? I think the answer to this last question is how we should start writing this part  (i.e., by pointing out an issue and menioning that we need refinement to solve that issue). then propose the interface function.}
+Finally, we also require that the stochastic transitions of the belief MDPs are approximately similar.  We require that any control action of the abstract MDP can be \emph{refined} to the concrete MDP such that the stochastic transitions are approximately similar. Levering the $\delta$-lifting  we can  express this as follows $\forall (\tilde x, x)\in \rel, \forall \tilde u \in \tilde A, \exists u \in \A$ such that 
+\begin{equation}\label{req:translifting}
+	\tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, u).
+\end{equation}
 
+To make sure that requirement \eqref{req:translifting} is constructive for the control refinement, we need a more strict condition on the measurability.  Hence, we require that 
+  there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \Xb\times\Xb$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
+\begin{equation}\tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}\end{equation} with respect to $\Wt$ and with $\InF$, a given Borel measurable  interface function, mapping the action and state pair to their refined actions
+\begin{align*}\InF: \tilde \A\times \tilde \Xb\times\Xb \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
 
-As in \citep{haesaert2017verification},  we give a notion of probabilistic simulation for  general MDPs over Polish spaces.
-%
-\red{[I propose to delete the next definition]}
-\axx{If you end up not deleting it, we should start with some intuition. Why do we need this simulation relation? what does it mean? Is it good for to MDP to be stochastically simulated?}
-\begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
-Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
-	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, denoted by $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
-	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 
-	\begin{equation}
-		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon.\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
-	\end{equation} 
-\mbox{ }	\hfill\mbox{ }\qed
-\end{definition}
-Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. \axx{why?}
-Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
- $\Labset(x)=\{\Lab(x)\}$.
-% {\color{blue}A little confusing to use $\Labset$ for both language and labeling map}  => fixed
- 
-We now require that \begin{equation}
-  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
-  \end{equation} 
-  \axx{Is this requirement the result of SR epsilon equation? how? We were talking about relations... what is the connection between "relations" and the "labelling" function? Is labelling function being treated as a mapping to the output space? If yes, I was thinking a bit wrong... when I read output space, I thought we are referring to measurement (e.g., sensory measurement) space. Like the common notion of "output" in basic control theory. Can you just call it "label space" instead of "output space" ?}
+Based on these requirements we are now ready to define a labeling-based stochastic simulation relation as follows. 
 
-\axx{And I still don't get what is the relation yet? it is quite abstract? an example earlier will help so that the reader can project the abstract definition in his/her mind to a concrete example.}
-%  Consider the case that $b$ is defined by $\hat x$ and $P$. 
-%The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
-% $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$, then it suffices to show that
-% for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
-By replacing the strict requirement on (approximate) equality with that of order,   we are not restricted to the use of a distance measure. %Instead, pseudo norms can be leveraged as well as preorders over $b$.  
-\axx{I dont understand this paragraph.}
- 
- 
- 
 \begin{definition}[labeling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labeling maps $\Labset$ and  $\tilde{\Labset}$.   
-We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
+We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $$\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP,$$ with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
 	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
 	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x)
 \tag{\textbf{SR$\,\boldsymbol{\CA{L}}$.}}
@@ -702,6 +691,65 @@ We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is
 holds. \hfill\mbox{ }\qed
 \end{definition}
 
+ \color{black}
+%  The former notion is defined as follows. 
+%Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$. \axx{Define $\Y$, and mention that $\mathbf{d}_\Y$ is the distance metric on $\Y$. When definition $\Y$ explain a bit more the notion of mapping to output space. Are you mapping the latent variable of the MDP? i.e., $y=h(x)\in\Y$. You can state it in equations.} 
+%Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy \axx{under which relation? any relation?}
+%\begin{equation}
+%\tilde\init \bar \rel_\delta \init.
+%	\tag{\textbf{SR 1.}}
+%\end{equation}
+%  
+%Furthermore, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \X\times\X$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
+%\begin{equation}\tilde \tr(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \tr(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}\end{equation} with $\InF$, a given interface function mapping the action and state pair to a refined action for $\MDP$
+%\begin{align*}\InF: \tilde \A\times \tilde \X\times\X \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
+%
+%Thus the interface function implements (or refines) any control action synthesized over the abstract model to an action for the concrete model.
+%\axx{I am lost here :) i do not understand how the interface funciton refines the control action. Even more basic question: what precisely "control action refinement" in this context mean?. Even more-more basic question: why do we need control action refinement? I think the answer to this last question is how we should start writing this part  (i.e., by pointing out an issue and menioning that we need refinement to solve that issue). then propose the interface function.}
+%
+
+As in \citep{haesaert2017verification},  we have given a notion of probabilistic simulation for  MDPs over Polish spaces.  In  \citep{haesaert2017verification},  we assumed that labels to 
+ 
+%\red{[I propose to delete the next definition]}
+%\axx{If you end up not deleting it, we should start with some intuition. Why do we need this simulation relation? what does it mean? Is it good for to MDP to be stochastically simulated?}
+%\begin{definition}[$\epsilon,\delta$-stochastic simulation relation]\label{def:apbsim}
+%Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h$ and  $\tilde h$  to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$.   
+%	$\tilde\MDP$ is $(\epsilon,\delta)$-stochastically simulated by $\MDP$, denoted by $\tilde\MDP\preceq^{\delta}_\eps\MDP$,  if there exists an interface function $\InF$ and
+%	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 
+%	\begin{equation}
+%		\forall (\tilde x,x)\in \rel:\mathbf{d}_\Y(\tilde h(\tilde x),h(x))  \leq \epsilon.\tag{\textbf{SR\,$\boldsymbol{\epsilon}$}.}
+%	\end{equation} 
+%\mbox{ }	\hfill\mbox{ }\qed
+%\end{definition}
+%Condition \textbf{SR$\epsilon$.} is overly conservative for the purpose of this paper. \axx{why?}
+%Consider the trivial set-valued extension of  the labeling function $\Lab:\X\rightarrow\alphabeth$, that is  $\Labset:\X\rightarrow2^\alphabeth$ with
+% $\Labset(x)=\{\Lab(x)\}$.
+%% {\color{blue}A little confusing to use $\Labset$ for both language and labeling map}  => fixed
+% 
+%We now require that \begin{equation}
+%  \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).
+%  \end{equation} 
+%  \axx{Is this requirement the result of SR epsilon equation? how? We were talking about relations... what is the connection between "relations" and the "labelling" function? Is labelling function being treated as a mapping to the output space? If yes, I was thinking a bit wrong... when I read output space, I thought we are referring to measurement (e.g., sensory measurement) space. Like the common notion of "output" in basic control theory. Can you just call it "label space" instead of "output space" ?}
+%
+%\axx{And I still don't get what is the relation yet? it is quite abstract? an example earlier will help so that the reader can project the abstract definition in his/her mind to a concrete example.}
+%  Consider the case that $b$ is defined by $\hat x$ and $P$. 
+%The choice of $\tilde f =f $  for $f(\cdot):=\det(\cdot)+c_1$, this can be of interest if $\tilde P\succeq P$ implies that
+% $f(\tilde b)\leq 0\rightarrow f( b)\leq 0$, then it suffices to show that
+% for every state pair  $ (\tilde b,b)\in \rel$ it holds that $\tilde P\succeq P$.
+ %Instead, pseudo norms can be leveraged as well as preorders over $b$.  
+ 
+% 
+% 
+%\begin{definition}[labeling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
+%Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labeling maps $\Labset$ and  $\tilde{\Labset}$.   
+%We say that	$\tilde\MDP$ is $\delta$-stochastically simulated by $\MDP$, that is $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP$, with respect to $(\tilde{\Labset},\Labset)$  if there exists an interface function $\InF$ and
+%	a Borel measurable relation $\rel\subseteq \tilde \X\times \X$, for which \textbf{SR.1-2} hold and for which 	\begin{equation}
+%	  \forall (\tilde x,x)\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x)
+%\tag{\textbf{SR$\,\boldsymbol{\CA{L}}$.}}
+%	\end{equation} 
+%holds. \hfill\mbox{ }\qed
+%\end{definition}
+%
 
 \axx{summarize the findings of the section, adn say how it connects to the next section...}
 
@@ -834,19 +882,19 @@ If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{LTI Gaussian}\label{sec:case}
-\axx{In this section, we will ...}
+\section{LTI Gaussian system}\label{sec:case}
+In this section, we derive an approximate model for a POMDP that can be modeled as a Linear Time Invariant (LTI) model.  We first show that the belief MDP of this LTI model can be given based on the Kalman filter. Then, we introduce a formal abstraction of this model.
 
 Consider an LTI system
  \begin{align} \label{eq:LTI} \begin{aligned}
 x_{k+1}&=A x_{k} + B u_k+ w_k\\
 z_k&=Cx_k+v_k\end{aligned} \end{align}
 with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$, and $v_t\sim \mathcal N(0,\CA V)$. 
-Eq. \eqref{eq:LTI}  defines an MDP with state space $\X=\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
+Eq. \eqref{eq:LTI}  defines an MDP with state space $\X\subseteq\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
  
  
 %At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
-Before receiving a measurement $z_0$, the initial state is distributed  as $\CA N(x_{0|-}, P_{0|-})$ \axx{hat is missing?}, with $\hat x_{0|-}:= x_\init$ and $P_{0|-}:= P_{\init}$.
+Before receiving a measurement $z_0$, the initial state is distributed  as $\CA N(\hat x_{0|-}, P_{0|-})$, with $\hat x_{0|-}:= x_\init$ and $P_{0|-}:= P_{\init}$.
 After receiving the measurement $z_0$, this is updated to \begin{align*}
 	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init),\\
 	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T,\\
@@ -860,7 +908,7 @@ This probability distribution defines a belief state as $b_0:=(\hat x_{0|0}, P_{
     with their finite parametrization, mean and
     covariance matrix.
      Thus,
-    $\Xb =  \BB{R}^n \times  \Symb^n$.
+    $\Xb \subseteq  \BB{R}^n \times  \Symb^n$.
 
 
 The dynamics of  $b_k:=(\hat x_{k|k}, P_{k|k})$ are defined via the 
@@ -883,22 +931,18 @@ This defines a belief MDP $\MB{(\POMDP)}$ with stochastic transitions of the bel
 	&&P_{k|k}&=f(P_{k-1|k-1})
 \end{align}
 with $s_k\sim \mathcal N (0, S_k )$ and  $S_k=\left(CP_{k|k-1}C^T+\mathcal V\right)$. 
-
- 
+\new{The computation of the backwards recursions \eqref{eq:V_recopt_inf} is intractable over the continuous space of this system. Hence the objective is to find a close finite state description of $\MB{(\POMDP)}$.  As a first step, we choose to remove the updates of the covariance matrix $P$.  }
 % We define an abstraction of $\MB{(\POMDP)}$  as $\hat\MB$ with state space $\mathbb R^n$ and stochastic transitions
-As a first simplification \axx{simplication for what? what are we doing and why do we need simiplication? why not just using the original model?}, we can replace the stochastic transitions  in equation \eqref{eq:beliefx} by
+In this LTI model,  we replace the stochastic transitions  in equation \eqref{eq:beliefx} by
 \begin{align}  
 		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract} 
 \end{align}
-with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$.
-These stochastic transitions \eqref{eq:abstract} can then be further abstracted to a finite state model $\hat\MB$ with states $s\in S=1,2,..., $.
-\axx{This S is different form S in above equations. right?}
+with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$ \new{where $\bar P$ defines the steady state $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that the above system has a state space $\Xb_{x}$.}
+These stochastic transitions \eqref{eq:abstract} can then be further abstracted to a finite state model $\hat\MB_{grid}$ by gridding the LTI model.
+As in Figure \ref{fig:grid}, model  $\hat\MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which are representative states that are distributed  equidistantly over the state space $  {\X}_{bx}$.   
+Each state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell\footnote{$\oplus$ defines the  Minkowski sum also called the set sum. $\prod$ defines the cartesian product of sets.}
+ $\Delta_{x_s}=\{x_s\} \oplus \prod_n [-\grid, \grid]$ such that the whole space is covered by these sets, that is, ${\X}_{bx} \subseteq \bigcup_{x_s\in \hat {\X}_{bx}}\Delta_{x_s}$.
 
-\axx{The set S is just a set of numbers? Please provide more intuition. and maybe a figure (if you dont have time, you can draw by hand and take a picture and we can convert it to a nice one.}
-
-Each state $s$ is associated to a representative point $x_s\in \Xb$ and associated to a 
-cell $\Delta_s=\{x_s\} \oplus \prod_n [-\grid, \grid]$.
-\axx{define the notation please. And provide intuition. maybe refer to the figure.}
 
 Further $\hat\MB_{grid}$  has transitions 
 \begin{align}\label{eq:tgrid}
@@ -908,11 +952,11 @@ t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
 \begin{figure}[htp]
 \centering
 	\includegraphics[width = .8\columnwidth]{figs/grid}
-	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition. }
+	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition.  \axx{The set S is just a set of numbers? Please provide more intuition. and maybe a figure (if you dont have time, you can draw by hand and take a picture and we can convert it to a nice one.}\red{[Feel free to improve my drawing!!]}}\label{fig:grid}
 \end{figure}
+
  
 Consider a simulation relation defined as 
-\axx{I am very happy now :))) finally, i see an example of relation...}
 	\begin{align}\label{eq:rel}
 \rel := \left\{(s,b_k)| (\hat x_{k|k}-x_s)^T M(\hat x_{k|k}-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P_{k|k} \preceq   P^+ \mbox{ with } b_k=(\hat x_{k|k}, P_{k|k} ) \right\},\notag
 	\end{align}
@@ -955,18 +999,6 @@ For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ su
 \end{align}
 Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ see equation \eqref{eq:rel}.
 
-
-\new{More precisely, compute a lower bound on \begin{align}
-&\po\left((A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\right.\\&\left.+  \bar P   C^T s^\Delta_{k+1} + \Delta_{k+1} s^\Delta_{k+1}+\Delta_{k+1} \hat{s}_{k+1} \in \rel\right)\label{eq:condition1}
-\end{align}
-given that $(\hat x_{\,|\,},\hat x_s)\in \rel$.  
-Given bounded sets $X_\Delta$, $\hat C_\Delta$, and  $C_\Delta$, we replace the probability condition \eqref{eq:condition1} with  
-\begin{align}
-&  (A+BK)x_\delta+\mathbf r  + c_{\Delta} +\hat c_{\Delta} \in \rel 
-\end{align}
-for all $x_\Delta\in X_\Delta :=\{(\hat x_{\,|\,}-\hat x_s)\in \rel\}$, $\hat c_{\Delta} \in \hat C_\Delta$ and for all $ c_{\Delta} \in  C_\Delta$.
- 
-}
 
 
 
