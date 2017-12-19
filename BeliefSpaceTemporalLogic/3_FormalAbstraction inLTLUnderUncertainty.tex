@@ -31,6 +31,7 @@
 \renewcommand{\axx}[1]{{\color{orange} Ali: #1}}
 
 \newcommand{\new}[1]{{\color{blue}#1}}
+\newcommand{\ind}{\mathbf{1}}
 
 
 \begin{document}
@@ -471,7 +472,7 @@ For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scL
 We can
 reduce $\P_\init^\polb
 (\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MB$ to a reachability problem
- over another MDP,  denoted  $\MB\otimes\mathcal A_\psi$, which we refer to as a product of the MDP $\MB$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. We give a similar definition of this product construction.
+ over another MDP,  denoted  $\MB\otimes\mathcal A_\psi$, which we refer to as a product of the belief MDP $\MB$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. Since belief MDPs are a instantiation of  MDPs, we give a similar definition of this product construction.
 %
 %We define the  product  
 %as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
@@ -491,33 +492,32 @@ Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta_{\CA A}(
 \end{definition}
 
 
-
+\new{
 We say that a trajectory $
-\{\bar x(t)\}_{t\geq 0}$  represents an accepted word for specification $\psi$ if the trace reaches the set of accept states $K:=\X\times Acc$.
-This reachability property can be evaluated over a   trajectory with length $N_s$ as 
+\{\bar x(t)\}_{t\geq 0}$  represents an accepted word for specification $\psi$ if it reaches the set of accept states $K:=\X\times Acc$.
+This reachability property can be evaluated over a   trajectory with length $N$ as 
 \begin{align*}\textstyle
-\exists j \in [0,N_s]: \bar x(j) \in K.\end{align*}
-The probability associated to this finite-time reach-avoid event can be characterized as a boolean expression using indicator functions \cite{Abate1},
+\exists j \in [0,N]: \bar x(j) \in K.\end{align*}
+The probability associated to this finite-time reach  event can be characterized as a boolean expression using indicator functions \cite{Abate1},
 which leads to 
 %its expression as 
 an expectation over the state trajectories as 
-\newcommand{\ind}{\mathbf{1}}
 \begin{align*} 
-r_{\bar x }^\polb(K)=\mathbb{E}_{\bar x(0)}^{\bar \polb}\bigg[\sum\limits_{\mathclap{\qquad j\in[0,N_s]}}\ind_{K}(\bar x(j))\prod_{i=0}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg],
+r_{\bar x }^\polb(K)=\mathbb{E}_{\bar x(0)}^{\bar \polb}\bigg[\sum\limits_{\mathclap{\qquad j\in[0,N]}}\ind_{K}(\bar x(j))\prod_{i=0}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg],
 \end{align*} 
 where $\ind_{B}(x) = 1$ if $x \in B$, 
-and otherwise it is equal to $0$.  
+and otherwise it is equal to $0$.  }
 
 For a given
 %property and
-policy $\polb$, the time-dependent value function $\!\mathbf V^\polb_k:\X\rightarrow [0,1]$,  is defined as 
-\begin{align*}\mathbf V_k^\polb(\bar x)=\mathbb{E}^\polb\!\left[\,\sum\limits_{\mathclap{\qquad \ j\in [k+1,N_s]}} \,\, \ind_K(\bar x(j)) \prod\limits_{\mathclap{i=k+1}}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg|\bar x(k)=\bar x\right]\!,\end{align*}
+policy $\polb$, the time-dependent value function $\!\mathbf V^\polb_N:\X\rightarrow [0,1]$,  is defined as 
+\begin{align*}\mathbf V_N^\polb(\bar x)=\mathbb{E}^\polb\!\left[\,\sum\limits_{\mathclap{\ \  j\in [1,N]}} \,\, \ind_K(\bar x(j)) \prod\limits_{\mathclap{i=k+1}}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg|\bar x(k)=\bar x\right]\!.\end{align*}
 For a given policy $\mathbf V^\polb_k$ 
 expresses the probability that the state trajectory $\{\bar x({k+1}),\ldots, x({N_s})\}$,
 starting from $\bar x(k)$, will reach the target set $K$ within the time horizon $[k,N_s]$,
 while staying within the safe set $A$. 
 Hence it expresses the probability of reaching $K$ in $N_s-k$ time steps.
-This function allows expressing the discounted reach-avoid probability backward recursively,
+This function allows expressing the  reachability probability backward recursively,
 as follows. 
 Denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
@@ -527,39 +527,54 @@ Denote the Bellman operator
 with $K:=\X \times Acc$.
 Then
 \begin{align}
-\mathbf V^\polb_{k-1} = 
- \Bel_\pol \mathbf V^\polb_{k}  \end{align}
-Thus if $\mathbf V^\polb_k$ expresses the probability of reaching the accept states in $N_s-k$ then $ \Bel_\pol \mathbf V^\polb_{k} $ expresses the probability of reaching them in $N_s-k+1$.
-In other words, every recursion combines the probability to reach the accept states with the probability of reaching it in the future.
+\mathbf V^\polb_{N} = 
+ \Bel_\pol \mathbf V^\polb_{N-1}  \end{align}
+Thus if $\mathbf V^\polb_{N-1} $ expresses the probability of reaching the accept states in $N-1$ then $ \Bel_\pol \mathbf V^\polb_{N} $ expresses the probability of reaching them in $N$.
+Every recursion combines the probability to reach the accept states in the next transition with the probability of reaching it in the future.
 For the product MDP, this Bellman operator reduces to 
-\begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol (V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]\notag\\&\hspace{3cm}\hfill 
+\begin{align}\label{eq:V_recopt_inf_mu}
+& \Bel_\pol (\mathbf V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')\mathbf V( x', q'))\right]\notag\\&\hspace{3cm}\hfill 
 \times \bar{\tr}(d \bar x' |x,q,\pol(x,q))
 \end{align}
 with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the product MDP, that is, it defines a control action as a function of the state $(q,x)\in\bar\X$.
-
-
-\axx{For explanation for the T operator, you can divide it to two pieces an explain the meaning of each piece.} 
-
+ 
 %\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 %\end{align}
-\red{[Richard: Give an explanation of what T represents in words]}
-and the optimal Bellman 
-\begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x,q) =\sup_\pol\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)),
-\end{align}
-The optimal probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
+\marginpar{\red{[Richard: Give an explanation of what T represents in words]}}
+
+If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^x$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
+Then, for a given stationary policy $\mu$, the  probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
 \begin{align*}
-&\P_\init^\polb
-(\word \in\Language(\mathcal A_\psi))= 	\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q_0)\right.\\ &\hspace{3cm} \left.+ \mathbf 1_{Q\setminus Acc}(q_0) \Bel^N_\ast\left( V\right)(x_0,q_0)\right] {\init} (d \bar x_0),
+&\P_\init^\polb(\MDP\vDash\psi) = \P_\init^\polb
+(\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\mu\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q),
 \end{align*}
-with $V=0$.
-\axx{what is L(A) ? }\red{Sofie: old symbol of language has been changed into the currently used symbol.}
-\axx{deinft $T^N$}
-\axx{here you have $d\bar{x}$, which makes it more accessible than previous two equations.}
+with $\mathbf V=0$. Remark that a stationary policy $\pol$ for the product MDP can be translated to  time-dependent policy $\polb$ for the original MDP. The latter then implicitly includes the memory function of the product MDP.
+
+Instead of defining the recursions for a given policy, we can also optimize it with respect to the set of deterministic  policies $\pol: \bar X\times Q\rightarrow \A$ with $\mathbf D_{\pol}$ the set of universally measurable deterministic policies.
+This yields the optimal Bellman recursion as
+\begin{align}\label{eq:V_recopt_inf}
+& \Bel_\ast (V)(x,q) =\sup_{\pol\in \mathbf D_{\pol}}\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)).
+\end{align}
+From \cite{Abate1}, we know that the optimal policy of the reachability problem is defined as the argument of the supremum and that the optimal policy is a stationary, universally measurable, and deterministic policy.  
+
+Hence we have that the maximal satisfaction of a scLTL property $\psi$ reduces to finding the solution of stochastic reachability problem. As a consequence  this reachability problem can be written as follows
+\begin{align*}
+&\sup_{\polb}\P_\init^\polb(\MDP\vDash\psi) = \sup_{\polb }\P_\init^\polb
+(\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\ast\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q).
+\end{align*}
+
+Even though we can express the probabilistic satisfaction of these scLTL properties as a stochastic reachability property, we can only perform the computation of the recursions  \eqref{eq:V_recopt_inf_mu} and \eqref{eq:V_recopt_inf}  for a limited set of systems. In general for continuous, or more general uncountable spaces, these recursions are intractable and one needs to use  approximate computations.
+This is especially the case for the belief MDPs in this paper.  Hence we can summarize the problem statement of this work next.
 
 \subsection{Problem statement}
-\red{WRITE PROBLEM STATEMENT.}
+Given a belief MDP $\MB$ and a scLTL specification $\psi$ defined over its belief state, compute a policy which yields a lower bounded satisfaction of $\psi$. That is 
+\begin{align}
+ \P_\init^\polb(\MDP\vDash\psi)\geq p.
+\end{align}
+
+
+
+
 \section{Refinement-based control synthesis} \label{sec:refinement}
  Let a belief space model \axx{what does model mean? you mean MDP?} $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$,  \begin{itemize}
 	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
