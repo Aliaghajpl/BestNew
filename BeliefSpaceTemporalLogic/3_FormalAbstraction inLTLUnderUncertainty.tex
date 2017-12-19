@@ -508,6 +508,7 @@ r_{\bar x }^\polb(K)=\mathbb{E}_{\bar x(0)}^{\bar \polb}\bigg[\sum\limits_{\math
 where $\ind_{B}(x) = 1$ if $x \in B$, 
 and otherwise it is equal to $0$.  }
 
+\new{
 For a given
 %property and
 policy $\polb$, the time-dependent value function $\!\mathbf V^\polb_N:\X\rightarrow [0,1]$,  is defined as 
@@ -516,8 +517,9 @@ For a given policy $\mathbf V^\polb_k$
 expresses the probability that the state trajectory $\{\bar x({k+1}),\ldots, x({N_s})\}$,
 starting from $\bar x(k)$, will reach the target set $K$ within the time horizon $[k,N_s]$,
 while staying within the safe set $A$. 
-Hence it expresses the probability of reaching $K$ in $N_s-k$ time steps.
-This function allows expressing the  reachability probability backward recursively,
+Hence it expresses the probability of reaching $K$ in $N_s-k$ time steps.}
+%
+\new{This function allows expressing the  reachability probability backward recursively,
 as follows. 
 Denote the Bellman operator
 \begin{align}\label{eq:V_recopt_inf}
@@ -525,10 +527,10 @@ Denote the Bellman operator
 \times \bar{\tr}(d \bar x' |\bar x,\pol(\bar x)),
 \end{align}
 with $K:=\X \times Acc$.
-Then
+Then it follows that 
 \begin{align}
 \mathbf V^\polb_{N} = 
- \Bel_\pol \mathbf V^\polb_{N-1}  \end{align}
+ \Bel_\pol \mathbf V^\polb_{N-1}  .\end{align}
 Thus if $\mathbf V^\polb_{N-1} $ expresses the probability of reaching the accept states in $N-1$ then $ \Bel_\pol \mathbf V^\polb_{N} $ expresses the probability of reaching them in $N$.
 Every recursion combines the probability to reach the accept states in the next transition with the probability of reaching it in the future.
 For the product MDP, this Bellman operator reduces to 
@@ -536,83 +538,88 @@ For the product MDP, this Bellman operator reduces to
 & \Bel_\pol (\mathbf V)(x,q) =\!\!\int_{\bar\X}  \left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}( q')\mathbf V( x', q'))\right]\notag\\&\hspace{3cm}\hfill 
 \times \bar{\tr}(d \bar x' |x,q,\pol(x,q))
 \end{align}
-with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the product MDP, that is, it defines a control action as a function of the state $(q,x)\in\bar\X$.
+with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the product MDP, that is, it defines a control action as a function of the state $(q,x)\in\bar\X$.}
  
 %\int_{\bar{\X}}\left[\mathbf 1_{K_\S}(\bar s)+ \mathbf 1_{\S\setminus K_\S}(\bar s) V(\bar s)\right]\bar{\tr}(d\bar s|s,\pol(s)),
 %\end{align}
 \marginpar{\red{[Richard: Give an explanation of what T represents in words]}}
 
-If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^x$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
+\new{If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^x$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
 Then, for a given stationary policy $\mu$, the  probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
 \begin{align*}
 &\P_\init^\polb(\MDP\vDash\psi) = \P_\init^\polb
 (\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\mu\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q),
 \end{align*}
-with $\mathbf V=0$. Remark that a stationary policy $\pol$ for the product MDP can be translated to  time-dependent policy $\polb$ for the original MDP. The latter then implicitly includes the memory function of the product MDP.
+with $\mathbf V=0$. Remark that a stationary policy $\pol$ for the product MDP can be translated to  time-dependent policy $\polb$ for the original MDP. The latter then implicitly includes the memory function of the product MDP.}
 
-Instead of defining the recursions for a given policy, we can also optimize it with respect to the set of deterministic  policies $\pol: \bar X\times Q\rightarrow \A$ with $\mathbf D_{\pol}$ the set of universally measurable deterministic policies.
+\new{Instead of defining the recursions for a given policy, we can also optimize it with respect to the set of deterministic  policies $\pol: \bar X\times Q\rightarrow \A$ with $\mathbf D_{\pol}$ the set of universally measurable deterministic policies.
 This yields the optimal Bellman recursion as
 \begin{align}\label{eq:V_recopt_inf}
 & \Bel_\ast (V)(x,q) =\sup_{\pol\in \mathbf D_{\pol}}\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)).
 \end{align}
-From \cite{Abate1}, we know that the optimal policy of the reachability problem is defined as the argument of the supremum and that the optimal policy is a stationary, universally measurable, and deterministic policy.  
+From \cite{Abate1}, we know that the optimal policy of the reachability problem is defined as the argument of the supremum and that the optimal policy is a stationary, universally measurable, and deterministic policy.  }
 
-Hence we have that the maximal satisfaction of a scLTL property $\psi$ reduces to finding the solution of stochastic reachability problem. As a consequence  this reachability problem can be written as follows
+\new{Hence we have that the maximal satisfaction of a scLTL property $\psi$ reduces to finding the solution of stochastic reachability problem. As a consequence  this reachability problem can be written as follows
 \begin{align*}
 &\sup_{\polb}\P_\init^\polb(\MDP\vDash\psi) = \sup_{\polb }\P_\init^\polb
 (\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\ast\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q).
-\end{align*}
+\end{align*}}
 
-Even though we can express the probabilistic satisfaction of these scLTL properties as a stochastic reachability property, we can only perform the computation of the recursions  \eqref{eq:V_recopt_inf_mu} and \eqref{eq:V_recopt_inf}  for a limited set of systems. In general for continuous, or more general uncountable spaces, these recursions are intractable and one needs to use  approximate computations.
-This is especially the case for the belief MDPs in this paper.  Hence we can summarize the problem statement of this work next.
+\new{Even though we can express the probabilistic satisfaction of these scLTL properties as a stochastic reachability property, we can only perform the computation of the recursions  \eqref{eq:V_recopt_inf_mu} and \eqref{eq:V_recopt_inf}  for a limited set of systems. In general for continuous, or more general uncountable spaces, these recursions are intractable and one needs to use  approximate computations.
+This is especially the case for the belief MDPs in this paper.  Hence we can summarize the problem statement of this work next.}
 
 \subsection{Problem statement}
-Given a belief MDP $\MB$ and a scLTL specification $\psi$ defined over its belief state, compute a policy which yields a lower bounded satisfaction of $\psi$. That is 
+\new{Given a belief MDP $\MB$ and a scLTL specification $\psi$ defined over its belief state, compute a policy $\polb$ which yields a lower bounded satisfaction of $\psi$. That is 
 \begin{align}
- \P_\init^\polb(\MDP\vDash\psi)\geq p.
+ \P_\init^\polb(\MB\vDash\psi)\geq p.
 \end{align}
+In this work, we will tackle this problem by assuming that there exists an approximate model $\tilde \MB$ which is close to the concrete model $\MB$.
+
+}
 
 
 
 
 \section{Refinement-based control synthesis} \label{sec:refinement}
- Let a belief space model \axx{what does model mean? you mean MDP?} $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$,  \begin{itemize}
+ Let a belief MDP $\MB$ and its abstraction $\tilde \MB$ be given.  Given a specification $\psi$ defined on $\MB$, we question \begin{itemize}
 	\item How can we compute a controller for $\MB$ based on $\tilde \MB$,
-	\item How an abstract controller designed for $\tilde\MB$ can be refined to a controller for $\MB$.
+	\item How  can an abstract controller designed for $\tilde\MB$ can be refined to a controller for $\MB$.
 \end{itemize}
 
-In \citet{tech_report_TACAS}, a method for the robust computation of control policies on abstract MDPs has been given.  Since these controllers are robust to the approximation error,  they can be refined to the original MDPs' controllers, while preserving the satisfaction guarantees. 
-In \citet{tech_report_TACAS}, the difference between the models is quantified based on both a probabilistic error and metric error in an output space of interest. 
-To allow for working with belief space models, we relax the bound on the output deviation.
 
 
 We approach control synthesis of the belief space model in three steps:
 \begin{enumerate}
-\item Compute labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
+\item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$,
 \item Compute $\delta$-robust policy for the abstract $\tilde{\MB}$ and value function,
 \item Refine the $\delta$-robust policy for the abstract model to the concrete model.
 \end{enumerate}
 
+In \citet{tech_report_TACAS}, the difference between the models is quantified based on both a probabilistic error and metric error in an output space of interest. To allow for working with belief space models, we change the standard definition such that it now incorporates non-determinism  in the labeling instead of a metric error.
+We leverage the results in
+ \citet{tech_report_TACAS} to compute a  robust control policy on abstract MDPs.  Since these controllers are robust to the approximation error,  they can be refined to the original MDPs' controllers, while preserving the satisfaction guarantees. In this work we will newly use the computed value function to obtain a refinement.
+
+In this section, we will first introduce the labeling based $\delta$-stochastic simulation relation. Then, in the next subsection we will give a computation which is robust for models in this $\delta$-stochastic simulation relations.  In subsection \ref{sec:control}, we introduce the new concept of value-based control refinement.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Lifting based simulation  and approximate similarity}
-\axx{I think in this paper what can help a lot is that:
+\marginpar{\axx{I think in this paper what can help a lot is that:
 
 In each section, start by saying the puprpose of the section, like, In this section, we will ....
 
 And then at the end of the section, in a couple of lines re-emphaize the findings of the section and motivate the next section...
 
-}
-
+}}
+\new{In this subsection, we introduce a similarity relation between MDPs, that is amiable for belief MDPs. 
+Let us anticipated this with the introduction of the concept of a relation between two spaces. }
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
 We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel^{-1}( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
-	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability distributions \axx{measures?}. 
+	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability measures.  \new{Suppose that $\rel$, defines a set which the values $(x_1,x_2)$ are pairwise `similar' in a certain way, then we can now quantify the similarity of these two measures as in \cite{haesaert2017verification}.}
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
 %	
-
-%{\color{blue} Can we put this in definition environment?} > done=
 \begin{definition}[$\delta$-lifting]\label{def:dellifting}
 For a given 
 	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
@@ -626,15 +633,16 @@ For a given
 	
 We refer to  $\mathbb W$ as the lifting. %We define 
 %\end{definition}
-The set of related, or equivalently, lifted probabilities is defined as 
+The set of related, or equivalently, $\delta$-lifted probabilities is defined as 
 	\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2)). \hfill \mbox{ }\qed\] 
 
 \end{definition}
 
-Hence based on \textbf{L1-3.} in Definition \ref{def:dellifting}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.
-\axx{at this point: it is not clear to a reader like me that why this relation has been defined. And how it really quantify the different between to distributions. Maybe one "example relation" can make the definion more intuitive.}
+Hence based on \textbf{L1-3.} in Definition \ref{def:dellifting}, we can quantify the difference between two probability distributions with respect to a relation $\rel$.  \new{Examples of relations are the diagonal $\rel_{\Delta}=\{(x_1,x_2){\mid} x_1=x_2\}$, or a norm based relations $\rel_{\|\cdot\|}=\{(x_1,x_2){\mid} \|Px_1-x_2\|_2\leq \epsilon\}$ with  $P$  a projection matrix and $\epsilon$ a quantification of the precision. }
+%\axx{at this point: it is not clear to a reader like me that why this relation has been defined. And how it really quantify the different between to distributions. Maybe one "example relation" can make the definion more intuitive.}
  
-We tailor the notion of approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} to the belief space MDPs.
+ Of interest is the quantification of similarity between two belief MDPs, for this we leverage the approximate probabilistic simulation relations for general MDPs given in \citep{haesaert2017verification} which also 
+ uses  the notion of $\delta$-lifting to quantify the differences between the stochastic transition kernels.  
   The former notion is defined as follows. 
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with mappings $h_i$ to a shared {metric} output space  $(\Y,\mathbf{d}_\Y)$. \axx{Define $\Y$, and mention that $\mathbf{d}_\Y$ is the distance metric on $\Y$. When definition $\Y$ explain a bit more the notion of mapping to output space. Are you mapping the latent variable of the MDP? i.e., $y=h(x)\in\Y$. You can state it in equations.} 
 Given a relation over the state spaces of the MDPs we require that the initial distributions $\init$ and $\tilde\init$ can be lifted with $\delta$-accuracy \axx{under which relation? any relation?}
@@ -798,7 +806,7 @@ The proof of this set of operators can be derived based on the the proofs in \ci
 %\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Control refinement}
+\subsection{Control refinement}\label{sec:control}
 \red{[New contribution]}
 \axx{since this is a new contribution of this paper, we should have a nice introduction for this section.... you can start by saying what the control refinement is and why do we need it. Then show how we do it.}
 Given a value function 
