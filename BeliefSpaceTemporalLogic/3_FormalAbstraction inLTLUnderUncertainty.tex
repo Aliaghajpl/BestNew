@@ -591,9 +591,9 @@ We approach  the control synthesis of the belief MDP in three steps:
 \begin{enumerate}
 \item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$. Here, $\delta$ quantifies the difference in the stochastic transitions of the two MDPs.
 \item Given a specification $\psi$, we are interested in  the $\delta$-robust evaluation of the probability that a specification $\psi$ is satisfied for  $\tilde\MB$.  More precisely, levering the $\delta$-stochastic simulation relations will show that there exists  a $\delta$-robust evaluation, denoted
- \begin{align}
+$
  \mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi),
-\end{align}
+$ 
 such that any control policy ${\tilde \polb}$ for $\tilde \MB$ can be refined to a control policy   ${ \polb}$ for $  \MB$ such that 
  \begin{align}
  \mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi)\leq  \mathbf P _{\initb}^{\polb}(\MB\vDash\psi),
@@ -954,49 +954,52 @@ t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
 \begin{figure}[htp]
 \centering
 	\includegraphics[width = .8\columnwidth]{figs/grid}
-	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition.  \axx{The set S is just a set of numbers? Please provide more intuition. and maybe a figure (if you dont have time, you can draw by hand and take a picture and we can convert it to a nice one.}\red{[Feel free to improve my drawing!]}}\label{fig:grid}
+	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition.  \red{Feel free to improve[}}\label{fig:grid}
 \end{figure}
+
 
  
 Consider a simulation relation defined as 
 	\begin{align}\label{eq:rel}
-\rel := \left\{(s,b)| (\hat x-x_s)^T M(\hat x-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P \preceq   P^+ \mbox{ with } b_k=(\hat x, P ) \right\},\notag
+\rel := \left\{(s,b)| (\hat x-x_s)^T M(\hat x-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P \preceq   P^+ \mbox{ with } b=(\hat x, P ) \right\},\notag
 	\end{align}
-\axx{should P+ and P- be in the neighborhoood of covariance part of $x_s$ ?}
 and an interface 
 \[\InF(\tilde u,  x_s, \hat x):=K( \hat x - x_s)+\tilde u\]
+\marginpar{\axx{interface deserve more explanation and intuition. It is a very key equation/example.}\red{Any suggestion?}}
+for some matrices $M, K,P^+,P^-$.  
+\new{We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation (c.f. Theorem \ref{def:apbsim}) between $\hat \MB_{grid}$ and $\MB$. That is, for some $\hat \Labset$  it holds that $\hat \MB_{grid}\preceq^\delta_{\hat\Labset,\Labset}\MB$.}
 
-\axx{interface deserve more explanation and intuition. It is a very key equation/example.}\red{Any suggestion?}
-for some matrices $M, K,P^+,P^-$.  \new{We require that $P^+$, and $P^-$ are an upper, respectively, lower bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}. }
+\subsection{Labeling requirement {\bf SR $\boldsymbol{\Labset}.$}}
+\red{[To be written]}
+\subsection{Requirements {\bf SR 1.} and {\bf SR 2.}}
+\new{We require that $P^+$, and $P^-$ are an upper, respectively, lower bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound for $P_{k|k}$ if  $P^-\preceq P_{k|k}$  and if it is monotonically increasing with respect to the Riccati equations see \citep{bitmead1985monotonicity}. For the upper bound we require, mutatis mutandis, a monotonically decreasing $P^+$. }
 
 
 
 We can quantify the difference between $\MB$ and $\hat\MB$ via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. 
-Consider a choice for the lifted stochastic  transitions  for \eqref{eq:abstract} and \eqref{eq:beliefx2}, \axx{referred equation is shown later in the text} denoted 
+Consider a choice for the lifted stochastic  transitions  for \eqref{eq:abstract} and \eqref{eq:beliefx},  denoted 
 	$ \mathbb W_{x}((\hat x_k, \hat x_{k|k})\in \cdot| \hat u_{k-1}, \hat x_{k-1}, \hat x_{k-1|k-1})$, based on the combined stochastic difference equation given as
-\axx{I am staring to understand some of the abstract concepts now.}
 \begin{align*}
 		&&\hat x_{k+1} &=A\hat x_{k} +B\hat u_{k} + \bar P  C^T  \hat{s}_{k+1},\\%\label{eq:abstract3} \\
 	&&\hat x_{k+1|k+1}&=A\hat x_{k|k}+Bu_{k}+  \bar P   C^T(  \hat{s}_{k+1}+s^\Delta_{k+1})\notag\\&&&\qquad+\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})%\label{eq:beliefx3}
 \end{align*}
  with $\Delta_k:=(P_{k|k-1}C^T-  \bar P   C^T)$ and with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_k\sim  \CA N (0,\  S_k^{-1}-\hat{S}_{inv}). $
 
-\axx{have you defined P-bar ?}
 
 We can now choose the lifted stochastic transition kernel 	$\Wt$ for the concrete belief MDP $\MB$ and the abstracted finite MDP $\hat\MB$ as follows.
-Denote $b=(\hat x_{\,|\,}, P)$ and $b_+=(\hat x_{+\,|\,+}, P_+)$, then 	$\Wt$ is computed as 
+Denote $b=(\hat x, P)$ and $b_+=(\hat x_+ P_+)$, then $\Wt$ is computed as 
  \begin{align*}
- &	\Wt((s_+,b_+)\in \cdot\,| \hat u, s ,b)\\&:= \left\{\begin{array}{ll} \mathbb W_{x}((\Delta_{s_+}, \hat x_{+|+})\in \cdot\,|  \hat u,x_s , \hat x_{\,|\,}) &\text{ for }  P_+=f(P)\\
+ &	\Wt((x_{s,+},b_+)\in \cdot\,| \tilde u, x_s ,b)\\&:= \left\{\begin{array}{ll} \mathbb W_{x}((\Delta_{x_{s,+}}, \hat x_{+})\in \cdot\,|  \tilde u,x_s , \hat x) &\text{ for }  P_+=f(P)\\
  	0 & \text{ else } \end{array}\right.
  \end{align*}
 
 For this choice of  	$\mathbb W_x$, the difference expression in \eqref{eq:rel} evolves   as 
 \begin{align}
- \hat x_{k+1|k+1}-	\hat x_{k+1}=(A+BK)(\hat x_{k|k}-\hat x_{k-1})\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}
+ \hat x_{k+1|k+1}-	\hat x_{k+1}=(A+BK)(\hat x_{k|k}-\hat x_{k-1})\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})
 \end{align}
  with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P   C^T)$, and with $ \hat{s}_{k+1}\sim \CA N (0,\hat{S}_{inv})$ and $ s^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv}). $
-For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ such that   $\hat x_{k+1}-\mathbf r \in \{x_s| s \in S\}$. Therefore we can write the update of the difference expression as  \begin{align}
- \hat x_{+|+}-	\hat x_{s_+}=(A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1})\label{eq:beliefx2}.
+For all $ \hat x_{k+1}$, there exists $\mathbf  r \in \prod_n[-\grid ,\grid]$ such that   $\hat x_{k+1}-\mathbf r \in \hat \X_{bx}$. Therefore we can write the update of the difference expression as  \begin{align}
+ \hat x_{+|+}-	\hat x_{s_+}=(A+BK)(\hat x_{\,|\,}-\hat x_s)+\mathbf r\qquad \quad\notag\\+  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{s}_{k+1}+ s^\Delta_{k+1}).
 \end{align}
 Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set, we can bound the influence of the noise terms $s^\Delta_{k+1}$ and $ \hat{s}_{k+1}$ with respect to a probability at least $1-\delta$ for which the update is always in $\rel$ see equation \eqref{eq:rel}.
 
@@ -1081,92 +1084,92 @@ Given that $(\hat x_{\,|\,}-\hat x_s)$ and  $\mathbf r$ belongs to a bounded set
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\appendix
-
-\section{Kalman filtering}
-Consider a Gaussian LTI system:
- \begin{align}  \begin{aligned}
-x_{k+1}&=A x_{k} + B u_t+ w_k,\\
-z_k&=Cx_k+Du_k+v_k.\end{aligned} \end{align}
-with $w_k\sim \mathcal N(0, \mathcal W)$ and $v_k\sim \mathcal N (0,\mathcal V)$.
-
-At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
-Thus,  before receiving a measurement $z_0$, the distribution of the belief is defined as $\CA N(x_{0|-}, P_{0|-})$
-\begin{align}
-	\hat x_{0|-}&:= x_\init\\
-	P_{0|-}&:= P_{\init}
-\end{align}
-After receiving the measurement $z_0$, this is updated to $\CA N(\hat x_{0|0}, P_{0|0})$
-\begin{align}
-	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init)\\
-	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T\\
-	& \mbox{ with } L_0=P_{\init}C^T\left(CP_{\init}C^T+\mathcal V\right)^{-1}
-\end{align}
-We represent the belief state  $\CA N(\hat x_{0|0}, P_{0|0})$ by $b_0:=(\hat x_{0|0}, P_{0|0})\in\mathbb R^n\times \mathbb S^n$.
-
-The dynamics of the Kalman filter are given as
-	\begin{align*}
-	&&\textbf{Predict} \qquad \hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_{k-1}\\
-	&&P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W
-\\
-	&&\textbf{Update} \  \qquad e_{k}&=z_k-C \hat x_{k|k-1}\\
-	&&S_k&=CP_{k|k-1}C^T+\mathcal V\\
-	&&L_{k}&=P_{k|k-1}C^TS_k^{-1}\\
-	&&\hat x_{k|k}&=\hat x_{k|k-1}+L_ke_k\\
-	&&P_{k|k}&=(I-L_kC)P_{k|k-1}\\
-	\end{align*}
-	\mbox{Joseph Formula  }
-	\begin{align*}
-	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
-		\end{align*}
-\mbox{Observability based }
-	\begin{align*}
-	&& P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
-	\end{align*}
-
-Though the covariance of the belief state is defined as 
-	\begin{align*}
-	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T, \\
-		\end{align*}
-		The update equations for $P_{k|k-1}$ are more well know:
-			\begin{align*}
-	&&P_{k+1|k}&=(A-K_kC)P_{k|k-1}(A-K_kC_k)^T+K_k\mathcal V_kK_k^T +\CA W
-		\end{align*}
-		with $K_k=AL_k$.
-		
-Hence, the belief state is updated as
-\begin{align}
-	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+L_ke_k\\
-	&&P_{k|k}&=f(P_{k-1|k-1})
-\end{align}
-We now want to model the random variable $s_k=L_ke_k$. We know that $s_k$ evolves as a zero mean Gaussian distributed stochastic process.
-Further 
-\begin{align*}
-	\Ex [s_k]=0\\
-	\Ex [s_ks_k^T]=L_k	\Ex [e_ke_k^T]L_k^T, \mbox{ and } \Ex [e_ke_k^T]=S_k \\
-	e_k = C\left(x_k- \hat x_{k|k-1}\right)+v_k\\
-	\Ex [e_ke_k^T] = C P_{k|k-1} C^T + \CA V\\
-		\Ex [s_ks_k^T]=L_k S_k L_k^T,\\
-				\Ex [s_ks_k^T]= P_{k|k-1} C^T S_k^{-1} C P_{k|k-1},\\
-								\Ex [s_ks_k^T]= P_{k|k-1} C^T \left(CP_{k|k-1}C^T+\mathcal V\right)^{-1} C P_{k|k-1},\notag\\
-\Ex [s_ks_k^T]= P_{k|k-1}-P_{k|k}\notag
-\end{align*}
-
-
-\begin{align}
-	&\text{concrete:}\left\{\begin{aligned}
-		&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+ P_{k|k-1} C^T  \bar{s}_k\notag \\
-		&&&\mbox{with } \bar{s}_k\sim \CA N (0,S_k^{-1}) \notag 
-	\end{aligned}\right.	\\
-&		\text{abstract 1:}\left\{\begin{aligned}
-		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k\notag \\
-		&&&\mbox{with } \hat{s}_k\sim \CA N (0,\hat{S}_{inv}) \notag 
-	\end{aligned}\right.	
-\end{align}
-Define  $\Delta_k:=P_{k|k-1} -\bar P $,  then  $S_k=\left(C\bar PC^T+C\Delta_kC^T+\mathcal V\right)$.
-Find maximal $\hat{S}_{inv}$ such that $\hat{S}_{inv}\preceq S_k^{-1}$
-
+%
+%\appendix
+%
+%\section{Kalman filtering}
+%Consider a Gaussian LTI system:
+% \begin{align}  \begin{aligned}
+%x_{k+1}&=A x_{k} + B u_t+ w_k,\\
+%z_k&=Cx_k+Du_k+v_k.\end{aligned} \end{align}
+%with $w_k\sim \mathcal N(0, \mathcal W)$ and $v_k\sim \mathcal N (0,\mathcal V)$.
+%
+%At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
+%Thus,  before receiving a measurement $z_0$, the distribution of the belief is defined as $\CA N(x_{0|-}, P_{0|-})$
+%\begin{align}
+%	\hat x_{0|-}&:= x_\init\\
+%	P_{0|-}&:= P_{\init}
+%\end{align}
+%After receiving the measurement $z_0$, this is updated to $\CA N(\hat x_{0|0}, P_{0|0})$
+%\begin{align}
+%	\hat x_{0|0}&:= x_\init+ L_0 (z_0-Cx_\init)\\
+%	P_{0|0}&:=(I-L_0 C) P_{\init}(I-L_0 C)^T+L_0\CA V L_0^T\\
+%	& \mbox{ with } L_0=P_{\init}C^T\left(CP_{\init}C^T+\mathcal V\right)^{-1}
+%\end{align}
+%We represent the belief state  $\CA N(\hat x_{0|0}, P_{0|0})$ by $b_0:=(\hat x_{0|0}, P_{0|0})\in\mathbb R^n\times \mathbb S^n$.
+%
+%The dynamics of the Kalman filter are given as
+%	\begin{align*}
+%	&&\textbf{Predict} \qquad \hat x_{k|k-1}&=A\hat x_{k-1|k-1}+Bu_{k-1}\\
+%	&&P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W
+%\\
+%	&&\textbf{Update} \  \qquad e_{k}&=z_k-C \hat x_{k|k-1}\\
+%	&&S_k&=CP_{k|k-1}C^T+\mathcal V\\
+%	&&L_{k}&=P_{k|k-1}C^TS_k^{-1}\\
+%	&&\hat x_{k|k}&=\hat x_{k|k-1}+L_ke_k\\
+%	&&P_{k|k}&=(I-L_kC)P_{k|k-1}\\
+%	\end{align*}
+%	\mbox{Joseph Formula  }
+%	\begin{align*}
+%	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T\\
+%		\end{align*}
+%\mbox{Observability based }
+%	\begin{align*}
+%	&& P_{k|k}^{-1}&=P_{k|k-1}^{-1}+C_k^T \mathcal  V_k^{-1}C_k
+%	\end{align*}
+%
+%Though the covariance of the belief state is defined as 
+%	\begin{align*}
+%	&&P_{k|k}&=(I-L_kC)P_{k|k-1}(I-L_kC_k)^T+L_k\mathcal V_kL_k^T, \\
+%		\end{align*}
+%		The update equations for $P_{k|k-1}$ are more well know:
+%			\begin{align*}
+%	&&P_{k+1|k}&=(A-K_kC)P_{k|k-1}(A-K_kC_k)^T+K_k\mathcal V_kK_k^T +\CA W
+%		\end{align*}
+%		with $K_k=AL_k$.
+%		
+%Hence, the belief state is updated as
+%\begin{align}
+%	&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+L_ke_k\\
+%	&&P_{k|k}&=f(P_{k-1|k-1})
+%\end{align}
+%We now want to model the random variable $s_k=L_ke_k$. We know that $s_k$ evolves as a zero mean Gaussian distributed stochastic process.
+%Further 
+%\begin{align*}
+%	\Ex [s_k]=0\\
+%	\Ex [s_ks_k^T]=L_k	\Ex [e_ke_k^T]L_k^T, \mbox{ and } \Ex [e_ke_k^T]=S_k \\
+%	e_k = C\left(x_k- \hat x_{k|k-1}\right)+v_k\\
+%	\Ex [e_ke_k^T] = C P_{k|k-1} C^T + \CA V\\
+%		\Ex [s_ks_k^T]=L_k S_k L_k^T,\\
+%				\Ex [s_ks_k^T]= P_{k|k-1} C^T S_k^{-1} C P_{k|k-1},\\
+%								\Ex [s_ks_k^T]= P_{k|k-1} C^T \left(CP_{k|k-1}C^T+\mathcal V\right)^{-1} C P_{k|k-1},\notag\\
+%\Ex [s_ks_k^T]= P_{k|k-1}-P_{k|k}\notag
+%\end{align*}
+%
+%
+%\begin{align}
+%	&\text{concrete:}\left\{\begin{aligned}
+%		&&\hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+ P_{k|k-1} C^T  \bar{s}_k\notag \\
+%		&&&\mbox{with } \bar{s}_k\sim \CA N (0,S_k^{-1}) \notag 
+%	\end{aligned}\right.	\\
+%&		\text{abstract 1:}\left\{\begin{aligned}
+%		&&\hat x_k &=A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k\notag \\
+%		&&&\mbox{with } \hat{s}_k\sim \CA N (0,\hat{S}_{inv}) \notag 
+%	\end{aligned}\right.	
+%\end{align}
+%Define  $\Delta_k:=P_{k|k-1} -\bar P $,  then  $S_k=\left(C\bar PC^T+C\Delta_kC^T+\mathcal V\right)$.
+%Find maximal $\hat{S}_{inv}$ such that $\hat{S}_{inv}\preceq S_k^{-1}$
+%
 
 
 \end{document}

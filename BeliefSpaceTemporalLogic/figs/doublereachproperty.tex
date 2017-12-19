@@ -1,7 +1,6 @@
 % This file was created by matplotlib2tikz v0.6.14.
+\centering
 \begin{tikzpicture}
-\newlength\figurewidth
-\newlength\figureheight
 \setlength\figurewidth{\columnwidth}
 \setlength\figureheight{\columnwidth}
 \definecolor{color1}{rgb}{1,0.498039215686275,0.0549019607843137}
@@ -235,7 +234,7 @@ x                      y
 --(axis cs:-2.5,-5)
 --cycle;
 
-\path [fill=color0, draw opacity=0] (axis cs:10,5)
+\path [fill=color3, draw opacity=0] (axis cs:10,5)
 --(axis cs:10,10)
 --(axis cs:5,10)
 --(axis cs:5,5)
@@ -527,6 +526,19 @@ table {%
 9.36507912062499 4.80777411791733
 6.21202330507348 9.94488621784665
 };
+
+\node at (axis cs:2.5,1)[
+  scale=1,
+  anchor=base west,
+  text=black,
+  rotate=0.0
+]{ A};
+\node at (axis cs:10,10)[
+  scale=1,
+  anchor=base west,
+  text=black,
+  rotate=0.0
+]{ B};
 \end{axis}
 
 \end{tikzpicture}
