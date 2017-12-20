@@ -89,39 +89,9 @@ A belief state $b$ is a posterior distribution over all past actions and observa
 
 A policy $\pi : \mathbb{B} \to \mathbb{U}$ is a mapping from belief to a control input.
 
-\subsection{Rover Dynamics}
-The dynamics of the rover are given by unicycle model:
-\begin{equation}
-    \begin{bmatrix}
-        x(t+1) \\
-        y(t+1) \\
-        \psi(t+1)
-    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\psi(t)) \delta{t}\\ y(t) + v \sin(\psi(t)) \delta{t}\\ \psi(t) + \omega \delta{t} \end{bmatrix} + w,
-\end{equation}
-where position of the rover is given by $(x,y)$, its heading is given by $\psi$ and it is corrupted by Gaussian noise $w \sim \mathcal{N}(0,\Sigma)$. \\
-\rohan{Do we incorporate roll and pitch in the dynamics?}
-
-\subsection{Copter Dynamics}
-% Better localization for map creation or avoiding obstacle
-The dynamics of the quadrotor are given by the following equations:
-\begin{gather}
-m\ddot{x} = mge_{3} - fRe_{3} \\
-\dot{R} = R\hat{\Omega} \\
-J\dot{\Omega} + \Omega \times J\Omega = M 
-\end{gather}
-
-\rohan{Where do we want to add noise?}
-
-Where the state of the copter is given by position, velocity, acceleration $x, \dot{x}, \ddot{x} \in \mathbb{R}^3$, orientation $R \in SO(3)$ and angular velocity $\Omega \in \mathbb{R}^3$.
-Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R}^3$.
-Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
-Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$.
-
-Since the system is differentially flat, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $[x, y, z, \psi] \in \mathbb{R}^4$.
-
 \pr{Problem} The overall problem is:
 \begin{align}
-\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
+\pi^{*} &= \arg\min \mathbb{E}\\
 \nonumber & \Pr(x\in F) < \epsilon \\
 \nonumber & u_{min} < u_i < u_{max}
 \end{align}
@@ -155,11 +125,11 @@ The pose of the camera $\theta$ can be estimated by minimizing the re-projection
 
 Information $\mathcal{I}$ can be found using the following equation:
 \begin{equation}
-     \mathcal{I} = J^{T}\Sigma^{-1}_{o}
+     \mathcal{I} = J^{T}\Sigma^{-1}_{o}J
 \end{equation}
 for
 \begin{equation}
-     J = \frac{dh}{d\theta}(?)
+     J = \frac{dh}{d\theta}
 \end{equation}
 
 Advantages:
@@ -170,7 +140,7 @@ Advantages:
 
 Challenges:
 \begin{itemize}
-    \item Efficiently finding all the feature points in the field for a give camera pose $\theta$.
+    \item Efficiently finding all the feature points in the field for a given camera pose $\theta$.
     \item Acquiring set of keyframes from an elevation map of the environment.
 \end{itemize}
 
@@ -184,10 +154,43 @@ Challenges:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experiment}\label{sec:experiment}
 
-\subsection{Rover}
+\subsection{Rover }
+The dynamics of the rover are given by unicycle model:
+\begin{equation}
+    \begin{bmatrix}
+        x(t+1) \\
+        y(t+1) \\
+        \psi(t+1)
+    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\psi(t)) \delta{t}\\ y(t) + v \sin(\psi(t)) \delta{t}\\ \psi(t) + \omega \delta{t} \end{bmatrix} + w,
+\end{equation}
+where position of the rover is given by $(x,y)$, its heading is given by $\psi$ and it is corrupted by Gaussian noise $w \sim \mathcal{N}(0,\Sigma)$. \\
+\rohan{Do we incorporate roll and pitch in the dynamics?}
 
 \subsection{Copter}
+\pr{Dynamics} \\
+% Better localization for map creation or avoiding obstacle
+The dynamics of the quadrotor are given by the following equations:
+\begin{gather}
+m\ddot{x} = mge_{3} - fRe_{3} \\
+\dot{R} = R\hat{\Omega} \\
+J\dot{\Omega} + \Omega \times J\Omega = M 
+\end{gather}
+where the state of the copter is given by position, velocity, acceleration $x, \dot{x}, \ddot{x} \in \mathbb{R}^3$, orientation $R \in SO(3)$ and angular velocity $\Omega \in \mathbb{R}^3$.
+Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R}^3$.
+Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
+Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$, and $\times$ is the vector cross-product operator.
 
+Since the system is differentially flat, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $[x, y, z, \psi] \in \mathbb{R}^4$.
+
+\pr{Problem} The overall problem is:
+\begin{align}
+\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
+\nonumber & \Pr(x\in F) < \epsilon \\
+\nonumber & u_{min} < u_i < u_{max}
+\end{align}
+\rohan{Where do we want to add noise in the dynamics?} \\
+\rohan{What is the local controller? LQG won't be robust if we linearise the attitude} \\
+\rohan{What representation do we use for the trajectories?}
 \printbibliography
 
 % marco pavone chance constraint dp on graph
