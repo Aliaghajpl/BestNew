@@ -102,12 +102,15 @@ where position of the rover is given by $(x,y)$, its heading is given by $\psi$ 
 \rohan{Do we incorporate roll and pitch in the dynamics?}
 
 \subsection{Copter Dynamics}
+% Better localization for map creation or avoiding obstacle
 The dynamics of the quadrotor are given by the following equations:
 \begin{gather}
 m\ddot{x} = mge_{3} - fRe_{3} \\
 \dot{R} = R\hat{\Omega} \\
 J\dot{\Omega} + \Omega \times J\Omega = M 
 \end{gather}
+
+\rohan{Where do we want to add noise?}
 
 Where the state of the copter is given by position, velocity, acceleration $x, \dot{x}, \ddot{x} \in \mathbb{R}^3$, orientation $R \in SO(3)$ and angular velocity $\Omega \in \mathbb{R}^3$.
 Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R}^3$.
@@ -116,10 +119,18 @@ Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition
 
 Since the system is differentially flat, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $[x, y, z, \psi] \in \mathbb{R}^4$.
 
+\pr{Problem} The overall problem is:
+\begin{align}
+\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
+\nonumber & \Pr(x\in F) < \epsilon \\
+\nonumber & u_{min} < u_i < u_{max}
+\end{align}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Motivation}
 Talk about degenerate configurations with figures.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Sensor Model}
 
 Let $P \in \mathbb{R}^{3}$ represent a 3-d point, $p \in \mathbb{R}^2$ represent represent a point in the image space and $\pi_\theta:\mathbb{R}^3\to\mathbb{R}^2$ be the camera projection model assuming that the intrinsic camera parameters are known and $\theta$ represents the pose of the camera in the world frame.
@@ -139,12 +150,12 @@ The sensor model is obtained by using the following equation, where $\Sigma_o$ i
 
 The pose of the camera $\theta$ can be estimated by minimizing the re-projection error, as shown in the equation below. Where, $\theta_{kf}$ represents the pose of the keyframe and $p_z$ represents the measure location of the feature point in the image space.
 \begin{equation}
-     \theta = \underset{\theta}{\arg\min}~||z_p - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d))||^2_{\Sigma_o}
+     \theta = \underset{\theta}{\arg\min}~\Sigma ||z_{p_i} - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p_i,d_i))||^2_{\Sigma_o}
 \end{equation}
 
 Information $\mathcal{I}$ can be found using the following equation:
 \begin{equation}
-     \mathcal{I} = J^{T}\Sigma^{-1}_{o}J
+     \mathcal{I} = J^{T}\Sigma^{-1}_{o}
 \end{equation}
 for
 \begin{equation}
@@ -163,6 +174,23 @@ Challenges:
     \item Acquiring set of keyframes from an elevation map of the environment.
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Planning}\label{sec:planning}
+
+\pr{Cost Graph in Belief Space}
+
+\pr{Dynamic-aware Local Planning in Belief Space}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiment}\label{sec:experiment}
+
+\subsection{Rover}
+
+\subsection{Copter}
+
 \printbibliography
+
+% marco pavone chance constraint dp on graph
+% RHC satisfaction
 
 \end{document}
