@@ -51,15 +51,16 @@
 
 \maketitle
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 \end{abstract}
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related work}
 \cite{achtelik2014motion}
 
@@ -71,6 +72,51 @@
 
 \cite{MapQualityEvaluation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem Definition}
+\subsection{General}
+For state $x$ and control input $u$ motion and observation model are defined as follows:
+\begin{align}
+x_{k+1} &= f(x_k, u_k, w_k), w_k \sim p(w_k|x_k,u_k) \\
+z_k &= h(x_k, v_k), v_k \sim p(v_k|x_k)
+\end{align}
+
+A belief state $b$ is a posterior distribution over all past actions and observations and it's evolution is as follows:
+\begin{align}
+    b_{k+1} &= p(x_{k+1}|z_{0:k+1}, u_{0:k}) \\
+            &= \tau(b_k,u_k,z_{k+1})
+\end{align} 
+
+A policy $\pi : \mathbb{B} \to \mathbb{U}$ is a mapping from belief to a control input.
+
+\subsection{Rover Dynamics}
+The dynamics of the rover are given by unicycle model:
+\begin{equation}
+    \begin{bmatrix}
+        x(t+1) \\
+        y(t+1) \\
+        \psi(t+1)
+    \end{bmatrix} = \begin{bmatrix}x(t) + v \cos(\psi(t)) \delta{t}\\ y(t) + v \sin(\psi(t)) \delta{t}\\ \psi(t) + \omega \delta{t} \end{bmatrix} + w,
+\end{equation}
+where position of the rover is given by $(x,y)$, its heading is given by $\psi$ and it is corrupted by Gaussian noise $w \sim \mathcal{N}(0,\Sigma)$. \\
+\rohan{Do we incorporate roll and pitch in the dynamics?}
+
+\subsection{Copter Dynamics}
+The dynamics of the quadrotor are given by the following equations:
+\begin{gather}
+m\ddot{x} = mge_{3} - fRe_{3} \\
+\dot{R} = R\hat{\Omega} \\
+J\dot{\Omega} + \Omega \times J\Omega = M 
+\end{gather}
+
+Where the state of the copter is given by position, velocity, acceleration $x, \dot{x}, \ddot{x} \in \mathbb{R}^3$, orientation $R \in SO(3)$ and angular velocity $\Omega \in \mathbb{R}^3$.
+Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R}^3$.
+Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
+Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$.
+
+Since the system is differentially flat, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $[x, y, z, \psi] \in \mathbb{R}^4$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Motivation}
 Talk about degenerate configurations with figures.
 
@@ -87,6 +133,7 @@ The sensor model is obtained by using the following equation, where $\Sigma_o$ i
 \begin{equation}
      z_p = h(\theta,v)=
      \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d)) + v,~~~ v\sim \mathcal{N}(0,\Sigma_{o})
+     \label{eq:ObsModel}
 \end{equation}
 
 

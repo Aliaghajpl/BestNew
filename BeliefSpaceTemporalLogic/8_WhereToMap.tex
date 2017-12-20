@@ -1,0 +1,119 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{standalone}
+\usepackage{times}
+\usepackage{float}
+
+\input{TemplateFiles/def.tex}
+\input{TemplateFiles/inc}
+
+% numbers option provides compact numerical references in the text. 
+
+% Table caption wrangling
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@makecaption}
+  {\scshape}
+  {}
+  {}
+  {}
+\makeatletter
+\patchcmd{\@makecaption}
+  {\\}
+  {.\ }
+  {}
+  {}
+\makeatother
+
+\newcommand{\Ali}[1]{{\color{green} Ali: #1}}
+\newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
+%\newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
+\allowdisplaybreaks[1]
+
+\begin{document}
+
+% paper title
+\title{\huge Where to Map? Active Mapping with Rover-Helicopter Team}
+
+\author{Takahiro Sasaki, Kyohei Otsu, Ali-akbar Agha-mohammadi}
+
+\maketitle
+
+\begin{abstract}
+In this paper, we consider the problem of planetary exploration with a two-agent team composed of a Mars rover and a Mars helicopter. Images by a helicopter can help estimation or navigation of a rover. In such a mission, how a helicopter learns {\it where to map} for a rover is of great interest in a two-agent team. 
+This paper answers this {\it where to map} by a helicopter while minimizing uncertainty of images by a rover’s camera.
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+%\subsection*{Related Work}
+%\subsection*{Contributions}
+
+\section{Problem Description}
+This section gives a formal definition of the problem we are going to address. 
+
+\subsubsection*{Rover and Helicopter Description}
+The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
+
+\subsubsection*{Rover and Helicopter Measurements}
+Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the helicopter at the $k$-th time step, respectively. Sequences of observations are defined as $z^r_{i:j}=\{z^r_i,z^r_{i+1},\cdots,z^r_j\}$,~$z^c_{i:j}=\{z^c_i,z^c_{i+1},\cdots,z^c_j\}$ for $j>i$.
+
+%\subsubsection*{Map Belief}
+%The map of the environment is denoted by $m$.
+%\subsubsection*{Measurement Model}
+%\subsubsection*{Problem}
+
+%\section{Mapping}
+%Confidence-rich Grid Mapping
+
+\section{Planning}
+\subsection{Planning Objective~1: Covariance (Exploitation)}
+
+We find a helicopter position that minimizes the following cost function:
+\begin{align}
+    x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^r_k
+\end{align}
+where
+\begin{align}
+P^r_k&={\rm Cov}(x^r_k)\\
+&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k)
+\end{align}
+Observation $z_k$ is given by
+\begin{align}
+z_k=x^r_k-L^m_k(x^c_k)
+\end{align}
+
+
+\subsection{Planning Objective~2: Coverage (Exploration)}
+We investigate unseen areas by helicopter.
+\begin{itemize}
+    \item Occluded area (using Viewshed analysis)
+    \item Beyond rover’s perception horizon
+\end{itemize}
+Using Viewshed analysis with $(x^r,~m)$, coverage can be obtained.
+\begin{figure}[b]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
+		\caption{Viewshed analysis.}
+		\label{fig:vs}
+\end{figure}
+
+
+\subsection{Planning Constraints}
+\subsubsection{Field-of-view constraint}
+\subsubsection{Resolution constraint}
+\subsubsection{Flight time constraint}
+\subsubsection{Flight interval constraint}
+~
+%\subsection{Search Method}
+%RRT
+
+%\section{Simulation Results}
+
+%\section{Conclusion}
+
+\end{document}
+
