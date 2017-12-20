@@ -757,19 +757,18 @@ In \citet{haesaert2017verification}, the difference between the models is quanti
 \subsection{Robust control computation}
 
 In this section, we define a robust quantification of the probability that a scLTL property is satisfied.   
-For these robust computations, we know based on
- \citet{tech_report_TACAS} that the resulting  policies are robust to the approximation errors,  and that can be refined to the original MDPs' control policy, while preserving the satisfaction guarantees.
+We introduce robust computations,  based on
+ \citet{tech_report_TACAS}, for which the policies are robust to the approximation errors. More precisely,   levering the $\delta$-approximate simulation relation these policies can be refined to the original MDPs', while preserving the satisfaction guarantees.
 
-%Consider syntactically co-safe properties as defined in \eqref{eq:scLTL}.
-\red{For the product MDP with hybrid state as $s=(x, q)$, denote the Bellman operator}
+\new{To robustify the Bellman operator \eqref{eq:V_recopt_inf_mu}, we resolve the non-determinism cause by the set-valued labeling by minimizing over the associated values as}
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol^\Labset (V)(x,q) \!\!=\!\!\int%_{\X}
-\min_{q' \in \delta_\FSA(q, \Labset( x'))}\left[\mathbf 1_{Acc}(q')+  \mathbf 1_{Q\setminus Acc}(q')V( x',q'))\right]\notag\\&\hspace{5cm}\hfill \times{\tr}(d x'|x,\pol(x,q)),
+& \Bel_\pol^\Labset (V)(x,q) \!\!=\!\!\int_{\X} 
+\min_{q' \in \delta_\FSA(q, \Labset( x'))}\left[\mathbf 1_{Acc}(q')\right.\notag\\ &\left.\hspace{1.25cm}+  \mathbf 1_{Q\setminus Acc}(q')V( x',q'))\right] {\tr}(d x'|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
-\begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\X}\min_{ q' \in \delta_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc}( q')\right.\hspace{1.5cm}\\&\left.\hspace{2.5cm}+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]\notag {\tr}(d x'
-|x,\pol(x,q)).
+\begin{align}
+& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\X}\min_{ q' \in \delta_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc}( q')\right.\hspace{1.25cm}\notag\\&\left.\hspace{1.5cm}+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]{\tr}(d x'
+|x,\pol(x,q)).\label{eq:V_recopt_inf}
 \end{align}
 
 \axx{Here is a good place to contrast the above operators with the ones intriduced in the previous section, to remind the reader about concepts and create a coherent stroy.}
@@ -985,7 +984,7 @@ $p\in\Lab_p(b)  \Leftrightarrow \hat x \in A$ with $b=(x,P)$.  The set-valued ex
  	  \{\{p\},\emptyset\}&\mbox{ else.}\end{array} \right.
  \end{align}
 This can be easily computed by shrinking, respectively, expanding the set $A$.  The extension towards more atomic propositions follows naturally.
-Similarly for propositions on the variance of the current belief state any atomic property which is monotonic in $P$ can be easily mapped to the abstract model.
+Similarly, for propositions on the variance of the current belief state any atomic property that is monotonic in $P$ can be mapped to the abstract model.
 Finally, for propositions that include probability, one should be more care-full as the quantification of probability of an event is in general not monotonic with the variance.
 
  
