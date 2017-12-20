@@ -417,7 +417,7 @@ Consider the syntax of the syntactically co-safe subset of LTL (scLTL) given as
     \begin{equation}\label{eq:scLTL}
      \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
     \end{equation}     where $p\in \AP$.
-\new{ Remark that based on this syntax properties that enforce invariance such as $\Always\psi$ and properties that define liveness specifications, such as $\Always\lozenge \psi$, cannot be formed.  } \new{In fact for words that satisfy these properties there always exists a finite time in which the satisfaction of the property is reached, and after which the remaining behavior becomes of no importance for the satisfaction of the property.  This allows us to reformulate the satisfaction as a reachability problem over a DFA. %For this consider the definition of a DFA as given next.
+\new{ Remark that based on this syntax properties that enforce invariance such as $\Always\psi$ and properties that define liveness specifications, such as $\Always\!\lozenge \psi$, cannot be formed.  } \new{In fact for words that satisfy these properties there always exists a finite time in which the satisfaction of the property is reached, and after which the remaining behavior becomes of no importance for the satisfaction of the property.  This allows us to reformulate the satisfaction as a reachability problem over a DFA. %For this consider the definition of a DFA as given next.
 }
 % 
 %\begin{figure}[htp]
@@ -961,23 +961,47 @@ t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
  
 Consider a simulation relation defined as 
 	\begin{align}\label{eq:rel}
-\rel := \left\{(s,b)| (\hat x-x_s)^T M(\hat x-x_s)\leq \eps, \right.\\\qquad\left.  P^-\preceq P \preceq   P^+ \mbox{ with } b=(\hat x, P ) \right\},\notag
+\rel := \left\{(s,b)| (\hat x-x_s)^T M(\hat x-x_s)\leq \eps^2, \right.\\\qquad\left.  P^-\preceq P \preceq   P^+ \mbox{ with } b=(\hat x, P ) \right\},\notag
 	\end{align}
 and an interface 
 \[\InF(\tilde u,  x_s, \hat x):=K( \hat x - x_s)+\tilde u\]
 \marginpar{\axx{interface deserve more explanation and intuition. It is a very key equation/example.}\red{Any suggestion?}}
 for some matrices $M, K,P^+,P^-$.  
-\new{We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation (c.f. Theorem \ref{def:apbsim}) between $\hat \MB_{grid}$ and $\MB$. That is, for some $\hat \Labset$  it holds that $\hat \MB_{grid}\preceq^\delta_{\hat\Labset,\Labset}\MB$.}
+\new{We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation (c.f. Theorem \ref{def:apbsim}) between $\hat \MB_{grid}$ and $\MB$. That is, we  show that for the relation \eqref{eq:rel}, we can find a set-valued labeling  $\hat \Labset:\hat\X_{bx}\rightarrow 2^\alphabeth$ and that we can compute a $\delta$ such that $\hat \MB_{grid}\preceq^\delta_{\hat\Labset,\Labset}\MB$.}
+
+
 
 \subsection{Labeling requirement {\bf SR $\boldsymbol{\Labset}.$}}
-\red{[To be written]}
+We show that  the simulation relation \eqref{eq:rel} enables the use of a set-valued labelling function $\hat \Labset:\hat\X_{bx}\rightarrow 2^\alphabeth$  for the atomic propositions introduced in Section \eqref{sec:DTL}.
+To construct this labeling function, we require that for all $x_s$ if there exists
+$ b \in \rel(x_s) $ then $ \Lab(b) \in \hat\Labset(x_s)$.
+
+For a position-based proposition $p$ consider, without loss of generality, a labeling $\Lab_p: \Xb \rightarrow \{\{p\},\emptyset\}$ for the concrete belief MDP, denoted
+$p\in\Lab_p(b)  \Leftrightarrow \hat x \in A$ with $b=(x,P)$.  The set-valued extension to $\{ \{\{p\},\emptyset\},\{\emptyset\}, \{\{p\}\} \}$
+ for the abstract MDP is defined as
+ \begin{align}
+ 	\hat \Labset_p(x_s) =\left\{\begin{array}{ll} \{\{p\}\} & \mbox{ if } \forall \hat x \in \rel (x_s):p\in\Lab_p(b), \\
+ 	  \{\emptyset \} & \mbox{ if } \forall \hat x \in \rel (x_s):p\not\in\Lab_p(b),\\
+ 	  \{\{p\},\emptyset\}&\mbox{ else.}\end{array} \right.
+ \end{align}
+This can be easily computed by shrinking, respectively, expanding the set $A$.  The extension towards more atomic propositions follows naturally.
+Similarly for propositions on the variance of the current belief state any atomic property which is monotonic in $P$ can be easily mapped to the abstract model.
+Finally, for propositions that include probability, one should be more care-full as the quantification of probability of an event is in general not monotonic with the variance.
+
+ 
+  
+  
 \subsection{Requirements {\bf SR 1.} and {\bf SR 2.}}
-\new{We require that $P^+$, and $P^-$ are an upper, respectively, lower bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound for $P_{k|k}$ if  $P^-\preceq P_{k|k}$  and if it is monotonically increasing with respect to the Riccati equations see \citep{bitmead1985monotonicity}. For the upper bound we require, mutatis mutandis, a monotonically decreasing $P^+$. }
+For  {\bf SR 1.}, the initial condition  for the concrete system is given deterministically. as $b_0:=(\hat x_{0|0}, P_{0|0})$. Hence we need to show that there exists an initial state $x_{s,0}$ such that the initial states $(x_{s,0},b_0)\in \rel$.  Thus we require that 
+$P^-\preceq  P_{0|0} $ and  $P_{0|0}\preceq P^+$.  Additionally, we choose $x_{s,0}\in \rel^{-1}(\hat x_{0|0})$.    To make sure that the latter is not an empty set, it is sufficient to require that for all $\mathbf r \in \prod_n[-\boldsymbol \delta, \boldsymbol \delta]$ it hols that $ \mathbf r ^T M \mathbf r \leq \eps^2$.
+ 
+ For  {\bf SR 2.},  we need to show that there exists a $\delta$-lifting. 
+First we require that $P^+$, and $P^-$ are an upper, respectively, lower bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the intial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations see \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$. 
 
 
 
-We can quantify the difference between $\MB$ and $\hat\MB$ via \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. 
-Consider a choice for the lifted stochastic  transitions  for \eqref{eq:abstract} and \eqref{eq:beliefx},  denoted 
+We can quantify the difference between $\MB$ and $\hat\MB$ via equation \eqref{eq:rel} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$ with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. 
+Consider a choice for the lifted stochastic  transitions  for  dynamics \eqref{eq:abstract} and \eqref{eq:beliefx},  denoted 
 	$ \mathbb W_{x}((\hat x_k, \hat x_{k|k})\in \cdot| \hat u_{k-1}, \hat x_{k-1}, \hat x_{k-1|k-1})$, based on the combined stochastic difference equation given as
 \begin{align*}
 		&&\hat x_{k+1} &=A\hat x_{k} +B\hat u_{k} + \bar P  C^T  \hat{s}_{k+1},\\%\label{eq:abstract3} \\
