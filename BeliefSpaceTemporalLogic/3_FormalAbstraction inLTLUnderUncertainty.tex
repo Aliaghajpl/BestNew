@@ -509,15 +509,15 @@ where $\ind_{B}(x) = 1$ if $x \in B$,
 and otherwise it is equal to $0$.  }
 
 \new{
-For a given
+For a given stationary
 %property and
-policy $\polb$, the time-dependent value function $\!\mathbf V^\polb_N:\X\rightarrow [0,1]$,  is defined as 
-\begin{align*}\mathbf V_N^\polb(\bar x)=\mathbb{E}^\polb\!\left[\,\sum\limits_{\mathclap{\ \  j\in [1,N]}} \,\, \ind_K(\bar x(j)) \prod\limits_{\mathclap{i=k+1}}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg|\bar x(k)=\bar x\right]\!.\end{align*}
-For a given policy $\mathbf V^\polb_k$ 
-expresses the probability that the state trajectory $\{\bar x({k+1}),\ldots, x({N_s})\}$,
-starting from $\bar x(k)$, will reach the target set $K$ within the time horizon $[k,N_s]$,
+policy $\polb$, the time-dependent value function $\!\mathbf V_\polb^N:\X\rightarrow [0,1]$,  is defined as 
+\begin{align}\mathbf V^N_\polb(\bar x)=\mathbb{E}^\polb\!\left[\,\sum\limits_{\mathclap{\ \  j\in [1,N]}} \,\, \ind_K(\bar x(j)) \prod\limits_{\mathclap{i=k+1}}^{j-1}\ind_{\bar{\X}\setminus K}(\bar x(i))\bigg|\bar x(k)=\bar x\right]\!.\label{eq:Valfunc}\end{align}
+For a given policy $\mathbf V_\polb^N$ 
+expresses the probability that a state trajectory $\{\bar x({0}),\ldots, x({N})\}$,
+starting from $\bar x({0})$, will reach the target set $K$ within the time horizon $N$,
 while staying within the safe set $A$. 
-Hence it expresses the probability of reaching $K$ in $N_s-k$ time steps.}
+Hence it expresses the probability of reaching $K$ in $N$ time steps.}
 %
 \new{This function allows expressing the  reachability probability backward recursively,
 as follows. 
@@ -529,9 +529,9 @@ Denote the Bellman operator
 with $K:=\X \times Acc$.
 Then it follows that 
 \begin{align}
-\mathbf V^\polb_{N} = 
- \Bel_\pol \mathbf V^\polb_{N-1}  .\end{align}
-Thus if $\mathbf V^\polb_{N-1} $ expresses the probability of reaching the accept states in $N-1$ then $ \Bel_\pol \mathbf V^\polb_{N} $ expresses the probability of reaching them in $N$.
+\mathbf V_\polb^{N} = 
+ \Bel_\pol \mathbf V_\polb^{N-1}  .\end{align}
+Thus if $\mathbf V_\polb^{N-1} $ expresses the probability of reaching the accept states in $N-1$ then $ \Bel_\pol \mathbf V_\polb^{N} $ expresses the probability of reaching them in $N$.
 Every recursion combines the probability to reach the accept states in the next transition with the probability of reaching it in the future.
 For the product MDP, this Bellman operator reduces to 
 \begin{align}\label{eq:V_recopt_inf_mu}
@@ -546,24 +546,24 @@ with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the prod
 
 \new{If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^x$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
 Then, for a given stationary policy $\mu$, the  probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
-\begin{align*}
+\begin{align}
 &\P_\init^\polb(\MDP\vDash\psi) = \P_\init^\polb
-(\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\mu\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q),
-\end{align*}
+(\word \in\Language(\mathcal A_\psi))\notag= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\mu\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q),\label{eq:P:prob}
+\end{align}
 with $\mathbf V=0$. Remark that a stationary policy $\pol$ for the product MDP can be translated to  time-dependent policy $\polb$ for the original MDP. The latter then implicitly includes the memory function of the product MDP.}
 
 \new{Instead of defining the recursions for a given policy, we can also optimize it with respect to the set of deterministic  policies $\pol: \bar X\times Q\rightarrow \A$ with $\mathbf D_{\pol}$ the set of universally measurable deterministic policies.
 This yields the optimal Bellman recursion as
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\ast (V)(x,q) =\sup_{\pol\in \mathbf D_{\pol}}\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')V(y,q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(d y\times\{q'\}|x,q,\pol(x,q)).
+& \Bel_\ast (\mathbf V)(x,q) =\sup_{\pol\in \mathbf D_{\pol}}\int_{\X}\left[\mathbf 1_{Acc}( q')+  \mathbf 1_{Q\setminus Acc}(q')\mathbf V(x',q'))\right]\notag\\&\hspace{3cm}\hfill\times \bar{\tr}(dx'\times\{q'\}|x,q,\pol(x,q)).
 \end{align}
 From \cite{Abate1}, we know that the optimal policy of the reachability problem is defined as the argument of the supremum and that the optimal policy is a stationary, universally measurable, and deterministic policy.  }
 
 \new{Hence we have that the maximal satisfaction of a scLTL property $\psi$ reduces to finding the solution of stochastic reachability problem. As a consequence  this reachability problem can be written as follows
-\begin{align*}
+\begin{align}
 &\sup_{\polb}\P_\init^\polb(\MDP\vDash\psi) = \sup_{\polb }\P_\init^\polb
-(\word \in\Language(\mathcal A_\psi))= \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\ast\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q).
-\end{align*}}
+(\word \in\Language(\mathcal A_\psi))=\label{eq:P:prob_opt} \\ &\lim_{N\rightarrow \infty}\int_{\bar{\X}}\left[\mathbf 1_{Acc}( q)+ \mathbf 1_{Q\setminus Acc}(q) \Bel^N_\ast\left( \mathbf V\right)(x_0,q)\right] {\bar \init} (d \bar x,q).\notag
+\end{align}}
 
 \new{Even though we can express the probabilistic satisfaction of these scLTL properties as a stochastic reachability property, we can only perform the computation of the recursions  \eqref{eq:V_recopt_inf_mu} and \eqref{eq:V_recopt_inf}  for a limited set of systems. In general for continuous, or more general uncountable spaces, these recursions are intractable and one needs to use  approximate computations.
 This is especially the case for the belief MDPs in this paper.  Hence we can summarize the problem statement of this work next.}
@@ -591,13 +591,16 @@ We approach  the control synthesis of the belief MDP in three steps:
 \begin{enumerate}
 \item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$. Here, $\delta$ quantifies the difference in the stochastic transitions of the two MDPs.
 \item Given a specification $\psi$, we are interested in  the $\delta$-robust evaluation of the probability that a specification $\psi$ is satisfied for  $\tilde\MB$.  More precisely, levering the $\delta$-stochastic simulation relations we will use the fact that there exists  a $\delta$-robust evaluation, denoted
-$
- \mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi),
+$\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MB\vDash\psi; \tilde\Labset,\delta) %\leq  \mathbf P _{\init}^{\polb}(\MDP\vDash\psi).
+ %\mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi),
 $ 
 such that any control policy ${\tilde \polb}$ for $\tilde \MB$ can be refined to a control policy   ${ \polb}$ for $  \MB$ such that 
  \begin{align}
- \mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi)\leq  \mathbf P _{\initb}^{\polb}(\MB\vDash\psi),
+\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MB\vDash\psi; \tilde\Labset,\delta) 
+ %\mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi)
+ \leq  \mathbf P _{\initb}^{\polb}(\MB\vDash\psi).
 \end{align}
+In the above notation $\tilde\Labset,\delta$ define, respectively, a relaxed labeling for the abstract system and $\delta$ and the deviation in stochastic transitions both introduced in the following subsections.
 \item We give a construction of this refinement that hinges on the robust value function computed in (2).
 \end{enumerate}
 
@@ -773,36 +776,51 @@ and the optimal Bellman
 \marginpar{\tiny \axx{Here is a good place to contrast the above operators with the ones intriduced in the previous section, to remind the reader about concepts and create a coherent stroy.}}
 To create a robust controller, we introduce a robust Bellman operator  $\BelR$. This operator is a  composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $\mathbf V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta}.
+& \BelR_\pol^{(\Labset,\delta)} (\mathbf V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta}.
 \end{align}
 \new{Remark that the truncation clips negative values of the now robustified probabilistic reachability property to zero. }
 %\axx{provide more intution about the meaning of R. Why do we have trunctation here?}
 Similarly, the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x,q)-\delta}
+& \BelR_\ast^{(\Labset,\delta)} (\mathbf V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x,q)-\delta}
 \end{align}
-\axx{better motivate robustness. why can't we just go with optimal? why do we need this robustness notion?}
 
-The ``robustified'' optimal probability of reaching $Acc_\FSA$ is given as
-\axx{why?}
-\begin{align}
-	V^\infty_\ast & =\lim_{N\rightarrow \infty}\BelR_\ast^N (V) \\
-	\pol^\infty_\ast(x,q)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x,q) 
-\end{align}
-with $V=0$.
-\axx{what do you mean by $V=0$ ?}
+%The ``robustified'' optimal probability of reaching $Acc_\FSA$ is given as
+%\axx{why?}
+%\begin{align}
+%	V^\infty_\ast & =\lim_{N\rightarrow \infty}\BelR_\ast^N (V) \\
+%	\pol^\infty_\ast(x,q)  &= \max_\pol \BelR_\pol (V_\ast^\infty)(x,q) 
+%\end{align}
+%with $V=0$.
+%\axx{what do you mean by $V=0$ ?}
 
-The robustified optimal probability of reaching $Acc$ is given as
-\axx{needs a bit more explanation of the terms in the equation}
-\begin{align}
-&\BelR_\init^\polb
-(\word \in\mathcal L(\mathcal A_\psi))=\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(\bar x))}\left[\mathbf 1_{Acc}(\bar q)+ \mathbf 1_{Q \setminus Acc}(\bar q) V^\infty_\ast(x_0) \right]%\notag\\\times
-\init (d x_0)-\delta.
+The robustified optimal probability of reaching $Acc$ and hence satisfying $\psi$ is given as
+\begin{align}\label{eq:prob:robust_optimal}
+&\mathbf{P_{\! rob}}_\init^{\!\ast}(\MDP\vDash\psi; \Labset,\delta) =\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(x_0))}\left[\mathbf 1_{Acc}(\bar q)+ \mathbf 1_{Q \setminus Acc}(\bar q) \mathbf W^\infty_\ast(x_0,\bar q) \right]\notag 
+\init (d x_0)-\delta\\
+&\mbox{ with }\ \mathbf W^\infty_\ast :=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N (\mathbf W) \mbox{ and } \mathbf W=0.
 \end{align} 
-The proof of this set of operators can be derived based on the the proofs in \citep{tech_report_TACAS}.
- 
+Remark the the robust optimal probability is parameterized with the set-valued labeling and the $\delta$ error in the stochastic transitions.
 
 
+\begin{prop}\label{prop:1}
+Suppose that $\tilde \MDP$  is  $\delta$-stochastically simulated by $\MDP$, that is  $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP,$ with respect to  $({\tilde{\Labset},\Labset})$. 
+Then, any control policy ${\tilde \polb}^*$ for $\tilde \MDP$ can be refined to a control policy   ${ \polb}$ for $  \MDP$ such that 
+ \begin{align}\label{eq:prob_result}
+\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MDP\vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb}(\MDP\vDash\psi).
+\end{align}
+ \end{prop}
+The proof of this set of operators and of the given proposition can be derived based on the the proofs in \citep{tech_report_TACAS} constructed for $(\eps,\delta)$- stochastic simulation relations.
+
+
+\red{[Can be removed:]}
+\begin{cor}\label{cor:2} Under the same conditions as in Prop. \ref{prop:1}, for 
+any stationary optimal control policy ${\tilde \polb}^*$ for $\tilde \MDP$,  a control policy   ${ \polb}$ for $  \MDP$ such that 
+ \begin{align}
+\mathbf W^{\tilde \polb*}_{N-1} (\tilde x, q)\leq  \mathbf V^\polb_{N-1} (x,q)
+\end{align} can be computed if the states are related, that is,
+for $(\tilde x, x ) \in \rel$ and with $\mathbf V^\polb_{N-1} (x)$ computed with equation \eqref{eq:Valfunc} for $\MDP$, and  with $\mathbf W^{\tilde \polb}_{N-1} (x)$ computed with the robust operator $\mathbf R^{(\tilde \Labset, \delta)}_{\tilde\pol^\ast}$.
+ \end{cor}
 
 
 %
@@ -855,32 +873,17 @@ The proof of this set of operators can be derived based on the the proofs in \ci
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Control refinement}\label{sec:control}
-\red{[New contribution]}
-\axx{since this is a new contribution of this paper, we should have a nice introduction for this section.... you can start by saying what the control refinement is and why do we need it. Then show how we do it.}
-Given a value function 
-	$\tilde V^\infty_\ast:\tilde\S \rightarrow [0,1]$ \axx{I am still a bit confused about the range of the value function. Why do we limit it to 0 to 1. Can we state this is with no loss of generality?} \red{So I should have said earlier that the exact value functions represents the probability of reaching the accepting states in the DFA. Thus the values point-wise represent probabilities, the range of the value of function is limited to [0,1]. }
-	
-	and abstract policy 	\red{$\tilde  \pol^\infty_\ast:\tilde\S \rightarrow [0,1]$ [This is wrong.  We cannot assume that the policy will be deterministic. Hence the policy is defined as a measure, which is parameterized by the current state and control action.] }\axx{shouldn't the range of policy be the "control space"}. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
+Based on proposition \ref{prop:1}, we already know we can construct a refined policy for the concrete model. In \cite{tech_report_TACAS}, this refined policy is constructed via the composition of the conditional lifting of the $\delta$-stochastic simulation relation and based on the abstract policy $\tilde  \pol^\ast$. 
+In this paper, we give an improvement of this construction that is independent of the exact lifting used in the simulation relation. Instead, we use the robust  value function $\mathbf  W^\infty_\ast$ computed for the abstract system.
+Given this robust value function  
+	and abstract policy  $\tilde  \pol^\ast$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
 	\begin{align}\label{eq:Valuebased_refined}
 		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in
-		\rel^{-1}(x)} \bar V^\infty_\ast(\tilde x,q).
+		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).
 	\end{align}
-\axx{I need to go back to previous sections and make connections in my mind... it is not clear to me how we reached to this conclusion.}
-If  $\bar V^\infty_\ast$ has a finite domain, then  the maximization in equation \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 	\red{[Notation not introduced:]}
-	Furthermore
-\begin{align}
-  \mathbf R^{\tilde \pol_\ast}_{\tilde\rho}\left(
-\tilde{\mathcal{B}}
- \vDash \psi \right)\leq   \mathbf P^{ \pol_\ast} _{ \rho}\left(
- {\mathcal{B}}
- \vDash \psi \right)
-\end{align}
+When  $\mathbf  W^\infty_\ast$ has a finite domain, then  the maximization in equation \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
+Remark that as a corollary of Proposition \ref{prop:1}, it also follows that the probability that the scLTL property is satisfied is still lower bounded as in \eqref{eq:prob_result}.
  
-\red{Above formula should hook into the problem statement. Then afterwards we introduce the next section as an application onto the Gaussian LTI systems.}
- 
-\axx{define varialbes and give intuition in this last equation.}
- 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Gaussian LTI system with partial observations}\label{sec:case}
 In this section, we derive an approximate model for a POMDP that can be modeled as a Linear Time Invariant (LTI) model.  We first show that the belief MDP of this LTI model can be given based on the Kalman filter. Then, we introduce a formal abstraction of this model.
