@@ -322,9 +322,9 @@ For a belief state characterized by  a Gaussian distribution with the mean $\hat
 %  $\Xb:=\mathbb R^n\times \S^n$,  then a labeling function  can be for example be composed of level functions based on
  %\axx{$X_b$ was a infinite-dimensional function space. Now, we overloaded it with the finite-dimensional parameter space. I think it is okay. But, we just need to be careful which one we are referring to when we work wiht it.}
      \begin{enumerate}
-         \item \new{a position based proposition which is evaluated as true, when the  state mean $\hat{x}$ is in a specific (Borel measurable) set  in $\mathbb R^n $. The set could define a region of interest containing rocks.}
+         \item a position based proposition that is evaluated as true when the  state mean $\hat{x}$ is in a specific (Borel measurable) set  in $\mathbb R^n $. %The set could define a region of interest containing rocks.
    % where in the state space the system should be. 
- 	\item \new{a proposition on the uncertainty of the current state, which is evaluated as true when the state determinant of the state variance is less than a given constant $c_1$, that is   $det(P)\leq c_1$; } %or when the trace of the state variance is bounded 
+ 	\item an uncertainty based proposition, evaluated as true when the determinant of the state variance is less than a given constant $c_1$, that is   $det(P)\leq c_1$;  %or when the trace of the state variance is bounded 
  %	\item Bounds on determinant or trace of the covariance matrix (i.e., $det(P)$, $Tr(P)$) to  bound the uncertainty about the system's state.
 	\item \new{ a proposition $ p_i$ which assigns a lower or upper bound to  the chance of an event $A$,  that is $ p_i \leftrightarrow b_k(A)=\po\left(x_k\in A{\,\mid\,}\rho, i_k\right)>c$. }
 % 	\item Bound on projection of covariance matrix $\Pi P$ to bound the uncertainty in a specific direction. 
@@ -590,7 +590,7 @@ In this section, we show  how we can leverage computations performed on the abst
 We approach  the control synthesis of the belief MDP in three steps:
 \begin{enumerate}
 \item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$. Here, $\delta$ quantifies the difference in the stochastic transitions of the two MDPs.
-\item Given a specification $\psi$, we are interested in  the $\delta$-robust evaluation of the probability that a specification $\psi$ is satisfied for  $\tilde\MB$.  More precisely, levering the $\delta$-stochastic simulation relations will show that there exists  a $\delta$-robust evaluation, denoted
+\item Given a specification $\psi$, we are interested in  the $\delta$-robust evaluation of the probability that a specification $\psi$ is satisfied for  $\tilde\MB$.  More precisely, levering the $\delta$-stochastic simulation relations we will use the fact that there exists  a $\delta$-robust evaluation, denoted
 $
  \mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi),
 $ 
@@ -679,7 +679,7 @@ To make sure that requirement \eqref{req:translifting} is constructive for the c
 \begin{equation}\tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}\end{equation} with respect to $\Wt$ and with $\InF$, a given Borel measurable  interface function, mapping the action and state pair to their refined actions
 \begin{align*}\InF: \tilde \A\times \tilde \Xb\times\Xb \rightarrow \mathcal{P}(\A,\mathcal B(\A)). \end{align*}
 
-Based on these requirements we are now ready to define a labeling-based stochastic simulation relation as follows. 
+Based on these requirements we are now ready to define a labeling-based $\delta$-stochastic simulation relation as follows. 
 
 \begin{definition}[labeling-based $\delta$-stochastic simulation relation]\label{def:apbsim}
 Consider a concrete MDP $\MDP$ and an abstract  MDP $\tilde\MDP$, with labeling maps $\Labset$ and  $\tilde{\Labset}$.   
@@ -751,7 +751,7 @@ In \citet{haesaert2017verification}, the difference between the models is quanti
 %\end{definition}
 %
 
-\axx{summarize the findings of the section, adn say how it connects to the next section...}
+%\axx{summarize the findings of the section, adn say how it connects to the next section...}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Robust control computation}
@@ -760,25 +760,24 @@ In this section, we define a robust quantification of the probability that a scL
 We introduce robust computations,  based on
  \citet{tech_report_TACAS}, for which the policies are robust to the approximation errors. More precisely,   levering the $\delta$-approximate simulation relation these policies can be refined to the original MDPs', while preserving the satisfaction guarantees.
 
-\new{To robustify the Bellman operator \eqref{eq:V_recopt_inf_mu}, we resolve the non-determinism cause by the set-valued labeling by minimizing over the associated values as}
+\new{To robustify the Bellman operator \eqref{eq:V_recopt_inf_mu}, we resolve the non-determinism caused by the set-valued labeling by minimizing over the associated values as}
 \begin{align}\label{eq:V_recopt_inf}
-& \Bel_\pol^\Labset (V)(x,q) \!\!=\!\!\int_{\X} 
-\min_{q' \in \delta_\FSA(q, \Labset( x'))}\left[\mathbf 1_{Acc}(q')\right.\notag\\ &\left.\hspace{1.25cm}+  \mathbf 1_{Q\setminus Acc}(q')V( x',q'))\right] {\tr}(d x'|x,\pol(x,q)),
+& \Bel_\pol^\Labset (\mathbf V)(x,q) \!\!=\!\!\int_{\X} 
+\min_{q' \in \delta_\FSA(q, \Labset( x'))}\left[\mathbf 1_{Acc}(q')\right.\notag\\ &\left.\hspace{1.25cm}+  \mathbf 1_{Q\setminus Acc}(q')\mathbf V( x',q'))\right] {\tr}(d x'|x,\pol(x,q)),
 \end{align}
 and the optimal Bellman 
 \begin{align}
-& \Bel_\ast^\Labset (V)(x,q) =\sup_\pol\int_{\X}\min_{ q' \in \delta_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc}( q')\right.\hspace{1.25cm}\notag\\&\left.\hspace{1.5cm}+  \mathbf 1_{Q\setminus Acc}( q')V( x', q'))\right]{\tr}(d x'
+& \Bel_\ast^\Labset (\mathbf  V)(x,q) =\sup_\pol\int_{\X}\min_{ q' \in \delta_\FSA(q, \Labset(\bar x))}\left[\mathbf 1_{Acc}( q')\right.\hspace{1.25cm}\notag\\&\left.\hspace{1.5cm}+  \mathbf 1_{Q\setminus Acc}( q')\mathbf V( x', q'))\right]{\tr}(d x'
 |x,\pol(x,q)).\label{eq:V_recopt_inf}
 \end{align}
-
-\axx{Here is a good place to contrast the above operators with the ones intriduced in the previous section, to remind the reader about concepts and create a coherent stroy.}
-
-\axx{start paragrphas by the purpose of it, like, "To create a robust controller, we introduce a robust Bellman operator R ..."}Denote the robust Bellman operator $\BelR$ as the composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $V:\X\rightarrow [0,1]$
+\marginpar{\tiny \axx{Here is a good place to contrast the above operators with the ones intriduced in the previous section, to remind the reader about concepts and create a coherent stroy.}}
+To create a robust controller, we introduce a robust Bellman operator  $\BelR$. This operator is a  composition of the Bellman operator together with a correction factor $\delta$ and  a truncation operation, that is for $\mathbf V:\X\rightarrow [0,1]$
 \begin{align}\label{eq:V_recopt_inf}
-& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta},
+& \BelR_\pol (V)(x,q) = \trunc{[0,1]}{\Bel_\pol^\Labset (V)(x,q)-\delta}.
 \end{align}
-\axx{provide more intution about the meaning of R. Why do we have trunctation here?}
-and the robust version of the optimal Bellman operator is given as 
+\new{Remark that the truncation clips negative values of the now robustified probabilistic reachability property to zero. }
+%\axx{provide more intution about the meaning of R. Why do we have trunctation here?}
+Similarly, the robust version of the optimal Bellman operator is given as 
 \begin{align}\label{eq:V_recopt_inf}
 & \BelR_\ast (V)(x,q)= \trunc{[0,1]}{\Bel_\ast^\Labset (V)(x,q)-\delta}
 \end{align}
