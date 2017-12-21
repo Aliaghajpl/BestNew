@@ -145,7 +145,7 @@ with model order reductions and simplifications.  Since we work over belief MDPs
  In the next section, the POMDPs and their belief models are first introduced together with the temporal logic used to define properties of interest. 
  Afterwards, we define the verification and control synthesis  problem for temporal logic properties over belief MDPs. 
  In Section \ref{sec:refinement}, the synthesis problem is solved robustly by newly using labeling-based stochastic simulation relation. In Section \ref{sec:case}, an illustrative case study is given. 
-Finally in the last section, the conclusions are given and the required future work to enable solving real-sized problems is discussed.
+%Finally in the last section, the conclusions are given and the required future work to enable solving real-sized problems is discussed.
  
 \section{POMDPs and temporal logic specifications.}
 
@@ -217,14 +217,15 @@ A partially observable Markov decision process $\POMDP$ (POMDP) is an MDP $\MDP 
 \begin{enumerate}
 %	\item $\X$, the state space with states $x\in\X$ as its element;
 %	\item $\A$, the action space;
-	\item observations $z$ in $\Z$,  which is a Polish space \axx{what specific feature of Polish speace do you need?} referred to as the observation space, % which is a Borel space.
+	\item observations $z$ in $\Z$,  which is a Polish space %\axx{what specific feature of Polish speace do you need?} 
+	referred to as the observation space, % which is a Borel space.
 %\end{enumerate}
 %with 
 %\begin{enumerate}
 %\item $\init$, the initial probability distribution,
 %\item $\tr(\cdot|x,a)$, the stochastic transition kernel of the next state given the current state-action pair,
 \item $r(\cdot|x)$,  the observation kernel giving the probability of the current observation,  $z\sim r(\cdot|x)$,  for the current state variable $x$.
-\axx{why $r$? in robotic-pomdp literature, this is not common.  $z\sim p_z(\cdot|x)$}
+%\axx{why $r$? in robotic-pomdp literature, this is not common.  $z\sim p_z(\cdot|x)$} => for stochastic kernels I perfer to not use the probability sign
 \end{enumerate}
 
 
@@ -331,7 +332,7 @@ For a belief state characterized by  a Gaussian distribution with the mean $\hat
 %    \item Bounds on Mahalanobis distance $\mathcal{M}(\hat{x},P,x) = (\hat{x}-x)^TP^{-1}(\hat{x}-x)$
 %    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
     \end{enumerate}
-     	\axx{when i saw the label, I thought you are going to assign semantic values such as sand, rock, ... But, it is different. So, is "label" the right/common word for this in the LTL world? To me "attribute" or "feature" seems better. }\red{Sofie: labeling is the right word within LTL, we can specify  the type of features that is isolated with the used labeling?} \red{Sofie: I think the above set of examples is easier to understand?}
+%     	\axx{when i saw the label, I thought you are going to assign semantic values such as sand, rock, ... But, it is different. So, is "label" the right/common word for this in the LTL world? To me "attribute" or "feature" seems better. }\red{Sofie: labeling is the right word within LTL, we can specify  the type of features that is isolated with the used labeling?} \red{Sofie: I think the above set of examples is easier to understand?}
       \new{At each state, several  atomic propositions can hold. For example, while staying in a region of interest as given in (1), the uncertainty on the current state could also be very low.  }
    \new{We say that a combination of propositions $p_i\in AP$ define an alphabet $\Sigma := 2^{AP}$. Each letter $\letter$ of the alphabet is defined as a set of atomic propositions.  Consider  a labeling function which maps states in the state space to letters in the alphabet. This labeling function is denoted as $\Lab:\Xb\rightarrow \alphabeth$.  }
 We require that the labeling function is measurable, that is we require that the induced sets  are Borel measurable
@@ -610,14 +611,13 @@ In the above notation $\tilde\Labset,\delta$ define, respectively, a relaxed lab
 %In this section, we will first introduce the labeling based $\delta$-stochastic simulation relation. Then, in the next subsection we will give a computation which is robust for models in this $\delta$-stochastic simulation relations.  In subsection \ref{sec:control}, we introduce the new concept of value-based control refinement.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Lifting based simulation  and approximate similarity}
-\marginpar{\axx{I think in this paper what can help a lot is that:
-
-In each section, start by saying the puprpose of the section, like, In this section, we will ....
-
-And then at the end of the section, in a couple of lines re-emphaize the findings of the section and motivate the next section...
-
-}}
-
+%\marginpar{\axx{I think in this paper what can help a lot is that:
+%
+%In each section, start by saying the puprpose of the section, like, In this section, we will ....
+%
+%And then at the end of the section, in a couple of lines re-emphaize the findings of the section and motivate the next section...
+%
+%}}
 \new{In this subsection, we introduce a similarity relation between MDPs, that is amiable for belief MDPs. 
 Let us anticipated this with the introduction of the concept of a relation between two spaces. }
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
@@ -807,7 +807,7 @@ Remark the the robust optimal probability is parameterized with the set-valued l
 Suppose that $\tilde \MDP$  is  $\delta$-stochastically simulated by $\MDP$, that is  $\tilde{\MDP}\preceq^{\delta}_{\tilde{\Labset},\Labset}\MDP,$ with respect to  $({\tilde{\Labset},\Labset})$. 
 Then, any control policy ${\tilde \polb}^*$ for $\tilde \MDP$ can be refined to a control policy   ${ \polb}$ for $  \MDP$ such that 
  \begin{align}\label{eq:prob_result}
-\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MDP\vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb}(\MDP\vDash\psi).
+\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MDP\vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb}(\MDP\vDash\psi).  \qed
 \end{align}
  \end{prop}
 The proof of this set of operators and of the given proposition can be derived based on the the proofs in \citep{tech_report_TACAS} constructed for $(\eps,\delta)$- stochastic simulation relations.
@@ -819,7 +819,7 @@ any stationary optimal control policy ${\tilde \polb}^*$ for $\tilde \MDP$,  a c
  \begin{align}
 \mathbf W^{\tilde \polb*}_{N-1} (\tilde x, q)\leq  \mathbf V^\polb_{N-1} (x,q)
 \end{align} can be computed if the states are related, that is,
-for $(\tilde x, x ) \in \rel$ and with $\mathbf V^\polb_{N-1} (x)$ computed with equation \eqref{eq:Valfunc} for $\MDP$, and  with $\mathbf W^{\tilde \polb}_{N-1} (x)$ computed with the robust operator $\mathbf R^{(\tilde \Labset, \delta)}_{\tilde\pol^\ast}$.
+for $(\tilde x, x ) \in \rel$ and with $\mathbf V^\polb_{N-1} (x)$ computed with equation \eqref{eq:Valfunc} for $\MDP$, and  with $\mathbf W^{\tilde \polb}_{N-1} (x)$ computed with the robust operator $\mathbf R^{(\tilde \Labset, \delta)}_{\tilde\pol^\ast}$.  \qed
  \end{cor}
 
 
@@ -879,10 +879,10 @@ Given this robust value function
 	and abstract policy  $\tilde  \pol^\ast$. We can compute a refined  concrete policy over the product MDP $\MB\otimes\FSA_\psi$ as
 	\begin{align}\label{eq:Valuebased_refined}
 		\pol_\ast(x,q):=\, &\InF( \tilde{\pol}(\tilde x, q), \tilde x, x) \\ \mbox{ with } &\tilde x:=\arg\max_{ \tilde x\in
-		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).
+		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).\notag
 	\end{align}
 When  $\mathbf  W^\infty_\ast$ has a finite domain, then  the maximization in equation \eqref{eq:Valuebased_refined} is performed over a finite set and does not introduce any measurability issues. 
-Remark that as a corollary of Proposition \ref{prop:1}, it also follows that the probability that the scLTL property is satisfied is still lower bounded as in \eqref{eq:prob_result}.
+Remark that as a corollary of Proposition \ref{prop:1}, it also follows that the probability that the scLTL property is satisfied is still lower bounded as in equation \eqref{eq:prob_result}.
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Gaussian LTI system with partial observations}\label{sec:case}
@@ -893,7 +893,8 @@ Consider an LTI system
 x_{k+1}&=A x_{k} + B u_k+ w_k\\
 z_k&=Cx_k+v_k\end{aligned} \end{align}
 with $x\in \mathbb{R}^n$ with stochastic disturbances $w_t\sim \mathcal N(0,\CA W)$, and $v_t\sim \mathcal N(0,\CA V)$. 
-Eq. \eqref{eq:LTI}  defines an MDP with state space $\X\subseteq\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and transition kernel $t$ defined based on  \eqref{eq:LTI}. This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
+Equation  \eqref{eq:LTI}  defines an MDP with state space $\X\subseteq\mathbb R^n$,  initial distribution  $\init:=\mathcal N(x_\init,P_\init)$,  control inputs $u_t\in\mathbb R^m$, and a transition kernel $t$. %defined based on difference eqution  \eqref{eq:LTI}. 
+This is a partially observable MDP that can only be observed via  $z_t\in\mathbb R^q$.
  
  
 %At $k=0$, we know $x_0\sim \init$ with $\init:=\mathcal N(x_\init,P_\init)$.
@@ -950,11 +951,11 @@ Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cel
 Further $\hat\MB_{grid}$  has transitions 
 \begin{align}\label{eq:tgrid}
 t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)
-\end{align}where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}.
+\end{align}where $\hat t$ is the stochastic transition kernel associated with difference equation \eqref{eq:abstract}.
 
 \begin{figure}[htp]
 \centering
-	\includegraphics[width = .8\columnwidth]{figs/grid}
+	\includegraphics[width = .6\columnwidth]{figs/grid}
 	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition.  \red{Feel free to improve[}}\label{fig:grid}
 \end{figure}
 
