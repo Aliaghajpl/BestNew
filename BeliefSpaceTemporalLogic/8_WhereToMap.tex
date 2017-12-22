@@ -32,9 +32,9 @@
 \begin{document}
 
 % paper title
-\title{\huge Where to Map? Active Mapping with Rover-Helicopter Team}
+\title{\huge Mobile Eye in the Sky: Copter-Rover Coordination for Space Exploration}
 
-\author{Takahiro Sasaki, Kyohei Otsu, Ali-akbar Agha-mohammadi}
+%\author{Takahiro Sasaki, Kyohei Otsu, Ali-akbar Agha-mohammadi, Kamak Ebadi}
 
 \maketitle
 
@@ -55,65 +55,130 @@ This paper answers this where to map by a helicopter while minimizing uncertaint
 \section{Problem Description}
 This section gives a formal definition of the problem we are going to address. 
 
-\subsubsection*{Rover and Helicopter Description}
+\pr{Rover and Helicopter Description}
 The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
 
-\subsubsection*{Rover and Helicopter Measurements}
+\pr{Rover and Helicopter Measurements}
 Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the helicopter at the $k$-th time step, respectively. Sequences of observations are defined as $z^r_{i:j}=\{z^r_i,z^r_{i+1},\cdots,z^r_j\}$,~$z^c_{i:j}=\{z^c_i,z^c_{i+1},\cdots,z^c_j\}$ for $j>i$.
 
-%\subsubsection*{Map Belief}
-%The map of the environment is denoted by $m$.
-%\subsubsection*{Measurement Model}
-%\subsubsection*{Problem}
-
-%\section{Mapping}
-%Confidence-rich Grid Mapping
-
-\section{Planning}
-\subsection{Planning Objective~1: Covariance (Exploitation)}
-
-We find a helicopter position that minimizes the following cost function:
+\pr{Map Belief}
+We denote the map of the environment by $m$ and assume the environment is stationary. The knowledge we have about the environment is obtained via noisy sensors. Therefore, the best we can have is a probabilistic representation of $m$, i.e., the map belief
 \begin{align}
-    x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^r_k
+    b^{m}_k&=p(m | z^r_{0:k}, x^r_{0:k})
+\end{align}
+or
+\begin{align}
+    b^{m}_k&=p(m | z^r_{0:k}, x^r_{0:k}, z^c, x^c)
+\end{align}
+%one by one??
+
+\pr{Measurement Model}
+The measurement model describes the probability distribution over all possible observations given the robots' state $x$ and the environment map $m$.
+\begin{align}
+    p(z|m, x)
+\end{align}
+
+\pr{Problem}
+
+\section{Mapping}
+
+\pr{Map Representation}
+%Confidence-rich Grid Mapping
+Surf features
+\begin{align}
+    m=
+\end{align}
+
+\pr{Map Evolution}
+
+\begin{align}
+    m_{k+1}=\tau^m (m_k, u^c, z^c_{k+1})
 \end{align}
 where
 \begin{align}
-P^r_k&={\rm Cov}(x^r_k)\\
-&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k)
+    z^c_{k+1} &\sim p(\cdot |x^c_{k+1})\\
+    x^c_{k+1} &\sim p(\cdot |x^c_k, u^c_k, w^c_k)
 \end{align}
-Observation $z_k$ is given by
+
+
+%\pr{Map Update}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Rover Localization}
+
 \begin{align}
-z_k=x^r_k-L^m_k(x^c_k)
+    b^r_{k+1}=\tau^r (b^r_k, u^r_k, z^r_{k+1}; m)
 \end{align}
 
 
-\subsection{Planning Objective~2: Coverage (Exploration)}
-We investigate unseen areas by helicopter.
-\begin{itemize}
-    \item Occluded area (using Viewshed analysis)
-    \item Beyond rover’s perception horizon
-\end{itemize}
-Using Viewshed analysis with $(x^r,~m)$, coverage can be obtained.
-\begin{figure}[b]
-		\centering
-		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
-		\caption{Viewshed analysis.}
-		\label{fig:vs}
-\end{figure}
+\section{Planning}
+\subsection{Planning Objective}
 
+\begin{align}
+    c(b_k, u_k)=
+\end{align}
+
+Covariance (Exploitation)\\
+
+
+We find a helicopter position that minimizes the following cost function:
+\begin{align}
+    x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^{r+}_k
+\end{align}
+where
+\begin{align}
+P^{r+}_k&={\rm Cov}(x^{r+}_k) = Cov(x^{r}_k | z_{0:k})\\
+&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k).
+\end{align}
+Using the cost $C(b_k, u_k)$,
+\begin{align}
+    &u^{c*}_{0:k}=\arg\min_{x^c \in X^c} \mathbb{E} \sum^T_{k=0} C(b^r_k, u_k; m_k (u^c_{0:k}))\\
+    &{\rm s.t.} \hspace{5mm} ||u^c_{0:k}||< \delta\\
+    &\hspace{10mm} x^r_T \in goal^r
+\end{align}
+
+
+
+
+
+
+%Observation $z_k$ is given by
+%\begin{align}
+%z_k=x^r_k-L^m_k(x^c_k)
+%\end{align}
+
+
+%\subsection{Planning Objective~2: Coverage (Exploration)}
+%We investigate unseen areas by helicopter.
+%\begin{itemize}
+%    \item Occluded area (using Viewshed analysis)
+%    \item Beyond rover’s perception horizon
+%\end{itemize}
+%Using Viewshed analysis with $(x^r,~m)$, coverage can be obtained.
+%\begin{figure}[b]
+%		\centering
+%		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
+%		\caption{Viewshed analysis.}
+%		\label{fig:vs}
+%\end{figure}
 
 \subsection{Planning Constraints}
+
 \subsubsection{Field-of-view constraint}
+~
 \subsubsection{Resolution constraint}
+~
 \subsubsection{Flight time constraint}
+~
 \subsubsection{Flight interval constraint}
 ~
-%\subsection{Search Method}
+
+\section{Search Method}
 %RRT
+\pr{Grid the Search Space}
 
-%\section{Simulation Results}
+\section{Simulation Results}
 
-%\section{Conclusion}
+\section{Conclusion}
 
 \end{document}
 
