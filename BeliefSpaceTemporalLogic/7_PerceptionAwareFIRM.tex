@@ -103,6 +103,12 @@ Talk about degenerate configurations with figures.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Sensor Model}
 
+\pr{Map Representation}
+define keyframes, feature points
+
+\pr{Sensor Model:}
+describe projection
+
 Let $P \in \mathbb{R}^{3}$ represent a 3-d point, $p \in \mathbb{R}^2$ represent represent a point in the image space and $\pi_\theta:\mathbb{R}^3\to\mathbb{R}^2$ be the camera projection model assuming that the intrinsic camera parameters are known and $\theta$ represents the pose of the camera in the world frame.
 
 The equation below projects a point $P$ in the world frame to image space of $k^{th}$ camera frame:
@@ -117,7 +123,10 @@ The sensor model is obtained by using the following equation, where $\Sigma_o$ i
      \label{eq:ObsModel}
 \end{equation}
 
-
+\rohan{TODO: Define feature and }
+\pr{Keyframe}
+\pr{Feature}
+\\
 The pose of the camera $\theta$ can be estimated by minimizing the re-projection error, as shown in the equation below. Where, $\theta_{kf}$ represents the pose of the keyframe and $p_z$ represents the measure location of the feature point in the image space.
 \begin{equation}
      \theta = \underset{\theta}{\arg\min}~\Sigma ||z_{p_i} - \pi_\theta(\pi^{-1}_{\theta_{kf}}(p_i,d_i))||^2_{\Sigma_o}
@@ -180,9 +189,30 @@ Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R
 Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
 Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$, and $\times$ is the vector cross-product operator.
 
-Since the system is differentially flat, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $[x, y, z, \psi] \in \mathbb{R}^4$.
+\pr{Differential Flatness} The quadcopter model is differentially flat. Thus, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $x^f = [x, y, z, \psi] \in \mathbb{R}^4$. 
+
+$(u(t), x(t)) = q(x^f(t))$
+
+$(u_t, x_t) = q_t(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
+
+
+\pr{Policy}
+we have segments...
+
+This is a trajectory not a policy...
+$x^f(t) = g(t;c)=\sum_{i=0}^n c_i t^i$, where $c^i\in\mathbb{R}^4$
+
+The full set of parameters
+$param = c^i_?$
 
 \pr{Problem} The overall problem is:
+\begin{align}
+\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
+\nonumber & \Pr(x\in F) < \epsilon \\
+\nonumber & u_{min} < u_i < u_{max}
+\end{align}
+
+
 \begin{align}
 \pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
 \nonumber & \Pr(x\in F) < \epsilon \\
@@ -194,6 +224,13 @@ Since the system is differentially flat, we can find a control input $u(t)$ and 
 \rohan{Currently we can execute only execute trajectories which are a sequence of 9th order polynomials}
 \printbibliography
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Future work}
+\begin{enumerate}
+    \item Closed-loop controller for quadcopter
+\end{enumerate}
+
+\end{document}
 % marco pavone chance constraint dp on graph
 % RHC satisfaction
 
