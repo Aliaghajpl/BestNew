@@ -296,7 +296,7 @@ discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ w
     \item $\trb:\Xb\times\A\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \A$ a probability measure \eqref{eq:trb} over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
   for which $\Xb$ and $\A$ are  Polish spaces \citep{bertsekas2004stochastic} and $\trb$ is a Borel measurable mapping.\footnote{In this work, we  require without loss of generality that the belief spaces are Polish. Remark that for finitely parameterizable spaces this always holds. } \marginpar{\tiny \axx{can you assume Polish-ness for teh belief space?} \red{see new footnote}}
-  \new{In the sequel, we will omit the POMDP $\POMDP$ from which the belief MDP $\MB(\POMDP)$ is generated  denote it instead as $\MB$. }
+  \new{In the sequel, we use $\MB$ and omit the argument $\POMDP$ whenever possible. }%from which the belief MDP $\MB(\POMDP)$ is generated  denote it instead as $\MB$. 
 
 Since the MDP $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k).\]
