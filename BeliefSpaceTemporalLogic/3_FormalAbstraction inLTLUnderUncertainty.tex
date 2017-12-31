@@ -33,6 +33,8 @@
 \newcommand{\new}[1]{{\color{blue}#1}}
 \newcommand{\ind}{\mathbf{1}}
 
+\newcommand{\cristi}[1]{{\color{orange}#1}}
+
 
 \begin{document}
 
@@ -108,8 +110,8 @@ Secondly,  we compute a labeling-based approximate stochastic  simulation relati
 there exist several tools for policy synthesis and verification such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. 
 For Markov decision processes over uncountable state spaces,  the characterization of properties cannot in general be
 attained analytically \citep{Abate1}, so an alternative is to approximate these models by simpler
-processes that are prone to be mathematically analyzed or algorithmically verified
-such as finite-state MDPs \citep{soudjani2015faust},   or deterministic transition systems \citep{Zamani2014}.	
+processes that are prone to be mathematically analyzed and algorithmically verified,
+such as finite-state MDPs \citep{soudjani2015faust}, and deterministic transition systems \citep{Zamani2014}.	
  In \citep{haesaert2017verification}, an approximate stochastic simulation relation has been introduced that allows for the use of  formal abstractions for the correct-by-construction control synthesis with respect to probabilistic linear time temporal logic properties \citep{tech_report_TACAS}. 
  
  
@@ -143,11 +145,11 @@ with model order reductions and simplifications.  Since we work over belief MDPs
   
   %  STRUCTURE
  In the next section, the POMDPs and their belief models are first introduced together with the temporal logic used to define properties of interest. 
- Afterwards, we define the verification and control synthesis  problem for temporal logic properties over belief MDPs. 
- In Section \ref{sec:refinement}, the synthesis problem is solved robustly by newly using labeling-based stochastic simulation relation. In Section \ref{sec:case}, an illustrative case study is given. 
+ Afterwards, we define the verification and control synthesis problems for temporal logic properties over belief MDPs.
+ In Section~\ref{sec:refinement}, the synthesis problem is solved robustly by using the proposed labeling-based stochastic simulation relation. In Section~\ref{sec:case}, an illustrative case study is given.
 %Finally in the last section, the conclusions are given and the required future work to enable solving real-sized problems is discussed.
  
-\section{POMDPs and temporal logic specifications.}
+\section{POMDPs and temporal logic specifications}
 
 In this section, we give the definition of a Partially Observable Markov Decision Process (POMDP). Then we define a (propositional) linear temporal logic (LTL)  equivalent to the formulation of distribution temporal logic as originally given in \citep{JonesDTL2013} for POMDPs. 
 
@@ -181,7 +183,7 @@ In this section, we give the definition of a Partially Observable Markov Decisio
 For metric space $\Y$, we denote with  $\borel{\Y}$ its Borel $\sigma$-field, i.e., the  
 collection of all sets that can be formed from countable unions and intersections of open sets in $\Y$.
 We refer to  $(\Y,\borel{\Y})$ as a Borel measurable space and we denote with $\mathcal P(\Y)$ the set of probability measures \new{(or equivalently, probability distributions )} on $(\Y,\borel{\Y})$.
-Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure $\po$ defines the probability space, denoted by $(\Y,\mathcal{B}(\Y),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability measure, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
+Together with the measurable space $(\Y,\borel{\Y})$,  a probability measure \cristi{$\po \in \mathcal P(\Y)$} defines the probability space, denoted by $(\Y,\mathcal{B}(\Y),\po)$ and has realizations  $s{\,\sim\,}\po$.     Given a probability measure, the corresponding expectation operator is denoted as  $\Ex[\cdot]$.
 In this work,  we only consider Polish spaces, which are complete separable metric spaces; see \citep{bogachev2007measure}. 
 
 
@@ -207,13 +209,16 @@ $u(0),$ $u(1), $ $\ldots, $ $u(N)$,
 over a finite time horizon $\{0,1,\ldots, N\}$,
 and an initial state  $x_0$ (sampled from $\rho$), 
 the states $x_{k+1}$ with $k\in \{0,1,\ldots, N\}$
-are obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,t} x_k, u_k \right)$ --
-these semantics induce paths (or executions) of the MDP. %\axx{relation between N and k?}
+are obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,t} x_k, u_k \right)$
+\cristi{C: $\tr\left(\cdot\mid x_k, u_k \right)$ ?}
+-- these semantics induce paths (or executions) of the MDP. %\axx{relation between N and k?}
   
 
 %\subsubsection{Partially observable Markov decision process (POMDP)}\label{sec:POMDP}
 \begin{definition}[Partially Observable  MDP (POMDP)] \label{def:MDP}\mbox{ }\\
-A partially observable Markov decision process $\POMDP$ (POMDP) is an MDP $\MDP = (\X, \init, \tr, \A)$  that is partially observable via  
+A partially observable Markov decision process $\POMDP$ (POMDP) is an MDP $\MDP = (\X, \init, \tr, \A)$
+%that is partially observable via
+\cristi{with partially observable states} via
 \begin{enumerate}
 %	\item $\X$, the state space with states $x\in\X$ as its element;
 %	\item $\A$, the action space;
@@ -254,7 +259,7 @@ Elements $i_k$ of $\I_k$ are defined as $(z_0,u_0,z_1,u_1,\ldots,u_{k-1},z_k)\in
 	We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution. Remark that unless otherwise mentioned, we will assume thay a policy represents a sequence of  stochastic kernels on $\A$. 
  \marginpar{\tiny \axx{why du and not just u?}\red{it is a measure, not a function or a pdf}}
 
-Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ on the canonical space $\Omega:=\Hist_\infty$. \axx{I see where you use history now.} Thus for a given policy the POMDP defines a stochastic process on the probability space  
+Given the distribution $\init$ for the initial state $x_0$,  and given the theorem of Ionescu Tulcea \citep{hll1996}, there exists a unique probability measure $\P_\pi^\init$ \cristi{C: $\P_\init^\polb$ or just $\P_\init$?} on the canonical space $\Omega:=\Hist_\infty$. \axx{I see where you use history now.} Thus for a given policy the POMDP defines a stochastic process on the probability space  
  $(\Omega,\borel{\Omega},\P_\init^\polb)$.  
  % \begin{align*}
 %   P_\pi^\pol(x_0\in B) = \pi(B),\quad P_\pi^\rho(u_n\in C|h_n) = \rho_n(C|h_n),\quad P_\pi^\rho(x_{n+1}\in B|h_n,u_n) = \mathbb T(B|x_n,u_n),
@@ -282,6 +287,7 @@ It can be shown that the transitions of this belief state evolve based on a fixe
 \begin{align}\label{eq:trb}
 	 b_{k+1}(\cdot)\sim \trb(b_{k+1}\in \cdot|b_k,u_k).
 \end{align}
+\cristi{C: The first $\cdot$ in the lhs of eq.~\eqref{eq:trb} is a subset of $\X$, while the second $\cdot$ in the rhs is a subset of $\Xb$. It is confusing as it written now.}
 At each time step, the belief state can also be computed using a 
 recursive filter denoted by $\tau$ as 
 \[b_{k+1}=\tau(b_k,u_k,z_{k+1}).\]
@@ -291,7 +297,7 @@ Therefore for a POMDP $\POMDP$, we can construct a belief MDP.
 discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ with
   \begin{itemize}
     \item $\Xb$,  a state space with states $b\in\Xb$; % as its elements;
-    \item $\initb$, the initial probability distribution $\initb:=\init$;
+    \item $\initb$, the initial probability distribution $\initb:=\init$; \cristi{C: Shouldn't we have $\initb \in \Xb$?}
     \item $\A$, the set of control inputs with $u\in\A$ as its elements;
     \item $\trb:\Xb\times\A\times\mathcal B(\Xb)\rightarrow[0,1]$, a conditional stochastic kernel that assigns to each state $b\in \Xb$ and control $u\in \A$ a probability measure \eqref{eq:trb} over $(\Xb,\mathcal B(\Xb))$;
   \end{itemize}
@@ -301,7 +307,7 @@ discrete-time MDP defined by the tuple $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ w
 Since the MDP $\MB(\POMDP)$ is a completely observable MDP, its information sequence at time $k$ is given as  
 \[i_k=(b_0, u_0, b_1, u_1, \ldots, u_{k-1},b_k).\]
 Thus a policy for $\MB(\POMDP)$ %\axx{has $\MB$ defined as a standalone symbol?}
- is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  \new{parameterized with the initial state distribution and the information sequence, that is  $(\init, i_k)\mathcal{P}(\X)\times \I_k$.} \marginpar{\tiny \axx{I have a little bit of challenge with this product space here.} better?}
+ is a sequence $\polb=(\pol_0,\ldots,\pol_{N-1})$ such that  for all $k$, $\pol_k(du_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  \new{parameterized with the initial state distribution and the information sequence, that is  $(\init, i_k)\in \mathcal{P}(\X)\times \I_k$.} \marginpar{\tiny \axx{I have a little bit of challenge with this product space here.} better?}
 	%We say that $\polb$ is non-randomized if for all $\init$, $k$, and $i_k$,    $\pol_k(du_k|\init, i_k)$ is a Dirac distribution.
 	We say that $\polb=(\pol_0,\ldots,\pol_{N-1})$ is a Markov policy if for each $k$, the policy only depends on the current state $b_k\in\Xb$, that is $\pol_k(du_k|b_k)$. \marginpar{\tiny\axx{maybe sth like $\pol_k(du_k|b_k)=\pol_k(du_k|b_{0:k})$ is better?} \red{}}
 	Furthermore 	 $\polb$ is a stationary Markov policy if $\pol(du_k|b)= \pol_k(du_k|b)$ for all $k$, and $b$.
@@ -333,7 +339,7 @@ For a belief state characterized by  a Gaussian distribution with the mean $\hat
 %    to describe the distance from a point to a Gaussian distribution, when specifying a desired state (or region) in the state space. 
     \end{enumerate}
 %     	\axx{when i saw the label, I thought you are going to assign semantic values such as sand, rock, ... But, it is different. So, is "label" the right/common word for this in the LTL world? To me "attribute" or "feature" seems better. }\red{Sofie: labeling is the right word within LTL, we can specify  the type of features that is isolated with the used labeling?} \red{Sofie: I think the above set of examples is easier to understand?}
-      \new{At each state, several  atomic propositions can hold. For example, while staying in a region of interest as given in (1), the uncertainty on the current state could also be very low.  }
+      \new{At each state, several  atomic propositions can hold. For example, while staying in a region of interest as given in (1), the uncertainty on the current state could also be very low.}
    \new{We say that a combination of propositions $p_i\in AP$ define an alphabet $\Sigma := 2^{AP}$. Each letter $\letter$ of the alphabet is defined as a set of atomic propositions.  Consider  a labeling function which maps states in the state space to letters in the alphabet. This labeling function is denoted as $\Lab:\Xb\rightarrow \alphabeth$.  }
 We require that the labeling function is measurable, that is we require that the induced sets  are Borel measurable
 \[B_p:=\{b|\Lab(b)\vDash p \}\in \borel{\Xb}\]    
@@ -381,7 +387,7 @@ In the next paragraph, we define these events via trace properties given in temp
 %    be an infinite sequence of belief states. $\BF{b} \models \psi$ denotes the event that the word $\BF{b}$ satisfies specification $\psi$.
 %    
 
-In contrast the semantics define the interpretation of the formula. For this denote with  $\word_i$ the suffix sequence  $\word_i:= \letter_i, letter_{i+1}, \letter_{i+2}, \ldots$, 
+In contrast the semantics define the interpretation of the formula. For this denote with  $\word_i$ the suffix sequence  $\word_i:= \letter_i, \letter_{i+1}, \letter_{i+2}, \ldots$, 
     % Accordingly, 
      then, the {\em semantics} of LTL  formula are defined recursively  over $\word_i$ as
 $\word_i \models p   \Equiv p\in\letter_i$, 
@@ -393,6 +399,8 @@ $\word_i \models p   \Equiv p\in\letter_i$,
     $\word_i \models \Event \psi   \Equiv \exists j \geq i \text{ s.t. }\word_j \models \psi $, and 
     $\word_i \models \Always \psi   \Equiv  \forall j \geq i \text{ s.t. }\word_j \models \psi$.
    % \end{definition}
+\cristi{The language of a formula $\psi$ is the set of all satisfying words,
+i.e., $\Language(\psi) = \{\word \in 2^\AP \mid \word \models \psi\}$.}
 
 
  
@@ -409,7 +417,7 @@ The probability measure $\P_\init^\polb$ over the traces $b_0, b_1, b_2, \ldots\
 
 Consider the problem to design $\polb$ such that  
 \[\P_\init^\polb
-(\word \in\Language (\mathcal A_\psi))\geq p\]
+(\word \in\Language (\cristi{\psi}))\geq p\]
 where $p$ is either given or to be maximized.
 
 To tackle this problem, we limit ourselves to the syntactically co-safe subset of LTL properties, which can be solved via reachability.  %These properties are of interest as they can be 
@@ -467,13 +475,13 @@ In other words, a sequence of letters is accepted if the corresponding trace in 
 
 %\begin{definition}
 For every $\psi$ that is expressed with syntactically co-safe LTL  \eqref{eq:scLTL}, there exists a DFA  $\FSA_\psi$ that models the same property \citep{Belta2017}. Specifically, a DFA represents the specification $\psi$ if a word $\word$ satisfies an LTL property $\psi$ if and only if it belongs to the accepting language of the DFA, that is,
-	 \[\psi\vDash\word \Leftrightarrow \word\in \Language(\mathcal A_\psi).\]
+	 \[\cristi{\word\models\psi} \Leftrightarrow \word\in \Language(\FSA_\psi).\] \cristi{Use $\Language(\psi) = \Language(\FSA_\psi)$ instead?}
 %\end{definition}
 
 We can
 reduce $\P_\init^\polb
-(\word \in\Language (\mathcal A_\psi))$  over the traces $\word$ of $\MB$ to a reachability problem
- over another MDP,  denoted  $\MB\otimes\mathcal A_\psi$, which we refer to as a product of the belief MDP $\MB$ and the automaton $\mathcal A_\psi$. This was originally derived in \citep{tmka2013} for MDPs. Since belief MDPs are a instantiation of  MDPs, we give a similar definition of this product construction.
+(\word \in\Language (\FSA_\psi))$ over the traces $\word$ of $\MB$ to a reachability problem
+ over another MDP,  denoted  $\MB\otimes\FSA_\psi$, which we refer to as a product of the belief MDP $\MB$ and the automaton $\FSA_\psi$. This was originally derived in \citep{tmka2013} for MDPs. Since belief MDPs are an instantiation of MDPs, we give a similar definition of this product construction.
 %
 %We define the  product  
 %as in \citep{tech_report_TACAS}\footnote{\red{This is very similar to the definition in \citep{tmka2013}. }} .
@@ -482,12 +490,12 @@ reduce $\P_\init^\polb
 Given an MDP  $\MDP = (\X, \init, \tr, \A)$,
 a finite alphabet $\Sigma$,
 a labeling function $\Lab:\X\rightarrow\Sigma$
-and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta_{\CA A}, Acc)$,
+and a DFA  $\FSA_\psi = (Q, q_0, \Sigma, \delta_\FSA, Acc)$,
 we define the product between $\MDP$ and $\FSA_\psi$ to be another MDP denoted as
 $\MDP\otimes\FSA_\psi = (\bar \X, \bar\init,\bar{\tr},\A)$.
-Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta_{\CA A}(q_0,\mathsf L(x))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as  
+Here $\bar \X= \X\times Q$, $\bar\init(dx,q) = \init(dx)$ if $q= \delta_\FSA(q_0,\mathsf L(x))$ else $ \bar\init(dx,q) =0$, and similarly the transition kernel is given as  
 \begin{equation*}
-  \bar{\tr}(d y\times\{q'\}|x,q,u) =  \left\{\begin{array}{ll}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(y)),\\ 0 & \text{else.}  \end{array}\right.
+  \bar{\tr}(d y\times\{q'\}|x,q,u) = \begin{cases}\tr(dy|x,u)& \text{if } q' =\delta(q,\Lab(y)),\\ 0 & \text{else.}  \end{cases}
 \end{equation*} 
 \hfill \mbox{ }\qed
 \end{definition}
@@ -508,6 +516,7 @@ r_{\bar x }^\polb(K)=\mathbb{E}_{\bar x(0)}^{\bar \polb}\bigg[\sum\limits_{\math
 \end{align*} 
 where $\ind_{B}(x) = 1$ if $x \in B$, 
 and otherwise it is equal to $0$.  }
+\cristi{$r(\cdot \mid \cdot)$ was used previously for the observation kernel of POMDPs.}
 
 \new{
 For a given stationary
@@ -545,7 +554,7 @@ with $d \bar x'= d x'\times\{q'\}$. Note that the policy is defined for the prod
 %\end{align}
 \marginpar{\red{[Richard: Give an explanation of what T represents in words]}}
 
-\new{If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^x$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
+\new{If we now look at the sequential application of $\mathbf T$, which is denoted by $\mathbf T^n$, we can compute the infinite horizon reachability probability based on the convergence of $\lim_{N\rightarrow \infty}\mathbf T_\mu^{N} \mathbf V$.
 Then, for a given stationary policy $\mu$, the  probability of reaching $Acc $, that is $\P_\init^\polb(\MDP\vDash\psi) $, is defined as
 \begin{align}
 &\P_\init^\polb(\MDP\vDash\psi) = \P_\init^\polb
@@ -590,7 +599,7 @@ In this section, we show  how we can leverage computations performed on the abst
 
 We approach  the control synthesis of the belief MDP in three steps:
 \begin{enumerate}
-\item We quantify the similarity of the models, for this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$. Here, $\delta$ quantifies the difference in the stochastic transitions of the two MDPs.
+\item We quantify the similarity of the models. For this we introduce the concept of a labeling based $\delta$-stochastic  simulation relation between  the abstract $\tilde{\MB}$ and the concrete $\MB$. Here, $\delta$ quantifies the difference in the stochastic transitions of the two MDPs.
 \item Given a specification $\psi$, we are interested in  the $\delta$-robust evaluation of the probability that a specification $\psi$ is satisfied for  $\tilde\MB$.  More precisely, levering the $\delta$-stochastic simulation relations we will use the fact that there exists  a $\delta$-robust evaluation, denoted
 $\mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\tilde \MB\vDash\psi; \tilde\Labset,\delta) %\leq  \mathbf P _{\init}^{\polb}(\MDP\vDash\psi).
  %\mathbf R _{\tilde \initb}^{\tilde \polb}(\tilde \MB\vDash\psi),
@@ -621,16 +630,18 @@ In the above notation $\tilde\Labset,\delta$ define, respectively, a relaxed lab
 \new{In this subsection, we introduce a similarity relation between MDPs, that is amiable for belief MDPs. 
 Let us anticipated this with the introduction of the concept of a relation between two spaces. }
 For the sets $A$ and $B$ a relation $\rel\subset A\times B$ is a subset of the Cartesian product $A\times B$. The relation $\rel$ relates $x\in A$ with $y\in B$ if $(x,y)\in\rel$, which is equivalently written as $x\rel y$. 
-We use the following notation for the mappings  $\rel(\tilde A):=\{y: x\rel y, x\in \tilde A\}$ and  $\rel^{-1}( \tilde B):=\{x: x\rel y, y\in \tilde B\}$ for   $\tilde A\subseteq A$ and $\tilde B \subseteq B$.
+We use the following notation for the mappings  $\rel(\widetilde A):=\{y: x\rel y, x\in \widetilde A\}$ and  $\rel^{-1}( \widetilde B):=\{x: x\rel y, y\in \widetilde B\}$ for $\widetilde A\subseteq A$ and $\widetilde B \subseteq B$.
 
 %\begin{definition}[$\delta$-lifting for general state spaces]\label{def:del_lifting}
 	Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$,
-	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability measures.  \new{Suppose that $\rel$, defines a set which the values $(x_1,x_2)$ are pairwise `similar' in a certain way, then we can now quantify the similarity of these two measures as in \cite{haesaert2017verification}.}
+	and let   $\Delta\in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and  $\Theta\in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability measures.  \new{Suppose that $\rel$ defines a set which \cristi{captures pairwise similarity between $x_1 \in \X_1$ and $x_2 \in \X_2$,}
+% 	the values $(x_1,x_2)$ are pairwise `similar' in a certain way,
+	then we can now quantify the similarity of these two measures as in \cite{haesaert2017verification}.}
 	%	We denote by\[\bar\rel_\delta\subseteq \mathcal{P}(\X_1,\mathcal B(\X_1))\times \mathcal{P}(\X_2,\mathcal B(\X_2))\]
 %	
 \begin{definition}[$\delta$-lifting]\label{def:dellifting}
 For a given 
-	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
+	$\rel\subseteq \X_1\times \X_2$ with $\rel\in \mathcal B(\X_1\times \X_2)$ \cristi{($\po(x_1 \rel x_2) \in \mathcal B(\X_1 \times \X_2)$ ?)}, we say that  $\Delta$ and $ \Theta$ are in the corresponding $\delta$-lifted relation, denoted $\Delta \bar \rel_\delta \Theta$  if there exists a probability distribution $\mathbb W$ for the measure space $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2),)$
 	satisfying { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
 		\begin{description}
 			\item[\textbf{L1.}] for all $X_1\in \mathcal{B}(\X_1)$: $\mathbb W(X_1\times \X_2)=\Delta(X_1)$;
@@ -660,7 +671,7 @@ As a first requirement, we need that the states in $\rel$ are pair-wise similar,
   \forall (\tilde x,x )\in \rel:  \Lab(x)\in \tilde{\Labset}(\tilde x)
   \end{equation} with $\Lab:\Xb\rightarrow\alphabeth$ the labeling function of the concrete belief MDP.
 Consider 
- the trivial set-valued extension of  the labeling function, that is,  $\Labset:\X\rightarrow2^\alphabeth$ with
+ the trivial set-valued extension of  the labeling function, that is,  $\Labset:\cristi{\Xb}\rightarrow2^\alphabeth$ with
  $\Labset(x)=\{\Lab(x)\}$.
 Requirement \eqref{req:lab} can now be written as  \begin{equation}
   \forall (\tilde x,x )\in \rel:  \Labset(x)\subset \tilde{\Labset}(\tilde x).

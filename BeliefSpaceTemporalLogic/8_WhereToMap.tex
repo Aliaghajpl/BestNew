@@ -55,22 +55,20 @@ This paper answers this where to map by a helicopter while minimizing uncertaint
 \section{Problem Description}
 This section gives a formal definition of the problem we are going to address. 
 
+\pr{Problem}
+This paper automates the process of where to map by a copter in order to minimize the covariance or the localization belief of a rover while considering the copter’s body path. Figure~\ref{fig:8_1} shows a belief propagation of a rover and Fig.~\ref{fig:8_2} illustrates an image of where to map by a copter.
+
 \pr{Rover and Helicopter Description}
 The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
 
 \pr{Rover and Helicopter Measurements}
-Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the helicopter at the $k$-th time step, respectively. Sequences of observations are defined as $z^r_{i:j}=\{z^r_i,z^r_{i+1},\cdots,z^r_j\}$,~$z^c_{i:j}=\{z^c_i,z^c_{i+1},\cdots,z^c_j\}$ for $j>i$.
+Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the helicopter at the $k$-th time step, respectively. Sequences of observations are defined as $z^r_{0:k}=\{z^r_0,z^r_1,\cdots,z^r_k\}$,~$z^c_{0:l}=\{z^c_0,z^c_1,\cdots,z^c_l\}$ for $0 \leq l \leq k$. A copter takes images only at the $l$-th step ($l \in k$), since a copter has battery limitation.
 
 \pr{Map Belief}
 We denote the map of the environment by $m$ and assume the environment is stationary. The knowledge we have about the environment is obtained via noisy sensors. Therefore, the best we can have is a probabilistic representation of $m$, i.e., the map belief
 \begin{align}
-    b^{m}_k&=p(m | z^r_{0:k}, x^r_{0:k})
+    b^m=p(m|z, x)
 \end{align}
-or
-\begin{align}
-    b^{m}_k&=p(m | z^r_{0:k}, x^r_{0:k}, z^c, x^c)
-\end{align}
-%one by one??
 
 \pr{Measurement Model}
 The measurement model describes the probability distribution over all possible observations given the robots' state $x$ and the environment map $m$.
@@ -78,107 +76,182 @@ The measurement model describes the probability distribution over all possible o
     p(z|m, x)
 \end{align}
 
-\pr{Problem}
+
+
+\begin{figure}[h]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/8_1.png}
+		\caption{Rover path.}
+		\label{fig:8_1}
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/8_2.png}
+		\caption{Where to map.}
+		\label{fig:8_2}
+\end{figure}
+
 
 \section{Mapping}
 
 \pr{Map Representation}
-%Confidence-rich Grid Mapping
-Surf features
-\begin{align}
-    m=
-\end{align}
+We consider maps from both rover and copter and use a surf feature mapping. Vectors or matrices $m^r$ and $m^c$ denote maps by a rover and a copter, respectively. Finally, a map can be obtained by combining $m^r$ and $m^c$.
 
-\pr{Map Evolution}
-
+\pr{Map Update}
+The map of a rover and a copter can be updated as follows:
 \begin{align}
-    m_{k+1}=\tau^m (m_k, u^c, z^c_{k+1})
+    m^r_{k+1}&=\tau^r_m (m_k, u^r_k, x^r_{k+1}, z^r_{k+1})\\
+    m^c_{k+1}&=\tau^c_m (m_k, u^c_k, x^c_{k+1}, z^c_{k+1})
 \end{align}
 where
 \begin{align}
+    z^r_{k+1} &\sim p(\cdot |x^r_{k+1})\\
+    x^r_{k+1} &\sim p(\cdot |x^r_k, u^r_k, w^r_k)\\
     z^c_{k+1} &\sim p(\cdot |x^c_{k+1})\\
-    x^c_{k+1} &\sim p(\cdot |x^c_k, u^c_k, w^c_k)
+    x^c_{k+1} &\sim p(\cdot |x^c_k, u^c_k, w^c_k).
 \end{align}
+Therefore, using these $m^r_{k+1}$ and $m^c_{k+1}$, the map at the $k$-th time step can be obtained by
 
+\begin{eqnarray}
+m_{k+1} =
+  \begin{cases}
+    \tau_m (m^r_{k+1}, m^c_{k+1}) & ($k+1 \in l$)\\
+    m^r_{k+1} & ($k+1 \not\in l$)
+  \end{cases}
+\end{eqnarray}
 
-%\pr{Map Update}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Rover Localization}
-
+This section considers belief update for a rover localization. Belief update of a map is given by
 \begin{align}
-    b^r_{k+1}=\tau^r (b^r_k, u^r_k, z^r_{k+1}; m)
+    b^{m}_k=p(m_k | z^r_{0:k}, x^r_{0:k}, z^c_{0:l}, x^c_{0:l}).
+\end{align}
+Belief update of a rover localization is given by
+\begin{align}
+    b^r_{k+1}=\tau^r (b^r_k, u^r_k, z^r_{k+1}; m_{k+1}).
 \end{align}
 
-
-\section{Planning}
+\section{Planning: copter where to map}
 \subsection{Planning Objective}
-
-\begin{align}
-    c(b_k, u_k)=
-\end{align}
-
-Covariance (Exploitation)\\
-
+%Covariance (Exploitation)\\
 
 We find a helicopter position that minimizes the following cost function:
 \begin{align}
-    x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^{r+}_k
+    &x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^{r+}_k\label{eq:c1}\\
+     &{\rm s.t.} \hspace{5mm} D_{\min}(x^c_{alt}) \leq D^c_k \leq D_{\max}(x^c_{alt})\label{eq:st1}\\
+    &\hspace{10mm} \sum^{Tc}_{l=1} L^c_{k,l} \leq L^c_{\max}(t^c_{search})\label{eq:st2}
 \end{align}
 where
 \begin{align}
-P^{r+}_k&={\rm Cov}(x^{r+}_k) = Cov(x^{r}_k | z_{0:k})\\
-&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k).
+P^{r+}_k&={\rm Cov}(x^{r+}_k) = {\rm Cov}(x^{r}_k | z_{0:k})\label{eq:p1}\\
+&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k).\label{eq:p2}
 \end{align}
+Note that Cov($\cdot$) and VO($\cdot$) denote the covariance and the visual odometry, respectively.
+
+\subsection{Constraints}
+
+\pr{Resolution constraint}
+A resolution of an image from a copter depends on a camera performance and a altitude of a copter $x^c_{alt}$.
+%\begin{align}
+%    \zeta=k x^c_{alt}
+%\end{align}
+
+\pr{Field-of-view constraint}
+Equation~\eqref{eq:st1} represents the constraint that the area of the image depends on the altitude of the copter.
+A field-of-view (FOV) $D^c$ is determined by an altitude of a copter.
+\begin{align}
+    D_{\min}(x^c_{alt}) \leq D^c_k \leq D_{\max}(x^c_{alt})
+\end{align}
+
+\pr{Flight time constraint}
+Equation~\eqref{eq:st2} represents the constraint that the searching range $L^c$ depends on the flight time $T^c_{search}$ coming from the battery limitation of the copter.
+\begin{align}
+    \sum^{Tc}_{l=1} L^c_{k,l} \leq L^c_{\max}(t^c_{search})
+\end{align}
+
+\pr{Flight interval constraint}
+``{\it When to map}'' is also an interesting problem. This constraint determines $l$ in the time step $k$.
+\textcolor[gray]{0.5}{
+\section{Planning: copter body path planning}
+\subsection{Planning Objective}
 Using the cost $C(b_k, u_k)$,
 \begin{align}
     &u^{c*}_{0:k}=\arg\min_{x^c \in X^c} \mathbb{E} \sum^T_{k=0} C(b^r_k, u_k; m_k (u^c_{0:k}))\\
-    &{\rm s.t.} \hspace{5mm} ||u^c_{0:k}||< \delta\\
-    &\hspace{10mm} x^r_T \in goal^r
+    &{\rm s.t.} \hspace{5mm} ||u^c_{0:k}||< \delta\label{eq:st10}\\
+    &\hspace{10mm} x^r_T \in goal^r\label{eq:st20}
 \end{align}
-
-
-
-
-
-
+}
 %Observation $z_k$ is given by
 %\begin{align}
 %z_k=x^r_k-L^m_k(x^c_k)
 %\end{align}
-
-
+\textcolor[gray]{0.5}{
+\subsection{Constraints}
+\pr{Input constraint}
+Equation~\eqref{eq:st10} represents the constraint that the limitation of the copter control input as follow:
+\begin{align}
+    ||u^c_{0:k}||< \delta
+\end{align}
+\pr{Position constraint}
+Equation~\eqref{eq:st20} represents the constraint that the rover need to reach the goal at the final step $T$.
+\begin{align}
+    x^r_T \in goal^r
+\end{align}
+}
+\section{Search Method: copter where to map}
+This section provides a process of a searching method for solving the cost function in the former section.
+\subsection{Grid the Search Space}
+First of all, we grid the searching space to determine where to map and the copter's path as in Fig.~\ref{fig:8_3}. These grid spaces are determined by a FOV of a copter.
+\begin{figure}[b]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/8_3.png}
+		\caption{Searching space grid.}
+		\label{fig:8_3}
+\end{figure}
 %\subsection{Planning Objective~2: Coverage (Exploration)}
-%We investigate unseen areas by helicopter.
+\subsection{Perception Performance Prediction}
+Our method investigates unseen or uncertainty areas by a copter. As a exploration, we search the occluded area by using viewshed analysis with $(x^r_k,~m_k)$. As a simple example of viewshed analysis, the coverage can be obtained as shown in Fig.~\ref{fig:vs}.
+
+Here, we consider the performance of the VO system as the evaluating measurement of the rover localization belief $b^r_{k+1}$. We know how to predict the most likely future measurement $\{ \grave{z}^r_t \}$ for all $t>k$ in Ref.~\cite{IEEE:Kyon}. We run a given VO algorithm on these synthetic images
+\begin{align}
+    {\rm VO}: (\grave{z}^r_i,\grave{z}^r_{i+1}) \to (\Delta \grae{x}_{i,i+1},\Omega_{i,i+1}),\quad i=k,\cdots,t
+\end{align}
+where $\Delta \grave{x}_{i,i+1}$ denotes the displacement between two synthetic images $i$ and $i+1$ computed by VO, and $\Omega_{i,i+1}$ is the performance indicator for VO between time-steps $i$ and $i+1$, which includes Cov($x^{r}_{k+1} | z_{0:k+1}$) in Eq.~\eqref{eq:p1}. To evaluate the $k+1$-th Cov($x^{r}_{k+1} | z_{0:k+1}$), ``where to map'' by a copter can be obtained as shown the red areas in Fig.~\ref{fig:8_4}.
+
+%\subsection*{Coverage (Exploration)}
 %\begin{itemize}
 %    \item Occluded area (using Viewshed analysis)
-%    \item Beyond rover’s perception horizon
+ %   \item Beyond rover’s perception horizon
 %\end{itemize}
-%Using Viewshed analysis with $(x^r,~m)$, coverage can be obtained.
-%\begin{figure}[b]
-%		\centering
-%		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
-%		\caption{Viewshed analysis.}
-%		\label{fig:vs}
-%\end{figure}
+\begin{figure}[h]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
+		\caption{Viewshed analysis (example).}
+		\label{fig:vs}
+\end{figure}
+\begin{figure}[h]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/8_4.png}
+		\caption{Creating the path.}
+		\label{fig:8_4}
+\end{figure}
 
-\subsection{Planning Constraints}
+\subsection{Search the optimal path}
+From the obtained the areas to map, next we search the optimal path (shortest path) using a traveling salesman problem (TSP) or a dynamic programming (DP).  
 
-\subsubsection{Field-of-view constraint}
-~
-\subsubsection{Resolution constraint}
-~
-\subsubsection{Flight time constraint}
-~
-\subsubsection{Flight interval constraint}
-~
-
-\section{Search Method}
-%RRT
-\pr{Grid the Search Space}
+\textcolor[gray]{0.5}{
+\section{Search Method: copter body path planning}
+RRT?
+}
 
 \section{Simulation Results}
 
 \section{Conclusion}
+
+\begin{thebibliography}{1}
+
+\bibitem{IEEE:Kyon}
+K. Otsu, A. Agha-mohammadi, and M. Paton, ``Where to look? Predictive Perception with Applications to Planetary Exploration,'' in {\it IEEE Robotics and Automation Letters}, vol.xx, no.xx, pp.xx-xx, 201x.
+
+\end{thebibliography}
 
 \end{document}
 
