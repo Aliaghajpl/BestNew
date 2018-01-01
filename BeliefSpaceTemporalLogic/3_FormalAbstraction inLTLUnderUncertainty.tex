@@ -70,7 +70,8 @@ correct-by-construction control synthesis, Markov decision processes, partially 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
-\section{Introduction }\label{subsec:intro}
+\section{Introduction}
+\label{subsec:intro}
 
 Emerging applications of robotics systems necessitate control systems capable of autonomously performing complex tasks in a safe manner. Therefore, systems deployed in (partially) unknown environments have to make decisions in the face of uncertainty that maximize the probability of task completion. Temporal logics have emerged as a principled formalism for expressing behavior, and associated correct-by-construction synthesis techniques have been developed \citep{Murray2009}. However, work to date in this area has focused on specifications expressed in terms of the system state; such specifications encompass many relevant behaviors but are incapable of expressing properties about system uncertainty. For instance, in a Mars rover exploration mission the accuracy of pose estimates must be of much higher quality during the crucial sample extraction phase, as compared to when the rover is traversing a ``safe'' area. In this work we are concerned with correct-by-construction synthesis for properties that quantify such notions of uncertainty.
  
@@ -439,7 +440,7 @@ The transition kernel of $\hat\MB_{grid}$ is given as $t_{grid}(s'|s,u)=\hat t \
 \begin{figure}[htp]
 \centering
 	\includegraphics[width = .6\columnwidth]{figs/grid}
-	\caption{Depiction of the gridded state space.The mean state of the concrete belief MDP $\bullet$ and the  representative state of the abstract MDP $\boldsymbol{+}$ are given together with an illustration of a stochastic transition. \textcolor{red}{should add $x_s, s, \Delta_s$, etc} } 
+	\caption{Depiction of the gridded state space. Depicted are the mean state $\hat x$ of the concrete belief MDP ($\bullet$), and the representative states $x_s$ of the abstract MDP ($\boldsymbol{+}$), together with an illustration of a stochastic transition. \textcolor{red}{should add $x_s, s, \Delta_s$, etc to figure} } 
   \label{fig:grid}
 \end{figure}
  
@@ -514,9 +515,13 @@ Motivated by space exploration applications we consider an autonomous rover task
 
 A finite abstraction $\MDP_{syst}$ is constructed as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$.
 
+{\color{red} 
+Say something about Fig. \ref{fig:tradeoff}}
+
 \begin{figure}
   \input{figs/epsdel}
   \caption{Trade-off between $\epsilon$ and $\delta$.  }
+  \label{fig:tradeoff}
 \end{figure}
 
 \textbf{Environment model.} We consider sample collection in a partially unknown environment. In particular, there are two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed via satellite imagery as 0.5 and 0.6, respectively. In addition, there are two potential obstacle regions $O_1$ and $O_2$ where estimates give probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and obstacle regions, we assume that the true nature of the region can be determined when the rover is within a certain distance of the regions. The regions are illustrated in Figs. \ref{fig:exp1} and \ref{fig:exp2}.
@@ -554,7 +559,7 @@ where the atomic proposition \texttt{sample} is true if the rover is in a target
   \setlength\figureheight{0.3\columnwidth} 
 
   \input{figs/exp2-prob.tikz}
-  \caption{Same as Fig. \ref{fig:exp1} with the difference that both $O_1$ and $O_2$ contain obstacles and must be avoided.}
+  \caption{Same as Fig. \ref{fig:exp1} with the difference that both $O_1$ and $O_2$ contain obstacles and must be avoided. When the obstacles are detected (around time step 20) the satisfaction probabilities decrease slightly due to the additional risk of moving around the obstacles.}
   \label{fig:exp2}
 \end{figure}
 
