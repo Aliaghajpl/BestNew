@@ -84,8 +84,8 @@ An appropriate model class that captures control and decision making under motio
 Like previously done in  \citep{Vasile2016,JonesDTL2013}, in this paper we consider properties defined on the belief space of a POMDP---the space of probability distributions over states. Belief space properties express requirements on the estimation quality or uncertainty. We novelly solve this synthesis problem in a  correct-by-construction fashion by leveraging recent results on  approximate simulation relations \citep{haesaert2017verification, tech_report_TACAS}.
 More precisely, since the temporal logic problem cannot be solved directly over the original model, we compute a policy with guarantees over an approximate model. Leveraging similarity, the policy can then be refined together with  its guaranties  to the original model.
 
-Next to the fact that correct-by-construction policies are novel within the realm of belief space temporal logics, we contribute to the state-of-the art as follows.
- We reinterpret the notion of approximate stochastic simulation relation via non-determinism in the labeling. We newly construct the associated policy refinement via the value function. We compute the approximate simulation relation for a non-stationary Kalman filtered  Linear Time-Invariant (LTI) system.   Finally,  we give a case study in which a finite environment POMDP is combined with a LTI POMDP.
+\new{Next to the fact that correct-by-construction policies are novel within the realm of belief space temporal logics, we contribute to the state-of-the art as follows.
+ We reinterpret the notion of approximate stochastic simulation relation via the non-determinism in the proposition labeling. We newly construct the associated policy refinement via the value function. We compute the approximate simulation relation for a non-stationary Kalman filtered  Linear Time-Invariant (LTI) system.   Finally,  we give a case study in which a finite environment POMDP is combined with a LTI POMDP.}
 
 %More precisely, we approach the synthesis problem as follows. Firstly, for a given belief MDP $\MB$ a finite-state abstraction  $\tilde \MB$ is computed. Secondly, we compute a labeling-based $\delta$-approximate stochastic  simulation relation between the abstract belief space model $\tilde{\MB}$ and the concrete model $\MB$. Then, a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem. Finally, a policy for the concrete belief space model is obtained as its refinement.
 
@@ -466,13 +466,13 @@ for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under whic
 
 We construct a set-valued labeling function $\hat \Labset: \mathbb{S} \rightarrow 2^\alphabeth$ satisfying \eqref{eq:sr-l}.
 
-For a position-based proposition $p$ consider, without loss of generality, a labeling $\Lab_p: \Xb \rightarrow \{\{p\},\emptyset\}$ for the concrete belief MDP defined by $p\in\Lab_p \left( (\hat x,P) \right)  \Leftrightarrow \hat x \in A$. The set-valued extension to $2^{\{\{p\},\emptyset\}}$ for the abstract MDP is defined as
+For a position-based proposition $p_i$ consider, without loss of generality, a labeling $\Lab_{p_i}: \Xb \rightarrow \{\{p_i\},\emptyset\}$ for the concrete belief MDP defined by $p_i\in\Lab_p \left( (\hat x,P) \right)  \Leftrightarrow \hat x \in A$. The set-valued extension to $2^{\{\{p_i\},\emptyset\}}$ for the abstract MDP is defined as
  \begin{align}
- 	\hat \Labset_p(s) =\left\{\begin{array}{ll} \{\{p\}\} & \mbox{ if } \forall \hat x \in \rel (s):p\in\Lab_p(b), \\
- 	  \{\emptyset \} & \mbox{ if } \forall \hat x \in \rel (s):p\not\in\Lab_p(b),\\
- 	  \{\{p\},\emptyset\}&\mbox{ otherwise.}\end{array} \right.
+ 	\hat \Labset_{p_i}(s) =\left\{\begin{array}{ll} \{\{p_i\}\} & \mbox{ if } \forall \hat x \in \rel (s):p\in\Lab_{p_i}(b), \\
+ 	  \{\emptyset \} & \mbox{ if } \forall \hat x \in \rel (s):{p_i}\not\in\Lab_{p_i}(b),\\
+ 	  \{\{p_i\},\emptyset\}&\mbox{ otherwise.}\end{array} \right.
  \end{align}
-The labeling $\hat \Labset_p$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is \textcolor{red}{monotonic in $P$} can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of probability of an event is in general not monotonic with respect to variance.
+The labeling $\hat \Labset_{p_i}$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is \textcolor{orange}{monotonic\footnote{\color{orange}Here monotonicity of a function in $P$ is defined based on the preorder $\succeq $ fo the matrices $P$ with $A\succeq B$ if $x^T(A-B)x\geq0\, \forall x\in\mathbb R^n$. } in $P$} can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of probability of an event is in general not \red{monotonic} with respect to variance.
 
 
 \subsubsection{Probability requirements:}
