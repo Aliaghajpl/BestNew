@@ -1,7 +1,7 @@
 %% Additional packages
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{mathtools}
-\usepackage{subfigure}
+% \usepackage{subfigure}
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{url}
@@ -13,7 +13,9 @@
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e}
 \fi
 
-\usepackage{tikz,pgf} 
+\usepackage{tikz}
+\usepackage{pgfplots} 
+\pgfplotsset{compat=1.15}
 \usetikzlibrary{arrows,automata,shapes,calc,backgrounds,spy,positioning}
 \usetikzlibrary{fit}
 
@@ -77,11 +79,11 @@
 \newcommand{\Y}{{\mathbb{Y}}}  % State
 
 %-------------POMDP-----------------------------
-\newcommand{\Hist}{{\mathsf{H}}}  %  History
-\newcommand{\I}{{\mathsf{I}}}  %  History
+\newcommand{\Hist}{{\mathbb{H}}}  %  History
+\newcommand{\I}{{\mathbb{I}}}  %  History
 \newcommand{\Belief}{b}
 \newcommand{\trb}{\tr_\Belief}
-\newcommand{\Xb}{{\X_\Belief}}  % State
+\newcommand{\Xb}{\mathbb{B}}  % State
 \newcommand{\initb}{\init_\Belief}
 
 
@@ -89,7 +91,7 @@
 \newcommand{\InF}{\mathcal{U}_{v}}
 \newcommand{\Wt}{\mathbb{W}_{\tr}}
 
-\newcommand{\grid}{\boldsymbol{\delta}}
+\newcommand{\grid}{{\boldsymbol{\eta}}}
 
 %%% Logic 
 %------------------Predicates-----------------------------------
@@ -149,7 +151,8 @@
 \newcommand{\abs}[1]{\left| {#1} \right|} 
 \DeclareMathOperator{\diag}{diag}
 
-
+\DeclareMathOperator*{\argmin}{arg\,min} 
+\DeclareMathOperator*{\argmax}{arg\,max} 
 
 \ifdefined\theoremstyle
 % Don't load theorem style:
@@ -168,6 +171,7 @@
 \newtheorem{theorem}[thm]{Theorem}
 \newtheorem{lemma}[thm]{Lemma}
 \newtheorem{definition}[thm]{Definition}
+\newtheorem{problem}{Problem}
 
 
 \newtheorem{example}{Example}
@@ -183,7 +187,6 @@
 \newtheorem{cond}{Condition}
 
 \newtheorem{example}{Example}
-\newtheorem{problem}{Problem}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}[theorem]{Definition}
 \fi

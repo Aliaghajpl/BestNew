@@ -3,41 +3,32 @@
 Motivated by space exploration applications we consider an autonomous rover tasked with identifying and collecting scientific samples.
 
 
-\textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass affected by stochastic disturbances on the state transitions. We assume that the position of the rover cannot be measured exactly. 
-We model its dynamics as
-\begin{align}
-	x_{k+1}&=\begin{bmatrix}
-		1&0\\
-		0&1
-	\end{bmatrix} x_{k} + \begin{bmatrix}
-		1&0\\
-		0&1
-	\end{bmatrix} u_k+ w_k\\
-z_k&=\begin{bmatrix}
-		1&0\\
-		0&1
-	\end{bmatrix}x_k+v_k
-\end{align}
-with $w_k\sim \CA N \left(0,\begin{bmatrix}.4&-.2\\-.2&.4\end{bmatrix}\right)$ and $v_k\sim \CA N \left(0,\begin{bmatrix}1&.1\\.1&1\end{bmatrix}\right)$
+\textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as
+\begin{equation*}
+\begin{aligned}
+	x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bmatrix}.4&-.2\\-.2&.4\end{bmatrix}\right), \\
+	z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bmatrix}1&.1\\.1&1\end{bmatrix}\right).
+\end{aligned}
+\end{equation*}
 
-A finite abstraction $M_{syst}$ of this model is constructed as outlined in the previous section by discretizing the input space $[-1,1]^2$ with nine discrete inputs, and the state space $[-10, 10]^2$ with grid points separated by $(0.76481, 0.64426)$.
+A finite abstraction $\MDP_{syst}$ is constructed as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$.
 
 \begin{figure}
 	\input{figs/epsdel}
 	\caption{Trade-off between $\epsilon$ and $\delta$.  }
 \end{figure}
 
-\textbf{Environment model.} We consider exploration in a partially unknown environment. In particular, there are two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two potential obstacle regions $O_1$ and $O_2$ where estimates based on satellite imagery give probabilities 0.1 and 0.3 that the rover can not traverse the obstacle safely. For both target and obstacle regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions. The regions are illustrated in Figs. \ref{fig:exp1} and \ref{fig:exp2}.
+\textbf{Environment model.} We consider sample collection in a partially unknown environment. In particular, there are two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed via satellite imagery as 0.5 and 0.6, respectively. In addition, there are two potential obstacle regions $O_1$ and $O_2$ where estimates give probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and obstacle regions, we assume that the true nature of the region can be determined when the rover is within a certain distance of the regions. The regions are illustrated in Figs. \ref{fig:exp1} and \ref{fig:exp2}.
 
-This environment model can be modeled as a finite-state MDP $M_{env}$. Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $M_{fail}$.
+The dynamics of the uncertainty in $T_1$ can be modeled as an MDP with three states \texttt{init}, \texttt{sample} and \texttt{empty}, and two actions \texttt{measure} and \texttt{none}. Initially, the state is \texttt{init}. If the \texttt{measure} action is performed, the state transitions to \texttt{sample} with probability $p$ and to \texttt{empty} with probability $1-p$. After a measurement, no further transitions occur. This type of MDP can be constructed for each region of uncertainty, and the overall environment model $\MDP_{env}$ is their parallel composition. Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $\MDP_{fail}$ which discourages solutions that take long time to execute.
 
-\textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the specification
+\textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the scLTL specification
 \begin{equation}
-	\varphi = \lozenge \texttt{sample} \land \left( \lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample} \right),
+	\psi = \lozenge \texttt{sample} \land \left( \lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample} \right),
 \end{equation}
-where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being in an obstacle region that contains an obstacle, or that the system is in failure mode.
+where the atomic proposition \texttt{sample} is true if the rover is in a target region that has been determined to contain a sample, and the atomic proposition \texttt{fail} is defined as being true if 1) the rover is in an obstacle region that contains an obstacle, or 2) $\MDP_{fail}$ is in failure mode.
 
-\textbf{Results.} We consider the aggregate system $M_{syst} \times M_{env} \times M_{fail}$ which is an MDP with 9 inputs and 277182 states. The specification $\varphi$ can be converted into a deterministic finite automaton. Via \eqref{eq:prob:robust_optimal} we can synthesize a control policy. Figs. \ref{fig:exp1} and \ref{fig:exp2} depict trajectories generated by the control policies, and the estimated probability that the specification can be satisfied, under two different resolutions of the unknown environment. In both experiments only $T_2$ contains a sample, and $O_1$ contains an obstacle. The difference is that in Fig. \ref{fig:exp1} also $O_2$ contains an obstacle but in Fig. \ref{fig:exp2} this region can be safely transversed.
+\textbf{Results.} We consider the aggregate system $\MDP_{syst} \times \MDP_{env} \times \MDP_{fail}$ defined as a product system analogous to Definition \ref{def:product}, which is an MDP with 9 inputs and 277182 states. Via \eqref{eq:prob:robust_optimal} we synthesize a control policy that is robust to the difference between the concrete and abstract models. Figs. \ref{fig:exp1} and \ref{fig:exp2} depict the evolution of the estimated position for executions generated by the control policies, and the estimated probability that the specification can be satisfied, under two different resolutions of the unknown environment. In both experiments only $T_2$ contains a sample, and $O_1$ contains an obstacle. The difference is that in Fig. \ref{fig:exp1} also $O_2$ turns out to contain an obstacle but in Fig. \ref{fig:exp2} this region can be safely traversed.
 
 \begin{figure}
 	\footnotesize
@@ -48,7 +39,7 @@ where the atomic proposition \texttt{sample} is true if the rover is in a target
 	\setlength\figureheight{0.4\columnwidth} 
 
 	\input{figs/exp1-prob.tikz}
-	\caption{Above: six trajectories starting at different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. No sample is found in $T_1$, and $O_2$ can be safely transversed. Jumps occur in the probabilities when (non-)existence of samples are measured when the rover is close to the regions.}
+	\caption{Above: six trajectories starting at different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. No sample is found in $T_1$, and $O_2$ can be safely traversed. Jumps occur in the probabilities when (non-)existence of samples are measured when the rover is close to the regions.}
 	\label{fig:exp1}
 \end{figure}
 
