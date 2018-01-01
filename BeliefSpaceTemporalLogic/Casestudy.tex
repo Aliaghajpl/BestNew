@@ -1,6 +1,6 @@
 %!TEX root = 3_FormalAbstraction inLTLUnderUncertainty.tex
 
-Motivated by space exploration applications we consider an autonomous rover tasked with identifying and collecting scientific samples.
+Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples.
 
 
 \textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as
@@ -20,7 +20,7 @@ A finite abstraction $\MDP_{syst}$ is constructed as outlined in the previous se
 
 \textbf{Environment model.} We consider sample collection in a partially unknown environment. In particular, there are two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed via satellite imagery as 0.5 and 0.6, respectively. In addition, there are two potential obstacle regions $O_1$ and $O_2$ where estimates give probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and obstacle regions, we assume that the true nature of the region can be determined when the rover is within a certain distance of the regions. The regions are illustrated in Figs. \ref{fig:exp1} and \ref{fig:exp2}.
 
-The dynamics of the uncertainty in $T_1$ can be modeled as an MDP with three states \texttt{init}, \texttt{sample} and \texttt{empty}, and two actions \texttt{measure} and \texttt{none}. Initially, the state is \texttt{init}. If the \texttt{measure} action is performed, the state transitions to \texttt{sample} with probability $p$ and to \texttt{empty} with probability $1-p$. After a measurement, no further transitions occur. This type of MDP can be constructed for each region of uncertainty, and the overall environment model $\MDP_{env}$ is their parallel composition. Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $\MDP_{fail}$ which discourages solutions that take long time to execute.
+The dynamics of the uncertainty in $T_1$ can be modeled as an MDP with three states \texttt{init}, \texttt{sample} and \texttt{empty}, and two actions \texttt{measure} and \texttt{none}. Initially, the state is \texttt{init}. If the \texttt{measure} action is performed, the state transitions to \texttt{sample} with probability $p$ and to \texttt{empty} with probability $1-p$. After a measurement, no further transitions occur. This type of MDP can be constructed for each region of uncertainty, and the overall environment model $\MDP_{env}$ is their parallel composition. \red{Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $\MDP_{fail}$ which discourages solutions that take long time to execute.}
 
 \textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the scLTL specification
 \begin{equation}
