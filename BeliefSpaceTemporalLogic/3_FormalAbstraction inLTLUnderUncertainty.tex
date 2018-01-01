@@ -495,15 +495,15 @@ Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ 
  \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 \end{aligned}
 \end{equation}
-Given that $(\hat x_{k|k}-\hat x_{s|k})$ and $x_\grid$ belong to bounded sets, we can bound the influence of the noise terms $w^\Delta_{k+1}$ and $ \hat{w}_{k+1}$ with respect to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
+Given that $(\hat x_{k|k}-\hat x_{s|k})$ and $x_\grid$ belong to bounded sets, we can bound the influence of the noise terms $\red{s}^\Delta_{k+1}$ and $ \hat{\red{s}}_{k+1}$   to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
 \begin{remark}
-  Here we did not explicitly write out the lifted probability space $\mathbb{W}$ of Definition \ref{def:dellifting}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} and a compensation for gridding error.
+  Here we did not explicitly write out the lifted probability space $\mathbb{W}$ of Definition \ref{def:dellifting}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} and a compensation for the gridding error.
 \end{remark}
 
 {\color{red}
 \begin{itemize}
   \item Mention interface and control refinement?
-  \item Give expression for $\delta$?
+  \item Give expression for $\delta$? \color{orange} Expression for $\delta$ vs $\rel$ doesnt exist, as it is computated numerically using convex optimizations.  Instead it is possible to give an expression  of the bounded set to which $\hat s_{k+1}$ and  $\hat s^{\Delta}_{k+1}$ belong. 
 \end{itemize}
 }
 
@@ -515,8 +515,8 @@ Motivated by space exploration applications we consider an autonomous rover task
 \textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as
 \begin{equation*}
 \begin{aligned}
-  x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bmatrix}.4&-.2\\-.2&.4\end{bmatrix}\right), \\
-  z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bmatrix}1&.1\\.1&1\end{bmatrix}\right).
+  x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bsmallmatrix}.4&-.2\\-.2&.4\end{bsmallmatrix}\right), \\
+  z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&.1\\.1&1\end{bsmallmatrix}\right).
 \end{aligned}
 \end{equation*}
 
