@@ -535,6 +535,7 @@ Say something about Fig. \ref{fig:tradeoff}}
 
 The dynamics of the uncertainty in $T_1$ can be modeled as an MDP with three states \texttt{init}, \texttt{sample} and \texttt{empty}, and two actions \texttt{measure} and \texttt{none}. Initially, the state is \texttt{init}. If the \texttt{measure} action is performed, the state transitions to \texttt{sample} with probability $p$ and to \texttt{empty} with probability $1-p$. After a measurement, no further transitions occur. This type of MDP can be constructed for each region of uncertainty, and the overall environment model $\MDP_{env}$ is their parallel composition. \red{Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $\MDP_{fail}$ which discourages solutions that take long time to execute.[This does not make sense to me[sofie]! Actually this delta error should pop up from the error incurred in the approximation of the Kalman filter]}
 
+\red{[Define aggregate system, comment on approx. simulation relation. State that the parallel composition of environment with the system does  not influence the delta accuracy. ]}
 \textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the scLTL specification
 \begin{equation}
   \psi = \lozenge \texttt{sample} \land \left( \lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample} \right),
@@ -574,9 +575,9 @@ where the atomic proposition \texttt{sample} is true if the rover is in a target
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper we considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we pursued an approach based on principled abstractions via a novel concept of stochastic simulation relation. In addition, we suggested a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. For the special case of linear systems with Gaussian noise and observation models we gave a concrete abstraction construction and an associated simulation relation, and applied the theory in a case study motivated by space exploration.
+In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP.  To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and applied the theory in a case study motivated by space exploration.
 
-We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies. In future work we will therefore explore additional settings where abstractions satisfying our novel simulation relation can be constructed, and plan to leverage the decomposed nature of product MDPs to improve computational efficiency.
+We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies. In future work, we  plan to explore additional settings in which abstractions satisfying our novel labeling-based simulation relation can be constructed, and plan to leverage the decomposed nature of product MDPs to improve computational efficiency.
 
 \bibliography{AliAgha,references}
 
