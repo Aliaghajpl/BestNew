@@ -39,8 +39,8 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we consider the problem of planetary exploration with a two-agent team composed of a Mars rover and a Mars helicopter. Images by a helicopter can help estimation or navigation of a rover. In such a mission, how a helicopter learns where to map for a rover is of great interest in a two-agent team. 
-This paper answers this where to map by a helicopter while minimizing uncertainty of images from a rover’s camera.
+In this paper, we consider the problem of planetary exploration with a two-agent team composed of a Mars rover and copter. Images by a copter can help estimation or navigation of a rover. In such a mission, how a copter learns where to map for a rover is of great interest in a two-agent team. 
+This paper answers this where to map by a copter while minimizing uncertainty of images from a rover’s camera.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -56,8 +56,14 @@ This paper answers this where to map by a helicopter while minimizing uncertaint
 This section gives a formal definition of the problem we are going to address. 
 
 \pr{Problem}
-This paper automates the process of where to map by a copter in order to minimize the covariance or the localization belief of a rover while considering the copter’s body path. Figure~\ref{fig:8_1} shows a belief propagation of a rover and Fig.~\ref{fig:8_2} illustrates an image of where to map by a copter.
-
+A two-agent team composed of a Mars rover and copter is considered. This paper automates the process of where to map by a copter in order to minimize the covariance or the localization belief of a rover while considering the copter’s body path.
+Copter’s constraints coming from a battery is described as follows:
+\begin{itemize}
+    \item Two flights per sol
+    \item Two minutes per flight
+\end{itemize}
+ Figure~\ref{fig:8_1} shows a belief propagation of a rover and Fig.~\ref{fig:8_2} illustrates an image of where to map by a copter. The copter can take images within the limitation of the battery at one step of the rover.
+ 
 \pr{Rover and Helicopter Description}
 The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
 
