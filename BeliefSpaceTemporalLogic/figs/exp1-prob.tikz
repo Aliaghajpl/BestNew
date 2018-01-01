@@ -10,7 +10,7 @@
 
 \begin{axis}[
 xlabel={$t$},
-ylabel={$\mathbb{P}(\varphi)$},
+ylabel={$\mathbf{P}(\varphi)$},
 xmin=-1.8, xmax=37.8,
 ymin=0.38853456067633, ymax=1.02911740187259,
 width=\figurewidth,
