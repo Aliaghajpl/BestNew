@@ -68,7 +68,12 @@ Copter’s constraints coming from a battery is described as follows:
 The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
 
 \pr{Rover and Helicopter Measurements}
-Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the helicopter at the $k$-th time step, respectively. Sequences of observations are defined as $z^r_{0:k}=\{z^r_0,z^r_1,\cdots,z^r_k\}$,~$z^c_{0:l}=\{z^c_0,z^c_1,\cdots,z^c_l\}$ for $0 \leq l \leq k$. A copter takes images only at the $l$-th step ($l \in k$), since a copter has battery limitation.
+Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the copter at the $k$-th time step, respectively. Sequences of observations are defined as
+\begin{align}
+    z^r_{0:k}&=\{z^r_0,z^r_1,\cdots,z^r_k\}\\
+    z^c_{k,1:j}&=\{z^c_{k,1},z^c_{k,2},\cdots,z^c_{k,j}\}
+\end{align}
+where $0 \leq k \leq T$ and a copter takes $j$ images at the $k$-th rover step.
 
 \pr{Map Belief}
 We denote the map of the environment by $m$ and assume the environment is stationary. The knowledge we have about the environment is obtained via noisy sensors. Therefore, the best we can have is a probabilistic representation of $m$, i.e., the map belief
@@ -104,8 +109,8 @@ We consider maps from both rover and copter and use a surf feature mapping. Vect
 \pr{Map Update}
 The map of a rover and a copter can be updated as follows:
 \begin{align}
-    m^r_{k+1}&=\tau^r_m (m_k, u^r_k, x^r_{k+1}, z^r_{k+1})\\
-    m^c_{k+1}&=\tau^c_m (m_k, u^c_k, x^c_{k+1}, z^c_{k+1})
+    m^r_{k+1}&=\tau^r_m (m_k, x^r_{k+1}, z^r_{k+1})\\
+    m^c_{k+1}&=\tau^c_m (m_k, x^c_{k+1}, z^c_{k+1})
 \end{align}
 where
 \begin{align}
@@ -119,20 +124,24 @@ Therefore, using these $m^r_{k+1}$ and $m^c_{k+1}$, the map at the $k$-th time s
 \begin{eqnarray}
 m_{k+1} =
   \begin{cases}
-    \tau_m (m^r_{k+1}, m^c_{k+1}) & ($k+1 \in l$)\\
-    m^r_{k+1} & ($k+1 \not\in l$)
+    \tau_m (m^r_{k+1}, m^c_{k+1}) & (k+1 = l)\\
+    m^r_{k+1} & (k+1 \neq l)
   \end{cases}
 \end{eqnarray}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Rover Localization}
 This section considers belief update for a rover localization. Belief update of a map is given by
-\begin{align}
-    b^{m}_k=p(m_k | z^r_{0:k}, x^r_{0:k}, z^c_{0:l}, x^c_{0:l}).
-\end{align}
+\begin{eqnarray}
+    b^{m}_k=
+    \begin{cases}
+    p(m_k | z^r_{0:k}, x^r_{0:k}, z^c_{k,1:j}, x^c_{k,1:j}) & (k=l)\\
+    p(m_k | z^r_{0:k}, x^r_{0:k}) & (k \neq l)
+    \end{cases}
+\end{eqnarray}
 Belief update of a rover localization is given by
 \begin{align}
-    b^r_{k+1}=\tau^r (b^r_k, u^r_k, z^r_{k+1}; m_{k+1}).
+    b^r_{k+1}=\tau^r (b^r_k, b^m_k, u^r_k, z^r_{k+1}; m_{k+1}).
 \end{align}
 
 \section{Planning: copter where to map}
@@ -142,13 +151,13 @@ Belief update of a rover localization is given by
 We find a helicopter position that minimizes the following cost function:
 \begin{align}
     &x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^{r+}_k\label{eq:c1}\\
-     &{\rm s.t.} \hspace{5mm} D_{\min}(x^c_{alt}) \leq D^c_k \leq D_{\max}(x^c_{alt})\label{eq:st1}\\
-    &\hspace{10mm} \sum^{Tc}_{l=1} L^c_{k,l} \leq L^c_{\max}(t^c_{search})\label{eq:st2}
+     &{\rm s.t.} \hspace{5mm} D^c_{\min}(x^c_{alt}) \leq D^c_k \leq D^c_{\max}(x^c_{alt})\label{eq:st1}\\
+    &\hspace{10mm} \sum^{n}_{i=0} L^c_{k,i} \leq L^c_{\max}(t^c_{search}), ~~0\leq i \leq n \label{eq:st2}
 \end{align}
 where
 \begin{align}
-P^{r+}_k&={\rm Cov}(x^{r+}_k) = {\rm Cov}(x^{r}_k | z_{0:k})\label{eq:p1}\\
-&={\rm VO}(z_1,~z_2,\cdots,~z_k)\simeq {\rm VO}(z_k).\label{eq:p2}
+P^{r+}_k&={\rm Cov}(x^{r+}_k) = {\rm Cov}(x^{r}_k | z^r_{0:k})\label{eq:p1}\\
+&={\rm VO}(z^r_0,~z^r_1,\cdots,~z^r_k)\simeq {\rm VO}(z^r_k).\label{eq:p2}
 \end{align}
 Note that Cov($\cdot$) and VO($\cdot$) denote the covariance and the visual odometry, respectively.
 
@@ -164,17 +173,18 @@ A resolution of an image from a copter depends on a camera performance and a alt
 Equation~\eqref{eq:st1} represents the constraint that the area of the image depends on the altitude of the copter.
 A field-of-view (FOV) $D^c$ is determined by an altitude of a copter.
 \begin{align}
-    D_{\min}(x^c_{alt}) \leq D^c_k \leq D_{\max}(x^c_{alt})
+    D^c_{\min}(x^c_{alt}) \leq D^c_k \leq D^c_{\max}(x^c_{alt})
 \end{align}
 
 \pr{Flight time constraint}
-Equation~\eqref{eq:st2} represents the constraint that the searching range $L^c$ depends on the flight time $T^c_{search}$ coming from the battery limitation of the copter.
+Equation~\eqref{eq:st2} represents the constraint that the searching range $L^c$ depends on the flight time $t^c_{search}$ coming from the battery limitation of the copter.
 \begin{align}
-    \sum^{Tc}_{l=1} L^c_{k,l} \leq L^c_{\max}(t^c_{search})
+    \sum^{n}_{i=0} L^c_{k,i} \leq L^c_{\max}(t^c_{search})
 \end{align}
+where $n$ is the number of the areas for searching by the copter.
 
 \pr{Flight interval constraint}
-``{\it When to map}'' is also an interesting problem. This constraint determines $l$ in the time step $k$.
+``{\it When to map}'' is also an interesting problem.
 \textcolor[gray]{0.5}{
 \section{Planning: copter body path planning}
 \subsection{Planning Objective}
@@ -227,21 +237,22 @@ where $\Delta \grave{x}_{i,i+1}$ denotes the displacement between two synthetic 
 %    \item Occluded area (using Viewshed analysis)
  %   \item Beyond rover’s perception horizon
 %\end{itemize}
+
+\subsection{Search the optimal path}
+From the obtained the areas to map, next we search the optimal path (shortest path) using a traveling salesman problem (TSP) or a dynamic programming (DP).  
+
 \begin{figure}[h]
 		\centering
 		\includegraphics[width=1.0\columnwidth]{figs/vs.png}
 		\caption{Viewshed analysis (example).}
 		\label{fig:vs}
-\end{figure}
-\begin{figure}[h]
+%\end{figure}
+%\begin{figure}[h]
 		\centering
 		\includegraphics[width=1.0\columnwidth]{figs/8_4.png}
-		\caption{Creating the path.}
+		\caption{Creating the path (in the case of $n=3$).}
 		\label{fig:8_4}
 \end{figure}
-
-\subsection{Search the optimal path}
-From the obtained the areas to map, next we search the optimal path (shortest path) using a traveling salesman problem (TSP) or a dynamic programming (DP).  
 
 \textcolor[gray]{0.5}{
 \section{Search Method: copter body path planning}
