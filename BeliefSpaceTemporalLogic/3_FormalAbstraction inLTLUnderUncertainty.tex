@@ -420,7 +420,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines an MDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
 
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -432,7 +432,7 @@ where
 \begin{aligned}
   P_{k|k-1}=AP_{k-1|k-1}A^T+\mathcal W, \\
   L_k = P_{k|k-1}C^T\left(CP_{k|k-1}C^T+\mathcal V\right)^{-1}, \\
-  s_k\sim \mathcal N (0, S_k ), \quad S_k \sim \mathcal N (0, CP_{k|k-1}C^T+\mathcal V ).
+  s_k\sim \mathcal N (0, S_k ), \quad \red{S_k = CP_{k|k-1}C^T+\mathcal V} .
 \end{aligned}
 \end{equation}
 
@@ -477,7 +477,7 @@ The labeling $\hat \Labset_{p_i}$ can be easily computed by shrinking or expandi
 
 \subsubsection{Probability requirements:}
 
-In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that $x_{s,0} \sim (\hat x_\init, P_\init)$, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
+In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \sim (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
 
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
@@ -485,14 +485,14 @@ We can quantify the difference between $\MB$ and \eqref{eq:abstract} by verifyin
 \begin{equation}
 \begin{aligned}
   \hat x_{k+1|k+1}-  \hat x_{k+1}=(A+BK)(\hat x_{k|k}-\hat x_{k-1}) \\
-  +  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{w}_{k+1}+ w^\Delta_{k+1}),
+  +  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \red{\hat{s}}_{k+1}+ \red{s}^\Delta_{k+1}),
 \end{aligned}
 \end{equation}
-with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \hat{w}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ w^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
+with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \hat{\red{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ \red{s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
 Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
 \begin{equation}
 \begin{aligned}
- \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{w}_{k+1}+ w^\Delta_{k+1}).
+ \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 \end{aligned}
 \end{equation}
 Given that $(\hat x_{k|k}-\hat x_{s|k})$ and $x_\grid$ belong to bounded sets, we can bound the influence of the noise terms $w^\Delta_{k+1}$ and $ \hat{w}_{k+1}$ with respect to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
