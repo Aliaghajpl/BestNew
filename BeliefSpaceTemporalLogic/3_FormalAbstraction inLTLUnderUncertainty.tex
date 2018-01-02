@@ -407,13 +407,12 @@ Based on Proposition \ref{prop:1}, we already know that a refined policy for the
 		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).
 \end{equation*}
 \new{We remark that this construction is allowed, as it effectively implements a one step improvement of the lower bound on the reachability probability.
-Additionally, we can assume without loss of generality that no measurability issues are introduced as the maximization is performed over a subset of the state space of the abstracted model, which in general  has a finite domain.} Remark that as a corollary of Proposition \ref{prop:1}, it follows that the probability that an scLTL property is satisfied is still lower bounded as in inequality \eqref{eq:prob_result}.
+Additionally, we can assume without loss of generality that no measurability issues are introduced as the maximization is performed over a subset of the simpler state space of the abstracted model.} Remark that as a corollary of Proposition \ref{prop:1}, it follows that the probability that an scLTL property is satisfied is still lower bounded as in inequality \eqref{eq:prob_result}.
 
 
 \section{Abstractions for Gaussian LTI POMDPs}
-\label{sec:gaussian}
-\red{[I am going to remove the details of the abstraction in this section, it is not a new contribution and it complicates the explanation. It makes more sense to explain that the labeling based relations are transitive and show that since we can go to a standard Gaussian process, we can afterwards use any method for abstracting it to a finite state model. ]}
-We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and give a concrete model abstraction. Consider an LTI system
+\label{sec:gaussian} 
+We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and detail the model abstraction  to an observable belief LTI model. Consider an LTI system
 \begin{equation}
   \label{eq:LTI}
     \begin{aligned}
@@ -425,37 +424,34 @@ Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\math
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
-  \label{eq:beliefx} \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+P_{k|k-1}C^Ts_k \\
+  \label{eq:beliefx}  \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+L_ke_k \\
   \label{eq:beliefP} P_{k|k}&= (I - L_k C) P_{k|k-1},
+\shortintertext{where $e_k\sim \mathcal N (0, S_k),$ and}
+ P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W, \notag\\
+ L_k &= P_{k|k-1}C^TS_k^{-1}, \quad S_k = CP_{k|k-1}C^T+\mathcal V.\notag
 \end{align}
-where $s_k\sim \mathcal N (0, S_k ),$ and
+These equations together define a belief model $\MB$. %Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}. 
+As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of covariance matrix $P$. Therefore, we replace the stochastic transitions in equation \eqref{eq:beliefx} by
 \begin{equation}
-\begin{aligned}
-  &P_{k|k-1}=AP_{k-1|k-1}A^T+\mathcal W, \\
-  &L_k = P_{k|k-1}C^T\left(CP_{k|k-1}C^T+\mathcal V\right)^{-1}, \\
- &S_k = CP_{k|k-1}C^T+\mathcal V.
-\end{aligned}
+		\tilde x_k  = A\tilde x_{k-1} +B\tilde u_{k-1} + \tilde P  C^T  \tilde{s}_k,\label{eq:abstract}
 \end{equation}
-These equations together define a belief model $\MB$. Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}. As a first step, we choose to remove the dynamics of the covariance matrix $P$. Furthermore, we replace the stochastic transitions in equation \eqref{eq:beliefx} by
-\begin{equation}
-		\hat x_k  = A\hat x_{k-1} +B\hat u_{k-1} + \bar P  C^T  \hat{s}_k,\label{eq:abstract}
-\end{equation}
-with $ \hat{s}_k\sim \CA N (0,\hat{S}_{inv})$ and $\hat{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\bar P$ defines the steady state $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that system \eqref{eq:abstract} has state space $\Xb_{x}$ and abstract the system further to a finite-state model $\tilde \MB_{grid}$ by gridding $\Xb_x$.  As illustrated in Figure \ref{fig:grid}, the abstract model $\tilde \MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which distributed  equidistantly over the state space $  {\X}_{bx}$.  Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell 
-$\Delta_{x_s}= \ball_\eta(x_s)$ where $\grid$ is a vector-valued precision parameter that defines the coarseness of the gridding. In addition, we require that the cells cover the whole state space, that is, $\Xb_x \subseteq \bigcup_{s \in \mathbb{S}} \Delta_{x_s}$.
+with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that system \eqref{eq:abstract} has state space $\Xb_{x}$ and abstract the system further to a finite-state model $\tilde \MB_{grid}$ by gridding $\Xb_x$. 
+%As illustrated in Figure \ref{fig:grid}, the abstract model $\tilde \MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which distributed  equidistantly over the state space $  {\X}_{bx}$.  Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell 
+%$\Delta_{x_s}= \ball_\eta(x_s)$ where $\grid$ is a vector-valued precision parameter that defines the coarseness of the gridding. In addition, we require that the cells cover the whole state space, that is, $\Xb_x \subseteq \bigcup_{s \in \mathbb{S}} \Delta_{x_s}$.
+%
+%The transition kernel of $\hat\MB_{grid}$ is given as $t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)$, where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}. Thus, the probability of transitioning from $s$ to $s'$ is given by the probability of transitioning from the representative \emph{state} $x_s$ of $s$ to the representative \emph{cell} $\Delta_{s'}$ of $s'$.
 
-The transition kernel of $\hat\MB_{grid}$ is given as $t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)$, where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}. Thus, the probability of transitioning from $s$ to $s'$ is given by the probability of transitioning from the representative \emph{state} $x_s$ of $s$ to the representative \emph{cell} $\Delta_{s'}$ of $s'$.
+%\begin{figure}[htp]
+%\centering
+%	\includegraphics[width = .6\columnwidth]{figs/grid}
+%	\caption{Depiction of the gridded state space. Depicted are the mean state $\hat x$ of the concrete belief MDP ($\bullet$), and the representative states $x_s$ of the abstract MDP ($\boldsymbol{+}$), together with an illustration of a stochastic transition. \textcolor{red}{should add $x_s, s, \Delta_s$, etc to figure} }
+%  \label{fig:grid}
+%\end{figure}
 
-\begin{figure}[htp]
-\centering
-	\includegraphics[width = .6\columnwidth]{figs/grid}
-	\caption{Depiction of the gridded state space. Depicted are the mean state $\hat x$ of the concrete belief MDP ($\bullet$), and the representative states $x_s$ of the abstract MDP ($\boldsymbol{+}$), together with an illustration of a stochastic transition. \textcolor{red}{should add $x_s, s, \Delta_s$, etc to figure} }
-  \label{fig:grid}
-\end{figure}
-
-We consider simulation relations $\sim$ between states $(\hat x, P)$ of $\MB$ and states $s$ of $\hat \MB_{grid}$ and interfaces $\InF$ defined on the forms
+We consider simulation relations $\rel$ between states $(\hat x, P)$ of $\MB$ and states $s$ of $\hat \MB_{grid}$ and interfaces $\InF$ defined on the forms
 \begin{align}
   \label{eq:rel}
-    & \rel = \left\{(s, (\hat x, P ) ) {\mid}\begin{aligned}
+    & \rel = \left\{(s, (\hat x, P ) ) \Big{|}\begin{aligned}
       (\hat x-x_s)^T M(\hat x-x_s)\leq \eps^2 \\
       P^-\preceq P \preceq   P^+
     \end{aligned} \right\}, \\
@@ -478,7 +474,7 @@ The labeling $\hat \Labset_{p_i}$ can be easily computed by shrinking or expandi
 
 \subsubsection{Probability requirements:}
 
-In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \sim (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
+In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \rel (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
 
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
@@ -490,13 +486,14 @@ We can quantify the difference between $\MB$ and \eqref{eq:abstract} by verifyin
 \end{aligned}
 \end{equation}
 with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \hat{\red{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ \red{s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
-Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
-\begin{equation}
-\begin{aligned}
- \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
-\end{aligned}
-\end{equation}
-Given that $(\hat x_{k|k}-\hat x_{s|k})$ and $x_\grid$ belong to bounded sets, we can bound the influence of the noise terms $\red{s}^\Delta_{k+1}$ and $ \hat{\red{s}}_{k+1}$   to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
+%Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
+%\begin{equation}
+%\begin{aligned}
+% \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
+%\end{aligned}
+%\end{equation}
+Given that $(\hat x_{k|k}-\hat x_{s|k})$ %and $x_\grid$ 
+belongs to bounded sets, we can bound the influence of the noise terms $\red{s}^\Delta_{k+1}$ and $ \hat{\red{s}}_{k+1}$   to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
 \begin{remark}
   Here we did not explicitly write out the lifted probability space $\mathbb{W}$ of Definition \ref{def:dellifting}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} and a compensation for the gridding error.
 \end{remark}
@@ -511,7 +508,7 @@ Given that $(\hat x_{k|k}-\hat x_{s|k})$ and $x_\grid$ belong to bounded sets, w
 \section{Case study}
 \label{sec:case}
 
-Motivated by space exploration applications we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment.
+Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment.
 
 \textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as
 \begin{equation*}
@@ -521,7 +518,7 @@ Motivated by space exploration applications we consider an autonomous rover task
 \end{aligned}
 \end{equation*}
 
-A finite abstraction $\MDP_{syst}$ is constructed as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$.
+A finite abstraction $\MDP_{syst}$ \red{(Or $\MB_{syst}$)} is constructed as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$.
 
 {\color{red}
 Say something about Fig. \ref{fig:tradeoff}}
