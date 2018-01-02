@@ -149,7 +149,7 @@ Given an observation-based policy $\pol$ and an initial distribution $\init$, th
 	 b_{k+1} \sim \trb(\cdot|b_k,u_k).
 \end{align}
 
-Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \init, \trb, \A)$ in belief space \cite{bertsekas2004stochastic}. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\rho, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\pol_k(\mathrm{d} u| b)=  \pol(\mathrm{d} u| b)$  for all $k$ and $b$ with $\pol:\mathbb B\rightarrow \mathcal{P}(\A)$ a universally measurable stochastic kernel. %\pol_k( \cdot |b)$ for all $k$ and $b$.
+Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ in belief space \citep{bertsekas2004stochastic}. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\initb, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\rho, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\pol_k(\mathrm{d} u| b)=  \pol(\mathrm{d} u| b)$  for all $k$ and $b$ with $\pol:\mathbb B\rightarrow \mathcal{P}(\A)$ a universally measurable stochastic kernel. %\pol_k( \cdot |b)$ for all $k$ and $b$.
 
 
 \subsection{Linear Temporal Logic for Belief MDPs}
@@ -274,7 +274,7 @@ and similarly for the policy-optimal version $\Bel_\ast$. The stationary policy 
 for the product MDP $\MB \otimes \FSA_\psi$ can be translated to a time-dependent policy $\polb$ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
 
 Even though this section outlines a solution method to Problem \ref{prob:main}, the required recursions can only be computed for a limited set of systems.
-Computation is especially challenging for high-dimensional continuous-state belief MDPs. In this work, we will tackle this issue by constructing an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a certain precise sense, but which is more amenable to policy synthesis.
+Computation is especially challenging for high-dimensional continuous-state belief MDPs. In the sequel, we tackle this issue by constructing an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a quantified sense, but which is more amenable to policy synthesis.
 
 
 \section{Refinement-based approximate control synthesis}
@@ -337,9 +337,9 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 %
 The difference between two probability distributions can be quantified with respect to a relation $\rel$ based on Definition \ref{def:dellifting}. For stochastic kernels we add a measurability condition.
 \begin{definition}
-		\new{Borel measurable stochastic kernels $\mathbf{t}_1(\cdot \mid x)$ and $\mathbf{t}_2(\cdot \mid x)$ are in a \ $\delta$-lifted relation $\bar \rel_\delta$ for a set $x\in A$, i.e.,  $\mathbf{t}_1(\cdot \mid x) \bar \rel_\delta \mathbf{t}_1(\cdot \mid x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Definition \ref{def:dellifting} holds. }
+		\new{Borel measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are in a \ $\delta$-lifted relation $\bar \rel_\delta$ for a set $x\in A$, i.e.,  $\tr_1(\cdot \mid x) \bar \rel_\delta \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Def. \ref{def:dellifting} holds. }
 \end{definition}
-We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of partially observed LTI Gaussian systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
+We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of Gaussian LTI POMDP systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
 
 \begin{definition}
 \label{def:apbsim}
@@ -347,24 +347,24 @@ Consider a concrete belief MDP $\MB = (\Xb, \rho, \trb, \A)$ and an abstract MDP
 \begin{equation}
   {\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset} \tilde \MB,
 \end{equation}
-if there exists a \red{Borel measurable interface function $\InF : \tilde \A \times \tilde \Xb \times \Xb \rightarrow \mathcal P(\A)$} and a Borel-measurable relation $\rel\subseteq \tilde \Xb\times \Xb$, for which
+if there exists a \red{Borel measurable interface function $\InF : \tilde \A \times \tilde \Xb \times \Xb \rightarrow \mathcal P(\A)$} and a Borel-measurable relation $\rel\subseteq \tilde \Xb\times \Xb$, for which for all  $ \tilde u\in \tilde \A$, and for all $ (\tilde b,b)\in \rel$
 \begin{align}
   \label{eq:sr-1} & \tilde\init \bar \rel_\delta \init, \tag{\textbf{SR 1}} \\
   \label{eq:sr-2} &  \tilde \trb(\cdot| \tilde b, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| b, \InF(\tilde u,\tilde b,b)), \tag{\textbf{SR 2}} \\
   \label{eq:sr-l} & %\forall (\tilde b,b)\in \rel:
-   \Labset(b)\subseteq \tilde{\Labset}(\tilde b) \tag{\textbf{SR$\,\boldsymbol{\CA{L}}$}}
+   \Labset(b)\subseteq \tilde{\Labset}(\tilde b).\tag{\textbf{SR$\,\boldsymbol{\CA{L}}$}}
 \end{align}
-for all  $ \tilde u\in \tilde \A$, and for all $ (\tilde b,b)\in \rel$. 
+
 \end{definition}
 
 Condition \eqref{eq:sr-1} enforces $\delta$-probabilistic similarity between the initial distributions, while \eqref{eq:sr-2} ensures that the transition kernels of the two MDPs are approximately matched via the interface. Finally, \eqref{eq:sr-l} guarantees that any label $\Labset(b)$ of a concrete state $b$ is also present in the abstract label $\Labset(\tilde b)$. Thus, any word generated by $\MB$ will also be present in the possible behaviors of $\tilde \MB$.
 
-In \citet{haesaert2017verification} difference between models is quantified based both on a probabilistic difference as above, and on a metric difference in output space. To facilitate working with belief space models this paper implements this novel alternative notion of simulation relation that instead of a metric error incorporates non-determinism in the labeling.
+In \citet{haesaert2017verification} the difference between models is quantified based both on a probabilistic difference as above, and on a metric difference in an output space. To facilitate working with belief space models this paper implements this novel alternative notion of simulation relation that instead of a metric error incorporates non-determinism in the labeling.
 
 
 \subsection{Robust policy synthesis}
 
-As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that a scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism:
+As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that a scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism
 \begin{equation}
 \label{eq:V_recopt_nondet}
 \begin{aligned}
@@ -378,15 +378,15 @@ The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogous
   \label{eq:V_recopt_nondet_rob}
   \BelR_\pol^{(\Labset,\delta)} (\mathbf V)(b,q) = \max \left( 0, \Bel_\pol^\Labset (V)(b,q) - \delta  \right),
 \end{equation}
-and similarly for the policy-optimal Bellman operator $\BelR_\ast^{(\Labset, \delta)}$. The robustified optimal probability that an execution $\tilde b$ of $\tilde \MB$ reaches $Q_f$, and hence satisfies $\psi$, is therefore given as
+and similarly for the policy-optimal Bellman operator $\BelR_\ast^{(\Labset, \delta)}$. The robustified optimal probability that an execution $\tilde{\mathbf{b}}$ of $\tilde \MB$ reaches $Q_f$, and hence satisfies $\psi$, is therefore given as
 \begin{equation}
 \label{eq:prob:robust_optimal}
 \begin{aligned}
-  &\mathbf{P_{\! rob}}_\init^{\!\ast} (\tilde b \vDash \psi; \Labset,\delta) =\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(b_0))}  \max \left( \mathbf 1_{Q_f}(\bar q), \mathbf W^\infty_\ast(b_0,\bar q) \right) \mathrm{d} b_0 -\delta
+  &\mathbf{P_{\! rob}}_\init^{\!\ast} (\tilde{\mathbf{b}} \vDash \psi; \Labset,\delta) =\\ & \int_{\X}\min_{\bar q \in \delta_\FSA(q_0,\Labset(b_0))}  \max \left( \mathbf 1_{Q_f}(\bar q), \mathbf W^\infty_\ast(b_0,\bar q) \right) \mathrm{d} b_0 -\delta
 \end{aligned}
 \end{equation}
 with
-$\mathbf W^\infty_\ast :=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N (\mathbf W^0)$ and $\mathbf W^0=0$. Remark the the robust optimal probability is parameterized with the set-valued labeling and the difference in the stochastic transitions $\delta$.
+$\mathbf W^\infty_\ast \!:=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N\! (\mathbf W^0)$ and $\mathbf W^0\equiv0$. Remark this robust probability is parameterized with the set-valued labeling and the $\delta$-difference in the stochastic transitions.
 
 
 \begin{prop}\label{prop:1}
@@ -423,7 +423,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
 
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
