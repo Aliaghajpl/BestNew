@@ -180,16 +180,27 @@ where position of the rover is given by $(x,y)$, its heading is given by $\psi$ 
 % Better localization for map creation or avoiding obstacle
 The dynamics of the quadrotor are given by the following equations:
 \begin{gather}
-m\ddot{x} = mge_{3} - fRe_{3} \\
+m\ddot{x} = mge_{3} - fRe_{3} + w^f\\
 \dot{R} = R\hat{\Omega} \\
-J\dot{\Omega} + \Omega \times J\Omega = M 
+J\dot{\Omega} + \Omega \times J\Omega = M + w^m
 \end{gather}
 where the state of the copter is given by position, velocity, acceleration $x, \dot{x}, \ddot{x} \in \mathbb{R}^3$, orientation $R \in SO(3)$ and angular velocity $\Omega \in \mathbb{R}^3$.
 Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R}^3$.
 Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
-Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$, and $\times$ is the vector cross-product operator.
+Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$, and $\times$ is the vector cross-product operator. The position and attitude dynamics are corrupted by gaussian disturbances  $w^f, w^m \sim \mathcal{N}(0,\Sigma)$. \\
 
-\pr{Differential Flatness} The quadcopter model is differentially flat. Thus, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $x^f = [x, y, z, \psi] \in \mathbb{R}^4$. 
+\pr{Control}
+The following controller \cite{leegeometric} provides almost global exponential attractiveness for position and attitude dynamics:
+\begin{gather}
+    e_x = x - x_d \\
+    e_v = v - v_d \\
+    e_R = \frac{1}{2}(R^T_d R - R^T R_d)^{\vee} \\
+    e_{\Omega} = \Omega - R^T R_d \Omega_d \\
+    f = -(-k_x e_x - k_v e_v - mge_3 + m\ddot{x}_d).Re_3 \\
+    \nonumber M = -k_R e_R - k_{\Omega} e_{\Omega} + \Omega \times J\Omega\\ - J (\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega_d})
+\end{gather}
+
+\pr{Differential Flatness} The quadcopter model is differentially flat. Thus, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $x^f(t)$. $x^f = [x, y, z, \psi] \in \mathbb{R}^4$. 
 
 $(u(t), x(t)) = q(x^f(t))$
 
@@ -218,11 +229,10 @@ $param = c^i_?$
 \nonumber & \Pr(x\in F) < \epsilon \\
 \nonumber & u_{min} < u_i < u_{max}
 \end{align}
-\rohan{Where do we want to add noise in the dynamics?} \\
+\rohan{How d} \\
 \rohan{What is the local controller? LQG won't be robust if we linearise the attitude} \\
 \rohan{What representation do we use for the trajectories?} 
 \rohan{Currently we can execute only execute trajectories which are a sequence of 9th order polynomials}
-\printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future work}
@@ -230,8 +240,8 @@ $param = c^i_?$
     \item Closed-loop controller for quadcopter
 \end{enumerate}
 
+\printbibliography
+
 \end{document}
 % marco pavone chance constraint dp on graph
 % RHC satisfaction
-
-\end{document}
