@@ -111,7 +111,7 @@ We first define a Markov decision process as follows \citep{hll1996}.
 % \citep{mt1993,bertsekas2004stochastic}.
 \begin{definition}
 \label{def:MDP}
-  A discrete-time \textbf{Markov decision process} (MDP) is a tuple $\MDP = (\X, \init, \tr, \A)$ where
+  A discrete-time \emph{Markov decision process} (MDP) is a tuple $\MDP = (\X, \init, \tr, \A)$ where
   \begin{itemize}
     \item $\X$ is a \new{(Polish)} state space with states $x\in\X$; % as its elements;
     \item $\init \in \mathcal P(\X)$ is an initial probability distribution;
@@ -139,9 +139,9 @@ An execution of the POMDP up to time $K$ is a sequence
 \label{eq:history}
   (x_0,u_0,z_0) (x_1,u_1,z_1) \ldots (x_K,u_K,z_K)
 \end{equation}
-where $(x_0, u_0) \ldots (x_K, u_K)$ is an execution of $\MDP$ and $z_k \sim r(\cdot \mid x_k)$. The execution \eqref{eq:history} grows with the number of observations $K$ and takes values in the \emph{history space} $\Hist_K = (\X \times \A \times \Z)^{K+1}$.
+where $(x_0, u_0) \ldots (x_K, u_K)$ is an execution of $\MDP$ and $z_k \sim r(\cdot | x_k)$. The execution \eqref{eq:history} grows with the number of observations $K$ and takes values in the \emph{history space} $\Hist_K = (\X \times \A \times \Z)^{K+1}$.
 
-In a POMDP control actions $u_k$ can be chosen as a function of the history of inputs and observed outputs. For this purpose, define the \emph{$k$:th information space} as $\I_k = (\Z \times \A)^{k} \times \Z$ with elements $i_k = (z_0,u_0,z_1,u_1,\ldots,z_{k-1}, u_{k-1}, z_k)$ referred to as the \emph{$k$:th information vector}. Based on the notion of information, an \emph{observation-based} policy for $\POMDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for each $k$, $\pol_k( \mathrm{d} u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  given $\mathcal{P}(\X)\times \I_k$. We say that $\polb$ is \emph{non-randomized} if for all $\init$, $k$, and $i_k$, $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution. % Unless otherwise mentioned, we will in the following assume that a policy represents a sequence of stochastic kernels on $\A$.
+In a POMDP control actions $u_k$ can be chosen as a function of the available information on the history of inputs and observed outputs. For this purpose, define the \emph{$k$-th information space} as $\I_k = (\Z \times \A)^{k} \times \Z$ with elements $i_k = (z_0,u_0,z_1,u_1,\ldots,z_{k-1}, u_{k-1}, z_k)$ referred to as the \emph{$k$-th information vector}. Based on the notion of information, an \emph{observation-based} policy for $\POMDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for each $k$, $\pol_k( \mathrm{d} u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  given $\mathcal{P}(\X)\times \I_k$. We say that $\polb$ is \emph{non-randomized} if for all $\init$, $k$, and $i_k$, $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution. % Unless otherwise mentioned, we will in the following assume that a policy represents a sequence of stochastic kernels on $\A$.
 
 Given an observation-based policy $\pol$ and an initial distribution $\init$, the theorem of Ionescu Tulcea \citep{hll1996} implies the existence of a unique probability measure $\P_\pol^\init$ on $\Hist_\infty$, or, equivalently, a stochastic process on the probability space $(\Hist_\infty, \borel{\Hist_\infty}, \P_\pol^\init)$. For an information vector $i_k$, state knowledge can be expressed as a conditional probability distribution $b_k( \mathrm{d} x )=\P(x_k\in \mathrm{d} x |\init,i_k)\in \mathcal P (\X)$. The distribution $b_k$ is called the \emph{belief state} and the set of all beliefs is the \emph{belief space} $\Xb\subset \mathcal P(\X)$. It can be shown that the belief state evolves based on a fixed stochastic kernel
 \begin{align}
@@ -149,7 +149,7 @@ Given an observation-based policy $\pol$ and an initial distribution $\init$, th
 	 b_{k+1} \sim \trb(\cdot|b_k,u_k).
 \end{align}
 
-Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \init, \trb, \A)$ in belief space. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\rho, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\polb(\cdot | b)= \pol_k( \cdot |b)$ for all $k$ and $b$.
+Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \init, \trb, \A)$ in belief space \cite{bertsekas2004stochastic}. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\rho, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\pol_k(\mathrm{d} u| b)=  \pol(\mathrm{d} u| b)$  for all $k$ and $b$ with $\pol:\mathbb B\rightarrow \mathcal{P}(\A)$ a universally measurable stochastic kernel. %\pol_k( \cdot |b)$ for all $k$ and $b$.
 
 
 \subsection{Linear Temporal Logic for Belief MDPs}
@@ -158,25 +158,26 @@ In this work we are interesting in controlling state evolution under uncertainty
 
 \subsubsection{Atomic propositions in belief space:}
 
-An atomic proposition $p$ is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions are uniquely characterized by the mean and variance. That is, the belief state is $b = (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
+An atomic proposition $p_i$ \red{[S: introduced subscript $i$ to avoid notational conflict]} is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions are uniquely characterized by the mean and variance. That is, the belief state is $b = (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
 \begin{enumerate}
   \item a position-based proposition $p_1 = \{ (\hat x, P) : \hat x \in A \}$ that evaluates to true when the state mean is in a set $A \subset \mathbb{R}^n$;
   \item an uncertainty-based proposition $p_2 = \{ (\hat x, P) : \det(P) \leq c \}$ that is true if the determinant of the variance is small;
   \item a proposition $p_3 = \{ (\hat x, P) : \int_{A} \mathbf{P}( \mathrm{d} x \mid \hat x, P) \geq c \}$ which lower bounds the probability of an event $A$.
 \end{enumerate}
+\red{[S: I am not sure whether it is smart to define AP as sets over the state space. Normally one considers the AP to be indicators for these sets.]}
 
 % Several atomic propositions can simultaneously hold at a state $(\hat x, P)$. For example, the mean $\hat x$ can belong to a given set as in (1), while the variance is also low as in (2).
 Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabeth := 2^{AP}$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots\in\alphabeth^{\mathbb{N}}$.
 
 To quantify the dynamic behavior of a system, we define the word associated to an MDP execution. Consider a labeling function $\Lab:\Xb\rightarrow \alphabeth$ that maps belief states to letters in the alphabet. We require that $\Lab$ is measurable, i.e. that $\{b|\Lab(b)\vDash p \}\in \borel{\Xb}$ for all $p \in AP$. Since Borel measurability is preserved by standard linear operations \citep{azoff1974borel}%\citep[page 116]{lang1993real}
-, the properties above are all Borel measurable. Under these assumptions, the words generated by a belief trajectory $\mathbf{b} = b_0 b_1 b_2 \ldots$ can be defined as the word $\word:=\Lab(b_0)\Lab(b_1) \Lab(b_2) \ldots$. System properties can now be expressed via temporal logic formulas over the generated words.
+, the above properties are all Borel measurable. Under these assumptions, the words generated by a belief trajectory $\mathbf{b} = b_0 b_1 b_2 \ldots$ can be defined as the word $\word:=\Lab(b_0)\Lab(b_1) \Lab(b_2) \ldots$. System properties can now be expressed via temporal logic formulas over the generated words.
 
 \subsubsection{Linear temporal logic formulas:}
 
 Properties are formulas composed of atomic propositions and operators. In this work we restrict attention to a fragment of linear temporal logic.
 \begin{definition}
   \label{def:gdtl-syntax}
-  Formulas in the \textbf{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
+  Formulas in the \emph{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
   \begin{equation*}
     \label{eq:scLTL}
     \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
@@ -188,7 +189,7 @@ Properties are formulas composed of atomic propositions and operators. In this w
 To define the interpretation of a formula, i.e. the \emph{semantics}, consider a word $\word$ with the suffix sequences $\word_i:= \letter_i \letter_{i+1} \letter_{i+2} \ldots$
 
 \begin{definition}
- The \textbf{semantics} of scLTL are defined recursively  over $\word_i$ as
+ The \emph{semantics} of scLTL are defined recursively  over $\word_i$ as
     $\word_i \models \True$,
     $\word_i \models p$ iff $p \in \letter_i$,
     $\word_i \models \psi_1 \andltl  \psi_2  $ iff $ ( \word_i \models \psi_1 ) \andltl ( \word_i \models \psi_2 ) $,
