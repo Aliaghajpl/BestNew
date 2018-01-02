@@ -336,7 +336,7 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 % Based on these requirements we can define the concept of a labeling-based $\delta$-stochastic simulation relation.
 %
 The difference between two probability distributions can be quantified with respect to a relation $\rel$ based on Definition \ref{def:dellifting}. For stochastic kernels we add a measurability condition.
-\begin{definition}
+\begin{definition}\label{def:kernellift}
 		\new{Borel measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are in a \ $\delta$-lifted relation $\bar \rel_\delta$ for a set $x\in A$, i.e.,  $\tr_1(\cdot \mid x) \bar \rel_\delta \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Def. \ref{def:dellifting} holds. }
 \end{definition}
 We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of Gaussian LTI POMDP systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
@@ -379,14 +379,14 @@ and similarly for the policy-optimal Bellman operator $\BelR_\ast^{(\Labset, \de
 \begin{equation}
 \label{eq:prob:robust_optimal}
 \begin{aligned}
-  &\mathbf{P_{\! rob}}_\init^{\!\ast} (\tilde{\mathbf{b}} \vDash \psi; \Labset,\delta) =\\ & \int_{\Xb}\min_{\bar q \in \delta_\FSA(q_0,\Labset(b_0))}  \max \left( \mathbf 1_{Q_f}(\bar q), \mathbf W^\infty_\ast(b_0,\bar q) \right) \initb(\mathrm{d} b_0) -\delta
+  &\mathbf{P_{\! rob}}_\init^{\!\ast} (\tilde{\mathbf{b}} \vDash \psi; \Labset,\delta) =\\ & \int_{\Xb}\  \min_{\ \ \bar q \in \delta_\FSA(q_0,\Labset(b_0))}  \max \left( \mathbf 1_{Q_f}(\bar q), \mathbf W^\infty_\ast(b_0,\bar q) \right) \initb(\mathrm{d} b_0) -\delta
 \end{aligned}
 \end{equation}
 with
 $\mathbf W^\infty_\ast \!:=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N\! (\mathbf W^0)$ and $\mathbf W^0\equiv0$. Remark this robust probability is parameterized with the set-valued labeling and the $\delta$-difference in the stochastic transitions.
 
-From the robust synthesis results in \citep{tech_report_TACAS}
-we now have that there exists a refined control strategy.\begin{prop}\label{prop:1}
+From the robust synthesis results in \citep{tech_report_TACAS},
+we know  that there exists a refined control strategy with inherited guarantees.\begin{prop}\label{prop:1}
   Suppose that $\MB$ is $\delta$-stochastically simulated by $\tilde \MB$ with respect to $({\tilde{\Labset},\Labset})$, that is, ${\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset} \tilde \MB$. Then, a control policy ${\tilde \polb}^\ast$ for $\tilde \MB$ can be refined to a control policy $\polb$ for $\MB$ such that %for all joint executions $\mathbf{\tilde b}$ and $\mathbf{b}$
   \begin{equation}
   \label{eq:prob_result}
@@ -399,19 +399,20 @@ we now have that there exists a refined control strategy.\begin{prop}\label{prop
 \subsection{Control refinement}
 \label{sec:control}
 
-Based on Proposition \ref{prop:1}, we already know that a refined policy for the concrete model can be constructed. In \cite{tech_report_TACAS}, this refined policy is constructed via the composition of the conditional lifting of the $\delta$-stochastic simulation relation and based on the abstract policy $\tilde  \polb^\ast$. Here we improve this construction in a way that is independent of the exact lifting used in the simulation relation. Given $\mathbf{W}^\infty_\ast$ and abstract policy $\tilde \polb^\ast$, a refined concrete policy over the product MDP $\MB\otimes\FSA_\psi$ is obtained as
+Based on Proposition \ref{prop:1}, we already know that a refined policy for the concrete model can be constructed. In \cite{tech_report_TACAS}, this refined policy is constructed via the composition of the conditional lifting %of the $\delta$-stochastic simulation relation
+ (see Def. \ref{def:kernellift}) and based on the abstract policy $\tilde  \polb^\ast$. Here we improve this construction in a way that is independent of the  lifting. Given $\mathbf{W}^\infty_\ast$ and abstract policy $\tilde \polb^\ast$, a refined concrete policy over the product MDP $\MB\otimes\FSA_\psi$ is obtained as
 \begin{equation*}
 		\polb_\ast(x,q): = \InF( \tilde{\polb}(\tilde x^*, q), \tilde x^*, x), \quad \tilde x^*:=\argmax_{ \tilde x\in
 		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).
 \end{equation*}
-When  $\mathbf  W^\infty_\ast$ has a finite domain, then the maximization is performed over a finite set and does not introduce any measurability issues.
-Remark that as a corollary of Proposition \ref{prop:1}, it follows that the probability that an scLTL property is satisfied is still lower bounded as in equation \eqref{eq:prob_result}.
+\new{We remark that this construction is allowed, as it effectively implements a one step improvement of the lower bound on the reachability probability.
+Additionally, we can assume without loss of generality that no measurability issues are introduced as the maximization is performed over a subset of the state space of the abstracted model, which in general  has a finite domain.} Remark that as a corollary of Proposition \ref{prop:1}, it follows that the probability that an scLTL property is satisfied is still lower bounded as in inequality \eqref{eq:prob_result}.
 
 
 \section{Abstractions for Gaussian LTI POMDPs}
 \label{sec:gaussian}
 
-We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and give a concrete construction of approximate models. Consider an LTI system
+We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and give a concrete model abstraction. Consider an LTI system
 \begin{equation}
   \label{eq:LTI}
     \begin{aligned}
@@ -420,7 +421,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
   \end{aligned}
 \end{equation}
 Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
-
+\\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
   \label{eq:beliefx} \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+P_{k|k-1}C^Ts_k \\
