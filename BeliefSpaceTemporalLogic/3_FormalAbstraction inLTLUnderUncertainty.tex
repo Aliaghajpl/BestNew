@@ -412,7 +412,7 @@ Additionally, we can assume without loss of generality that no measurability iss
 
 \section{Abstractions for Gaussian LTI POMDPs}
 \label{sec:gaussian}
-
+\red{[I am going to remove the details of the abstraction in this section, it is not a new contribution and it complicates the explanation. It makes more sense to explain that the labeling based relations are transitive and show that since we can go to a standard Gaussian process, we can afterwards use any method for abstracting it to a finite state model. ]}
 We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and give a concrete model abstraction. Consider an LTI system
 \begin{equation}
   \label{eq:LTI}
@@ -428,12 +428,12 @@ It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for t
   \label{eq:beliefx} \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+P_{k|k-1}C^Ts_k \\
   \label{eq:beliefP} P_{k|k}&= (I - L_k C) P_{k|k-1},
 \end{align}
-where
+where $s_k\sim \mathcal N (0, S_k ),$ and
 \begin{equation}
 \begin{aligned}
   &P_{k|k-1}=AP_{k-1|k-1}A^T+\mathcal W, \\
   &L_k = P_{k|k-1}C^T\left(CP_{k|k-1}C^T+\mathcal V\right)^{-1}, \\
- &\quad s_k\sim \mathcal N (0, S_k ), \quad \red{S_k = CP_{k|k-1}C^T+\mathcal V} .
+ &S_k = CP_{k|k-1}C^T+\mathcal V.
 \end{aligned}
 \end{equation}
 These equations together define a belief model $\MB$. Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}. As a first step, we choose to remove the dynamics of the covariance matrix $P$. Furthermore, we replace the stochastic transitions in equation \eqref{eq:beliefx} by
@@ -466,7 +466,7 @@ for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under whic
 \subsubsection{Labeling requirement:}
 
 We construct a set-valued labeling function $\hat \Labset: \mathbb{S} \rightarrow 2^\alphabeth$ satisfying \eqref{eq:sr-l}.
-
+\\
 For a position-based proposition $p_i$ consider, without loss of generality, a labeling $\Lab_{p_i}: \Xb \rightarrow \{\{p_i\},\emptyset\}$ for the concrete belief MDP defined by $p_i\in\Lab_p \left( (\hat x,P) \right)  \Leftrightarrow \hat x \in A$. The set-valued extension to $2^{\{\{p_i\},\emptyset\}}$ for the abstract MDP is defined as
  \begin{align}
  	\hat \Labset_{p_i}(s) =\left\{\begin{array}{ll} \{\{p_i\}\} & \mbox{ if } \forall \hat x \in \rel (s):p\in\Lab_{p_i}(b), \\
