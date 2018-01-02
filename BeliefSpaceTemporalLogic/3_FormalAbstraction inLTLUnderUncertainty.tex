@@ -127,10 +127,10 @@ An execution of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ wh
 \begin{definition}
 \label{def:POMDP}
 
-A \textbf{partially observable Markov decision process} (POMDP) $\POMDP$ is an MDP $\MDP = (\X, \init, \tr, \A)$ together with an observation model $(\Z, r)$ where
+A \emph{partially observable Markov decision process} (POMDP) $\POMDP$ is an MDP $\MDP = (\X, \init, \tr, \A)$ together with an observation model $(\Z, r)$ where
 \begin{itemize}
 	\item $\Z$ is a (Polish) output space with outputs $z \in \Z$;
-  \item $r : \X \times \mathcal B(\Y) \rightarrow [0,1]$ is an observation kernel that to each state $x \in \X$ assigns an output $z \in Z$ according to $z\sim r(\cdot|x)$.
+  \item $r : \X \times \mathcal B(\Y) \rightarrow [0,1]$ is an observation kernel that to each state $x \in \X$ assigns an output $z \in \Z$ according to $z\sim r(\cdot|x)$.
 \end{itemize}
 \end{definition}
 
