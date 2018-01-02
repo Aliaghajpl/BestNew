@@ -371,7 +371,7 @@ As a means of compensating for the differences between a concrete system and its
   \min_{q' \in \delta_\FSA(q, \Labset( b'))} \hspace{-3mm} \max \left( \mathbf 1_{Q_f}(q'), \mathbf V( b',q') \right)  \notag\\[-.4em]
    \times {\tr}(d b'|b,\pol(b,q)).\label{eq:V_recopt_nondet}
 \end{align}
-The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogously. Secondly, we compensate for the difference in probability $\delta$ by introducing the robust Bellman operator
+The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogously. Hence the robust Bellman operator follows by compensating for the difference in probability $\delta$ as 
 \begin{equation}
   \label{eq:V_recopt_nondet_rob}
   \BelR_\pol^{(\Labset,\delta)} (\mathbf V)(b,q) = \max \left( 0, \Bel_\pol^\Labset (V)(b,q) - \delta  \right),
