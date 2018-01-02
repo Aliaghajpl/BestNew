@@ -200,14 +200,12 @@ The following controller \cite{leegeometric} provides almost global exponential 
     \nonumber M = -k_R e_R - k_{\Omega} e_{\Omega} + \Omega \times J\Omega\\ - J (\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega}_d)
 \end{gather}
 
-\pr{Differential Flatness} The quadcopter model is differentially flat. Thus, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $x^f(t)$. $x^f = [x, y, z, \psi] \in \mathbb{R}^4$. 
+\pr{Differential Flatness} The quadcopter dynamics are differentially flat. Thus, control input $u$ and state $x$ can be written as algebraic functions $\alpha$ of flat variables $x^f = [x, y, z, \psi] \in \mathbb{R}^3 \times SO(2)$ and their derivatives.
 
-$(u(t), x(t)) = q(x^f(t))$
-
-$(u_t, x_t) = q_t(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
-
+$(u_t, x_t) = \alpha(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
 
 \pr{Policy}
+Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory in state space control inputs $u(t)$ and 
 we have segments...
 
 This is a trajectory not a policy...
