@@ -205,27 +205,35 @@ The following controller \cite{leegeometric} provides almost global exponential 
 $(u_t, x_t) = \alpha(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
 
 \pr{Policy}
-Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory in state space control inputs $u(t)$ and 
-we have segments...
+Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory of state $x(t)$ and control inputs $u(t)$. 
 
-This is a trajectory not a policy...
-$x^f(t) = g(t;c)=\sum_{i=0}^n c_i t^i$, where $c^i\in\mathbb{R}^4$
+We represent that trajectories as a sequence of $n^{th}$ order polynomials
+\begin{align}
+x^f(t) = 
+\begin{cases}
+    \sum_{i=0}^n c_i^1 t^i, & 0 < t < T_1 \\
+    \sum_{i=0}^n c_i^2 t^i, & T_1 < t < T_2 \\
+    \vdots\\
+    \sum_{i=0}^n c_i^K t^i, & T_{N-1} < t < T_N
+\end{cases}    
+\end{align}
+where $c^k_i\in\mathbb{R}^4$.
 
 The full set of parameters
 $param = c^i_?$
 \rohan{Fix Notation}
+
 \pr{Problem} The overall problem is:
 \begin{align}
-\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
-\nonumber & \Pr(x\in F) < \epsilon \\
-\nonumber & u_{min} < u_i < u_{max}
+\pi^{*} &= \arg\min \sum_{k=0}^n T_k\\
+\nonumber & \Pr(x_t\in \mathbb{X}_{obs}) < \epsilon \\
+\nonumber & u_{min} < u_t < u_{max}
 \end{align}
 
-
 \begin{align}
-\pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
-\nonumber & \Pr(x\in F) < \epsilon \\
-\nonumber & u_{min} < u_i < u_{max}
+\pi^{*} &= \arg\min \sum_{k=0}^n T_k\\
+\nonumber & \Pr(x\in \mathbb{X}_{obs}) < \epsilon \\
+\nonumber & u_{min} < u_t < u_{max}
 \end{align}
 \rohan{How do we find stochastic nonlinear dynamics?} \\
 
