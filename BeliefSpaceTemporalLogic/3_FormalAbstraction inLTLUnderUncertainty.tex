@@ -388,7 +388,8 @@ $\mathbf W^\infty_\ast \!:=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\del
 \\
 From the robust synthesis results in \citep{tech_report_TACAS},
 we know  that there exists a refined control policy with inherited guarantees.\begin{prop}\label{prop:1}
-  Suppose that $\MB$ is $\delta$-stochastically simulated by $\tilde \MB$ with respect to $({\tilde{\Labset},\Labset})$, i.e., ${\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset} \tilde \MB$. Then, a control policy ${\tilde \polb}^\ast$ for $\tilde \MB$ can be refined to a control policy $\polb$ for $\MB$ such that %for all joint executions $\mathbf{\tilde b}$ and $\mathbf{b}$
+  Suppose that %$\tilde \MB$ is $\delta$-stochastically simulated by $ \MB$ with respect to $({\tilde{\Labset},\Labset})$, i.e., 
+  $\tilde{\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset}  \MB$, then a control policy ${\tilde \polb}^\ast$ for $\tilde \MB$ can be refined to a control policy $\polb$ for $\MB$ such that %for all joint executions $\mathbf{\tilde b}$ and $\mathbf{b}$
   \begin{equation}
   \label{eq:prob_result}
     \mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\mathbf{\tilde b} \vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb}( \mathbf{b} \vDash\psi).
@@ -431,11 +432,11 @@ It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for t
  L_k &= P_{k|k-1}C^TS_k^{-1}, \quad S_k = CP_{k|k-1}C^T+\mathcal V.\notag
 \end{align}
 These equations together define a belief model $\MB$. %Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}. 
-As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of covariance matrix $P$. Therefore, we replace the stochastic transitions in equation \eqref{eq:beliefx} by
+As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of covariance matrix $P$. Therefore,  $\tilde \MB$ is obtained by replacing the stochastic transitions in equation \eqref{eq:beliefx} by
 \begin{equation}
 		\tilde x_k  = A\tilde x_{k-1} +B\tilde u_{k-1} + \tilde P  C^T  \tilde{s}_k,\label{eq:abstract}
 \end{equation}
-with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that system \eqref{eq:abstract} has state space $\Xb_{x}$ and abstract the system further to a finite-state model $\tilde \MB_{grid}$ by gridding $\Xb_x$. 
+with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that system $\tilde \MB$ \eqref{eq:abstract} has state space $\Xb_{x}$ and abstract the system further to a finite-state model $\tilde \MB_{grid}$ by gridding $\Xb_x$. 
 %As illustrated in Figure \ref{fig:grid}, the abstract model $\tilde \MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which distributed  equidistantly over the state space $  {\X}_{bx}$.  Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell 
 %$\Delta_{x_s}= \ball_\eta(x_s)$ where $\grid$ is a vector-valued precision parameter that defines the coarseness of the gridding. In addition, we require that the cells cover the whole state space, that is, $\Xb_x \subseteq \bigcup_{s \in \mathbb{S}} \Delta_{x_s}$.
 %
@@ -448,14 +449,14 @@ with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_
 %  \label{fig:grid}
 %\end{figure}
 
-We consider simulation relations $\rel$ between states $(\hat x, P)$ of $\MB$ and states $s$ of $\hat \MB_{grid}$ and interfaces $\InF$ defined on the forms
+We consider simulation relations $\rel$ between states $(\hat x, P)$ of $\MB$ and states $\tilde x$ of $\tilde \MB $ and interface $\InF$ defined on the forms
 \begin{align}
   \label{eq:rel}
-    & \rel = \left\{(s, (\hat x, P ) ) \Big{|}\begin{aligned}
-      (\hat x-x_s)^T M(\hat x-x_s)\leq \eps^2 \\
+    & \rel = \left\{(\tilde x, (\hat x, P ) ) \Big{|}\begin{aligned}
+      (\hat x- \tilde x)^T M(\hat x-\tilde x)\leq \eps^2 \\
       P^-\preceq P \preceq   P^+
     \end{aligned} \right\}, \\
-    & \InF(\tilde u,  x_s, \hat x)  =K( \hat x - x_s)+\tilde u,
+    & \InF(\tilde u,  \tilde x, \hat x)  =K( \hat x - \tilde x)+\tilde u,
 \end{align}
 for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation between $\hat \MB_{grid}$ and $\MB$. To do so, we construct a set-valued labeling $\hat \Labset: \mathbb{S} \rightarrow 2^\alphabeth$ and compute $\delta$ such that $\MB\preceq^\delta_{\hat\Labset,\Labset}\hat \MB_{grid}$.
 
