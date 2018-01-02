@@ -236,7 +236,7 @@ For every property $\psi$ expressed as a syntactically co-safe LTL formula \eqre
   \end{equation*}
 \end{definition}
 
-From this construction it follows that a policy $\polb$ for $\MB$ enforces a specification $\psi$ with probability $p$ if and only if $\polb$ for $\MB \otimes \FSA_\psi$ reaches the set $\X \times Q_f$ with probability $p$. In other words, Problem \ref{prob:main} can be converted into the problem of constructing a reachability-enforcing policy on $\MB \otimes \FSA_\psi$. In the following we review the reachability problem on MDPs.
+From this construction it follows that a policy $\polb$ for $\MB$ enforces a specification $\psi$ with probability $p$ if and only if $\polb$ for $\MB \otimes \FSA_\psi$ reaches the set $\Xb \times Q_f$ with probability $p$. In other words, Problem \ref{prob:main} can be converted into the problem of constructing a reachability-enforcing policy on $\MB \otimes \FSA_\psi$. In the following we review the reachability problem on MDPs.
 
 \subsection{MDP reachability via value iteration}
 
@@ -262,16 +262,16 @@ From \cite{Abate1} we know that the optimal policy of the reachability problem i
 
 
 \subsection{Policy synthesis}
-
-As stated above, policy synthesis for a scLTL specification is equivalent to reachability of $\X \times Q_f$ on the product system $\MB \otimes \FSA_\psi$. In this case, the Bellman operator \eqref{eq:V_recopt} reduces to
+Policy synthesis for a scLTL specification over a belief state space $\Xb$ is equivalent to reachability of $\Xb\times Q_f$ on the product system $\MB \otimes \FSA_\psi$. In this case, the Bellman operator \eqref{eq:V_recopt} reduces to
 \begin{equation}
 \label{eq:V_recopt_inf_mu}
-\begin{aligned}
-  \Bel_\pol (\mathbf V)(b,q) = \hspace{-1mm} \int_{\Xb} \hspace{-1mm} \max \left( \mathbf 1_{Q_f}(q'), \mathbf V( b', q') \right) {\tr}(\mathrm{d} b' |b,\pol(b,q))
-\end{aligned}
+%\begin{aligned}
+  \Bel_\pol (\mathbf V)(b,q)\! = \hspace{-1mm} \int_{\Xb} \hspace{-1mm} \max \left( \mathbf 1_{Q_f}(q'), \!\mathbf V( b'\!, q') \right)\! {\tr}(\mathrm{d} b' |b,\pol(b,q))\!
+%\end{aligned}
 \end{equation}
 with {\color{orange}the implicit DFSA transitions  $q' =\delta(q,\Lab(b'))$}, %\red{$\mathrm{d} b'= d b'\times\{q'\}$}, 
-and similarly for the policy-optimal version $\Bel_\ast$. In this case the policy is defined for the product MDP, i.e, it defines a control action as a function of the state $(b,q) \in \Xb \times Q$. A stationary policy $\pol$ for the product MDP $\MB \otimes \FSA_\psi$ can be translated to a time-dependent policy $\polb$ for the original MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
+and similarly for the policy-optimal version $\Bel_\ast$. The stationary policy $\pol$ is defined for the product MDP, i.e, it defines a control action as a function of the state $(b,q) \in \Xb \times Q$.  A stationary policy %$\pol$ 
+for the product MDP $\MB \otimes \FSA_\psi$ can be translated to a time-dependent policy $\polb$ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
 
 Even though this section outlines a solution method to Problem \ref{prob:main}, the required recursions can only be computed for a limited set of systems.
 Computation is especially challenging for high-dimensional continuous-state belief MDPs. In this work, we will tackle this issue by constructing an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a certain precise sense, but which is more amenable to policy synthesis.
@@ -304,45 +304,42 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 			$x_1\rel x_2$ with probability at least $1-\delta$, or, equivalently, that $\mathbb{W}\left(\rel\right)\geq1-\delta$.
 	\end{description}}
 \end{definition}
-
-\begin{definition}
-		\new{Borel measurable stochastic kernels $\mathbf{t}_1(\cdot \mid x)$ and $\mathbf{t}_2(\cdot \mid x)$ are in a \textbf{$\delta$-lifted relation} $\bar \rel_\delta$, written $\mathbf{t}_1(\cdot \mid x) \bar \rel_\delta \mathbf{t}_1(\cdot \mid x)$ for all $x$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Definition \ref{def:dellifting} holds. }
-\end{definition}
-
 % \subsubsection{Preservation of labels:} As a first requirement, we require that $\rel$ is proposition-preserving, i.e. that if an atomic propositions holds for $\MB$ it should also hold for all related states in $\tilde \MB$. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labellings for the abstract model via a set-valued function $ \tilde{\Labset}(\tilde b):\Xb\rightarrow2^\alphabeth$. We require that for all $(\tilde b, b) \in \rel$,
 % \begin{equation}
 % \label{req:lab}
 %   \Lab(b)\in \tilde{\Labset}(\tilde b),
 % \end{equation}
 % where  $\Lab:\Xb\rightarrow\alphabeth$ is the labeling function of the concrete belief MDP $\MB$. That is, for every concrete state we require that the correct labeling is present in every associated abstract state.
-
 % Consider the trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$, that is, $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
 % Requirement \eqref{req:lab} can then be equivalently expressed as
 % \begin{equation}
 %   \forall (\tilde b,b )\in \rel:  \Labset(b)\subset \tilde{\Labset}(\tilde b).
 % \end{equation}
-
 % \subsubsection{Initial condition similarity:} Secondly, we require that there exists a $\delta$-lifting for the initial distributions $\initb$ and $\tilde\init$, that is,
 % \begin{equation}
 % \tilde\init \bar \rel_\delta \init.
 % 	\tag{\textbf{SR 1.}}
 % \end{equation}
-
+%
 % \subsubsection{Transition similarity:} Finally, we also require that the stochastic transitions of the belief MDPs are approximately similar.  We require that any control action of the abstract MDP can be \emph{refined} to the concrete MDP in a way such that the stochastic transitions are approximately similar. Levering the $\delta$-lifting  we can  express this as follows:
 % \begin{equation}
 %   \label{req:translifting}
 % 	\forall (\tilde x, x)\in \rel, \forall \tilde u \in \tilde A, \exists u \in \A\; \text{s.t.} \; \tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, u).
 % \end{equation}
-
+%
 % To make sure that requirement \eqref{req:translifting} is constructive for the control refinement, we need a more strict condition on the measurability.  Hence, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \Xb\times\Xb$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
 % \begin{equation}
 %   \tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}
 % \end{equation}
 % with respect to $\Wt$ and a given Borel-measurable interface function $\InF: \tilde \A\times \tilde \Xb\times\Xb \rightarrow \mathcal{P}(\A,\mathcal B(\A))$ that maps the abstract action and state pair to refined actions for the concrete system.
-
+%
 % Based on these requirements we can define the concept of a labeling-based $\delta$-stochastic simulation relation.
-
-Based on Definition \ref{def:dellifting}, the difference between two probability distributions can be quantified with respect to a relation $\rel$. We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of partially observed LTI Gaussian systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
+%
+The difference between two probability distributions can be quantified with respect to a relation $\rel$ based on Definition \ref{def:dellifting}. For stochastic kernels we add a measurability condition.
+\begin{definition}
+		\new{Borel measurable stochastic kernels $\mathbf{t}_1(\cdot \mid x)$ and $\mathbf{t}_2(\cdot \mid x)$ are in a \ $\delta$-lifted relation $\bar \rel_\delta$ for a set $x\in A$, i.e.,  $\mathbf{t}_1(\cdot \mid x) \bar \rel_\delta \mathbf{t}_1(\cdot \mid x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Definition \ref{def:dellifting} holds. }
+\end{definition}
+We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of partially observed LTI Gaussian systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
 
 \begin{definition}
 \label{def:apbsim}
@@ -460,10 +457,10 @@ The transition kernel of $\hat\MB_{grid}$ is given as $t_{grid}(s'|s,u)=\hat t \
 We consider simulation relations $\sim$ between states $(\hat x, P)$ of $\MB$ and states $s$ of $\hat \MB_{grid}$ and interfaces $\InF$ defined on the forms
 \begin{align}
   \label{eq:rel}
-    & \rel = \left\{(s, (\hat x, P ) ) \mid \begin{aligned}
+    & \rel = \left\{(s, (\hat x, P ) ) {\mid}\begin{aligned}
       (\hat x-x_s)^T M(\hat x-x_s)\leq \eps^2 \\
       P^-\preceq P \preceq   P^+
-    \end{aligned} \right \}, \\
+    \end{aligned} \right\}, \\
     & \InF(\tilde u,  x_s, \hat x)  =K( \hat x - x_s)+\tilde u,
 \end{align}
 for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation between $\hat \MB_{grid}$ and $\MB$. To do so, we construct a set-valued labeling $\hat \Labset: \mathbb{S} \rightarrow 2^\alphabeth$ and compute $\delta$ such that $\MB\preceq^\delta_{\hat\Labset,\Labset}\hat \MB_{grid}$.
