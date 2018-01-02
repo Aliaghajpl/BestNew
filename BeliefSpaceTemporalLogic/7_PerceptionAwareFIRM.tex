@@ -189,7 +189,7 @@ Control input is the total thrust $f \in \mathbb{R}$ and moment $M \in \mathbb{R
 Parameters of the system are mass $m$, intertia matrix $J$ and gravity $g$.
 Hat map $\hat{.}: \mathbb{R}^3 \to \mathfrak{so}(3)$ is defined by the condition $a \times b = \hat{a}b$ where $a,b\in \mathbb{R}^3$, and $\times$ is the vector cross-product operator. The position and attitude dynamics are corrupted by gaussian disturbances  $w^f, w^m \sim \mathcal{N}(0,\Sigma)$. \\
 
-\pr{Control}
+\pr{Local Controller}
 The following controller \cite{leegeometric} provides almost global exponential attractiveness for position and attitude dynamics:
 \begin{gather}
     e_x = x - x_d \\
@@ -197,7 +197,7 @@ The following controller \cite{leegeometric} provides almost global exponential 
     e_R = \frac{1}{2}(R^T_d R - R^T R_d)^{\vee} \\
     e_{\Omega} = \Omega - R^T R_d \Omega_d \\
     f = -(-k_x e_x - k_v e_v - mge_3 + m\ddot{x}_d).Re_3 \\
-    \nonumber M = -k_R e_R - k_{\Omega} e_{\Omega} + \Omega \times J\Omega\\ - J (\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega_d})
+    \nonumber M = -k_R e_R - k_{\Omega} e_{\Omega} + \Omega \times J\Omega\\ - J (\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega}_d)
 \end{gather}
 
 \pr{Differential Flatness} The quadcopter model is differentially flat. Thus, we can find a control input $u(t)$ and state $\boldsymbol{x}(t)$ for a given trajectory of the copter in the flat space $x^f(t)$. $x^f = [x, y, z, \psi] \in \mathbb{R}^4$. 
@@ -215,7 +215,7 @@ $x^f(t) = g(t;c)=\sum_{i=0}^n c_i t^i$, where $c^i\in\mathbb{R}^4$
 
 The full set of parameters
 $param = c^i_?$
-
+\rohan{Fix Notation}
 \pr{Problem} The overall problem is:
 \begin{align}
 \pi^{*} &= \arg\min \mathbb{E}\sum_{k=0}^n T_k\\
@@ -229,10 +229,7 @@ $param = c^i_?$
 \nonumber & \Pr(x\in F) < \epsilon \\
 \nonumber & u_{min} < u_i < u_{max}
 \end{align}
-\rohan{How d} \\
-\rohan{What is the local controller? LQG won't be robust if we linearise the attitude} \\
-\rohan{What representation do we use for the trajectories?} 
-\rohan{Currently we can execute only execute trajectories which are a sequence of 9th order polynomials}
+\rohan{How do we find stochastic nonlinear dynamics?} \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future work}
