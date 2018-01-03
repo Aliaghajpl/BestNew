@@ -479,15 +479,14 @@ The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expan
 
 \subsubsection{Probability requirements:}
 
-In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \rel (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
 
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
-We can quantify the difference between $\MB$ and \eqref{eq:abstract} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
+We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ \eqref{eq:abstract} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
 \begin{equation}
 \begin{aligned}
-  \hat x_{k+1|k+1}-  \hat x_{k+1}=(A+BK)(\hat x_{k|k}-\hat x_{k-1}) \\
-  +  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \red{\hat{s}}_{k+1}+ \red{s}^\Delta_{k+1}),
+ & \hat x_{k+1|k+1}-  \tilde x_{k+1}=(A+BK)(\hat x_{k|k}-\tilde x_{k}) \\
+ &\qquad\qquad  +  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \red{\hat{s}}_{k+1}+ \red{s}^\Delta_{k+1}),
 \end{aligned}
 \end{equation}
 with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \hat{\red{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ \red{s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
@@ -509,6 +508,11 @@ belongs to bounded sets, we can bound the influence of the noise terms $\red{s}^
   \item Give expression for $\delta$? \color{orange} Expression for $\delta$ vs $\rel$ doesnt exist, as it is computated numerically using convex optimizations.  Instead it is possible to give an expression  of the bounded set to which $\hat s_{k+1}$ and  $\hat s^{\Delta}_{k+1}$ belong. 
 \end{itemize}
 }
+
+
+In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \rel (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
+
+
 
 \section{Case study}
 \label{sec:case}
