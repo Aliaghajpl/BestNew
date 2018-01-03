@@ -202,7 +202,27 @@ The following controller \cite{leegeometric} provides almost global exponential 
 
 \pr{Differential Flatness} The quadcopter dynamics are differentially flat. Thus, control input $u$ and state $x$ can be written as algebraic function $\alpha$ of flat variables $x^f = [x, y, z, \psi] \in \mathbb{R}^3 \times SO(2)$ and their derivatives.
 
-$(u_t, x_t) = \alpha(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
+\begin{align}
+(u_t, x_t) = \alpha(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)
+\end{align}
+
+\pr{State}
+\begin{align}
+X_t = (x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)
+\end{align}
+
+
+\begin{align}
+(u^{ij}_{0:T}, x^{ij}_{0:T}) = mp(X^i,X^j,T)
+\end{align}
+
+\begin{align}
+(u^{ij}_{0:T}, x^{ij}_{0:T},T) = tomp(X^i,X^j)
+\end{align}
+
+\begin{align}
+(u, x) = \alpha(X)
+\end{align}
 
 \pr{Policy}
 Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory of state $x(t)$ and control inputs $u(t)$. 
@@ -245,6 +265,16 @@ J^{*} &= \min_{\bar{T},\bar{c}} T_N\\
 
 \rohan{FIRM nodes to be created in which space?}
 \rohan{EKF uses IMU and not the same process}
+
+
+\begin{align}
+node^i = ?
+\end{align}
+
+\begin{align}
+T^{ij} = g_{time}(node^i,node^j)
+\end{align}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future work}
 \begin{enumerate}
