@@ -209,7 +209,7 @@ Since the quadrotor system is deferentially flat, given a sufficiently smooth tr
 Also, $x(t) \in \mathbb{C}^4$ to ensure that the trajectories are kinodynamically feasible. 
 We represent the trajectories as a sequence of $9^{th}$ order polynomials:
 \begin{align}
-x^f(t) = 
+x^f_t = 
 \begin{cases}
     \sum_{i=0}^9 c_i^1 t^i, & 0 < t < T_1 \\
     \sum_{i=0}^9 c_i^2 t^i, & T_1 < t < T_2 \\
@@ -225,10 +225,21 @@ A(\bar{T}) \bar{c} = b
 \end{align}
 where $\bar{T}\in\mathbb{R}^n$ and $\bar{c}\in \mathbb{R}^{40n}$
 
+============
+
+\begin{align}
+T_i = \bar{T}[N]
+\end{align}
+
+
+=============
+
+
 \pr{Problem} The overall problem is:
 \begin{align}
-J^{*} &= \min \sum_{i=0}^N T_i\\
-\nonumber & P(x_t\in \mathbb{X}_{obs}) < \epsilon, \forall~t \in [0,T_N]\\
+J^{*} &= \min_{\bar{T},\bar{c}} T_N\\
+\nonumber & P(x_t\in \mathbb{X}_{obs}) < \epsilon_1, \forall~t \in [0,T_N]\\
+\nonumber & P(x_T\in \mathbb{X}_{goal}) > 1-\epsilon_2 \\
 \nonumber & u_{min} < u_t < u_{max}, \forall~t \in [0,T_N]
 \end{align}
 
