@@ -163,7 +163,7 @@ Challenges:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experiment}\label{sec:experiment}
 
-\subsection{Rover }
+\subsection{Rover}
 The dynamics of the rover are given by unicycle model:
 \begin{equation}
     \begin{bmatrix}
@@ -200,43 +200,40 @@ The following controller \cite{leegeometric} provides almost global exponential 
     \nonumber M = -k_R e_R - k_{\Omega} e_{\Omega} + \Omega \times J\Omega\\ - J (\hat{\Omega} R^T R_d \Omega_d - R^T R_d \dot{\Omega}_d)
 \end{gather}
 
-\pr{Differential Flatness} The quadcopter dynamics are differentially flat. Thus, control input $u$ and state $x$ can be written as algebraic functions $\alpha$ of flat variables $x^f = [x, y, z, \psi] \in \mathbb{R}^3 \times SO(2)$ and their derivatives.
+\pr{Differential Flatness} The quadcopter dynamics are differentially flat. Thus, control input $u$ and state $x$ can be written as algebraic function $\alpha$ of flat variables $x^f = [x, y, z, \psi] \in \mathbb{R}^3 \times SO(2)$ and their derivatives.
 
 $(u_t, x_t) = \alpha(x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)$
 
 \pr{Policy}
 Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory of state $x(t)$ and control inputs $u(t)$. 
-
-We represent that trajectories as a sequence of $n^{th}$ order polynomials
+Also, $x(t) \in \mathbb{C}^4$ to ensure that the trajectories are kinodynamically feasible. 
+We represent the trajectories as a sequence of $9^{th}$ order polynomials:
 \begin{align}
 x^f(t) = 
 \begin{cases}
-    \sum_{i=0}^n c_i^1 t^i, & 0 < t < T_1 \\
-    \sum_{i=0}^n c_i^2 t^i, & T_1 < t < T_2 \\
+    \sum_{i=0}^9 c_i^1 t^i, & 0 < t < T_1 \\
+    \sum_{i=0}^9 c_i^2 t^i, & T_1 < t < T_2 \\
     \vdots\\
-    \sum_{i=0}^n c_i^K t^i, & T_{N-1} < t < T_N
-\end{cases}    
+    \sum_{i=0}^9 c_i^N t^i, & T_{N-1} < t < T_N
+\end{cases}
 \end{align}
-where $c^k_i\in\mathbb{R}^4$.
+where $c^k_i\in\mathbb{R}^4$. 
 
-The full set of parameters
-$param = c^i_?$
-\rohan{Fix Notation}
+Further continuity constraints on the above polynomials can be enforced by:
+\begin{align}
+A(\bar{T}) \bar{c} = b    
+\end{align}
+where $\bar{T}\in\mathbb{R}^n$ and $\bar{c}\in \mathbb{R}^{40n}$
 
 \pr{Problem} The overall problem is:
 \begin{align}
-\pi^{*} &= \arg\min \sum_{k=0}^n T_k\\
-\nonumber & \Pr(x_t\in \mathbb{X}_{obs}) < \epsilon \\
-\nonumber & u_{min} < u_t < u_{max}
+J^{*} &= \min \sum_{i=0}^N T_i\\
+\nonumber & P(x_t\in \mathbb{X}_{obs}) < \epsilon, \forall~t \in [0,T_N]\\
+\nonumber & u_{min} < u_t < u_{max}, \forall~t \in [0,T_N]
 \end{align}
 
-\begin{align}
-\pi^{*} &= \arg\min \sum_{k=0}^n T_k\\
-\nonumber & \Pr(x\in \mathbb{X}_{obs}) < \epsilon \\
-\nonumber & u_{min} < u_t < u_{max}
-\end{align}
-\rohan{How do we find stochastic nonlinear dynamics?} \\
-
+\rohan{FIRM nodes to be created in which space?}
+\rohan{EKF uses IMU and not the same process}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Future work}
 \begin{enumerate}
