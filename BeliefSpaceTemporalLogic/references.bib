@@ -20,27 +20,23 @@
 	Volume = {44},
 	Year = {2008}}
 	
-	@techreport{tech_report_TACAS,
+	@article{tech_report_TACAS,
 	title = {Temporal logic control of general {Markov} decision processes by approximate policy refinement},
-	urldate = {2017-12-21},
-	journal = {arXiv:1712.07622 [cs, math]},
+	journal = {arXiv:1712.07622 [cs.SY]},
 	author = {Haesaert, Sofie and Soudjani,  Sadegh and Abate, Alessandro},
-	month = dec,
-	year = {2017},
-	note = {arXiv: 1712.07622},
-	keywords = {Computer Science - Systems and Control, 93E03, 93E20, 68W25, Computer Science - Logic in Computer Science, Mathematics - Optimization and Control},
+	year = {2017}
 }
 
-@article{Chatterjee2014,
+@inproceedings{Chatterjee2014,
   author    = {Krishnendu Chatterjee and
                Martin Chmelik and
                Raghav Gupta and
                Ayush Kanodia},
   title     = {Qualitative Analysis of {POMDP}s with Temporal Logic Specifications
                for Robotics Applications},
-  journal   = {CoRR},
-  volume    = {abs/1409.3360},
-  year      = {2014}, 
+  booktitle   = {Proc. IEEE ICRA},
+  year      = {2015}, 
+  pages = {325-330}
 }
 
 
@@ -63,10 +59,10 @@ issn="1573-1383",
 
 
 
-@article{lang1993real,
-  title={Real and functional analysis, volume 142 of Graduate Texts in Mathematics},
+@book{lang1993real,
+  title={Real and functional analysis},
   author={Lang, Serge},
-  journal={Springer-Verlag, New York,},
+  journal={Springer},
   volume={10},
   pages={11--13},
   year={1993}
@@ -74,7 +70,7 @@ issn="1573-1383",
  
 @book{mt1993,
 	Author = {Meyn, S. P. and Tweedie, R. L.},
-	Publisher = {Springer-Verlag London Ltd.},
+	Publisher = {Springer},
 	Series = {Communications and Control Engineering Series},
 	Title = {Markov chains and stochastic stability},
 	Year = {1993}}
@@ -138,7 +134,7 @@ month={April},}
 
 @book{hll1996,
 	Author = {Hern{\'a}ndez-Lerma, O. and Lasserre, J. B.},
-	Publisher = {Springer Verlag},
+	Publisher = {Springer},
 	Series = {Applications of Mathematics},
 	Title = {Discrete-time {M}arkov control processes},
 	Volume = {30},
@@ -150,9 +146,10 @@ month={April},}
 
 @book{bogachev2007measure,
 	Author = {Bogachev, Vladimir I},
-	Publisher = {Springer Science \& Business Media},
+	Publisher = {Springer},
 	Title = {Measure theory},
-	Year = {2007}}
+	Year = {2007}
+}
 
 
 	
@@ -241,14 +238,13 @@ month={May},
 
 
 @article{LESSER20141989,
-title = "Reachability for partially observable discrete time stochastic hybrid systems",
-journal = "Automatica",
-volume = "50",
-number = "8",
-pages = "1989 - 1998",
-year = "2014", 
-author = "Kendra Lesser and Meeko Oishi",
-keywords = "Hybrid systems, Reachability, Optimal control, Stochastic control"
+  title = "Reachability for partially observable discrete time stochastic hybrid systems",
+  journal = "Automatica",
+  volume = "50",
+  number = "8",
+  pages = "1989--1998",
+  year = "2014", 
+  author = "Kendra Lesser and Meeko Oishi"
 }
 @ARTICLE{Zamani2014,
 author={M. Zamani and P. Mohajerin Esfahani and R. Majumdar and A. Abate and J. Lygeros},
@@ -264,7 +260,7 @@ month={Dec}
 
 @INPROCEEDINGS{Leahy2015,
 author={K. Leahy and A. Jones and M. Schwager and C. Belta},
-booktitle={54th IEEE Conference on Decision and Control},
+booktitle={Proc. IEEE CDC},
 title={Distributed information gathering policies under temporal logic constraints},
 year={2015},
 pages={6803--6808},
@@ -459,7 +455,8 @@ journal = {The International Journal of Robotics Research}
 @book{bertsekas2004stochastic,
   title={Stochastic optimal control: the discrete-time case},
   author={Bertsekas, Dimitri P and Shreve, Steven},
-  year={2004}
+  year={2004},
+  publisher={Academic Press}
 }
 @book{Bertsekas2012,
  author = {Bertsekas, D. P.},
@@ -824,10 +821,8 @@ year = {2012}
 @inproceedings{dehnert2017storm,
   title={A storm is coming: A modern probabilistic model checker},
   author={Dehnert, Christian and Junges, Sebastian and Katoen, Joost-Pieter and Volk, Matthias},    
-    series    = {Lecture Notes in Computer Science},
-    Volume = {1047},
-    proceedings={CAV},
-    pages = {592-600},
+  booktitle = {Proc. CAV},
+  pages = {592-600},
   year={2017}
 }
 
@@ -836,18 +831,9 @@ author={M. Kwiatkowska and G. Norman and D. Parker},
 title={{PRISM} 4.0: Verification of Probabilistic Real-time Systems},
 booktitle={Proc. CAV},
 year={2011},
-
-editor={G. Gopalakrishnan and S. Qadeer},
-pages={585--591},
-organization={},
-publisher={Springer},
-series={LNCS},
-volume={6806},
-address={},
-month={},
-note={},
-key={}
+pages={585--591}
 }
+
 @conference{Morteza-HSCC-2013,
     title = {{Iterative Temporal Motion Planning for Hybrid Systems in Partially Unknown Environments}},
     booktitle = {ACM International Conference on Hybrid Systems: Computation and Control (HSCC)},
@@ -951,13 +937,12 @@ Year = {2004}}
   booktitle = {Proc. HSCC},
   year = {2013},
   pages = {293--302},
-};
-
+}
 
 @inproceedings{JonesDTL2013,
   title={{Distribution temporal logic: Combining correctness with quality of estimation}},
   author={Jones, A. and Schwager, M. and Belta, C.},
-  booktitle={IEEE 52nd Conference on Decision and Control (CDC)},
+  booktitle={Proc. IEEE CDC},
   pages={4719--4724},
   year={2013}
 }
