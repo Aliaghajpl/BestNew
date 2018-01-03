@@ -460,7 +460,7 @@ with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_
       (\hat x- \tilde x)^T M(\hat x-\tilde x)\leq \eps^2 \\
       P^-\preceq P \preceq   P^+
     \end{aligned} \right\}, \\
-    & \InF(\tilde u,  \tilde x, \hat x)  =K( \hat x - \tilde x)+\tilde u,
+    & \InF(\tilde u,  \tilde x, \hat x)  =K( \hat x - \tilde x)+\tilde u,  \label{eq:intf}
 \end{align}
 for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation between $\tilde \MB$ and $\MB$. To do so, we construct a set-valued labeling $\tilde \Labset: \Xb_{x}\rightarrow 2^\alphabeth$ and compute $\delta$ such that $\tilde \MB\preceq^\delta_{\tilde\Labset,\Labset} \MB $.
 
@@ -474,43 +474,39 @@ For a position-based proposition $p_i$ consider, without loss of generality, a l
  	  \{\emptyset \} & \mbox{ if } \forall b\in \rel (\tilde x):{p_i}\not\in\Lab_{p_i}(b),\\
  	  \{\{p_i\},\emptyset\}&\mbox{ otherwise.}\end{array} \right.
  \end{align}
-The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is \textcolor{orange}{monotonic\footnote{\color{orange}Here monotonicity of a function in $P$ is defined based on the preorder $\succeq $ fo the matrices $P$ with $A\succeq B$ if $x^T(A-B)x\geq0\, \forall x\in\mathbb R^n$. } in $P$} can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of probability of an event is in general not \red{monotonic} with respect to variance.
+The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is \textcolor{orange}{monotonic\footnote{\color{orange}Here monotonicity of a function in $P$ is defined based on the preorder $\succeq $ for the matrices $P$ with $A\succeq B$ if $x^T(A-B)x\geq0\, \forall x\in\mathbb R^n$. } in $P$} can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of probability of an event is in general not \red{monotonic} with respect to variance.
 
 
 \subsubsection{Probability requirements:}
-
-
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
 We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ \eqref{eq:abstract} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
 \begin{equation}
 \begin{aligned}
- & \hat x_{k+1|k+1}-  \tilde x_{k+1}=(A+BK)(\hat x_{k|k}-\tilde x_{k}) \\
- &\qquad\qquad  +  \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \red{\hat{s}}_{k+1}+ \red{s}^\Delta_{k+1}),
+ \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
 \end{aligned}
 \end{equation}
-with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \hat{\red{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ \red{s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
+with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
 %Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
 %\begin{equation}
 %\begin{aligned}
 % \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 %\end{aligned}
 %\end{equation}
-Given that $(\hat x_{k|k}-\hat x_{s|k})$ %and $x_\grid$ 
-belongs to bounded sets, we can bound the influence of the noise terms $\red{s}^\Delta_{k+1}$ and $ \hat{\red{s}}_{k+1}$   to arrive at a probability $1-\delta$ that lower bounds the probability of remaining in $\rel$.
+\new{We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution.} 
+\new{The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities. }
+
+ 
 \begin{remark}
-  Here we did not explicitly write out the lifted probability space $\mathbb{W}$ of Definition \ref{def:dellifting}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} and a compensation for the gridding error.
-\end{remark}
+  Here we did not explicitly write out the lifted probability space $\mathbb{W}_t$ of Definition \ref{def:kernellift}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} driven by noise sources $s^\Delta$ and $ {\tilde{s}} $.  \end{remark}
+%
+%{\color{red}
+%\begin{itemize}
+%  \item Mention interface and control refinement?
+%\end{itemize}
+%}
 
-{\color{red}
-\begin{itemize}
-  \item Mention interface and control refinement?
-  \item Give expression for $\delta$? \color{orange} Expression for $\delta$ vs $\rel$ doesnt exist, as it is computated numerically using convex optimizations.  Instead it is possible to give an expression  of the bounded set to which $\hat s_{k+1}$ and  $\hat s^{\Delta}_{k+1}$ belong. 
-\end{itemize}
-}
-
-
-In the interest of satisfying \eqref{eq:sr-1}, remark that the initial condition for the concrete system $\MB$ is given deterministically as $(\hat x_\init, P_\init)$. Hence we only need to show that there exists an initial state $x_{s,0}$ for $\tilde \MB_{grid}$ such that \red{$x_{s,0} \rel (\hat x_\init, P_\init)$}, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
+For the satisfaction of \eqref{eq:sr-1}, we repeat the same procedure as above and show that there exists an initial state $\tilde x_{0}$ (or if needed a distribution) for $\tilde \MB$ such that  $\tilde x_{0} \bar\rel_\delta \initb$. %, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. %For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
 
 
 
