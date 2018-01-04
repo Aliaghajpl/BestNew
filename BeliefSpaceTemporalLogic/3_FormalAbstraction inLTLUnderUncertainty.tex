@@ -495,7 +495,7 @@ The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expan
 \subsubsection{Probability requirements:}
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
-We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. \The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
+We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. \y in The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
 \begin{equation}
 \begin{aligned}
  \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
