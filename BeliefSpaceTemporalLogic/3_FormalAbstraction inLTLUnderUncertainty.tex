@@ -412,7 +412,7 @@ The obtained policy $	\polb_\ast(b,q)$ is a stationary, universally measurable a
 \begin{pf}\new{At each time instant, finding a control action $u$ is associated to finding the state update for the abstract system such as to find the abstract input that can be refined via the interface in Def. \ref{def:apbsim}.  
 We know that there exists a refined policy for the original system for every policy of the concrete system such that 
 for all pairs of belief states $(\tilde b,b)\in\rel$, it holds that 
-\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel Def. \ref{def:kernellift}, by selecting the next state by maximizing over $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved.  }
+\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel Def. \ref{def:kernellift}, by selecting the next state by maximizing over $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved.  }\qed
 \end{pf}
 
 \section{Abstractions for Gaussian LTI POMDPs}
@@ -425,7 +425,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, \axx{shouldnt this be $\mathcal N(Ax + Bu, APA^T+\CA W)$ ?} together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ \axx{similar comment for the observation model} generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, \axx{shouldnt this be $\mathcal N(Ax + Bu, APA^T+\CA W)$ ?}\red{[sof:] these are the dynamics of the POMDP, not of the belief MDP. The update hence does not depend on the covariance of the belief state.} together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ \axx{similar comment for the observation model} generating noisy measurements $z_k$.
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -450,9 +450,9 @@ with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_
 \tilde s_k\sim \mathcal N (0, \tilde S_k),
 \end{align}
 So, we are saying $S_k \preceq \tilde{S}$ for all $k$? But, isn't that only true if the initial covariance is larger than the steady-state covariance? If correct, we should state the assumptions clearly.
-}
+}\red{[sof:] It has not been claimed that $\tilde S$ is a function of $\tilde P$, instead we have required that $tilde S$ is chosen such that its inverse yields a lower bound. When implemented this is a simple problem of finding the maximal lower bound given $P^-$ and $P^+$.}
 
-We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted. \axx{should we cite an Arxiv paper instead of just omitting?}
+We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted. \axx{should we cite an Arxiv paper instead of just omitting?}\red{[sof:] citation is one sentence earlier.}
 
 
 % and abstract the system further to a finite-state model  by gridding $\Xb_x$.
