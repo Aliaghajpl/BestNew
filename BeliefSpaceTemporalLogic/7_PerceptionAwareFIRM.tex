@@ -119,7 +119,7 @@ We can retrieve the 3-d point in the world frame from a point in the image space
 The sensor model is obtained by using the following equation, where $\Sigma_o$ is covariance of the image noise (estimation of location of the feature points).
 \begin{equation}
      z_p = h(\theta,v)=
-     \pi_\theta(\pi^{-1}_{\theta_{kf}}(p,d)) + v,~~~ v\sim \mathcal{N}(0,\Sigma_{o})
+     \pi_\theta(^w P) + v,~~~ v\sim \mathcal{N}(0,\Sigma_{o})
      \label{eq:ObsModel}
 \end{equation}
 
@@ -285,6 +285,14 @@ T^{ij} = g_{time}(node^i,node^j)
 \begin{enumerate}
     \item Closed-loop controller for quadcopter
 \end{enumerate}
+
+\begin{align*}
+p &= \pi(P,\theta) \\
+\Sigma_p &= J_{P} \Sigma_P J_{P}^{T} \\ 
+\mathcal{I} &= J_{\theta}^{T}\Sigma_p^{-1}J_{\theta} \\
+\Sigma_{\theta} &= \mathcal{I}^{-1}\\
+J_{P} &= \frac{d\pi}{dP},~~~J_{\theta} = \frac{d\pi}{d\theta} 
+\end{align*}
 
 \printbibliography
 
