@@ -442,17 +442,17 @@ As a first abstraction, we choose to reduce the complexity and dimensionality of
 \end{equation}
 with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and a matrix $\tilde{S}_{inv}$ such that $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. 
 
-\axx{To understand the claim better, I am defining $\tilde S$ here, explicitly. If $\tilde S_k &= C\tilde PC^T+\mathcal V$, then we have:
-\begin{align}
-  \label{eq:beliefx}  \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+\tilde PC^T\tilde S_k^{-1}e_k
-  \label{eq:beliefP}
-\shortintertext{where $\tilde s_k = \tilde S^{-1}_k\tilde e_k$ and $\tilde e_k\sim \mathcal N (0, \tilde S_k),$ Thus}
-\tilde s_k&\sim \mathcal N (0, \tilde S^{-1}_k=:\tilde S_{inv}),
-\end{align}
-So, we are saying $S_k \preceq \tilde{S}$ for all $k$? But, isn't that only true if the initial covariance is larger than the steady-state covariance? If correct, we should state the assumptions clearly.
-}\red{[sof:] It has not been claimed that $\tilde S$ is a function of $\tilde P$, instead we have required that $tilde S$ is chosen such that its inverse yields a lower bound. When implemented this is a simple problem of finding the maximal lower bound given $P^-$ and $P^+$.}
+% \axx{To understand the claim better, I am defining $\tilde S$ here, explicitly. If $\tilde S_k &= C\tilde PC^T+\mathcal V$, then we have:
+% \begin{align}
+%   \label{eq:beliefx}  \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+\tilde PC^T\tilde S_k^{-1}e_k
+%   \label{eq:beliefP}
+% \shortintertext{where $\tilde s_k = \tilde S^{-1}_k\tilde e_k$ and $\tilde e_k\sim \mathcal N (0, \tilde S_k),$ Thus}
+% \tilde s_k&\sim \mathcal N (0, \tilde S^{-1}_k=:\tilde S_{inv}),
+% \end{align}
+% So, we are saying $S_k \preceq \tilde{S}$ for all $k$? But, isn't that only true if the initial covariance is larger than the steady-state covariance? If correct, we should state the assumptions clearly.
+% }\red{[sof:] It has not been claimed that $\tilde S$ is a function of $\tilde P$, instead we have required that $tilde S$ is chosen such that its inverse yields a lower bound. When implemented this is a simple problem of finding the maximal lower bound given $P^-$ and $P^+$.}
 
-We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step can be found in \citeptech_report_TACAS}. 
+We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step can be found in \citep{tech_report_TACAS}. 
 
 
 % and abstract the system further to a finite-state model  by gridding $\Xb_x$.
@@ -502,7 +502,8 @@ Consider a choice of noise sources $\tilde{{s}}_{k+1}$ and $s^\Delta_{k+1}$, suc
  \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
 \end{aligned}
 \end{equation}
-with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
+with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$. \axx{definitions of $\bar{P}$ and $\hat{S}_{inv}$ ? }
+
 We can now quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\tilde x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\tilde x_{k+1},\hat x_{k+1|k+1})\in \rel$. %\axx{The first entry in last two pairs should be tilde?}
 % thnx
 %Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
@@ -522,12 +523,11 @@ Furthermore, we can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \
 For the satisfaction of \eqref{eq:sr-1}, we repeat the same procedure as above and show that there exists an initial state $\tilde x_{0}$ (or if needed a distribution) for $\tilde \MB$ such that  $\tilde x_{0} \bar\rel_\delta \initb$.
 
 
-\section{Case study}
-\label{sec:case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Case study}\label{sec:case}
+Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment. In this scenario, there exist a very low-resolution map of the Mars surface (i.e., environment) from satellite imagery. While different region types can be identified on the surface from this overhead imagery, the accuracy of labelling is not sufficient for near-surface operations. Here we consider two types of regions: \emph{target regions} and \emph{risk regions}, where the former are expected to contain science samples and the latter may contain non-traversable areas such as obstacles, steep-slopes, loose-sand, etc.
 
-Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment. In this scenario the environment has been mapped from satellite imagery, and certain regions types have been identified. Here we consider two types of regions: \emph{target regions} and \emph{risk regions}, where the former are expected to contain science samples and the latter may contain obstacles that can not be traversed.
-
-\textbf{Rover model.} We consider a simple rover modeled as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as the POMDP $\POMDP$:
+\textbf{Rover model.} We consider a simple rover modeled as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. Also in real-world setting, the position of the rover cannot be measured perfectly. Thus, we model its dynamics as a partially-observable system:
 \begin{equation*}
 \begin{aligned}
   x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bsmallmatrix}.4&-.2\\-.2&.4\end{bsmallmatrix}\right), \\
@@ -537,8 +537,8 @@ Motivated by space exploration applications, we consider an autonomous rover tas
 The corresponding belief space model $\MB$ is defined by the Kalman filter equations \eqref{eq:beliefx}-\eqref{eq:beliefP} as in Section \ref{sec:gaussian}.
 
 
-\textbf{Environment model.} We consider two %potential
- target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_{r,0}$ are the belief probabilities from satellite imagery, with dynamics illustrated by Fig. \ref{fig:envmdp}.
+\textbf{Environment model.} From the overhead imagery, we consider two %potential
+ target regions $T_1$ and $T_2$ where the probability of encountering a desired sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions and can acquired additional measurements from its on-board sensors. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_{r,0}$ are the belief probabilities from satellite imagery, with dynamics illustrated in Fig. \ref{fig:envmdp}.
 
 \begin{figure}
   \begin{center}
@@ -571,17 +571,17 @@ With $\MB_{env}$ as the combined environment model with state $(b_{T_1}, b_{T_2}
 where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if the rover is in an obstacle region that contains an obstacle.
 
 
-\textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section; first we compute an approximate LTI belied model and then we  discretizing the state space $[-10, 10]^2$ with  grids of size $\grid = (0.76481, 0.64426)$. The input space $[-1,1]^2$ is sampled with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, %and introducing a simulation relation that compensates for accuracy loss caused by the gridding, 
+\textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section; first we compute an approximate LTI belief model and then we  discretize the state space $[-10, 10]^2$ with  grids of size $\grid = (0.76481, 0.64426)$. The input space $[-1,1]^2$ is sampled with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, %and introducing a simulation relation that compensates for accuracy loss caused by the gridding, 
 we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $.
 
-\red{In order to analyze the combined system $\MB \otimes \MB_{env}$ we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. [This is outside the proposed theory, and though I agree that this is the way to do it in practice. The case study used in  paper should hinge as pure as possible on the proposed theory. Please, as discussed, can we make the measurement an action that is taking by the environment model. We can then simply reduce the allowed measurements in the abstracted model. This would fix it all.]}
+\red{In order to analyze the combined system $\MB \otimes \MB_{env}$, we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in Eq. \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. [This is outside the proposed theory, and though I agree that this is the way to do it in practice. The case study used in  paper should hinge as pure as possible on the proposed theory. Please, as discussed, can we make the measurement an action that is taking by the environment model. We can then simply reduce the allowed measurements in the abstracted model. This would fix it all.]}
 
 With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  \red{The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. }The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
 
 \begin{figure}
   \footnotesize
   \input{figs/epsdel}
-  \caption{Trade-off between state error $\epsilon$ from \eqref{eq:rel} and probability error $\delta$ from Definition \ref{def:apbsim}.}
+  \caption{Trade-off between state error $\epsilon$ from Eq. \eqref{eq:rel} and probability error $\delta$ from Definition \ref{def:apbsim}.}
   \label{fig:tradeoff}
 \end{figure}
 
@@ -621,7 +621,7 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
     \node[anchor=west, yshift=-2mm] at (cbar.north east) {$V = 1$};
     \node[anchor=west, ] at (cbar.east) {$V = 0.5$};
   \end{tikzpicture}
-  \caption{Illustration of value function for two different states of the environment, with regions of interest plotted with dashed lines. Left: environment state $(p_{T_1, 0}, p_{T_2, 0}, p_{R_1,0}, p_{R_2,0})$, i.e. all regions are still uncertain, which results in a fairly uniform value function with slightly less success probability close to the risk regions. Right: environment state $(p_{T_1, 0}, 1, p_{R_1,0}, 1)$, i.e. it is known that $T_2$ contains a sample and that $R_2$ contains an obstacle, which yields a more polarized value function.}
+  \caption{Illustration of value function for two different states of the environment, with regions of interest plotted with dashed lines. Left: environment state $(p_{T_1, 0}, p_{T_2, 0}, p_{R_1,0}, p_{R_2,0})$, i.e., all regions are still uncertain, which results in a fairly uniform value function with slightly less success probability close to the risk regions. Right: environment state $(p_{T_1, 0}, 1, p_{R_1,0}, 1)$, i.e., it is known that $T_2$ contains a sample and that $R_2$ contains an obstacle, which yields a more polarized value function.}
   \label{fig:valuefcn}
 \end{figure}
 
@@ -640,7 +640,7 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
   \begin{center}
     \input{figs/exp1-prob.tikz}   \input{figs/exp2-prob.tikz}
   \end{center}
-  \caption{Above: regions of interest (solid red/blue), associated measurement regions (dashed lines), and trajectories of noisy state estimates starting at three different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. The left and right plots illustrate two different configurations of the true environment. In both cases, a sample exists at $T_1$ but not at $T_2$, and $R_1$ can not be traversed due to an obstacle. However, to the left $R_2$ does not contain an obstacle, so the rover can traverse $R_2$ after confirming that it is safe. To the right, both risk regions unexpectedly turn out to contain obstacles, and thus the rover must move around them which is associated with additional risk.}
+  \caption{Above: regions of interest (solid red/blue), associated measurement regions (dashed lines), and trajectories of noisy state estimates starting at three different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. The left and right plots illustrate two different configurations of the true environment. In both cases, a sample exists at $T_1$ but not at $T_2$, and $R_1$ cannot be traversed due to an obstacle. However, in the left figure, $R_2$ does not contain an obstacle, so the rover can traverse $R_2$ after confirming that it is safe. To the right, both risk regions unexpectedly turn out to contain obstacles, and thus the rover must move around them which is associated with additional risk.}
   \label{fig:exp1}
 \end{figure}
 
