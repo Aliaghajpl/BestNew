@@ -425,7 +425,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, \axx{shouldnt this be $\mathcal N(Ax + Bu, APA^T+\CA W)$ ?} together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ \axx{similar comment for the observation model} generating noisy measurements $z_k$.
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -436,11 +436,23 @@ It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for t
  L_k &= P_{k|k-1}C^TS_k^{-1}, \quad S_k = CP_{k|k-1}C^T+\mathcal V.\notag
 \end{align}
 These equations together define a belief model $\MB$. %Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}.
-As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of the covariance matrix $P$. Therefore, an abstract model $\tilde \MB$ is obtained by replacing the stochastic transitions in equation \eqref{eq:beliefx} by
+As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of the covariance matrix $P$. Therefore, an abstract model $\tilde \MB$ is obtained by replacing the stochastic transitions in Equation \eqref{eq:beliefx} by
 \begin{equation}
 		\tilde x_k  = A\tilde x_{k-1} +B\tilde u_{k-1} + \tilde P  C^T  \tilde{s}_k,\label{eq:abstract}
 \end{equation}
-with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted.
+with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. 
+
+\axx{To understand the claim better, I am defining $\tilde S$ here, explicitly. If $\tilde S_k &= C\tilde PC^T+\mathcal V$, then we have:
+\begin{align}
+  \label{eq:beliefx}  \hat x_{k|k}&=A\hat x_{k-1|k-1}+Bu_{k-1}+\tilde PC^T\tilde S_k^{-1}e_k
+  \label{eq:beliefP}
+\shortintertext{where $\tilde s_k = \tilde S^{-1}_k\tilde e_k$ and $\tilde e_k\sim \mathcal N (0, \tilde S_k^{-1}),$ Thus}
+\tilde s_k\sim \mathcal N (0, \tilde S_k),
+\end{align}
+So, we are saying $S_k \preceq \tilde{S}$ for all $k$? But, isn't that only true if the initial covariance is larger than the steady-state covariance? If correct, we should state the assumptions clearly.
+}
+
+We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted. \axx{should we cite an Arxiv paper instead of just omitting?}
 
 
 % and abstract the system further to a finite-state model  by gridding $\Xb_x$.
