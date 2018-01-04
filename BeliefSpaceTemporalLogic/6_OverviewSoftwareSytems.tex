@@ -35,6 +35,8 @@
 \newcommand{\Ali}[1]{{\color{green} Ali: #1}}
 \newcommand{\cristi}[1]{{\color{orange} Cristi: #1}}
 %\newcommand{\rohan}[1]{{\color{blue} Rohan: #1}}
+\newcommand{\kyon}[1]{{\color{cyan} #1}}
+\newcommand{\done}[1]{{\color{gray} #1}}
 \allowdisplaybreaks[1]
 
 \begin{document}
@@ -132,16 +134,19 @@ TBD
 
 
 
+\clearpage
 \section{Development Status}
 
-Below is the development status as of December 11.
+Below is the development status as of January 3.
 
 \subsection{Core Navigation Modules}
 
 \subsubsection{Perception}
 
 \paragraph{Stereo Reconstruction (complete)}
+\done{
 The JPLV stereo vision has been implemented. It provides point cloud up to 7-8m. 
+}
 
 \paragraph{Terrain Classification (development complete; copter test requires 1 week; multi-class extention requires 1+ month)}
 The SPOC-lite classifier provides the probability (confidence) of sand given a single color image. The SPOC-lite is essentially a 5-class classifier based on SVM Linear \cite{liblinear}. It is specialized to detect the white sand regions in the JPL Mars yard (the accuracy is $>$98\%).
@@ -152,16 +157,22 @@ Extra labeling and training may be required for the following cases: reliable mu
 
 
 \paragraph{Traversability Assessent (complete; adaption requires up to 2-3 days)}
+\done{
 The Morphin traversability analyzer (the ancestor of MER/MSL GESTALT) is implemented. The adaptation to different terrain requires intensive parameter tuning. For stable performance, 2-3 day testing will be required.
+}
 
 
 \subsubsection{State Estimation}
 
 \paragraph{Visual Odometry (complete)}
+\done{
 The JPL VO provides 6DoF pose information in 3.75 Hz. 
+}
 
-\paragraph{IMU (2 weeks)}
-An IMU is mounted on Athena, but the sensor does not publish any data in the ROS space. There is a plan to install a new IMU but it is currently under testing on a benchtop model.
+\paragraph{IMU (completed)}
+\done{
+An IMU is mounted on Athena, and publishing data as sensor\_msgs/IMU messages.
+}
 
 \paragraph{EKF (2-3 months?; 2-3 weeks for 3rdparty option)}
 There is an effort to implement an EKF that fuses wheel odometry, visual odometry, and IMU. It is under testing on a benchtop model. No ROS wrapper presents.
@@ -172,15 +183,21 @@ On special need,  the 3rdparty EKF like robot\_localization\footnote{\url{http:/
 \subsubsection{Actuation}
 
 \paragraph{Locomotion (complete; 2 weeks to implement visual feedback; 3 months for proper velocity distribution over articulated suspention)}
+\done{
 The locomotion module drives a rover to a designated point. The destination is specified either by $ (x, y, \theta) $ or arc parameters. Each wheel is separately controlled in terms of position and velocity.
 
 The vision-based path tracking is not implemented. It requires about two weeks to implement and test. 
+\kyon{The visual feedback will not be implemented at this level, as the higher level planner can handler the execution uncertainty.}
 
 The suspension model is not incorpolated into the velocity distribution to six wheels. Therefore, actuation error may be innegligible in undulating terrain. This requires suspention angle measurements which are not possible with the current hardware configurations. 
+\kyon{This is not critical as well. The suspension measurements will not be implemented in the near future.}
+}
 
 
 \paragraph{Mast Actuation (complete)}
+\done{
 The mast actuation module moves the mast gymbal to a designated direction. The direction is specified using the cartesian coordinates (XYZ) or joint angles (azimuth and elevation). 
+}
 
 
 
@@ -190,15 +207,39 @@ The mast actuation module moves the mast gymbal to a designated direction. The d
 Realistic Martian terrain models are already available in Gazebo. If physical interaction is needed, surface parameters should be tuned to produce natural rover motions. 
 
 \paragraph{Rover Model (1 week for visual; 2 weeks for physical)}
-The rocker-bogie rover model is not available in DARTS. The visualization takes about a week to move the vehicle parts (suspention, wheels). 
+The rocker-bogie rover model is not available in DARTS. The visualization takes about a week to move the vehicle parts (suspention, wheels).
+\kyon{A visual model for rocker-bogie rover (Curiosity) is partially completed. See Fig.~ \ref{fig:msl_visual}. The mast joints are not yet implemented.}
 
 The physical model is completely unavailable. Porting from DARTS models should take about 2 weeks.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figs/report6/msl_visual.png}
+    \caption{Visual model for the Curiosity rover.}
+    \label{fig:msl_visual}
+\end{figure}
+
+
 
 \paragraph{Copter Model (quadcopter visual available; helicopter visual 1 week; 3 day to emulate heli camera; 1-2 months for full aerodynamics simulation)}
 The estimate work time for the mock helicopter is one week. If it requires full simulation (I hope not), it will take months. 
 
+\kyon{Implemented simple visual model as shown in Fig.~\ref{fig:copter_visual}. Not sure if the Mars helicopter model is publicly available.}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figs/report6/copter_visual.png}
+    \caption{Visual model for the Curiosity rover.}
+    \label{fig:msl_visual}
+\end{figure}
+
+
+
+
+\done{
 \subsection{DARTS Simulation}
+
+\kyon{We will not implement models in DARTS framework.}
 
 Generally, using DARTS requires a steep learning curve. For those who don't have experience with DARTS, it takes 1-2 more months in learning before working on practical tasks. 
 
@@ -213,7 +254,7 @@ A few copter models are available as a part of DSENDS. It may take 1-2 weeks to 
 
 \paragraph{ROS interface (3 weeks)}
 Significant effort needed to connect DARTS simulator with the ROS interface. There is a prototype implementation for ROAMS. It will take about 3 weeks to expose all relevant functionalities to ROS.
-
+}
 
 \subsection{Decision}
 As of December 12, we decided to go with the simulation only (possibly with Gazebo). The estimate work time is about 10 weeks (around the end of February). 
