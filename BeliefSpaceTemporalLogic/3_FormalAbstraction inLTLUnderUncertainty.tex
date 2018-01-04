@@ -37,7 +37,10 @@
 \begin{frontmatter}
 
 % \title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
-\title{Labeling-based simulation relations for belief space temporal logic control of POMDPs}
+%\title{Stochastic Labeling-based Simulation Relations for belief space temporal logic control of POMDPs}
+%\title{Stochastic Labeling-based Simulation Relations for Temporal Logic Control of POMDPs}
+\title{Temporal Logic Control of POMDPs via Stochastic Labeling-based Simulation Relations}
+%\title{\huge Refinement-based Temporal Logic Control of POMDPs via Stochastic Proposition Labeling}
 %\thanks[footnoteinfo]{Sponsor and financial support acknowledgment
 %goes here. Paper titles should be written in uppercase and lowercase
 %letters, not all uppercase.}
@@ -84,7 +87,7 @@ Control and decision making under motion and sensing uncertainty is best capture
 Like previously done in  \citep{Vasile2016,JonesDTL2013}, in this paper we consider properties defined on the belief space of a POMDP---the space of probability distributions over states. Belief space properties express requirements on the estimation quality or uncertainty. We novelly solve this synthesis problem in a  correct-by-construction fashion by leveraging recent results on  approximate simulation relations \citep{haesaert2017verification, tech_report_TACAS}.
 More precisely, since the temporal logic problem cannot be solved directly over the original model, we compute a policy with guarantees over an approximate model. Leveraging similarity, the policy can then be refined to the original model in a way that preserves guarantees.
 
-We contribute to the state-of-the art of correct-by-construction methods within the realm of belief space temporal logics as follows: Firstly, we reinterpret the notion of an approximate stochastic simulation relation by introducing non-determinism in the proposition labeling. Secondly, we newly construct the associated policy refinement directly from the value function. Thirdly, we explicitly compute an approximate simulation relation for a non-stationary Kalman-filtered Linear Time-Invariant (LTI) system. Finally, we present a case study in which a finite environment POMDP is combined with a LTI POMDP in a Mars exploration scenario.
+We contribute to the state-of-the-art of correct-by-construction methods within the realm of belief space temporal logics as follows: First, we reinterpret the notion of an approximate stochastic simulation relation by introducing non-determinism in the proposition labeling. Second, we propose a method to construct the associated policy refinement directly from the value function. Third, we explicitly compute an approximate simulation relation for a non-stationary Kalman-filtered Linear Time-Invariant (LTI) system. Finally, we present a case study in which a finite environment POMDP is combined with a LTI POMDP in a Mars exploration scenario.
 
 %More precisely, we approach the synthesis problem as follows. Firstly, for a given belief MDP $\MB$ a finite-state abstraction  $\tilde \MB$ is computed. Secondly, we compute a labeling-based $\delta$-approximate stochastic  simulation relation between the abstract belief space model $\tilde{\MB}$ and the concrete model $\MB$. Then, a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem. Finally, a policy for the concrete belief space model is obtained as its refinement.
 
@@ -512,7 +515,7 @@ We can now quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by ve
 % \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 %\end{aligned}
 %\end{equation}
-Furthermore, we can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities \cite{haesaert2017verification}.
+Furthermore, we can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities \citep{haesaert2017verification}.
 
 
 \begin{remark}
@@ -640,7 +643,7 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
   \begin{center}
     \input{figs/exp1-prob.tikz}   \input{figs/exp2-prob.tikz}
   \end{center}
-  \caption{Above: regions of interest (solid red/blue), associated measurement regions (dashed lines), and trajectories of noisy state estimates starting at three different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. The left and right plots illustrate two different configurations of the true environment. In both cases, a sample exists at $T_1$ but not at $T_2$, and $R_1$ cannot be traversed due to an obstacle. However, in the left figure, $R_2$ does not contain an obstacle, so the rover can traverse $R_2$ after confirming that it is safe. To the right, both risk regions unexpectedly turn out to contain obstacles, and thus the rover must move around them which is associated with additional risk.}
+  \caption{Above: regions of interest (solid red/blue), associated measurement regions (dashed lines), and trajectories of noisy state estimates starting at three different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. The left and right plots illustrate two different configurations of the true environment. In both cases, a sample exists at $T_1$ but not at $T_2$, and $R_1$ cannot be traversed due to an obstacle. However, in the left figure, $R_2$ does not contain an obstacle, so the rover can traverse $R_2$ after confirming that it is safe. In the right figure, both risk regions unexpectedly turn out to contain obstacles, and thus the rover must move around them which is associated with additional risk.}
   \label{fig:exp1}
 \end{figure}
 
