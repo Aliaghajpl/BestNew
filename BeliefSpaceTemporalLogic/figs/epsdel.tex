@@ -14,10 +14,15 @@ xmin=-0.01395, xmax=0.25,
 ymin=0.8, ymax=1.45222764450879,
 width=\figurewidth,
 height=\figureheight,
-tick align=outside,
-tick pos=left,
+% tick align=outside,
+% tick pos=left,
 x grid style={lightgray!92.026143790849673!black},
-y grid style={lightgray!92.026143790849673!black}
+y grid style={lightgray!92.026143790849673!black},
+axis y line=left,
+axis x line=middle,
+every axis x label/.style={
+    at={(ticklabel* cs:1.05)}
+}
 ]
 \addplot [semithick, color0, forget plot]
 table {%

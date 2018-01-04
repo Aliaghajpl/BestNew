@@ -36,7 +36,8 @@
 
 \begin{frontmatter}
 
-\title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
+% \title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
+\title{Labeling-based simulation relations for belief space temporal logic control of POMDPs}
 %\thanks[footnoteinfo]{Sponsor and financial support acknowledgment
 %goes here. Paper titles should be written in uppercase and lowercase
 %letters, not all uppercase.}
@@ -60,7 +61,7 @@
 \maketitle
 \begin{abstract}
 The stochastic evolution of a partially observable Markov decision process (POMDP) can be modeled by an associated Markov decision process (MDP) in belief space.
-In this work, we consider synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We leverage the notion of approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, correctness guarantees are inherited by the refined control policy.
+In this work, we consider synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We introduce a novel notion of labeling-based approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, lower bounds for the probability of specification satisfaction are guaranteed by the refined control policy.
 \end{abstract}
 \begin{keyword} Belief space models,
 correct-by-construction control synthesis, Markov decision processes, partially observable
@@ -70,20 +71,20 @@ correct-by-construction control synthesis, Markov decision processes, partially 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \section{Introduction}\label{subsec:intro}
-Emerging applications of robotics systems necessitate control systems capable of autonomously performing complex tasks in a safe manner. Therefore, systems deployed in (partially) unknown environments have to make decisions in the face of uncertainty that maximize the probability of task completion. Temporal logics have emerged as a principled formalism for expressing behavior, and associated correct-by-construction synthesis techniques for the control policy have been developed \citep{Murray2009}. However, work to date in this area has focused on specifications expressed in terms of the system state; such specifications encompass many relevant behaviors but are incapable of expressing properties about system uncertainty. For instance, in a Mars rover exploration mission the accuracy of pose estimates must be of much higher quality during the crucial sample extraction phase, as compared to when the rover is traversing a ``safe'' area. In this work we are concerned with correct-by-construction synthesis for properties that quantify such notions of uncertainty.
+Emerging applications of robotics systems necessitate control systems capable of autonomously performing complex tasks in a safe manner. Therefore, systems deployed in (partially) unknown environments have to make decisions in the face of uncertainty that maximize the probability of task completion. Temporal logics have emerged as a principled formalism for expressing behavior, and associated correct-by-construction synthesis techniques have been developed \citep{Murray2009}. However, work to date in this area has focused on specifications expressed in terms of the system state; such specifications encompass many relevant behaviors but are incapable of expressing properties about system uncertainty. For instance, in a Mars rover exploration mission the accuracy of pose estimates must be of much higher quality during the crucial sample extraction phase, as compared to when the rover is traversing a ``safe'' area. In this work we are concerned with correct-by-construction synthesis for properties that quantify such notions of uncertainty.
 
 % Given a specification $\psi$  written in linear temporal logic with propositions over the belief state of a POMDP, we are interested in the design of a policy $\pol$ such that  $\psi$ is satisfied with probability at least $p$. In this paper, we approach the synthesis problem as follows. Firstly, for a given belief MDP $\MB$ a finite-state abstraction  $\tilde \MB$ is computed. Secondly, we compute a labeling-based $\delta$-approximate stochastic  simulation relation between the abstract belief space model $\tilde{\MB}$ and the concrete model $\MB$. Then, a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem. Finally, a policy for the concrete belief space model is obtained as its refinement.
 
-For probabilistic temporal logic properties over finite-state Markov decision processes (MDPs), there exist several tools for policy synthesis and verification, such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. However, when the MDP state space is uncountable the characterization of these properties, expressed in terms of the system state, cannot in general be attained analytically \citep{Abate1}, so an alternative is to approximate these models by simpler processes that can be analyzed and verified algorithmically, such as finite-state MDPs \citep{soudjani2015faust}, or deterministic transition systems \citep{Zamani2014}. \new{By quantifying the approximation accuracy via (approximate) simulation relations \citep{Zamani2014,haesaert2017verification,tech_report_TACAS}, the resulting controller can be shown to still be correct-by-construction.}
+For probabilistic temporal logic properties over finite-state Markov decision processes (MDPs), there exist several tools for policy synthesis and verification, such as PRISM \citep{KNP11} and  Storm \citep{dehnert2017storm}. However, when the MDP state space is uncountable the characterization of these properties, expressed in terms of the system state, cannot in general be attained analytically \citep{Abate1}. An alternative is to approximate these models by simpler processes that can be analyzed and verified algorithmically, such as finite-state MDPs \citep{soudjani2015faust}, or deterministic transition systems \citep{Zamani2014}. By quantifying the approximation accuracy via (approximate) simulation relations \citep{Zamani2014,haesaert2017verification,tech_report_TACAS}, the resulting controller can be shown to still be correct-by-construction.
 
-Control and decision making under motion and sensing uncertainty is best captured by the class of partially observable Markov decision processes (POMDPs) \citep{Kaelbling98,Smallwood73}. Without full-state observations, formal synthesis becomes more challenging. For finite-state POMDPs verification and policy synthesis has been considered for PCTL properties \citep{Norman2017, Chatterjee2014}. Results for specifications defined on the continuous states of a POMDP are rather preliminary and have been focused mainly on reachability and safety problems, where reachability and safety is defined with respect to the hidden state of the POMDP. In \citep{ding2013optimal} the optimal control of partially observable systems under safety specifications is analyzed, whereas \citep{LESSER20141989} studies reachability over partially observable stochastic systems.
+Control and decision making under motion and sensing uncertainty is best captured by the class of partially observable Markov decision processes (POMDPs) \citep{Kaelbling98,Smallwood73}. Without full-state observations, formal synthesis becomes more challenging. For finite-state POMDPs, verification and policy synthesis has been considered for PCTL properties \citep{Norman2017, Chatterjee2014}. Results for specifications defined on the continuous states of a POMDP are rather preliminary and have been focused mainly on reachability and safety problems, where reachability and safety is defined with respect to the hidden state of the POMDP. In \citep{ding2013optimal} the optimal control of partially observable systems under safety specifications is analyzed, whereas \citep{LESSER20141989} studies reachability over partially observable stochastic systems.
 
 Like previously done in  \citep{Vasile2016,JonesDTL2013}, in this paper we consider properties defined on the belief space of a POMDP---the space of probability distributions over states. Belief space properties express requirements on the estimation quality or uncertainty. We novelly solve this synthesis problem in a  correct-by-construction fashion by leveraging recent results on  approximate simulation relations \citep{haesaert2017verification, tech_report_TACAS}.
-More precisely, since the temporal logic problem cannot be solved directly over the original model, we compute a policy with guarantees over an approximate model. Leveraging similarity, the policy can then be refined together with  its guaranties  to the original model.
+More precisely, since the temporal logic problem cannot be solved directly over the original model, we compute a policy with guarantees over an approximate model. Leveraging similarity, the policy can then be refined to the original model in a way that preserves guarantees.
 
-\new{Next to the fact that correct-by-construction policies are novel within the realm of belief space temporal logics, we contribute to the state-of-the art as follows.
- Firstly, we reinterpret the notion of approximate stochastic simulation relation via the non-determinism in the proposition labeling. Secondly, we newly construct the associated policy refinement via the value function. We also compute the approximate simulation relation for a non-stationary Kalman filtered  Linear Time-Invariant (LTI) system.   Finally,  we give a case study in which a finite environment POMDP is combined with a LTI POMDP.}
+We contribute to the state-of-the art of correct-by-construction methods within the realm of belief space temporal logics as follows: Firstly, we reinterpret the notion of an approximate stochastic simulation relation by introducing non-determinism in the proposition labeling. Secondly, we newly construct the associated policy refinement directly from the value function. Thirdly, we explicitly compute an approximate simulation relation for a non-stationary Kalman-filtered Linear Time-Invariant (LTI) system. Finally, we present a case study in which a finite environment POMDP is combined with a LTI POMDP in a Mars exploration scenario.
 
 %More precisely, we approach the synthesis problem as follows. Firstly, for a given belief MDP $\MB$ a finite-state abstraction  $\tilde \MB$ is computed. Secondly, we compute a labeling-based $\delta$-approximate stochastic  simulation relation between the abstract belief space model $\tilde{\MB}$ and the concrete model $\MB$. Then, a $\delta$-robust policy for the abstract $\tilde{\MB}$ is computed  together with a stationary value function for the associated stochastic optimal control problem. Finally, a policy for the concrete belief space model is obtained as its refinement.
 
@@ -93,12 +94,12 @@ More precisely, since the temporal logic problem cannot be solved directly over 
 For a metric space $\Y$, we denote by $\borel{\Y}$ its Borel $\sigma$-field. Then $\mathcal P(\Y)$ is the set of probability measures on the Borel-measurable space $(\Y,\borel{\Y})$. A probability measure $\po \in \mathcal P(\Y)$ together with $(\Y,\borel{\Y})$ defines a probability space $(\Y,\mathcal{B}(\Y),\po)$ with realizations $s{\,\sim\,}\po$. Given a probability measure, the corresponding expectation operator is denoted as $\Ex[\cdot]$. In this work, we restrict attention to the case when $\Y$ is a Polish space, i.e, a complete and separable metric space \citep{bogachev2007measure}.
 
 % For two sets $\X_1$ and $\X_2$, a relation $\rel\subset \X_1 \times \X_2$ is a subset of the Cartesian product that relates $x_1 \in \X_1$ to $x_2 \in \X_2$ if $(x_1, x_2)\in\rel$, equivalently written $x_1 \rel x_2$. Examples of relations include the diagonal relation $\{(x_1,x_2){\mid} x_1=x_2\}$, and norm based relations $\{(x_1,x_2){\mid} \|Px_1-x_2\|_2\leq \epsilon\}$ where $P$ is a projection matrix.
-For a vector $\grid  \in \mathbb{R}^n$ we write the $\grid$-ball in infinity norm as $\ball_\grid(x_0) = \{ x : |x_i - x_{0,i}| \leq \grid_i \}$. The indicator function for a set $A$ is written $\ind_A(x)$ and is equal to $1$ if $x \in A$, and to 0 otherwise. For a relation $\rel \subset \X_1 \times \X_2$ we introduce the associated mappings $\rel(X_1):=\{x_2: x_1\rel x_2, x_1 \in \X_1\}$ and  $\rel^{-1}( X_2 ):=\{x_1: x_1\rel x_2, x_2 \in \X_2 \}$ for $X_1 \subseteq \X_1$ and $X_2 \subseteq \X_2$.
+For a vector $\grid  \in \mathbb{R}^n$ we write the $\grid$-ball in infinity norm as $\ball_\grid(x_0) = \{ x : |x_i - x_{0,i}| \leq \grid_i \}$. The indicator function of a set $A$ is written $\ind_A(x)$ and is equal to $1$ if $x \in A$, and to 0 otherwise. For a relation $\rel \subset \X_1 \times \X_2$ we introduce the associated mappings $\rel(X_1):=\{x_2: x_1\rel x_2, x_1 \in \X_1\}$ and  $\rel^{-1}( X_2 ):=\{x_1: x_1\rel x_2, x_2 \in \X_2 \}$ for $X_1 \subseteq \X_1$ and $X_2 \subseteq \X_2$.
 
 
 \subsubsection{Paper layout:}
 
-In the next section, the POMDPs and associated belief models are introduced together followed by temporal logic concepts. Afterwards, in Section \ref{sec:exact_synth} we consider the control synthesis problem for temporal logic properties over belief MDPs, before suggesting a robust synthesis procedure for abstractions in Section \ref{sec:refinement}. In Section \ref{sec:gaussian}, we study the special case of Gaussian POMDPs in more detail, before concluding the paper with an illustrative case study in Section~\ref{sec:case} and conclusions in Section \ref{sec:conclusions}.
+In the next section, POMDPs and associated belief models are introduced, followed by temporal logic concepts. Afterwards, in Section \ref{sec:exact_synth} we consider the control synthesis problem for temporal logic properties over belief MDPs, before suggesting a robust synthesis procedure for abstractions in Section \ref{sec:refinement}. In Section \ref{sec:gaussian} we study the special case of linear Gaussian POMDPs in more detail, before ending the paper with an illustrative case study in Section~\ref{sec:case}, and conclusions in Section \ref{sec:conclusions}.
 
 
 \section{POMDPs and temporal logic specifications}
@@ -113,9 +114,9 @@ We first define a Markov decision process as follows \citep{hll1996}.
 \label{def:MDP}
   A discrete-time \emph{Markov decision process} (MDP) is a tuple $\MDP = (\X, \init, \tr, \A)$ where
   \begin{itemize}
-    \item $\X$ is a \new{(Polish)} state space with states $x\in\X$; % as its elements;
+    \item $\X$ is a (Polish) state space with states $x\in\X$; % as its elements;
     \item $\init \in \mathcal P(\X)$ is an initial probability distribution;
-    \item $\A$ is a \new{(Polish)} input space with inputs $u\in\A$;
+    \item $\A$ is a (Polish) input space with inputs $u\in\A$;
     \item $\tr:\X\times\A\times\mathcal B(\X)\rightarrow[0,1]$ is a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \A$ a probability measure $\tr(\cdot\mid x,u)$ over $(\X,\mathcal B(\X))$.
   \end{itemize}
 \end{definition}
@@ -146,31 +147,29 @@ In a POMDP control actions $u_k$ can be chosen as a function of the available in
 Given an observation-based policy $\pol$ and an initial distribution $\init$, the theorem of Ionescu Tulcea \citep{hll1996} implies the existence of a unique probability measure $\P_\pol^\init$ on $\Hist_\infty$, or, equivalently, a stochastic process on the probability space $(\Hist_\infty, \borel{\Hist_\infty}, \P_\pol^\init)$. For an information vector $i_k$, state knowledge can be expressed as a conditional probability distribution $b_k( \mathrm{d} x )=\P(x_k\in \mathrm{d} x |\init,i_k)\in \mathcal P (\X)$. The distribution $b_k$ is called the \emph{belief state} and the set of all beliefs is the \emph{belief space} $\Xb\subset \mathcal P(\X)$. It can be shown that the belief state evolves based on a fixed stochastic kernel
 \begin{align}
 \label{eq:trb}
-	 b_{k+1} \sim \trb(\cdot|b_k,u_k).
+	 b_{k+1} \sim \trb(\cdot|b_k,u_k), \quad b_0 \sim \initb,
 \end{align}
-
-Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ in belief space \citep{bertsekas2004stochastic}. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\initb, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\initb, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\pol_k(\mathrm{d} u| b)=  \pol(\mathrm{d} u| b)$  for all $k$ and $b$ with $\pol:\mathbb B\rightarrow \mathcal{P}(\A)$ a universally measurable stochastic kernel. %\pol_k( \cdot |b)$ for all $k$ and $b$.
+for an initial belief $\initb$. Since \eqref{eq:trb} is a completely observable system it follows that a POMDP $\POMDP$ can equivalently be expressed as an MDP $\MB(\POMDP) = (\Xb, \initb, \trb, \A)$ in belief space \citep{bertsekas2004stochastic}. In the sequel we will omit $\POMDP$ and simply write $\MB = \MB(\POMDP)$ for the belief model. The information vector for $\MB$ at time $k$ is given as $i_k=(b_0, u_0, b_1, u_1, \ldots, b_{k-1}, u_{k-1}, b_k)$. Thus a policy for $\MB$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for all $k$, $\pol_k(\mathrm{d}u_k|\initb, i_k)$ is a universally measurable stochastic kernel on $\A$.	We say that a policy $\polb$ is a \emph{Markov policy} if for each $k$ it depends only on the current state, i.e., $\pol_k(\mathrm{d} u_k|\initb, i_k) = \pol_k(\mathrm{d} u_k| b_k)$. Furthermore $\polb$ is a \emph{stationary Markov policy} if $\pol_k(\mathrm{d} u| b)=  \pol(\mathrm{d} u| b)$  for all $k$ and $b$ with $\pol:\mathbb B\rightarrow \mathcal{P}(\A)$ a universally measurable stochastic kernel. %\pol_k( \cdot |b)$ for all $k$ and $b$.
 
 
 \subsection{Linear Temporal Logic for Belief MDPs}
 
-In this work we are interesting in controlling state evolution under uncertainty to guarantee properties of the belief state. First we introduce atomic propositions in belief space to give examples of the types of behavior that can be quantified. These propositions are the basic building blocks from which temporal specifications are then constructed.
+In this work we are interested in controlling state evolution under uncertainty to guarantee properties of the belief state. First we introduce atomic propositions in belief space to give examples of the types of behavior that can be quantified. These propositions are the basic building blocks from which temporal specifications are then constructed.
 
 \subsubsection{Atomic propositions in belief space:}
 
-An atomic proposition $p_i$ \red{[S: introduced subscript $i$ to avoid notational conflict]} is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions are uniquely characterized by the mean and variance. That is, the belief state is $b = (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
+An atomic proposition $p_i$ is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions are uniquely characterized by the mean and variance. That is, the belief state is $b = (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
 \begin{enumerate}
-  \item a position-based proposition $p_1 = \{ (\hat x, P) : \hat x \in A \}$ that evaluates to true when the state mean is in a set $A \subset \mathbb{R}^n$;
-  \item an uncertainty-based proposition $p_2 = \{ (\hat x, P) : \det(P) \leq c \}$ that is true if the determinant of the variance is small;
-  \item a proposition $p_3 = \{ (\hat x, P) : \int_{A} \mathbf{P}( \mathrm{d} x \mid \hat x, P) \geq c \}$ which lower bounds the probability of an event $A$.
+  \item a position-based proposition $p_1 \; \Leftrightarrow \; \hat x \in A$ that evaluates to true when the state mean is in a set $A \subset \mathbb{R}^n$;
+  \item an uncertainty-based proposition $p_2 \; \Leftrightarrow \det(P) \leq c$ that is true if the determinant of the variance is small;
+  \item a proposition $p_3 \; \Leftrightarrow \; \int_{A} \mathbf{P}( \mathrm{d} x \mid \hat x, P) \geq c$ that lower-bounds the probability of an event $A$.
 \end{enumerate}
-\red{[S: I am not sure whether it is smart to define AP as sets over the state space. Normally one considers the AP to be indicators for these sets.]}
 
 % Several atomic propositions can simultaneously hold at a state $(\hat x, P)$. For example, the mean $\hat x$ can belong to a given set as in (1), while the variance is also low as in (2).
 Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabeth := 2^{AP}$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots\in\alphabeth^{\mathbb{N}}$.
 
-To quantify the dynamic behavior of a system, we define the word associated to an MDP execution. Consider a labeling function $\Lab:\Xb\rightarrow \alphabeth$ that maps belief states to letters in the alphabet. We require that $\Lab$ is measurable, i.e. that $\{b|\Lab(b)\vDash p \}\in \borel{\Xb}$ for all $p \in AP$. Since Borel measurability is preserved by standard linear operations \citep{azoff1974borel}%\citep[page 116]{lang1993real}
-, the above properties are all Borel measurable. Under these assumptions, the words generated by a belief trajectory $\mathbf{b} = b_0 b_1 b_2 \ldots$ can be defined as the word $\word:=\Lab(b_0)\Lab(b_1) \Lab(b_2) \ldots$. System properties can now be expressed via temporal logic formulas over the generated words.
+To quantify the dynamic behavior of a system, we define the word associated to an MDP execution. Consider a labeling function $\Lab:\Xb\rightarrow \alphabeth$ that maps belief states to letters in the alphabet. We require that $\Lab$ is measurable, i.e. that $\{b| p \in \Lab(b) \}\in \borel{\Xb}$ for all $p \in AP$. Since Borel measurability is preserved by standard linear operations \citep{azoff1974borel}%\citep[page 116]{lang1993real}
+ the above properties are all Borel-measurable. Under these assumptions, the words generated by a belief trajectory $\mathbf{b} = b_0 b_1 b_2 \ldots$ can be defined as the word $\word:=\Lab(b_0)\Lab(b_1) \Lab(b_2) \ldots$. System properties can now be expressed via temporal logic formulas over the generated words.
 
 \subsubsection{Linear temporal logic formulas:}
 
@@ -180,7 +179,7 @@ Properties are formulas composed of atomic propositions and operators. In this w
   Formulas in the \emph{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
   \begin{equation*}
     \label{eq:scLTL}
-    \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi
+    \psi :=  \True \ |\ p \ |\ \notltl p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \andltl \psi_2 \ |\ \psi_1 \Until \psi_2 \ |\ \Next \psi,
   \end{equation*}
   where $p\in \AP$ is an atomic proposition.
 \end{definition}
@@ -223,14 +222,14 @@ An important property of the scLTL fragment is that the satisfaction of a formul
 \begin{definition}
   A \emph{deterministic finite-state automaton} (DFSA) is a tuple $\FSA = (Q, q_0, \Sigma, \delta_\FSA, Q_f)$, where $Q$ is a finite set of states, $q_0 \in Q$ is a initial state, $\Sigma$ is a input alphabet, $\delta_\FSA : Q \times \Sigma \rightarrow Q$ is a transition function, and $Q_f\subseteq Q$ is a set of accepting states.
 
-  A word $\word = \letter_0 \letter_1 \letter_2 \ldots$ \textbf{is accepted} by the DFSA if there exists a sequence $q_0 q_1 q_2 \ldots q_f$ with $q_f\in Q_f$, that starts with the initial state $q_0$ and for which $q_{i+1}=\delta_{\CA A}(q_i,\letter_i)$. In other words, a sequence of letters is accepted if the corresponding trace in the DFSA reaches the set of accepting states. We denote the set of words accepted by a DFSA $\CA A$ as $\Language (\mathcal A)$.
+  A word $\word = \letter_0 \letter_1 \letter_2 \ldots$ \emph{is accepted} by the DFSA if there exists a sequence $q_0 q_1 q_2 \ldots q_f$ with $q_f\in Q_f$, that starts with the initial state $q_0$ and for which $q_{i+1}=\delta_{\CA A}(q_i,\letter_i)$. In other words, a sequence of letters is accepted if the resulting execution in the DFSA reaches the set of accepting states. We denote the set of words accepted by a DFSA $\CA A$ as $\Language (\mathcal A)$.
 \end{definition}
 
 For every property $\psi$ expressed as a syntactically co-safe LTL formula \eqref{eq:scLTL}, there exists a DFSA  $\FSA_\psi$ that models the same property \citep{Belta2017}. In particular, $\word\models\psi$ if and only if $\word\in \Language(\FSA_\psi)$. We can therefore reason about satisfaction of properties on $\MB$ by analyzing a product system $\MB \otimes \FSA_\psi$. As shown in \citep{tmka2013}, also this system is an MDP.
 
 \begin{definition}
 \label{def:product}
-  Given an MDP $\MDP = (\X, \init, \tr, \A)$, a finite alphabet $\Sigma$, a labeling function $\Lab : \X\rightarrow\Sigma$, and a DFSA  $\FSA_\psi = (Q, q_0, \Sigma, \delta_\FSA, Q_f)$, the \textbf{product} between $\MDP$ and $\FSA_\psi$ is another MDP $\MDP\otimes\FSA_\psi = (\X \times Q, \bar\init, \bar{\tr}, \A)$, where $\bar\init(dx,q) = \init(dx)$ if $q= \delta_\FSA(q_0,\mathsf L(x))$ and $ \bar\init(dx,q) =0$ otherwise, and the transition kernel is similarly given as
+  Given an MDP $\MDP = (\X, \init, \tr, \A)$, a finite alphabet $\Sigma$, a labeling function $\Lab : \X\rightarrow\Sigma$, and a DFSA  $\FSA_\psi = (Q, q_0, \Sigma, \delta_\FSA, Q_f)$, the \emph{product} between $\MDP$ and $\FSA_\psi$ is another MDP $\MDP\otimes\FSA_\psi = (\X \times Q, \bar\init, \bar{\tr}, \A)$, where $\bar\init(dx,q) = \init(dx)$ if $q= \delta_\FSA(q_0,\mathsf L(x))$ and $ \bar\init(dx,q) =0$ otherwise, and the transition kernel is similarly given as
   \begin{equation*}
     \bar{\tr}(d x'\times\{q'\}|x,q,u) = \begin{cases}\tr(dx'|x,u)& \text{if } q' =\delta_{\FSA}(q,\Lab(x')),\\ 0 & \text{otherwise.}  \end{cases}
   \end{equation*}
@@ -240,17 +239,17 @@ From this construction it follows that a policy $\polb$ for $\MB$ enforces a spe
 
 \subsection{MDP reachability via value iteration}
 
-Consider an MDP $\MDP = (\X, \rho, t, \A)$ and a set of accepting states $X_f \subset \X$. We are interested in constructing a policy $\pol$ that maximizes the possibility of reaching $X_f$. To this end, we define for a stationary policy $\polb$ the time-dependent value function $\mathbf V_\polb^K:\X\rightarrow [0,1]$ as
+Consider an MDP $\MDP = (\X, \rho, t, \A)$ and a set of accepting states $X_f \subset \X$. We are interested in constructing a policy $\pol$ that maximizes the probability of reaching $X_f$. To this end, we define for a stationary policy $\polb$ the time-dependent value function $\mathbf V_\polb^K:\X\rightarrow [0,1]$ as
 \begin{equation*}
 \label{eq:Valfunc}
-  \mathbf V^K_\polb(x)=\mathbb{E}^\polb \left[ \sum\limits_{ i=0 }^K \ind_{X_f}( x_i) \prod \limits_{\mathclap{j = 0}}^{i-1}\ind_{ \X \setminus X_f}( x_j ) \bigg| x_0 = x \right].
+  \mathbf V^K_\polb(x)=\Ex_\polb \left[ \sum\limits_{ i=0 }^K \ind_{X_f}( x_i) \prod \limits_{\mathclap{j = 0}}^{i-1}\ind_{ \X \setminus X_f}( x_j ) \bigg| x_0 = x \right].
 \end{equation*}
-\textcolor{red}{As shown in \citep{Abate1}}, $\mathbf V_\polb^K (x)$ expresses the probability that a trajectory generated by $\polb$ starting from $x$ will reach the target set $X_f$ within a time horizon $K$.
+As shown in \citep{Abate1}, $\mathbf V_\polb^K (x)$ expresses the probability that a trajectory generated by $\polb$ starting from $x$ will reach the target set $X_f$ within a time horizon $K$.
 
 Next express the associated Bellman operator $\Bel_\pol$ as
 \begin{align}
 \label{eq:V_recopt}
-  & \Bel_\pol (\mathbf  V)(x) = \int_\X \max \left( \mathbf 1_{X_f}( x'), \mathbf V(x') \right) {\tr}(d  x' | x,\pol( x)),
+  & \Bel_\pol (\mathbf  V)(x) = \int_\X \max \left( \mathbf 1_{X_f}( x'), \mathbf V(x') \right) {\tr}(\mathrm{d} x' | x,\pol( x)),
 \end{align}
 from where it follows that $\mathbf V_\polb^{K} = \Bel_\pol \mathbf V_\polb^{K-1}$. Thus if $\mathbf V_\polb^{K-1} $ expresses the probability of reaching $X_f$ within $K-1$ steps, then $ \Bel_\pol \mathbf V_\polb^{K} $ expresses the probability of reaching $X_f$ within $K$ steps. It follows that the infinite-horizon reachability probability distribution can be computed as $\lim_{K\rightarrow \infty}\mathbf T_\mu^{K} \mathbf V^0$ with $\mathbf{V}^0 \equiv 0$.
 
@@ -258,29 +257,28 @@ Instead of defining the recursions for a given policy $\polb$, we can also optim
 \begin{equation}
   \Bel_{\!\ast} \!(\mathbf V)(x) \!=\!\!\sup_{\pol \in \mathbf D_{\pol}}\! \int_{\X}\! \max\! \left( \mathbf 1_{X_f}\!( x'),\! \mathbf V(x') \right)\! {\tr}(d  x' | x,\pol( x)).\!\label{eq:opt_bell}
 \end{equation}
-From \cite{Abate1} we know that the policy $\polb^\ast$ optimizing  the reachability recursions \eqref{eq:opt_bell}  is a stationary, universally measurable, and deterministic policy.
+From \cite{Abate1} we know that the policy $\polb_\ast$ optimizing  the reachability recursions \eqref{eq:opt_bell}  is a stationary, universally measurable, and deterministic policy.
 
 
 \subsection{Policy synthesis}
-Policy synthesis for a scLTL specification over a belief state space $\Xb$ is equivalent to reachability of $\Xb\times Q_f$ on the product system $\MB \otimes \FSA_\psi$. In this case, the Bellman operator \eqref{eq:V_recopt} reduces to
+Policy synthesis for a scLTL specification over a belief space $\Xb$ is equivalent to reachability of $\Xb\times Q_f$ on the product system $\MB \otimes \FSA_\psi$. In this case, the Bellman operator \eqref{eq:V_recopt} reduces to
 \begin{equation}
 \label{eq:V_recopt_inf_mu}
 %\begin{aligned}
   \Bel_\pol (\mathbf V)(b,q)\! = \hspace{-1mm} \int_{\Xb} \hspace{-1mm} \max \left( \mathbf 1_{Q_f}(q'), \!\mathbf V( b'\!, q') \right)\! {\tr}(\mathrm{d} b' |b,\pol(b,q))\!
 %\end{aligned}
 \end{equation}
-with {\color{orange}the implicit DFSA transitions  $q' =\delta_\FSA(q,\Lab(b'))$}, %\red{$\mathrm{d} b'= d b'\times\{q'\}$}, 
-and similarly for the policy-optimal version $\Bel_\ast$. The stationary policy $\pol$ is defined for the product MDP, i.e, it defines a control action as a function of the state $(b,q) \in \Xb \times Q$.  A stationary policy %$\pol$ 
-for the product MDP $\MB \otimes \FSA_\psi$ can be translated to a time-dependent policy $\polb$ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
+with the implicit DFSA transitions  $q' =\delta_\FSA(q,\Lab(b'))$, %\red{$\mathrm{d} b'= d b'\times\{q'\}$},
+and similarly for the policy-optimal version $\Bel_\ast$. A stationary policy $\pol$ defined for the product MDP $\MB \otimes \FSA_\psi$ defines a control action as a function of the state $(b,q) \in \Xb \times Q$, and can be translated to a time-dependent policy $\polb$ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
 
 Even though this section outlines a solution method to Problem \ref{prob:main}, the required recursions can only be computed for a limited set of systems.
-Computation is especially challenging for high-dimensional continuous-state belief MDPs. In the sequel, we tackle this issue by constructing an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a quantified sense, but which is more amenable to policy synthesis.
+Computation is especially challenging for high-dimensional continuous-state belief MDPs. In the sequel, we tackle this issue by outlining how the problem can be transfered to an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a quantified sense.
 
 
 \section{Refinement-based approximate control synthesis}
 \label{sec:refinement}
 
-Let a belief MDP $\MB$ and an abstract model $\tilde \MB$ be given. In this section we show how we can leverage a policy for the abstract model to control the concrete model with inherited guarantees. For this we first quantify the difference between $\MB$ and $\tilde \MB$ and design a control policy for $\tilde \MB$ that satisfies a property robustly with respect to the difference. Finally, we show a novel way of constructing a refined policy for the concrete belief MDP.
+Let a belief MDP $\MB$ and an abstract model $\tilde \MB$ be given. In this section we show how we can leverage a policy for the abstract model to control the concrete model with inherited guarantees. For this we first quantify the difference between $\MB$ and $\tilde \MB$ and design a control policy for $\tilde \MB$ that satisfies a property robustly with respect to the difference. Finally, we show a novel way of constructing a refined policy for the concrete belief MDP $\MB$.
 
 % We approach the control synthesis of the belief MDP in three steps:
 % \begin{enumerate}
@@ -296,7 +294,7 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 %
 \begin{definition}
 \label{def:dellifting}
-  For a given relation $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\mathbf{P}_1$ and $\mathbf{P}_2$ are in the corresponding \textbf{$\delta$-lifted relation} $\bar \rel_\delta$, written $\mathbf{P}_1 \bar \rel_\delta \mathbf{P}_2$, if there exists a \textbf{lifting} $\mathbb{W}$ which is a probability distribution on $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2))$ such that { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
+  For a given relation $\rel\in \mathcal B(\X_1\times \X_2)$, we say that  $\mathbf{P}_1$ and $\mathbf{P}_2$ are in the corresponding \emph{$\delta$-lifted relation} $\bar \rel_\delta$, written $\mathbf{P}_1 \bar \rel_\delta \mathbf{P}_2$, if there exists a \emph{lifting} $\mathbb{W}$ which is a probability distribution on $(\X_1\times \X_2,\mathcal B(\X_1\times \X_2))$ such that { \setlength{\parskip}{-1pt}\setlength{\parsep}{0pt}
 		\begin{description}
 			\item[\textbf{L1.}] for all $X_1\in \mathcal{B}(\X_1)$: $\mathbb W(X_1\times \X_2)=\mathbf{P}_1(X_1)$;
 			\item [\textbf{L2.}] for all $X_2\in \mathcal{B}(\X_2)$:  $\mathbb W(\X_1\times X_2)=\mathbf{P}_2(X_2)$;
@@ -327,7 +325,7 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 % 	\forall (\tilde x, x)\in \rel, \forall \tilde u \in \tilde A, \exists u \in \A\; \text{s.t.} \; \tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, u).
 % \end{equation}
 %
-% To make sure that requirement \eqref{req:translifting} is constructive for the control refinement, we need a more strict condition on the measurability.  Hence, we require that there exists a Borel measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \Xb\times\Xb$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
+% To make sure that requirement \eqref{req:translifting} is constructive for the control refinement, we need a more strict condition on the measurability.  Hence, we require that there exists a Borel-measurable stochastic kernel $\Wt(\,\cdot\,{\mid} \tilde u,\tilde x,x)$ on $\tilde \Xb\times\Xb$ such that $\forall (\tilde x,x)\in \rel$, $\forall \tilde u\in\tilde \A$:
 % \begin{equation}
 %   \tilde \trb(\cdot| \tilde x, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| x, \InF(\tilde u,\tilde x,x)),\tag{\textbf{SR 2.}}
 % \end{equation}
@@ -337,18 +335,17 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 %
 The difference between two probability distributions can be quantified with respect to a relation $\rel$ based on Definition \ref{def:dellifting}. For stochastic kernels we add a measurability condition.
 \begin{definition}\label{def:kernellift}
-		\new{Borel measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are in a \ $\delta$-lifted relation $\bar \rel_\delta$ for a set $x\in A$, i.e.,  $\tr_1(\cdot \mid x) \bar \rel_\delta \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel measurable stochastic kernel for which Def. \ref{def:dellifting} holds. }
+		Borel-measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are \emph{in a \ $\delta$-lifted relation $\bar \rel_\delta$} for a set $x\in A$, i.e.,  $\tr_1(\cdot \mid x) \bar \rel_\delta \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel-measurable stochastic kernel for which Definition \ref{def:dellifting} holds.
 \end{definition}
 We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of Gaussian LTI POMDP systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
 
 \begin{definition}
 \label{def:apbsim}
-Consider a concrete belief MDP $\MB = (\Xb, \rho, \trb, \A)$ and an abstract MDP $\tilde\MB = (\tilde \Xb, \tilde \rho, \tilde \trb, \tilde \A)$, with (set-valued) labeling maps $\Labset$ and  $\tilde{\Labset}$. We say that	$\tilde \MB$ is \textbf{$\delta$-stochastically simulated} by $ \MB$ with respect to $(\tilde{\Labset},\Labset)$, written
+Consider a concrete belief MDP $\MB = (\Xb, \rho, \trb, \A)$ and an abstract MDP $\tilde\MB = (\tilde \Xb, \tilde \rho, \tilde \trb, \tilde \A)$, with (set-valued) labeling maps $\Labset$ and  $\tilde{\Labset}$. We say that	$\tilde \MB$ is \emph{$\delta$-stochastically simulated} by $ \MB$ with respect to $(\tilde{\Labset},\Labset)$, written
 \begin{equation}
  \tilde {\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset}  \MB,
 \end{equation}
-\red{[Order was wrong?,  Control defines the non-determinism wrt which we order the relation.]}
-if there exists a \red{Borel measurable interface function $\InF : \tilde \A \times \tilde \Xb \times \Xb \rightarrow \mathcal P(\A)$} and a Borel-measurable relation $\rel\subseteq \tilde \Xb\times \Xb$, for which for all  $ \tilde u\in \tilde \A$, and for all $ (\tilde b,b)\in \rel$
+if there exists a Borel-measurable interface function $\InF : \tilde \A \times \tilde \Xb \times \Xb \rightarrow \mathcal P(\A)$ and a Borel-measurable relation $\rel\subseteq \tilde \Xb\times \Xb$, for which for all  $ \tilde u\in \tilde \A$, and for all $ (\tilde b,b)\in \rel$
 \begin{align}
   \label{eq:sr-1} & \tilde\init \bar \rel_\delta \init, \tag{\textbf{SR 1}} \\
   \label{eq:sr-2} &  \tilde \trb(\cdot| \tilde b, \tilde u)\ \bar \rel_\delta \  \trb(\cdot| b, \InF(\tilde u,\tilde b,b)), \tag{\textbf{SR 2}} \\
@@ -358,20 +355,20 @@ if there exists a \red{Borel measurable interface function $\InF : \tilde \A \ti
 
 \end{definition}
 
-Condition \eqref{eq:sr-1} enforces $\delta$-probabilistic similarity between the initial distributions, while \eqref{eq:sr-2} ensures that the transition kernels of the two MDPs are approximately matched via the interface. Finally, \eqref{eq:sr-l} guarantees that any label $\Labset(b)$ of a concrete state $b$ is also present in the abstract label $\Labset(\tilde b)$. Thus, any word generated by $\MB$ will also be present in the possible behaviors of $\tilde \MB$.
+Condition \eqref{eq:sr-1} enforces $\delta$-probabilistic similarity between the initial distributions, while \eqref{eq:sr-2} ensures that the transition kernels of the two MDPs are approximately matched via the interface. Finally, \eqref{eq:sr-l} guarantees that any label $\Lab \in \Labset(b)$ of a concrete state $b$ is also present in the abstract label collection $\Labset(\tilde b)$. Thus, any word generated by $\MB$ will also be present in the possible behaviors of $\tilde \MB$.
 \\
 In \citet{haesaert2017verification} the difference between models is quantified based both on a probabilistic difference as above, and on a metric difference in an output space. To facilitate working with belief space models this paper implements this novel alternative notion of simulation relation that instead of a metric error incorporates non-determinism in the labeling.
-\new{Next, we show that a  robust policy synthesis, introduced in \cite{tech_report_TACAS}, can used for the new labeling based approximate stochastic simulation relations.}
+Next, we show that robust policy synthesis as introduced in \cite{tech_report_TACAS} can be used for the new labeling-based approximate stochastic simulation relations.
 
 \subsection{Robust policy synthesis}
 
-As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that an scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism
+As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that an scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism:
 \begin{align}
   \Bel_\pol^\Labset (\mathbf V)(b,q) = \hspace{-1mm} \int_\Xb
   \min_{q' \in \delta_\FSA(q, \Labset( b'))} \hspace{-3mm} \max \left( \mathbf 1_{Q_f}(q'), \mathbf V( b',q') \right)  \notag\\[-.4em]
    \times {\tr}(d b'|b,\pol(b,q)).\label{eq:V_recopt_nondet}
 \end{align}
-The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogously. Hence the robust Bellman operator follows by compensating for the difference in probability $\delta$ as 
+The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogously. Hence the robust Bellman operator follows by compensating for the difference in probability $\delta$ as
 \begin{equation}
   \label{eq:V_recopt_nondet_rob}
   \BelR_\pol^{(\Labset,\delta)} (\mathbf V)(b,q) = \max \left( 0, \Bel_\pol^\Labset (V)(b,q) - \delta  \right),
@@ -384,15 +381,16 @@ and similarly for the policy-optimal Bellman operator $\BelR_\ast^{(\Labset, \de
 \end{aligned}
 \end{equation}
 with
-$\mathbf W^\infty_\ast \!:=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N\! (\mathbf W^0)$ and $\mathbf W^0\equiv0$. Remark this robust probability is parameterized with the set-valued labeling and the $\delta$-difference in the stochastic transitions.
+$\mathbf W^\infty_\ast \!:=  \lim_{N\rightarrow\infty}[\BelR_\ast^{(\Labset,\delta)}]^N\! (\mathbf W^0)$ and $\mathbf W^0\equiv0$, and an associated policy $\tilde \polb_\ast$ is obtained as the maximizing argument. Remark this robust probability is parameterized by the set-valued labeling and the $\delta$-difference in the stochastic transitions.
 \\
 From the robust synthesis results in \citep{tech_report_TACAS},
-we know  that there exists a refined control policy with inherited guarantees.\begin{prop}\label{prop:1}
-  Suppose that %$\tilde \MB$ is $\delta$-stochastically simulated by $ \MB$ with respect to $({\tilde{\Labset},\Labset})$, i.e., 
-  $\tilde{\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset}  \MB$, then a control policy ${\tilde \polb}^\ast$ for $\tilde \MB$ can be refined to a control policy $\polb$ for $\MB$ such that %for all joint executions $\mathbf{\tilde b}$ and $\mathbf{b}$
+we know  that there exists a refined control policy with inherited guarantees.
+\begin{prop}\label{prop:1}
+  Suppose that %$\tilde \MB$ is $\delta$-stochastically simulated by $ \MB$ with respect to $({\tilde{\Labset},\Labset})$, i.e.,
+  $\tilde{\MB}\preceq^{\delta}_{\tilde{\Labset},\Labset}  \MB$, then a control policy ${\tilde \polb}_\ast$ for $\tilde \MB$ can be refined to a control policy $\polb_\ast$ for $\MB$ such that %for all joint executions $\mathbf{\tilde b}$ and $\mathbf{b}$
   \begin{equation}
   \label{eq:prob_result}
-    \mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\mathbf{\tilde b} \vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb}( \mathbf{b} \vDash\psi).
+    \mathbf{P_{\! rob}}_{\tilde \init}^{\!\ast}(\mathbf{\tilde b} \vDash\psi; \tilde\Labset,\delta)\leq  \mathbf P _{\init}^{\polb_\ast}( \mathbf{b} \vDash\psi).
   \end{equation}
 \end{prop}
 
@@ -401,18 +399,21 @@ we know  that there exists a refined control policy with inherited guarantees.\b
 \subsection{Control refinement}
 \label{sec:control}
 
-Based on Proposition \ref{prop:1}, we already know that a refined policy for the concrete model can be constructed. In \cite{tech_report_TACAS}, this refined policy is constructed via the composition of the conditional lifting %of the $\delta$-stochastic simulation relation
- (see Def. \ref{def:kernellift}) and based on the abstract policy $\tilde  \polb^\ast$. Here we improve this construction in a way that is independent of the  lifting. Given $\mathbf{W}^\infty_\ast$ and abstract policy $\tilde \polb^\ast$, a refined concrete policy over the product MDP $\MB\otimes\FSA_\psi$ is obtained as
+Based on Proposition \ref{prop:1}, we already know that a refined policy for the concrete model can be constructed. In \cite{tech_report_TACAS}, this refined policy is constructed via composition of the conditional lifting %of the $\delta$-stochastic simulation relation
+ (see Def. \ref{def:kernellift}) and the abstract policy $\tilde  \polb_\ast$. Here we improve this construction in a way that is independent of the lifting. Given $\mathbf{W}^\infty_\ast$ and an abstract policy $\tilde \polb_\ast$, a refined concrete policy over the product MDP $\MB\otimes\FSA_\psi$ is obtained as
 \begin{equation*}
-		\polb_\ast(x,q): = \InF( \tilde{\polb}(\tilde x^*, q), \tilde x^*, x), \quad \tilde x^*:=\argmax_{ \tilde x\in
+		\polb_\ast(x,q): = \InF( \tilde{\polb}_\ast(\tilde x^*, q), \tilde x^*, x), \; \tilde x^*:=\argmax_{ \tilde x\in
 		\rel^{-1}(x)} \mathbf  W^\infty_\ast(\tilde x,q).
 \end{equation*}
-\new{We remark that this construction is allowed, as it effectively implements a one step improvement of the lower bound on the reachability probability.
-Additionally, we can assume without loss of generality that no measurability issues are introduced as the maximization is performed over a subset of the simpler state space of the abstracted model.} Remark that as a corollary of Proposition \ref{prop:1}, it follows that the probability that an scLTL property is satisfied is still lower bounded as in inequality \eqref{eq:prob_result}.
-
+\begin{prop}
+  This control refinement ensures that \eqref{eq:prob_result} is satisfied.
+\end{prop}
+\begin{pf}
+  \textcolor{red}{Needs improvement} We can assume without loss of generality that no measurability issues are introduced as the maximization is performed over a subset of the simpler state space of the abstract model. Equation \eqref{eq:prob_result} is satisfied since this choice effectively implements a one-step improvement of the lower bound on the reachability probability.
+\end{pf}
 
 \section{Abstractions for Gaussian LTI POMDPs}
-\label{sec:gaussian} 
+\label{sec:gaussian}
 We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and detail the model abstraction  to an observable belief LTI model. Consider an LTI system
 \begin{equation}
   \label{eq:LTI}
@@ -421,7 +422,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a \new{POMDP} with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ generating noisy measurements $z_k$.
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -431,17 +432,16 @@ It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for t
  P_{k|k-1}&=AP_{k-1|k-1}A^T+\mathcal W, \notag\\
  L_k &= P_{k|k-1}C^TS_k^{-1}, \quad S_k = CP_{k|k-1}C^T+\mathcal V.\notag
 \end{align}
-These equations together define a belief model $\MB$. %Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}. 
-As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of covariance matrix $P$. Therefore,  $\tilde \MB$ is obtained by replacing the stochastic transitions in equation \eqref{eq:beliefx} by
+These equations together define a belief model $\MB$. %Since the computation of the backwards recursions \eqref{eq:V_recopt_inf_mu} is intractable over the continuous space of this system, we construct a finite-state abstraction that is related to $\MB$ in the sense of Definition \ref{def:apbsim}.
+As a first abstraction, we choose to reduce the complexity and dimensionality of the dynamics by neglecting the variations of the covariance matrix $P$. Therefore, an abstract model $\tilde \MB$ is obtained by replacing the stochastic transitions in equation \eqref{eq:beliefx} by
 \begin{equation}
 		\tilde x_k  = A\tilde x_{k-1} +B\tilde u_{k-1} + \tilde P  C^T  \tilde{s}_k,\label{eq:abstract}
 \end{equation}
-with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that system $\tilde \MB$ \eqref{eq:abstract} has state space $\Xb_{x}$. \new{It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$.} \new{Remark that, if this holds it follows that for  the resulting LTI MDP  system, we can  grid  $\Xb_x$  as in \citep{haesaert2017verification,tech_report_TACAS}  to obtain a finite state  MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite state MDP system will then also be in an $\delta$- approximate stochastic simulation relation. The details of this step have been omitted.}
+with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted.
 
 
-
-% and abstract the system further to a finite-state model  by gridding $\Xb_x$. 
-%As illustrated in Figure \ref{fig:grid}, the abstract model $\tilde \MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which distributed  equidistantly over the state space $  {\X}_{bx}$.  Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell 
+% and abstract the system further to a finite-state model  by gridding $\Xb_x$.
+%As illustrated in Figure \ref{fig:grid}, the abstract model $\tilde \MB_{grid}$ has a finite set of states $ \hat {\X}_{bx}$, denoted $x_s\in \hat {\X}_{bx}\subset  {\X}_{bx}$,  which distributed  equidistantly over the state space $  {\X}_{bx}$.  Each finite state is the representative point $x_s\in  \hat {\X}_{bx}$ for a cell
 %$\Delta_{x_s}= \ball_\eta(x_s)$ where $\grid$ is a vector-valued precision parameter that defines the coarseness of the gridding. In addition, we require that the cells cover the whole state space, that is, $\Xb_x \subseteq \bigcup_{s \in \mathbb{S}} \Delta_{x_s}$.
 %
 %The transition kernel of $\hat\MB_{grid}$ is given as $t_{grid}(s'|s,u)=\hat t \left(\Delta_{s'}\mid x_s, u\right)$, where $\hat t$ is the stochastic transition kernel associated with \eqref{eq:abstract}. Thus, the probability of transitioning from $s$ to $s'$ is given by the probability of transitioning from the representative \emph{state} $x_s$ of $s$ to the representative \emph{cell} $\Delta_{s'}$ of $s'$.
@@ -453,7 +453,7 @@ with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_
 %  \label{fig:grid}
 %\end{figure}
 
-\new{To compute  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$, } we consider the simulation relations $\rel$ between states $b=(\hat x, P)$ of $\MB$ and states $\tilde x$ of $\tilde \MB $ and  interface $\InF$ defined as
+To compute $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$ we restrict attention to simulation relations $\rel$ between states $b=(\hat x, P)$ of $\MB$ and states $\tilde x$ of $\tilde \MB $, and interfaces $\InF$, on the forms
 \begin{align}
   \label{eq:rel}
     & \rel = \left\{(\tilde x, (\hat x, P ) ) \Big{|}\begin{aligned}
@@ -474,13 +474,13 @@ For a position-based proposition $p_i$ consider, without loss of generality, a l
  	  \{\emptyset \} & \mbox{ if } \forall b\in \rel (\tilde x):{p_i}\not\in\Lab_{p_i}(b),\\
  	  \{\{p_i\},\emptyset\}&\mbox{ otherwise.}\end{array} \right.
  \end{align}
-The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is \textcolor{orange}{monotonic\footnote{\color{orange}Here monotonicity of a function in $P$ is defined based on the preorder $\succeq $ for the matrices $P$ with $A\succeq B$ if $x^T(A-B)x\geq0\, \forall x\in\mathbb R^n$. } in $P$} can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of probability of an event is in general not \red{monotonic} with respect to variance.
+The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expanding the set $A$ and the extension to multiple atomic propositions is straightforward. Similarly, for propositions involving the variance of the current belief state any atomic property that is monotonic\footnote{Here monotonicity of a function in $P$ is defined based on the preorder $\succeq $ for the matrices $P$ with $A\succeq B$ if $x^T(A-B)x\geq0\, \forall x\in\mathbb R^n$. } in $P$ can be mapped to the abstract model. However, atomic propositions that include probability require caution since the quantification of the probability of an event is in general not monotonic with respect to variance.
 
 
 \subsubsection{Probability requirements:}
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
-We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ \eqref{eq:abstract} by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
+We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
 \begin{equation}
 \begin{aligned}
  \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
@@ -493,95 +493,142 @@ with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N 
 % \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 %\end{aligned}
 %\end{equation}
-\new{We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution.} 
-\new{The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities. }
+We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities. \new{PN: Is there a citation?}
 
- 
+
 \begin{remark}
-  Here we did not explicitly write out the lifted probability space $\mathbb{W}_t$ of Definition \ref{def:kernellift}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} driven by noise sources $s^\Delta$ and $ {\tilde{s}} $.  \end{remark}
-%
-%{\color{red}
-%\begin{itemize}
-%  \item Mention interface and control refinement?
-%\end{itemize}
-%}
+  Here we did not explicitly write out the lifted probability space $\mathbb{W}_t$ of Definition \ref{def:kernellift}. It is obtained from the probability measure induced by joint evolution of \eqref{eq:beliefx} and \eqref{eq:abstract} driven by noise sources $s^\Delta$ and $ {\tilde{s}} $.
+ \end{remark}
 
-For the satisfaction of \eqref{eq:sr-1}, we repeat the same procedure as above and show that there exists an initial state $\tilde x_{0}$ (or if needed a distribution) for $\tilde \MB$ such that  $\tilde x_{0} \bar\rel_\delta \initb$. %, which is true if  $P^-\preceq  P_\init \preceq P^+$ and $x_{s,0}\in \rel^{-1}( \hat x_\init )$. %For the latter not to be an empty set it is sufficient if for all $x$ with $x \in \ball_\grid(0)$ it holds that $x^T M x \leq \eps^2$.
 
+For the satisfaction of \eqref{eq:sr-1}, we repeat the same procedure as above and show that there exists an initial state $\tilde x_{0}$ (or if needed a distribution) for $\tilde \MB$ such that  $\tilde x_{0} \bar\rel_\delta \initb$.
 
 
 \section{Case study}
 \label{sec:case}
 
-Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment.
+Motivated by space exploration applications, we consider an autonomous rover tasked with identifying and collecting scientific samples in a partially unknown Mars environment. In this scenario the environment has been mapped from satellite imagery, and certain regions types have been identified. Here we consider two types of regions: \emph{target regions} and \emph{risk regions}, where the former are expected to contain science samples and the latter may contain obstacles that can not be traversed.
 
-\textbf{Rover model.} Without loss of generality, we consider a simple rover model as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as
+\textbf{Rover model.} We consider a simple rover modeled as a point mass $x_k \in \mathbb{R}^2$ affected by stochastic disturbances. We also assume that the position of the rover cannot be measured exactly and model its dynamics as the POMDP $\POMDP$:
 \begin{equation*}
 \begin{aligned}
   x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bsmallmatrix}.4&-.2\\-.2&.4\end{bsmallmatrix}\right), \\
   z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&.1\\.1&1\end{bsmallmatrix}\right).
 \end{aligned}
 \end{equation*}
+The corresponding belief space model $\MB$ is defined by the Kalman filter equations as in Section \ref{sec:gaussian}.
 
-A finite abstraction $\MDP_{syst}$ \red{(Or $\MB_{syst}$)} is constructed as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$.
 
-{\color{red}
-Say something about Fig. \ref{fig:tradeoff}}
-{\color{orange} Fig.  \ref{fig:tradeoff} give the trade of between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference.  Combined with a relaxing of the labeling as introduced in the previous subsection, this represents the accuracy of the used gridded belief MDP, that is $\tilde \MB_{grid}\preceq^\delta_{\tilde\Labset_{grid},\Labset} \MB $. For the evaluation of this simulation relation, we have also incorporated the accuracy loss caused by the gridding procedure. .}
+\textbf{Environment model.} We consider two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_0$ is the estimated probability from satellite imagery, with dynamics illustrated by Fig. \ref{fig:envmdp}.
+
 \begin{figure}
-  \input{figs/epsdel} 
-  \caption{Trade-off between $\epsilon$ and $\delta$ for simulation relation.   }
+  \begin{center}
+  \begin{tikzpicture}
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, ] (b0) {$p_0$};
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b0] (b1) {1};
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b1] (b2) {0};
+
+    \draw[-latex, red] (b0) to node[black, above] {$p = 1-p_0$} (b1);
+    \draw[-latex, red] (b0) to[out=45, in=145] node[black, above] {$p = p_0$} (b2);
+
+    \draw[-latex, blue, dashed] (b0) to[loop left] (b0);
+    \draw[-latex, red] (b1) to[loop right] (b1);
+    \draw[-latex, red] (b2) to[loop right] (b2);
+    \draw[-latex, blue, dashed] (b1) to[loop right] (b1);
+    \draw[-latex, blue, dashed] (b2) to[loop right] (b2);
+  \end{tikzpicture}
+  \end{center}
+  \caption{Illustration of environment belief model for a single region. At the beginning the belief is $p_0$. When a measurement is received (solid red edges), the belief transitions to $1$ with probability $p_0$ and to $0$ with probability $1-p_0$. That is, one measurement is sufficient to determine the state of the region. When no measurement is taken (blue dashed edges), or if a measurement has already been taken, the state does not change.}
+  \label{fig:envmdp}
+\end{figure}
+
+With $\MB_{env}$ as the combined environment model with state $(b_{T_1}, b_{T_2}, b_{R_1}, b_{R_2})$, the overall system is $\MB \otimes \MB_{env}$. This product is defined similarly to the product in Definition \ref{def:product}: $\MB$ gives inputs to $\MB_{env}$ according to the position in the state space. If the state estimate $\hat x$ of $\MB$ is inside a measurement region (dashed lines in Fig. \ref{fig:exp1}), a measurement is performed in the corresponding environment MDP (red edge in Fig. \ref{fig:envmdp}).
+
+
+\textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the scLTL specification
+\begin{equation}
+  \psi =\lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample},
+\end{equation}
+where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if the rover is in an obstacle region that contains an obstacle.
+
+
+\textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, and introducing a simulation relation that compensates for accuracy loss caused by the gridding, we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $.
+
+In order to analyze the combined system $\MB \otimes \MB_{env}$ we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system. The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
+
+\begin{figure}
+  \footnotesize
+  \input{figs/epsdel}
+  \caption{Trade-off between state error $\epsilon$ from \eqref{eq:rel} and probability error $\delta$ from Definition \ref{def:apbsim}.}
   \label{fig:tradeoff}
 \end{figure}
 
-\textbf{Environment model.} We consider sample collection in a partially unknown environment. In particular, there are two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed via satellite imagery as 0.5 and 0.6, respectively. In addition, there are two potential obstacle regions $O_1$ and $O_2$ where estimates give probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and obstacle regions, we assume that the true nature of the region can be determined when the rover is within a certain distance of the regions. The regions are illustrated in Figs. \ref{fig:exp1} and \ref{fig:exp2}.
-
-The dynamics of the uncertainty in $T_1$ can be modeled as an MDP with three states \texttt{init}, \texttt{sample} and \texttt{empty}, and two actions \texttt{measure} and \texttt{none}. Initially, the state is \texttt{init}. If the \texttt{measure} action is performed, the state transitions to \texttt{sample} with probability $p$ \red{[previously used notation][Give value?]} and to \texttt{empty} with probability $1-p$. After a measurement, no further transitions occur. This type of MDP can be constructed for each region of uncertainty, and the overall environment model $\MDP_{env}$ is their parallel composition. \red{Furthermore, we model a failure probability of 0.01 at each step with an additional MDP $\MDP_{fail}$ which discourages solutions that take long time to execute.[This does not make sense to me[sofie]! Actually this delta error should pop up from the error incurred in the approximation of the Kalman filter]}
-
-\red{[Define aggregate system, comment on approx. simulation relation. State that the parallel composition of environment with the system does  not influence the delta accuracy. ]}
-\textbf{Specification.} The objective is to collect a sample while avoiding unsafe regions. To this end, we consider the scLTL specification
-\begin{equation}
-  \psi = \lozenge \texttt{sample} \land \left( \lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample} \right),
-\end{equation}
-\red{[above is equivalent to $\left( \lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample} \right),$ ]}
-where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if 1) the rover is in an obstacle region that contains an obstacle, or 2) $\MDP_{fail}$ is in failure mode.
-
-\textbf{Results.} We consider the aggregate system $\MDP_{syst} \times \MDP_{env} \red{\times \MDP_{fail}}$ defined as a product system analogously to Definition \ref{def:product}, which is an MDP with 9 inputs and 277182 states. Via formula \eqref{eq:prob:robust_optimal}, we synthesize a control policy that is robust to the difference between the concrete and abstract models. Figs. \ref{fig:exp1} and \ref{fig:exp2} depict the evolution of the estimated position for executions generated by the control policies, and the estimated probability that the specification can be satisfied, under two different resolutions of the unknown environment. In both experiments only $T_2$ contains a sample, and $O_1$ contains an obstacle. The difference is that in Fig. \ref{fig:exp1} also $O_2$ turns out to contain an obstacle but in Fig. \ref{fig:exp2} this region can be safely traversed. As can be seen, the policy synthesis technique elicits intelligent behaviors where the agents explore the most promising regions first, while remaining robust to noise effects.
+The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position for executions generated by the control policy, and the estimated probability that the specification can be satisfied, under two different resolutions of the unknown environment. The associated probabilities of specification satisfaction reflect multiple factors: the probability of encountering samples, the probability of encountering obstacles, and the probability of falling out of the simulation relation (as captured by $\delta = 0.01$). Positive jumps in probability occur when samples are detected or regions are deemed obstacle-free, and negative jumps result from not finding samples in target regions, and from finding obstacles. As can be seen, the policy synthesis technique elicits intelligent behaviors where the agents explore the most promising regions to satisfy the specification, while remaining robust to noise effects.
 
 \begin{figure}
   \footnotesize
-  \setlength\figurewidth{\columnwidth}
-  \setlength\figureheight{0.6\columnwidth}
-
-  \input{figs/exp1-map.tikz}
-  \setlength\figureheight{0.3\columnwidth}
-
-  \input{figs/exp1-prob.tikz}
-  \caption{Above: trajectories of six noise state estimates starting at initial conditions $(-10, -9)$ $(-6, -9)$ \ldots $(10,-9)$. Below: estimated probability to satisfy the specification over time for the same trajectories. No sample is found in $T_1$, and $O_2$ can be safely traversed. Jumps occur in the probabilities when (non-)existence of samples are measured when the rover is close to the regions.}
-  \label{fig:exp1}
+  \begin{tikzpicture}
+    \begin{axis}[
+      name=ax1,
+      at = {(0,0)},
+      width=0.55\columnwidth,
+      height=0.55\columnwidth,
+      anchor = south west,
+      xmin=-10,
+      xmax=10,
+      ymin=-10,
+      ymax=10,
+      ticks=none]
+      \addplot graphics[xmin=-10,ymin=-10,xmax=10,ymax=10] {figs/value1.pdf};
+    \end{axis}
+    \begin{axis}[
+      name=ax2,
+      at = {(0.4\columnwidth,0)},
+      width=0.55\columnwidth,
+      height=0.55\columnwidth,
+      anchor = south west,
+      xmin=-10,
+      xmax=10,
+      ymin=-10,
+      ymax=10,
+      ticks=none]
+      \addplot graphics[xmin=-10,ymin=-10,xmax=10,ymax=10] {figs/value2.pdf};
+    \end{axis}
+    \node[anchor=south west] (cbar) at (0.8\columnwidth,-1.1mm) {\includegraphics[width=0.03\columnwidth, height=0.372\columnwidth]{figs/cbar.pdf}};
+    \node[anchor=west, yshift=2mm] at (cbar.south east) {$V = 0$};
+    \node[anchor=west, yshift=-2mm] at (cbar.north east) {$V = 1$};
+    \node[anchor=west, ] at (cbar.east) {$V = 0.5$};
+  \end{tikzpicture}
+  \caption{Illustration of value function for two different states of the environment, with regions of interest plotted with dashed lines. Left: environment state $(p_{T_1, 0}, p_{T_2, 0}, p_{R_1,0}, p_{R_2,0})$, i.e. all regions are still uncertain, which results in a fairly uniform value function with slightly less success probability close to the risk regions. Right: environment state $(p_{T_1, 0}, 1, p_{R_1,0}, 1)$, i.e. it is known that $T_2$ contains a sample and that $R_2$ contains an obstacle, which yields a more polarized value function.}
+  \label{fig:valuefcn}
 \end{figure}
 
 \begin{figure}
   \footnotesize
-  \setlength\figurewidth{\columnwidth}
+  \setlength\figurewidth{0.65\columnwidth}
   \setlength\figureheight{0.6\columnwidth}
 
-  \input{figs/exp2-map.tikz}
+  \begin{center}
+    \input{figs/exp1-map.tikz}   \input{figs/exp2-map.tikz}
+  \end{center}
 
-  \setlength\figureheight{0.3\columnwidth}
+  \setlength\figurewidth{0.575\columnwidth}
+  \setlength\figureheight{0.325\columnwidth}
 
-  \input{figs/exp2-prob.tikz}
-  \caption{Same as Fig. \ref{fig:exp1} with the difference that both $O_1$ and $O_2$ contain obstacles and must be avoided. When the obstacles are detected (around time step 20) the satisfaction probabilities decrease slightly due to the additional risk of moving around the obstacles.}
-  \label{fig:exp2}
+  \begin{center}
+    \input{figs/exp1-prob.tikz}   \input{figs/exp2-prob.tikz}
+  \end{center}
+  \caption{Above: regions of interest (solid red/blue), associated measurement regions (dashed lines), and trajectories of noisy state estimates starting at three different initial conditions. Below: estimated probability to satisfy the specification over time for the same trajectories. The left and right plots illustrate two different configurations of the true environment. In both cases, a sample exists at $T_1$ but not at $T_2$, and $R_1$ can not be traversed due to an obstacle. However, to the left $R_2$ does not contain an obstacle, so the rover can traverse $R_2$ after confirming that it is safe. To the right, both risk regions unexpectedly turn out to contain obstacles, and thus the rover must move around them which is associated with additional risk.}
+  \label{fig:exp1}
 \end{figure}
 
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP.  To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and applied the theory in a case study motivated by space exploration.
+In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. As a result, we obtained policies with associated guarantees on the probability of specification satisfaction. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and applied the theory in a case study motivated by space exploration.
 
-We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies. In future work, we  plan to explore additional settings in which abstractions satisfying our novel labeling-based simulation relation can be constructed, and plan to leverage the \red{decomposed nature} of product MDPs to improve computational efficiency.
+We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies in future work. We also plan to explore additional settings in which abstractions satisfying our novel labeling-based simulation relation can be constructed, and will explore ways to leverage the decomposed nature of product MDPs to improve computational efficiency.
 
 \bibliography{AliAgha,references}
 
