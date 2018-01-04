@@ -534,7 +534,11 @@ Motivated by space exploration applications, we consider an autonomous rover tas
   z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&.1\\.1&1\end{bsmallmatrix}\right).
 \end{aligned}
 \end{equation*}
-The corresponding belief space model $\MB$ is defined by the Kalman filter equations \eqref{eq:beliefx}-\eqref{eq:beliefP} as in Section \ref{sec:gaussian}.
+The corresponding belief space model $\MB$ is defined by the Kalman filter equations \eqref{eq:beliefx}-\eqref{eq:beliefP} as in Section \ref{sec:gaussian}. We know that at the initial time instance, the belief distribution of $x$ is $\mathcal N(\hat x_0, P_0)$ with $P_0=\begin{bsmallmatrix} 
+ 0.74446& -0.2862\\
+ -0.2862 &  0.74446
+\end{bsmallmatrix}. 
+ $
 
 
 \textbf{Environment model.} From the overhead imagery, we consider two %potential
@@ -572,9 +576,9 @@ where the atomic proposition \texttt{sample} is true if the rover is in a target
 
 
 \textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section; first we compute an approximate LTI belief model and then we  discretize the state space $[-10, 10]^2$ with  grids of size $\grid = (0.76481, 0.64426)$. The input space $[-1,1]^2$ is sampled with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, %and introducing a simulation relation that compensates for accuracy loss caused by the gridding, 
-we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $.
+we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $. \new{Remark that the upper bound $P^+$ and the lower bound $P^- $ have been selected based on the steady state Kalman gain, and based on the initial covariance $P_0$, respectively. }
 
-\red{In order to analyze the combined system $\MB \otimes \MB_{env}$, we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in Eq. \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. [This is outside the proposed theory, and though I agree that this is the way to do it in practice. The case study used in  paper should hinge as pure as possible on the proposed theory. Please, as discussed, can we make the measurement an action that is taking by the environment model. We can then simply reduce the allowed measurements in the abstracted model. This would fix it all.]}
+In order to analyze the combined system $\MB \otimes \MB_{env}$, we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in Eq. \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. 
 
 With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  \red{The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. }The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
 
