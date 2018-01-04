@@ -224,6 +224,11 @@ X_t = (x_t^f,\dot{x}_t^f,\ddot{x}_t^f,\dddot{x}_t^f,\ddddot{x}_t^f)
 (u, x) = \alpha(X)
 \end{align}
 
+
+\begin{align}
+(u^{ij}_{0:T}, x^{ij}_{0:T},T) = tomp(x^{f,i},x^{f,j})
+\end{align}
+
 \pr{Policy}
 Since the quadrotor system is deferentially flat, given a sufficiently smooth trajectory in flat space $x^f(t): t \to \mathbb{R}^3\times SO(2)$ we can obtain the trajectory of state $x(t)$ and control inputs $u(t)$. 
 Also, $x(t) \in \mathbb{C}^4$ to ensure that the trajectories are kinodynamically feasible. 
