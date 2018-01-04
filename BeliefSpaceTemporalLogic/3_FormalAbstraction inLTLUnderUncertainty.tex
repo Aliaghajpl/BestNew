@@ -44,10 +44,10 @@
 
 \author[cal]{S. Haesaert}
 \author[cal]{P. Nilsson}
-\author[mit]{C.I. Vasile}
+\author[mit]{C. I. Vasile}
 \author[jpl]{R. Thakker}
 \author[jpl]{A. Agha}
-\author[cal]{A.D.  Ames}
+\author[cal]{A. D.  Ames}
 \author[cal]{R. M. Murray}
 
 
@@ -440,7 +440,7 @@ As a first abstraction, we choose to reduce the complexity and dimensionality of
 \begin{equation}
 		\tilde x_k  = A\tilde x_{k-1} +B\tilde u_{k-1} + \tilde P  C^T  \tilde{s}_k,\label{eq:abstract}
 \end{equation}
-with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. 
+with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and a matrix $\tilde{S}_{inv}$ such that $\tilde{S}_{inv}\preceq S_k^{-1}$ for all $k$, where $\tilde P$ defines the steady state value of  $P_{k|k-1}$, i.e., the solution of the Kalman equations. 
 
 \axx{To understand the claim better, I am defining $\tilde S$ here, explicitly. If $\tilde S_k &= C\tilde PC^T+\mathcal V$, then we have:
 \begin{align}
@@ -452,7 +452,7 @@ with $ \tilde{s}_k\sim \CA N (0,\tilde{S}_{inv})$ and $\tilde{S}_{inv}\preceq S_
 So, we are saying $S_k \preceq \tilde{S}$ for all $k$? But, isn't that only true if the initial covariance is larger than the steady-state covariance? If correct, we should state the assumptions clearly.
 }\red{[sof:] It has not been claimed that $\tilde S$ is a function of $\tilde P$, instead we have required that $tilde S$ is chosen such that its inverse yields a lower bound. When implemented this is a simple problem of finding the maximal lower bound given $P^-$ and $P^+$.}
 
-We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step have been omitted. \axx{should we cite an Arxiv paper instead of just omitting?}\red{[sof:] citation is one sentence earlier.}
+We say that the system $\tilde \MB$ has state space $\Xb_{x}$. It is now of interest to show that there exists a value for $\delta$ such that  $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$. If this holds, then we can grid $\Xb_x$ as in \citep{haesaert2017verification,tech_report_TACAS} to obtain a finite-state MDP $\tilde \MB_{grid}$ over which we can do the control synthesis. Via transitivity of Definition \ref{def:apbsim}, the latter finite-state MDP will also be in an $\delta$-approximate stochastic simulation relation with $\MB$. The details of the gridding step can be found in \citeptech_report_TACAS}. 
 
 
 % and abstract the system further to a finite-state model  by gridding $\Xb_x$.
@@ -495,20 +495,23 @@ The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expan
 \subsubsection{Probability requirements:}
 To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
 
-We can quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\hat x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\hat x_{k+1},\hat x_{k+1|k+1})\in \rel$. \y in The difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
+
+Consider a choice of noise sources $\tilde{{s}}_{k+1}$ and $s^\Delta_{k+1}$, such that the difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
 \begin{equation}
 \begin{aligned}
  \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
 \end{aligned}
 \end{equation}
 with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$.
+We can now quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\tilde x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\tilde x_{k+1},\hat x_{k+1|k+1})\in \rel$. %\axx{The first entry in last two pairs should be tilde?}
+% thnx
 %Furthermore, for all $\hat x_{k+1}$, there exists $x_\grid \in \ball_\grid (0)$ such that  $\hat x_{k+1}+x_\grid = x_s$ for some $s \in \mathbb{S}$. Therefore we can write the update of the difference expression in \eqref{eq:rel} as
 %\begin{equation}
 %\begin{aligned}
 % \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 %\end{aligned}
 %\end{equation}
-We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities \cite{haesaert2017verification}.
+Furthermore, we can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities \cite{haesaert2017verification}.
 
 
 \begin{remark}

@@ -250,12 +250,12 @@ table {%
   anchor=base west,
   text=black,
   rotate=0.0
-]{ $O_1$};
+]{ $R_1$};
 \node at (axis cs:-0.5,7.5)[
   anchor=base west,
   text=black,
   rotate=0.0
-]{ $O_2$};
+]{ $R_2$};
 \node at (axis cs:-9,7.5)[
   anchor=base west,
   text=black,
