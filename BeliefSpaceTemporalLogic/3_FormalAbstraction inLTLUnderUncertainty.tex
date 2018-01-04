@@ -493,7 +493,7 @@ with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N 
 % \hat x_{k+1|k+1} - x_{s_{k+1}}=(A+BK)(\hat x_{k|k}- x_{s,k})+x_\grid \\ + \bar P   C^T s^\Delta_{k+1} +\Delta_{k+1}( \hat{\red{s}}_{k+1}+ \red{s}^\Delta_{k+1}).
 %\end{aligned}
 %\end{equation}
-We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities. \new{PN: Is there a citation?}
+We can bound the norm of the noise terms ${s}^\Delta_{k+1}$ and $ \tilde{{s}}_{k+1}$ using probabilistic guarantees computed via inter alia the chi-square distribution. The computation of the values of $\epsilon$ and the values of the matrices  in $\rel$ \eqref{eq:rel} and in the interface \eqref{eq:intf}, can now be performed via sequential convex optimizations expressed with linear matrix inequalities \cite{haesaert2017verification}.
 
 
 \begin{remark}
@@ -516,15 +516,16 @@ Motivated by space exploration applications, we consider an autonomous rover tas
   z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&.1\\.1&1\end{bsmallmatrix}\right).
 \end{aligned}
 \end{equation*}
-The corresponding belief space model $\MB$ is defined by the Kalman filter equations as in Section \ref{sec:gaussian}.
+The corresponding belief space model $\MB$ is defined by the Kalman filter equations \eqref{eq:beliefx}-\eqref{eq:beliefP} as in Section \ref{sec:gaussian}.
 
 
-\textbf{Environment model.} We consider two potential target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_0$ is the estimated probability from satellite imagery, with dynamics illustrated by Fig. \ref{fig:envmdp}.
+\textbf{Environment model.} We consider two %potential
+ target regions $T_1$ and $T_2$ where the probability of encountering a sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_{r,0}$ are the belief probabilities from satellite imagery, with dynamics illustrated by Fig. \ref{fig:envmdp}.
 
 \begin{figure}
   \begin{center}
   \begin{tikzpicture}
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, ] (b0) {$p_0$};
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, initial above,initial text={} ] (b0) {$p_0$};
     \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b0] (b1) {1};
     \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b1] (b2) {0};
 
@@ -534,8 +535,8 @@ The corresponding belief space model $\MB$ is defined by the Kalman filter equat
     \draw[-latex, blue, dashed] (b0) to[loop left] (b0);
     \draw[-latex, red] (b1) to[loop right] (b1);
     \draw[-latex, red] (b2) to[loop right] (b2);
-    \draw[-latex, blue, dashed] (b1) to[loop right] (b1);
-    \draw[-latex, blue, dashed] (b2) to[loop right] (b2);
+    \draw[-latex, blue, dashed] (b1) to[loop above] (b1);
+    \draw[-latex, blue, dashed] (b2) to[loop above] (b2);
   \end{tikzpicture}
   \end{center}
   \caption{Illustration of environment belief model for a single region. At the beginning the belief is $p_0$. When a measurement is received (solid red edges), the belief transitions to $1$ with probability $p_0$ and to $0$ with probability $1-p_0$. That is, one measurement is sufficient to determine the state of the region. When no measurement is taken (blue dashed edges), or if a measurement has already been taken, the state does not change.}
@@ -552,9 +553,12 @@ With $\MB_{env}$ as the combined environment model with state $(b_{T_1}, b_{T_2}
 where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if the rover is in an obstacle region that contains an obstacle.
 
 
-\textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section by discretizing the state space $[-10, 10]^2$ with a discretization parameter $\grid = (0.76481, 0.64426)$, and by representing the input space $[-1,1]^2$ with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, and introducing a simulation relation that compensates for accuracy loss caused by the gridding, we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $.
+\textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section; first we compute an approximate LTI belied model and then we  discretizing the state space $[-10, 10]^2$ with  grids of size $\grid = (0.76481, 0.64426)$. The input space $[-1,1]^2$ is sampled with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, %and introducing a simulation relation that compensates for accuracy loss caused by the gridding, 
+we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $.
 
-In order to analyze the combined system $\MB \otimes \MB_{env}$ we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system. The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
+\red{In order to analyze the combined system $\MB \otimes \MB_{env}$ we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. [This is outside the proposed theory, and though I agree that this is the way to do it in practice. The case study used in  paper should hinge as pure as possible on the proposed theory. Please, as discussed, can we make the measurement an action that is taking by the environment model. We can then simply reduce the allowed measurements in the abstracted model. This would fix it all.]}
+
+With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  \red{The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. }The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
 
 \begin{figure}
   \footnotesize
@@ -626,7 +630,7 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. As a result, we obtained policies with associated guarantees on the probability of specification satisfaction. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and applied the theory in a case study motivated by space exploration.
+In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. As a result, we have obtained policies with associated guarantees on the probability of specification satisfaction. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and we have applied the theory in a case study motivated by space exploration.
 
 We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies in future work. We also plan to explore additional settings in which abstractions satisfying our novel labeling-based simulation relation can be constructed, and will explore ways to leverage the decomposed nature of product MDPs to improve computational efficiency.
 
