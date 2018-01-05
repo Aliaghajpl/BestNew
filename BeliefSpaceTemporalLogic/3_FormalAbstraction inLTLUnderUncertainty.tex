@@ -28,7 +28,7 @@
 \newcommand{\new}[1]{{\color{blue}#1}}
 \newcommand{\ind}{\mathbf{1}}
 
-\newcommand{\cristi}[1]{{\color{orange}#1}}
+\newcommand{\cristi}[1]{{\color{olive}#1}}
 
 
 \begin{document}
@@ -64,7 +64,7 @@
 \maketitle
 \begin{abstract}
 The stochastic evolution of a partially observable Markov decision process (POMDP) can be modeled by an associated Markov decision process (MDP) in belief space.
-In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We newly use  a  notion of label-based approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, lower bounds for the probability of specification satisfaction are guaranteed by the refined control policy.
+In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We newly \cristi{\tiny C: I don't think ``newly'' is properly used here. It does not mean that the ``use'' is new. Newly usually means recently or again/afresh.} use  a  notion of label-based approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, lower bounds for the probability of specification satisfaction are guaranteed by the refined control policy.
 \end{abstract}
 \begin{keyword} Belief space models,
 correct-by-construction control synthesis, Markov decision processes, partially observable
@@ -295,7 +295,7 @@ Let a belief MDP $\MB$ and an abstract model $\tilde \MB$ be given. In this sect
 
 \subsection{Lifting-based simulation and approximate similarity}
 
-Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$, and let $\mathbf{P}_1 \in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ and $\mathbf{P}_2 \in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability measures. Suppose that $\rel \subset \X_1 \times \X_2$ defines a set that captures pairwise similarity between $x_1 \in \X_1$ and $x_2 \in \X_2$, then also similarity between $\mathbf{P}_1$ and $\mathbf{P}_2$ can be quantified as in \cite{haesaert2017verification}.
+Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(\X_1)),$ $(\X_2,\mathcal B(\X_2))$, and let $\mathbf{P}_1 \in \mathcal{P}(\X_1,\mathcal B(\X_1)) $ \cristi{(Shouldn't this be just $\mathbf{P}_1 \in \mathcal{P}(\X_1)$? Similar for $\BF{P}_2$ and $\BB{W}$?)} and $\mathbf{P}_2 \in \mathcal{P}(\X_2,\mathcal B(\X_2)) $ be two probability measures. Suppose that $\rel \subset \X_1 \times \X_2$ defines a set that captures pairwise similarity between $x_1 \in \X_1$ and $x_2 \in \X_2$, then also similarity between $\mathbf{P}_1$ and $\mathbf{P}_2$ can be quantified as in \cite{haesaert2017verification}.
 %
 \begin{definition}
 \label{def:dellifting}
@@ -340,7 +340,7 @@ Let $\X_1,\X_2$ be two sets with associated measurable spaces $(\X_1,\mathcal B(
 %
 The difference between two probability distributions can be quantified with respect to a relation $\rel$ based on Definition \ref{def:dellifting}. For stochastic kernels we add a measurability condition.
 \begin{definition}\label{def:kernellift}
-		Borel-measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are \emph{in a \ $\delta$-lifted relation $\bar \rel_\delta$} for a set $x\in A$, i.e.,  $\tr_1(\cdot \mid x) \bar \rel_\delta \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel-measurable stochastic kernel for which Definition \ref{def:dellifting} holds.
+		Borel-measurable stochastic kernels $\tr_1(\cdot {\mid} x)$ and $\tr_2(\cdot {\mid} x)$ are \emph{in a \ $\delta$-lifted relation $\bar \rel_\delta$} for a set $x\in A$, i.e.,  $\tr_1(\cdot {\mid} x) \,\bar \rel_\delta\, \tr_2(\cdot {\mid} x)\, \forall x\in A$,  if there exists a lifting $\mathbb W_t$ that is a  Borel-measurable stochastic kernel for which Definition \ref{def:dellifting} holds.
 \end{definition}
 We next apply this concept to quantify the difference between two belief MDPs $\tilde \MB$ and $\MB$. In particular, we give requirements for the two systems  to be approximately stochastically simulated with respect to a relation $\rel\subset \tilde \Xb \times \Xb$. In the next section, we will give a concrete example of such a relation for the special case of Gaussian LTI POMDP systems. To allow for approximate relations where atomic proposition can be ambiguous, we consider set-valued labelings $\Xb\rightarrow2^\alphabeth$. The trivial set-valued extension of the labeling function $\Lab : \Xb \rightarrow \alphabeth$ for the concrete MDP $\MB$ is $\Labset: \Xb \rightarrow2^\alphabeth$ with $\Labset(b)=\{\Lab(b)\}$.
 
@@ -363,7 +363,7 @@ if there exists a Borel-measurable interface function $\InF : \tilde \A \times \
 Condition \eqref{eq:sr-1} enforces $\delta$-probabilistic similarity between the initial distributions, while \eqref{eq:sr-2} ensures that the transition kernels of the two MDPs are approximately matched via the interface. Finally, \eqref{eq:sr-l} guarantees that any label $\Lab \in \Labset(b)$ of a concrete state $b$ is also present in the abstract label collection $\Labset(\tilde b)$. Thus, any word generated by $\MB$ will also be present in the possible behaviors of $\tilde \MB$.
 \\
 In \citet{haesaert2017verification} the difference between models is quantified based both on a probabilistic difference as above, and on a metric difference in an output space. To facilitate working with belief space models this paper implements this novel alternative notion of simulation relation that instead of a metric error incorporates non-determinism in the labeling.
-Next, we show that robust policy synthesis as introduced in \cite{tech_report_TACAS} can be used for the new labeling-based approximate stochastic simulation relations.
+Next, we show that robust policy synthesis as introduced in \cite{tech_report_TACAS} can be used for the new label-based approximate stochastic simulation relations.
 
 \subsection{Robust policy synthesis}
 
