@@ -421,7 +421,7 @@ The obtained policy $	\polb_\ast(b,q)$ is a stationary, universally measurable a
 We know that there exists a refined policy for the original system for every policy of the concrete system such that 
 for all pairs of belief states $(\tilde b,b)\in\rel$, it holds that 
 \begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel (c.f. Definition \ref{def:kernellift}); by selecting the next state
-\cristi{as the maximizer of} 
+ as the maximizer of
 % by maximizing over
 $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved. \qed
 \end{pf}
@@ -591,7 +591,7 @@ we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \
 
 In order to analyze the combined system $\MB \otimes \MB_{env}$, we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in Eq. \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. 
 
-With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
+With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  \red{The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$[[sof:] I dont think this holds, the policy when constructed on the DFSA product with the MDP is a function of the state space (defined before) of that MDP and of the states of the DFSA. Translated this becomes a policy with as internal memory the DFSA and with as input the state of the MDP.]  }---the combined rover and environment state. The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
 
 \begin{figure}
   \footnotesize
