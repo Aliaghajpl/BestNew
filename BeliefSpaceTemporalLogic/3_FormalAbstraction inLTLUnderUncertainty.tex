@@ -213,7 +213,7 @@ With the definition above, a probability measure $\P_\init^\polb$ over execution
 \begin{problem}
 \label{prob:main}
   Consider a belief model $\MB = (\Xb, \rho, \trb, \A)$ generating trajectories $\mathbf{b} = b_0 b_1 b_2 \ldots$, a labeling function $\Lab : \Xb \rightarrow AP$, and a scLTL formula $\psi$ defined over $AP$. Construct a policy $\polb$ such that
-  \begin{equation}
+  \begin{equation}\label{eq:probstatement}
     \P_\init^\polb ( \mathbf{b} \models \psi )\geq p,
   \end{equation}
   where $p$ is either given or to be maximized.
@@ -259,7 +259,8 @@ Next express the associated Bellman operator $\Bel_\pol$ as
 \end{align}
 Consider a policy $\polb_i=\cramped{(\pol_{i+1}, \ldots \pol_K)}$ with time horizon $K-i$, then it follows
 %from whereit follows 
- that $\cramped{\mathbf V_{\polb_{i-1}}^{{K-i}+1}} = \cramped{\Bel_{\pol_i}}\cramped{\mathbf V_{\polb_i}^{K-i}}$. Thus if $\cramped{\mathbf V_{\polb_i}^{K-1}}$ expresses the probability of reaching $X_f$ within $K-i$ steps, then $ \Bel_{\pol_i} \cramped{\mathbf V_{\polb_i}^{K-i} }$ expresses the probability of reaching $X_f$ within $K-i+1$ steps with policy $\polb_{i-1}$. It follows that for a stationary policy $\pol$, the infinite-horizon reachability probability distribution can be computed as $\lim_{K\rightarrow \infty}\mathbf T_\mu^{K} \mathbf V^0$ with $\mathbf{V}^0 \equiv 0$.
+ that $\cramped{\mathbf V_{\polb_{i-1}}^{{K-i}+1}} = \cramped{\Bel_{\pol_i}}\cramped{\mathbf V_{\polb_i}^{K-i}}$. Thus if $\cramped{\mathbf V_{\polb_i}^{K-1}}$ expresses the probability of reaching $X_f$ within $K-i$ steps, then $ \Bel_{\pol_i} \cramped{\mathbf V_{\polb_i}^{K-i} }$ expresses the probability of reaching $X_f$ within $K-i+1$ steps with policy $\polb_{i-1}$. It follows that for a stationary policy $\polb $, the infinite-horizon value function %reachability probability distribution
+  can be computed as $\mathbf V^\infty_\polb = \lim_{K\rightarrow \infty}\mathbf T_\mu^{K} \mathbf V^0$ with $\mathbf{V}^0 \equiv 0$.
 
 Instead of defining the recursions for a given policy $\polb$, we can also optimize with respect to the set $\mathbf D_{\pol}$ of universally measurable deterministic policies. This yields the policy-optimal Bellman recursion as
 \begin{equation}
@@ -277,7 +278,16 @@ Policy synthesis for a scLTL specification over a belief space $\Xb$ is equivale
 %\end{aligned}
 \end{equation}
 with the implicit DFSA transitions  $q' =\delta_\FSA(q,\Lab(b'))$, %\red{$\mathrm{d} b'= d b'\times\{q'\}$},
-and similarly for the policy-optimal version $\Bel_\ast$. A stationary policy $\pol$ defined for the product MDP $\MB \otimes \FSA_\psi$ defines a control action as a function of the state $(b,q) \in \Xb \times Q$, and can be translated to a time-dependent policy $\polb$ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
+and similarly for the policy-optimal version $\Bel_\ast$.  For the converged value function $\mathbf V^\infty_\ast \!:=  \lim_{K\rightarrow\infty}\Bel_\ast^K\! \mathbf V^0$, now expresses the value of \eqref{eq:abstract}
+\begin{equation}
+\label{eq:prob:_optimal} 
+ \sup_{\polb}\mathbf{P}_\init^{\polb}( {\mathbf{b}} \vDash \psi) =
+  \int_{\Xb}  \max \left( \mathbf 1_{Q_f}( q'), 
+   \mathbf V^\infty_\ast(b_0, q') \right) \initb(\mathrm{d} b_0) 
+\end{equation}
+with the associated deterministic and stationary policy $ \polb_\ast=(\pol_\ast,\pol_\ast,\ldots)$ obtained as the maximizing argument. 
+This policy defined for the product MDP $\MB \otimes \FSA_\psi$, maps to control actions as a function of the state $(b,q) \in \Xb \times Q$, and can be translated to a non-stationary policy %$\polb$
+ for the original belief MDP $\MB$ that includes $\FSA_\psi$ as a memory model.
 
 Even though this section outlines a solution method to Problem \ref{prob:main}, the required recursions can only be computed for a limited set of systems.
 Computation is especially challenging for high-dimensional continuous-state belief MDPs. In the sequel, we tackle this issue by outlining how the problem can be transfered to an approximate model $\tilde \MB$ that is close to the concrete model $\MB$ in a quantified sense.
@@ -374,7 +384,7 @@ Next, we show that robust policy synthesis as introduced in \cite{tech_report_TA
 
 As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that an scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism:
 \begin{align}
-  \Bel_\pol^\Labset (\mathbf W)(b,q) = \hspace{-1mm} \int_\Xb
+  \Bel_\pol^\Labset (\mathbf W)(b,q) = \hspace{-1mm} \int_{ \Xb}
   \min_{q' \in \delta_\FSA(q, \Labset( b'))} \hspace{-3mm} \max \left( \mathbf 1_{Q_f}(q'), \mathbf W( b',q') \right)  \notag\\[-.4em]
    \times {\tr}(d b'|b,\pol(b,q)).\label{eq:V_recopt_nondet}
 \end{align}
