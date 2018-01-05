@@ -281,9 +281,9 @@ with the implicit DFSA transitions  $q' =\delta_\FSA(q,\Lab(b'))$, %\red{$\mathr
 and similarly for the policy-optimal version $\Bel_\ast$.  For the converged value function $\mathbf V^\infty_\ast \!:=  \lim_{K\rightarrow\infty}\Bel_\ast^K\! \mathbf V^0$, now expresses the value of \eqref{eq:abstract}
 \begin{equation}
 \label{eq:prob:_optimal} 
- \sup_{\polb}\mathbf{P}_\init^{\polb}( {\mathbf{b}} \vDash \psi) =
-  \int_{\Xb}  \max \left( \mathbf 1_{Q_f}( q'), 
-   \mathbf V^\infty_\ast(b_0, q') \right) \initb(\mathrm{d} b_0) 
+ \sup_{\polb}\mathbf{P}_\init^{\polb}( {\mathbf{b}} \vDash\! \psi)\! =\!
+  \int_{\Xb} \! \max \left( \mathbf 1_{Q_f}( q'), 
+   \mathbf V^\infty_\ast(b_0, q') \right) \initb(\mathrm{d} b_0) \!
 \end{equation}
 with the associated deterministic and stationary policy $ \polb_\ast=(\pol_\ast,\pol_\ast,\ldots)$ obtained as the maximizing argument. 
 This policy defined for the product MDP $\MB \otimes \FSA_\psi$, maps to control actions as a function of the state $(b,q) \in \Xb \times Q$, and can be translated to a non-stationary policy %$\polb$
@@ -384,9 +384,9 @@ Next, we show that robust policy synthesis as introduced in \cite{tech_report_TA
 
 As a means of compensating for the differences between a concrete system and its abstraction, we proceed by introducing a robust quantification of the probability that an scLTL property is satisfied. Policies synthesized for the abstraction with the robustified procedure can be refined to the concrete system while preserving probabilistic guarantees. A robustified synthesis procedure must incorporate both the non-determinism in the labeling function, as well as the difference $\delta$ in probability. The former can be dealt with by introducing an additional minimization in the Bellman operator \eqref{eq:V_recopt_inf_mu} that effectively considers the worst-case resolution of non-determinism:
 \begin{align}
-  \Bel_\pol^\Labset (\mathbf W)(b,q) = \hspace{-1mm} \int_{ \Xb}
+ & \Bel_\pol^\Labset (\mathbf W)(b,q) = \hspace{-1mm} \int_{ \Xb}
   \min_{q' \in \delta_\FSA(q, \Labset( b'))} \hspace{-3mm} \max \left( \mathbf 1_{Q_f}(q'), \mathbf W( b',q') \right)  \notag\\[-.4em]
-   \times {\tr}(d b'|b,\pol(b,q)).\label{eq:V_recopt_nondet}
+&\hspace{5cm}   \times {\tr}(d b'|b,\pol(b,q)).\label{eq:V_recopt_nondet}
 \end{align}
 The policy-optimal Bellman operator $\Bel_\ast^\Labset$ is constructed analogously. Hence the robust Bellman operator follows by compensating for the difference in probability $\delta$ as
 \begin{equation}
@@ -554,7 +554,7 @@ Motivated by space exploration applications, we consider an autonomous rover tas
 \begin{equation*}
 \begin{aligned}
   x_{k+1}&= x_{k} + u_k+ w_k,  & w_k \sim \CA N \left(0,\begin{bsmallmatrix}.4&-.2\\-.2&.4\end{bsmallmatrix}\right), \\
-  z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&.1\\.1&1\end{bsmallmatrix}\right).
+  z_k&= x_k+v_k, &  v_k \sim \CA N \left(0,\begin{bsmallmatrix}1&0\\0&1\end{bsmallmatrix}\right).
 \end{aligned}
 \end{equation*}
 The corresponding belief space model $\MB$ is defined by the Kalman filter equations \eqref{eq:beliefx}-\eqref{eq:beliefP} as in Section \ref{sec:gaussian}. We know that at the initial time instance, the belief distribution of $x$ is $\mathcal N(\hat x_0, P_0)$ with $P_0=\begin{bsmallmatrix} 
