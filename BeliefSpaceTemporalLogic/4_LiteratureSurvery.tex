@@ -58,7 +58,7 @@
 \title{\huge Overview of Autonomous Planning Methods for Space Applications}
 
 %\author{Kamak Ebadi, Ali Agha, Rohan, Cristi, Petter, Sofie Richard Murray, Aaron Ames}
-\author{Kamak Ebadi, Ali Agha}
+%\author{Kamak Ebadi, Ali Agha}
 
 \maketitle
 
@@ -74,40 +74,59 @@ As a world leader in space exploration, NASA advances deep space exploration mis
 In order to satisfy a set of high-level science and engineering goals for every space robotic mission, a step-by-step planning and scheduling of spacecraft operations is required. This involves generating a sequence of low-level spacecraft commands that according to the goal of the mission, describes the action plan of the robot. The action plans is a series of states, and actions in order to move from one state to another.
 In this article we survey past and present space robotic mission planners, as well as describe a new mission planner targeting future joint Mars rover and helicopter mission concepts.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Terminology}
+\pr{Planner}
+Planning and scheduling spacecraft operations involves generating a sequence of low-level spacecraft commands from a set of high-level science and engineering goals.
+
+\pr{Scheduler}
+
+\pr{Repairer}
+Repairing and optimizing an existing plan enables fast re-planning when necessary from manual plan modifications or from unexpected discrepancies detected during execution.
+
+\pr{Executive}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Features for Planning methods}
-\textbf{Verifiable specification satisfaction: }
-for credibility, quality control and confidence.
+\section{Planner features}
+\pr{Linguistic mission-specification}
 
-\textbf{Uncertainty: }
+\pr{Verifiability}
+For credibility, quality control and confidence.
+
+\pr{Uncertainty}
 Uncertainties generally interfere with two aspects of planning:
 \begin{itemize}
 \item Predictability: Due to uncertainties, it is not known what will happen in the future when certain actions are applied. This means that future states are not necessarily predictable.
 \item Sensing: Due to uncertainties, the current state is not necessarily known. Information regarding the state is obtained from initial conditions, sensors, and the memory of previously applied actions.
 \end{itemize}
 
-\textbf{Planning and Scheduling: }
-Planning and scheduling spacecraft operations involves generating a sequence of low-level spacecraft commands from a set of high-level science and engineering goals.
-
-\textbf{Repair and Optimization: }
-Repairing and optimizing an existing plan enables fast re-planning when necessary from manual plan modifications or from unexpected differences detected during execution.
-
-\textbf{Scalability: }
+\pr{Scalability}
 Scalability is a characteristic of a system, model or function that describes its capability to cope and perform under an increased or expanding workload. A system that scales well will be able to maintain or even increase its level of performance or efficiency when tested by larger operational demands.
+\begin{enumerate}
+    \item Time-horizon scalability
+    \item State space scalability
+    \item action space sca
+    \item observation sca
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Planning method overview for space applications}
+\section{Planners for space applications}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\textbf{Apex}}\label{sec:apex}
-Apex is an execution system and has been used in numerous large-scale applications including control of real autonomous helicopters, control of simulated aircraft for wildfire detection, and in simulating humans for Human Computer Interface (HCI) analysis.
-Apex is a reactive execution system that selects for execution one or more procedures (partial plans) from its library of procedures at each execution step. In most applications Apex has been used as an execution-only system. Apex is designed to unify plan-running and mission-management functionality. Planners may be called on to produce or extend a mission plan, to solve a local planning problem within a mission plan or both. Apex may therefore potentially be used as an execution system coupled with an external planner.
+\pr{Description} Apex is a reactive execution system that selects for execution one or more procedures (partial plans) from its library of procedures at each execution step. 
 
+\pr{Algorithm}
 
+\pr{Features} In most applications Apex has been used as an execution-only system. Apex is designed to unify plan-running and mission-management functionality. Planners may be called on to produce or extend a mission plan, to solve a local planning problem within a mission plan or both. Apex may therefore potentially be used as an execution system coupled with an external planner.
+
+\pr{Applications} Apex is an execution system and has been used in numerous large-scale applications including control of real autonomous helicopters, control of simulated aircraft for wildfire detection, and in simulating humans for Human Computer Interface (HCI) analysis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\textbf{ASPEN}}\label{sec:aspen}
-Automated Scheduling and Planning ENvironment encodes spacecraft operability constraints, flight rules, spacecraft hardware models, science experiment goals, and operations procedures to allow for automated generation of low-level spacecraft sequences. ASPEN contains a number of innovations including: 
+\pr{Description} ASPEN (Automated Scheduling and Planning ENvironment) encodes spacecraft operability constraints, flight rules, spacecraft hardware models, science experiment goals, and operations procedures to allow for automated generation of low-level spacecraft sequences. 
 
+\pr{Features} ASPEN contains a number of innovations including: 
 \begin{itemize}
   \item an expressive but easy to use modeling language
   \item multiple search (inference) engines
@@ -116,12 +135,18 @@ Automated Scheduling and Planning ENvironment encodes spacecraft operability con
   \item plan optimization
 \end{itemize}
  
-ASPEN has also been used to automate ground communications stations – automating generation of tracking plans for the Deep Space Terminal (DS-T). ASPEN has been used to demonstrate automated command generation and onboard planning for rovers and is currently being evaluated for operational use for the Mars-01 Marie Curie rover mission. 
+\pr{Applications} ASPEN has also been used to automate ground communications stations – automating generation of tracking plans for the Deep Space Terminal (DS-T). ASPEN has been used to demonstrate automated command generation and onboard planning for rovers and is currently being evaluated for operational use for the Mars-01 Marie Curie rover mission. 
 
 
 \subsection{\textbf{CASPER}}\label{sec:casper}
-It is the soft real-time version of ASPEN, has been demonstrated with the Jet Propulsion Laboratory (JPL) Mission Data Systems (MDS) Control Architecture prototypes.
+\pr{Description} It is the soft real-time version of ASPEN.
 
+\pr{Application} It has been demonstrated with the Jet Propulsion Laboratory (JPL) Mission Data Systems (MDS) Control Architecture prototypes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\textbf{J-P}}\label{sec:j-p}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\textbf{CRL and C-CRL Executive}}\label{sec:crl}
 The Contingent Rover Language (CRL) is a declarative plan execution language that was designed to represent contingent plans. It uses a hierarchical representation and can represent simple and floating branches, nesting, flexible time, and state and resource conditions. 
 
