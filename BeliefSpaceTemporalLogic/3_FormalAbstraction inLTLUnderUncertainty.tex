@@ -179,7 +179,7 @@ To quantify the dynamic behavior of a system, we define the word associated to a
 
 \subsubsection{Linear temporal logic formulas:}
 
-Properties are formulas composed of atomic propositions and operators. In this work we restrict attention to a fragment of linear temporal logic.
+Properties are formulas composed of atomic propositions and operators. In the sequel we focus on a fragment of linear temporal logic.
 \begin{definition}
   \label{def:gdtl-syntax}
   Formulas in the \emph{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
@@ -195,11 +195,11 @@ To define the interpretation of a formula, i.e. the \emph{semantics}, consider a
 
 \begin{definition}
  The \emph{semantics} of scLTL are defined recursively  over $\word_i$ as
-    $\word_i \models \True$,
-    $\word_i \models p$ iff $p \in \letter_i$,
-    $\word_i \models \psi_1 \andltl  \psi_2  $ iff $ ( \word_i \models \psi_1 ) \andltl ( \word_i \models \psi_2 ) $,
-    $\word_i \models \psi_1 \orltl  \psi_2  $ iff $ ( \word_i \models \psi_1 ) \orltl ( \word_i \models \psi_2 ) $,
-    $\word_i \models  \psi_1 \Until \psi_2 $ iff $\exists j \geq i \text{ s.t. } (\word_j \models \psi_2 ) $ and $\word_k \models \psi_1, \forall k \in \{i, \ldots j-1\}$,
+    $\word_i \models \True$;
+    $\word_i \models p$ iff $p \in \letter_i$;
+    $\word_i \models \psi_1 \andltl  \psi_2  $ iff $ ( \word_i \models \psi_1 ) \andltl ( \word_i \models \psi_2 ) $;
+    $\word_i \models \psi_1 \orltl  \psi_2  $ iff $ ( \word_i \models \psi_1 ) \orltl ( \word_i \models \psi_2 ) $;
+    $\word_i \models  \psi_1 \Until \psi_2 $ iff $\exists j \geq i \text{ s.t. } (\word_j \models \psi_2 ) $ and $\word_k \models \psi_1, \forall k \in \{i, \ldots j-1\}$;
     $\word_i \models \Next \psi$ iff $\word_{i+1} \models \psi$.
 \end{definition}
 
