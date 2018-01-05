@@ -64,7 +64,7 @@
 \maketitle
 \begin{abstract}
 The stochastic evolution of a partially observable Markov decision process (POMDP) can be modeled by an associated Markov decision process (MDP) in belief space.
-In this work, we consider synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We introduce a novel notion of labeling-based approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, lower bounds for the probability of specification satisfaction are guaranteed by the refined control policy.
+In this work, we consider the synthesis of controllers guaranteeing  specifications given in linear temporal logic on such belief models. The computational issues associated with correct-by-construction synthesis on continuous state spaces are circumvented via construction of a finite-state abstraction, on which a control policy is synthesized and refined back to the original model. We newly use  a  notion of label-based approximate stochastic simulations to quantify the deviation of the approximate model. By compensating {\it a priori} for these deviations in the control synthesis, lower bounds for the probability of specification satisfaction are guaranteed by the refined control policy.
 \end{abstract}
 \begin{keyword} Belief space models,
 correct-by-construction control synthesis, Markov decision processes, partially observable
@@ -102,7 +102,8 @@ For a vector $\grid  \in \mathbb{R}^n$ we write the $\grid$-ball in infinity nor
 
 \subsubsection{Paper layout:}
 
-In the next section, POMDPs and associated belief models are introduced, followed by temporal logic concepts. Afterwards, in Section \ref{sec:exact_synth} we consider the control synthesis problem for temporal logic properties over belief MDPs, before suggesting \cristi{C: ``suggest'' sounds weird here? ``introduce'' perhaps} a robust synthesis procedure for abstractions in Section \ref{sec:refinement}. In Section \ref{sec:gaussian} we study the special case of linear Gaussian POMDPs in more detail, before ending the paper with an illustrative case study in Section~\ref{sec:case}, and conclusions in Section \ref{sec:conclusions}.
+In the next section, POMDPs and associated belief models are introduced, followed by temporal logic concepts. Afterwards, in Section \ref{sec:exact_synth} we consider the control synthesis problem for temporal logic properties over belief MDPs, before introducing %\cristi{C: ``suggest'' sounds weird here? ``introduce'' perhaps}
+ a robust synthesis procedure for abstractions in Section \ref{sec:refinement}. In Section \ref{sec:gaussian} we study the special case of linear Gaussian POMDPs in more detail, before ending the paper with an illustrative case study in Section~\ref{sec:case}, and conclusions in Section \ref{sec:conclusions}.
 
 
 \section{POMDPs and temporal logic specifications}
@@ -124,7 +125,7 @@ We first define a Markov decision process as follows \citep{hll1996}.
   \end{itemize}
 \end{definition}
 
-An execution of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_k \sim t(\cdot \mid x_k, u_k)$ for inputs $u_k \in \A$. While MDPs capture uncertainty in state transitions, full knowledge is assumed about the state of the system. We therefore augment MDPs with a model for observation.
+An execution of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_{k+1} \sim t(\cdot \mid x_k, u_k)$ for inputs $u_k \in \A$. While MDPs capture uncertainty in state transitions, full knowledge is assumed about the state of the system. We therefore augment MDPs with a model for observation.
 
 % Given a string of inputs $u(0),$ $u(1), $ $\ldots, $ $u(N)$, over a finite time horizon $0,1,\ldots, N$ and an initial state $x_0$ sampled from $\rho$, the states $x_{k+1}$ with $k\in \{0,1,\ldots, N\}$ are obtained as a realization of the controlled Borel-measurable stochastic kernel $\tr\left(\cdot{\,\mid\,t} x_k, u_k \right)$ \cristi{C: $\tr\left(\cdot\mid x_k, u_k \right)$ ?} -- these semantics induce paths (or executions) of the MDP.
 
@@ -146,8 +147,10 @@ An execution of the POMDP up to time $K$ is a sequence
 where $(x_0, u_0) \ldots (x_K, u_K)$ is an execution of $\MDP$ and $z_k \sim r(\cdot | x_k)$. The execution \eqref{eq:history} grows with the number of observations $K$ and takes values in the \emph{history space} $\Hist_K = (\X \times \A \times \Z)^{K+1}$.
 
 In a POMDP control actions $u_k$ can be chosen as a function of the available information on the history of inputs and observed outputs. For this purpose, define the \emph{$k$-th information space} as $\I_k = (\Z \times \A)^{k} \times \Z$ with elements $i_k = (z_0,u_0,z_1,u_1,\ldots,z_{k-1}, u_{k-1}, z_k)$ referred to as the \emph{$k$-th information vector}. Based on the notion of information, an \emph{observation-based} policy for $\POMDP$ is a sequence $\polb=(\pol_0,\ldots,\pol_{K-1})$ such that for each $k$, $\pol_k( \mathrm{d} u_k|\init, i_k)$ is a universally measurable stochastic kernel on $\A$  given $\mathcal{P}(\X)\times \I_k$. We say that $\polb$ is \emph{non-randomized} if for all $\init$, $k$, and $i_k$, $\pol_k(\cdot|\init, i_k)$ is a Dirac distribution. % Unless otherwise mentioned, we will in the following assume that a policy represents a sequence of stochastic kernels on $\A$.
+%
+Given an observation-based policy $\polb$ and an initial distribution $\init$, the theorem of Ionescu Tulcea \citep{hll1996} implies the existence of a unique probability measure $\P_\polb^\init$ on $\Hist_\infty$, or, equivalently, a stochastic process on the probability space $(\Hist_\infty, \borel{\Hist_\infty}, \P_\polb^\init)$. 
 
-Given an observation-based policy $\pol$ and an initial distribution $\init$, the theorem of Ionescu Tulcea \citep{hll1996} implies the existence of a unique probability measure $\P_\pol^\init$ on $\Hist_\infty$, or, equivalently, a stochastic process on the probability space $(\Hist_\infty, \borel{\Hist_\infty}, \P_\pol^\init)$. For an information vector $i_k$, state knowledge can be expressed as a conditional probability distribution $b_k( \mathrm{d} x )=\P(x_k\in \mathrm{d} x |\init,i_k)\in \mathcal P (\X)$. The distribution $b_k$ is called the \emph{belief state} and the set of all beliefs is the \emph{belief space} $\Xb\subset \mathcal P(\X)$. It can be shown that the belief state evolves based on a fixed stochastic kernel
+For an information vector $i_k$, state knowledge can be expressed as a conditional probability distribution $b_k( \mathrm{d} x )=\P(x_k\in \mathrm{d} x |\init,i_k)\in \mathcal P (\X)$. The distribution $b_k$ is called the \emph{belief state} and the set of all beliefs is the \emph{belief space} $\Xb\subset \mathcal P(\X)$. It can be shown that the belief state evolves based on a fixed stochastic kernel
 \begin{align}
 \label{eq:trb}
 	 b_{k+1} \sim \trb(\cdot|b_k,u_k), \quad b_0 \sim \initb,
@@ -157,15 +160,15 @@ for an initial belief $\initb$. Since \eqref{eq:trb} is a completely observable 
 
 \subsection{Linear Temporal Logic for Belief MDPs}
 
-In this work we are interested in controlling state evolution under uncertainty to guarantee properties of the belief state. First we introduce atomic propositions in belief space to give examples of the types of behavior that can be quantified. These propositions are the basic building blocks from which temporal specifications are then constructed.
+In this work, we are interested in controlling the state evolution under uncertainty to guarantee properties of the belief state. First, we introduce atomic propositions in belief space to give examples of the types of behavior that can be quantified. These propositions are the basic building blocks from which temporal specifications are then constructed.
 
 \subsubsection{Atomic propositions in belief space:}
 
-An atomic proposition $p_i$ is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions are uniquely characterized by the mean and variance. That is, the belief state is $b = (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
+An atomic proposition $p_i$ is associated with a subset of the belief space $\Xb$. While belief spaces are generally infinite-dimensional, Gaussian distributions $\mathcal N(\hat x, P)$ are uniquely characterized by the mean $\hat x$ and variance $P$. That is, the belief state is $b \equiv (\hat x, P)$ and takes values in the finite-dimensional belief space $\mathbb{R}^n \times \mathbb{S}^n$. In this case, examples of atomic propositions in belief space are:
 \begin{enumerate}
   \item a position-based proposition $p_1 \; \Leftrightarrow \; \hat x \in A$ that evaluates to true when the state mean is in a set $A \subset \mathbb{R}^n$;
   \item an uncertainty-based proposition $p_2 \; \Leftrightarrow \det(P) \leq c$ that is true if the determinant of the variance is small;
-  \item a proposition $p_3 \; \Leftrightarrow \; \int_{A} \mathbf{P}( \mathrm{d} x \mid \hat x, P) \geq c$ that lower-bounds the probability of an event $A$.
+  \item a proposition $p_3 \; \Leftrightarrow \; \int_{A} \mathcal N( \mathrm{d} x\, {\mid} \,\hat x, P) \geq c$ that lower-bounds the probability of an event $A$.
 \end{enumerate}
 
 % Several atomic propositions can simultaneously hold at a state $(\hat x, P)$. For example, the mean $\hat x$ can belong to a given set as in (1), while the variance is also low as in (2).
