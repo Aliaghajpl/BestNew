@@ -420,12 +420,15 @@ The obtained policy $	\polb_\ast(b,q)$ is a stationary, universally measurable a
 \begin{pf}At each time instant, finding a control action $u$ is associated to finding the state update for the abstract system such as to find the abstract input that can be refined via the interface in Definition \ref{def:apbsim}.  
 We know that there exists a refined policy for the original system for every policy of the concrete system such that 
 for all pairs of belief states $(\tilde b,b)\in\rel$, it holds that 
-\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel (c.f. Definition \ref{def:kernellift}); by selecting the next state by maximizing over $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved. \qed
+\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel (c.f. Definition \ref{def:kernellift}); by selecting the next state
+\cristi{as the maximizer of} 
+% by maximizing over
+$\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved. \qed
 \end{pf}
 
 \section{Abstractions for Gaussian LTI POMDPs}
 \label{sec:gaussian}
-We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) models and detail the model abstraction  to an observable belief LTI model. Consider an LTI system
+We now consider the special case of POMDPs that can be modeled as Linear Time Invariant (LTI) systems and detail the model abstraction  to an observable belief LTI model. Consider an LTI system
 \begin{equation}
   \label{eq:LTI}
     \begin{aligned}
@@ -433,7 +436,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$,  together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$  generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$,  together with an observation model $r(\cdot {\mid} x) = \mathcal N(Cx, \CA V)$  generating noisy measurements $z_k$.
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -485,7 +488,7 @@ To compute $\tilde \MB\preceq^\delta_{\tilde \Labset,\Labset} \MB$, we restrict 
     \end{aligned} \right\}, \\
     & \InF(\tilde u,  \tilde x, \hat x)  =K( \hat x - \tilde x)+\tilde u,  \label{eq:intf}
 \end{align}
-for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under which $\rel$ and $\InF$ define a labeling-based $\delta$-stochastic simulation relation between $\tilde \MB$ and $\MB$. To do so, we construct a set-valued labeling $\tilde \Labset: \Xb_{x}\rightarrow 2^\alphabeth$ and compute $\delta$ such that $\tilde \MB\preceq^\delta_{\tilde\Labset,\Labset} \MB $.
+for some matrices $M, P^-, P^+$ and $K$. We now derive the conditions under which $\rel$ and $\InF$ define a label-based $\delta$-stochastic simulation relation between $\tilde \MB$ and $\MB$. To do so, we construct a set-valued labeling $\tilde \Labset: \Xb_{x}\rightarrow 2^\alphabeth$ and compute $\delta$ such that $\tilde \MB\preceq^\delta_{\tilde\Labset,\Labset} \MB $.
 
 \subsubsection{Labeling requirement:}
 
@@ -501,7 +504,7 @@ The labeling $\tilde \Labset_{p_i}$ can be easily computed by shrinking or expan
 
 
 \subsubsection{Probability requirements:}
-To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, mutatis mutandis, a monotonically decreasing $P^+$.
+To show satisfaction of \eqref{eq:sr-2}, we need to show that there exists a $\delta$-lifting. First we require that $P^+$ (resp. $P^-$) is an upper (resp. lower) bound for $P_{k|k}$ of the belief MDP \eqref{eq:beliefx}-\eqref{eq:beliefP}.  We say that $P^-$ is a lower bound if it is a lower bound for the initial condition (see above) and   if it is monotonically increasing with respect to the Riccati equations \citep{bitmead1985monotonicity}. For the upper bound, we require, {\it mutatis mutandis}, a monotonically decreasing $P^+$.
 
 
 Consider a choice of noise sources $\tilde{{s}}_{k+1}$ and $s^\Delta_{k+1}$, such that the difference between the states in \eqref{eq:abstract} and \eqref{eq:beliefx} evolves according to
@@ -550,7 +553,7 @@ The corresponding belief space model $\MB$ is defined by the Kalman filter equat
 
 
 \textbf{Environment model.} From the overhead imagery, we consider two %potential
- target regions $T_1$ and $T_2$ where the probability of encountering a desired sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse the area safely. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions and can acquired additional measurements from its on-board sensors. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_{r,0}$ are the belief probabilities from satellite imagery, with dynamics illustrated in Fig. \ref{fig:envmdp}.
+ target regions $T_1$ and $T_2$ where the probability of encountering a desired sample has been assessed as 0.5 and 0.6, respectively. In addition, there are two risk regions $R_1$ and $R_2$ with probabilities of 0.9 and 0.7 that the rover can traverse them safely, respectively. For both target and risk regions, we assume that the true nature of the region can be measured when the rover is within a certain distance of the regions and can acquire additional measurements from its on-board sensors. The regions are illustrated in Fig. \ref{fig:exp1}, along with the regions from where the true state can be determined (dashed lines). To each region we associate a discrete belief state $b_r \in \{ p_{r,0}, 1, 0 \}$ where $p_{r,0}$ are the belief probabilities from satellite imagery, with dynamics illustrated in Fig. \ref{fig:envmdp}.
 
 \begin{figure}
   \begin{center}
@@ -660,9 +663,9 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel labeling-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. As a result, we have obtained policies with associated guarantees on the probability of specification satisfaction. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and we have applied the theory in a case study motivated by space exploration.
+In this paper,  we have considered correct-by-construction control synthesis of policies that guarantee behaviors expressed in the belief space of a POMDP. To cope with the inherent computational difficulties, we have pursued an approach based on principled abstractions via a novel label-based concept of stochastic simulation relation. In addition, we have used a synthesis procedure that is robust to differences between a concrete system and its abstraction, as well as a way to refine control policies. As a result, we have obtained policies with associated guarantees on the probability of specification satisfaction. For the special case of linear systems with Gaussian noise and observation models, we have given a concrete abstraction construction and an associated simulation relation, and we have applied the theory in a case study motivated by space exploration.
 
-We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies in future work. We also plan to explore additional settings in which abstractions satisfying our novel labeling-based simulation relation can be constructed, and will explore ways to leverage the decomposed nature of product MDPs to improve computational efficiency.
+We are interested in cooperative robotics applications where some agents perform exploration while others collect samples, and will therefore conduct more sophisticated case studies in future work. We also plan to explore additional settings in which abstractions satisfying our novel label-based simulation relation can be constructed, and will explore ways to leverage the decomposed nature of product MDPs to improve computational efficiency.
 
 \bibliography{AliAgha,references}
 
