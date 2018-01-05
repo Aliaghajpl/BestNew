@@ -39,7 +39,7 @@
 % \title{\huge Refinement-based temporal logic control of partially observable Markov decision processes }
 %\title{Stochastic Labeling-based Simulation Relations for belief space temporal logic control of POMDPs}
 %\title{Stochastic Labeling-based Simulation Relations for Temporal Logic Control of POMDPs}
-\title{Temporal Logic Control of POMDPs via Stochastic Labeling-based Simulation Relations}
+\title{Temporal Logic Control of POMDPs via Label-based Stochastic Simulation Relations}
 %\title{\huge Refinement-based Temporal Logic Control of POMDPs via Stochastic Proposition Labeling}
 %\thanks[footnoteinfo]{Sponsor and financial support acknowledgment
 %goes here. Paper titles should be written in uppercase and lowercase
@@ -412,10 +412,10 @@ Based on Proposition \ref{prop:1}, we already know that a refined policy for the
   This control refinement ensures that \eqref{eq:prob_result} is satisfied.
 \end{prop}
 The obtained policy $	\polb_\ast(b,q)$ is a stationary, universally measurable and deterministic policy. This universal measurability follows from the measurability of the abstract model, since we can require without loss of generality that no measurability  issues are introduced as the maximization is performed over a subset of the simpler state space of the abstract model. 
-\begin{pf}\new{At each time instant, finding a control action $u$ is associated to finding the state update for the abstract system such as to find the abstract input that can be refined via the interface in Def. \ref{def:apbsim}.  
+\begin{pf}At each time instant, finding a control action $u$ is associated to finding the state update for the abstract system such as to find the abstract input that can be refined via the interface in Definition \ref{def:apbsim}.  
 We know that there exists a refined policy for the original system for every policy of the concrete system such that 
 for all pairs of belief states $(\tilde b,b)\in\rel$, it holds that 
-\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel Def. \ref{def:kernellift}, by selecting the next state by maximizing over $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved.  }\qed
+\begin{equation}\label{eq:W:V}\mathbf  W^\infty_\ast(\tilde b,q)\leq \mathbf  V^\infty_{ref}( b,q).\end{equation} In this formula, the latter value function represents the infinite horizon value \eqref{eq:Valfunc} for the refined policy starting from $\tilde b$.   The standard control refinement hinges on selecting the next abstract state as a realization of the lifted kernel (c.f. Definition \ref{def:kernellift}); by selecting the next state by maximizing over $\mathbf  W^\infty_\ast$ a strict improvement of the lower bound is achieved. \qed
 \end{pf}
 
 \section{Abstractions for Gaussian LTI POMDPs}
@@ -428,7 +428,7 @@ We now consider the special case of POMDPs that can be modeled as Linear Time In
     z_k&=Cx_k+v_k, & v_k\sim \mathcal N(0,\CA V).
   \end{aligned}
 \end{equation}
-Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$, \axx{shouldnt this be $\mathcal N(Ax + Bu, APA^T+\CA W)$ ?}\red{[sof:] these are the dynamics of the POMDP, not of the belief MDP. The update hence does not depend on the covariance of the belief state.} together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$ \axx{similar comment for the observation model} generating noisy measurements $z_k$.
+Equation \eqref{eq:LTI} defines a POMDP with state space $\X\subseteq\mathbb R^n$, initial distribution $\init:=\mathcal N(\hat x_\init,P_\init)$, control inputs $\A \subseteq \mathbb R^m$, and a transition kernel $t(\cdot | x, u ) = \mathcal N(Ax + Bu, \CA W)$,  together with an observation model $r(\cdot \mid x) = \mathcal N(Cx, \CA V)$  generating noisy measurements $z_k$.
 \\
 It is well known that the belief state $(\hat x_{k \mid k}, P_{k \mid k})$ for this type of system evolves over the space of Gaussian distributions, and is given by the Kalman filter equations. In particular,
 \begin{align}
@@ -505,7 +505,7 @@ Consider a choice of noise sources $\tilde{{s}}_{k+1}$ and $s^\Delta_{k+1}$, suc
  \hat x_{k+1|k+1}-  \tilde x_{k+1}&=(A+BK)(\hat x_{k|k}-\tilde x_{k})  \\ & \qquad + P_{k+1|k}C^T s^\Delta_{k+1}+\Delta_{k+1} {\tilde{s}}_{k+1},
 \end{aligned}
 \end{equation}
-with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \bar P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\hat{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\hat{S}_{inv})$. \axx{definitions of $\bar{P}$ and $\hat{S}_{inv}$ ? }
+with $\Delta_{k+1}:=(P_{k+1|k}C^T-  \tilde P C^T)$, $ \tilde{{s}}_{k+1}\sim \CA N (0,\tilde{S}_{inv})$, and $ {s}^\Delta_{k+1}\sim  \CA N (0,\  S_{k+1}^{-1}-\tilde{S}_{inv})$. 
 
 We can now quantify the $\delta$-difference between $\MB$ and $\tilde \MB$ by verifying that for all  $(\tilde x_k,\hat x_{k|k})\in \rel$, with probability at least $1-\delta$ it holds that $(\tilde x_{k+1},\hat x_{k+1|k+1})\in \rel$. %\axx{The first entry in last two pairs should be tilde?}
 % thnx
@@ -551,8 +551,8 @@ The corresponding belief space model $\MB$ is defined by the Kalman filter equat
   \begin{center}
   \begin{tikzpicture}
     \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, initial above,initial text={} ] (b0) {$p_0$};
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b0] (b1) {1};
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b1] (b2) {0};
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b0] (b1) {0};
+    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b1] (b2) {1};
 
     \draw[-latex, red] (b0) to node[black, above] {$p = 1-p_0$} (b1);
     \draw[-latex, red] (b0) to[out=45, in=145] node[black, above] {$p = p_0$} (b2);
@@ -575,15 +575,15 @@ With $\MB_{env}$ as the combined environment model with state $(b_{T_1}, b_{T_2}
 \begin{equation}
   \psi =\lnot \texttt{fail} \; \mathcal {U} \; \texttt{sample},
 \end{equation}
-where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if the rover is in an obstacle region that contains an obstacle.
+where the atomic proposition \texttt{sample} is true if the rover is in a target region that contains a sample, and the atomic proposition \texttt{fail} is defined as being true if the rover is in a risk region that contains an obstacle.
 
 
 \textbf{Solution.} We first construct a finite abstraction of $\MB$ as outlined in the previous section; first we compute an approximate LTI belief model and then we  discretize the state space $[-10, 10]^2$ with  grids of size $\grid = (0.76481, 0.64426)$. The input space $[-1,1]^2$ is sampled with nine discrete inputs $\{0, 1, -1\}^2$. Fig.  \ref{fig:tradeoff} illustrates the trade-off between the $\epsilon$ error in the relation \eqref{eq:rel} and the $\delta$-difference in Definition \ref{def:apbsim} for these choices of discretization parameters. Combined with a relaxation of the labeling as introduced in the previous subsection, %and introducing a simulation relation that compensates for accuracy loss caused by the gridding, 
-we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $. \new{Remark that the upper bound $P^+$ and the lower bound $P^- $ have been selected based on the steady state Kalman gain, and based on the initial covariance $P_0$, respectively. }
+we obtain an abstract model $\tilde \MB_{grid}$ with the property that $\tilde \MB_{grid}\preceq^{0.01}_{\tilde\Labset_{grid},\Labset} \MB $. Remark that the upper bound $P^+$ and the lower bound $P^- $ have been selected based on the steady state Kalman gain, and based on the initial covariance $P_0$, respectively.
 
 In order to analyze the combined system $\MB \otimes \MB_{env}$, we create $\tilde \MB_{grid} \otimes \MB_{env}$ as a nondeterministic product and treat it analogously to the nondeterminism in the connection between an MDP and a DFSA in Eq. \eqref{eq:prob:robust_optimal}. Effectively, when there is uncertainty about whether a measurement of a region can be expected, the worst-case is considered in the value iteration which ensures that the obtained probabilities are indeed lower bounds. 
 
-With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  \red{The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. }The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
+With this method we compute a value function and an associated control policy for $\tilde \MB_{grid} \otimes \MB_{env}$ and refine it to the concrete system.  The resulting policy is a policy with memory defined on $\Xb \times \prod_{i=1}^4 \{ p_{0,i}, 0, 1 \}$---the combined rover and environment state. The value function is illustrated in Fig. \ref{fig:valuefcn} for two different environment states.
 
 \begin{figure}
   \footnotesize
@@ -628,7 +628,7 @@ The plots in Fig. \ref{fig:exp1} depict the evolution of the estimated position 
     \node[anchor=west, yshift=-2mm] at (cbar.north east) {$V = 1$};
     \node[anchor=west, ] at (cbar.east) {$V = 0.5$};
   \end{tikzpicture}
-  \caption{Illustration of value function for two different states of the environment, with regions of interest plotted with dashed lines. Left: environment state $(p_{T_1, 0}, p_{T_2, 0}, p_{R_1,0}, p_{R_2,0})$, i.e., all regions are still uncertain, which results in a fairly uniform value function with slightly less success probability close to the risk regions. Right: environment state $(p_{T_1, 0}, 1, p_{R_1,0}, 1)$, i.e., it is known that $T_2$ contains a sample and that $R_2$ contains an obstacle, which yields a more polarized value function.}
+  \caption{Illustration of value function for two different states of the environment, with regions of interest plotted with dashed lines. Left: environment state $(0.5, 0.6, 0.9, 0.7)$, i.e., all regions are still uncertain, which results in a fairly uniform value function with slightly less success probability close to the risk regions. Right: environment state $(0.5, 1, 0.9, 0)$, i.e., it is known that $T_2$ contains a sample and that $R_2$ contains an obstacle, which yields a more polarized value function.}
   \label{fig:valuefcn}
 \end{figure}
 
