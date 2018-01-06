@@ -391,7 +391,8 @@ How quadrotors are controlled to move between grid cells. \red{Can we provide so
 
 We assume that there are collections of regions of interest, where samples and/or obstacles may be located. Associated to each region is a belief state that evolves according to an MDP representing belief dynamics. A measurement is taken when the copter flies over a region.
 
-\red{Can do simple model in Figure \ref{fig:envmdp}, or more elaborate Bernoulli model}
+\red{Can do simple model in Figure \ref{fig:envmdp}, or more elaborate Bernoulli model (next section)}
+
 
 \paragraph{Specification:}
 
@@ -399,6 +400,118 @@ We assume that there are collections of regions of interest, where samples and/o
   \item Rover should collect a sample and avoid obstacles
   \item Copter should land in safe area before battery is exhausted
 \end{itemize}
+
+\section{Bernoulli belief}
+
+\subsection{Belief model}
+
+Suppose we want to estimate an unknown label $\bar l \in \{ 0,1 \}$.
+\begin{itemize}
+  \item Prior distribution: $p(\bar l) = \begin{cases}
+    q   & \bar l=0 \\
+    1-q & \bar l=1
+  \end{cases}$
+  \item Measurement $m \sim p(m \mid \bar l) = \begin{cases}
+    s & \bar l=0, m = 0, \\
+    1-s & \bar l=0, m=1, \\
+    s & \bar l=1, m= 1, \\
+    1-s & \bar l=1, m=0.
+  \end{cases}$ with accuracy $s > 1/2$.
+\end{itemize}
+We can thus write the posterior as
+\begin{equation}
+  p(\bar l \mid m) \propto p(m \mid \bar l) p(\bar l) = \begin{cases}
+    q s & \bar l=0, m=0, \\
+    q(1-s) & \bar l=0, m=1, \\
+    (1-q) s & \bar l=1, m=1, \\
+    (1-q)(1-s) & \bar l=1, m=0.
+  \end{cases}
+\end{equation}
+After re-normalizing we can the update $q$ depending on the measurement $m$ as 
+\begin{equation}
+  q \mapsto \begin{cases}
+    \frac{qs}{qs + (1-q)(1-s)} & m = 0, \\
+    \frac{q(1-s)}{q(1-s) + (1-q)s} & m = 1, 
+  \end{cases}
+\end{equation}
+These are the dynamics of the belief state. We assume that $m$ is sampled from the current belief $p(\bar l)$ which results in an MDP with state $q$ and action $s$:
+\begin{equation}
+\label{eq:bernoulli_mdp}
+\begin{aligned}
+  q & \longrightarrow \frac{qs}{qs + (1-q)(1-s)} \quad &  \text{w.p} \; & qs + (1-q)(1-s) \\
+  q & \longrightarrow \frac{q(1-s)}{q(1-s) + (1-q)s} \quad &  \text{w.p} \; & q(1-s) + (1-q)s 
+\end{aligned}
+\end{equation}
+
+\subsection{Belief abstraction}
+
+\subsubsection{Uniform abstraction}
+
+Consider an abstract state $\tilde q$ such that $|q - \tilde q| \leq \epsilon$, in an abstraction with state discretization $\eta$. The abstract state $\tilde q$ is updated in synchrony with $q$ according to
+\begin{equation}
+\begin{aligned}
+  \tilde q &  \longrightarrow \left \lfloor \frac{\tilde qs}{\tilde qs + (1-\tilde q)(1-s)} \right \rfloor_\eta \quad &  \text{if $q$ grows} \\
+  \tilde q & \longrightarrow \left \lfloor \frac{\tilde q(1-s)}{\tilde q(1-s) + (1-\tilde q)s} \right \rfloor_\eta \quad &  \text{if $q$ shrinks}
+\end{aligned}
+\end{equation}
+Let 
+\begin{equation}
+\begin{aligned}
+  f_1(q,s) = \frac{qs}{qs + (1-q)(1-s)}, \\
+  f_2(q,s) = \frac{q(1-s)}{q(1-s) + (1-q)s}.
+\end{aligned}
+\end{equation}
+Then, 
+\begin{equation*}
+\begin{aligned}
+  \mathbb{P} \left[ |q' - \tilde q'| \leq \epsilon \right] = \left[qs + (1-q)(1-s)\right] \\
+  \times \mathds{1} \left[ |f_1(q,s) - f_1(\tilde q,s)| \leq \epsilon - \frac{\eta}{2} \right] \\ + \left[q(1-s) + (1-q)s \right] \times \mathds{1} \left[ |f_2(q,s) - f_2(\tilde q,s)| \leq \epsilon - \frac{\eta}{2} \right]
+\end{aligned}
+\end{equation*}
+It can be shown that
+\begin{equation*}
+\begin{aligned}
+  & |f_1(q,s) - f_1(\tilde q,s)| \\ 
+  & \; = s(1-s) \frac{|q - \tilde q|}{(qs + (1-q)(1-s))(\tilde qs + (1-\tilde q)(1-s))}, \\
+  & |f_2(q,s) - f_2(\tilde q,s)| \\ 
+  & \; = s(1-s) \frac{|q - \tilde q|}{(q(1-s) + (1-q)s)(\tilde q(1-s) + (1-\tilde q)s)}.
+\end{aligned}
+\end{equation*}
+Under the assumption $q = \tilde q$ it follows that
+\begin{equation}
+\begin{aligned}
+  \mathbb{P} \left[ |q' - \tilde q'| \leq \epsilon \mid |q-\tilde q| \leq \epsilon \right] \geq 1 - \sqrt{\frac{s(1-s) \epsilon}{\epsilon - \frac{\eta}{2}}}.
+\end{aligned}
+\end{equation}
+
+\begin{itemize}
+  \item Pro: can use lowest $\bar s$ to get inequality that holds for all $s > \bar s$
+  \item Con: relatively high $\delta$.
+\end{itemize}
+
+\subsubsection{Non-uniform abstraction}
+
+For a fixed $s$, consider the sequence
+\begin{equation}
+  c_0 = 1/2, \; c_{k+1} = f_1(c_k, s).
+\end{equation}
+Let each interval $[c_k, c_{k+1}]$ represent an abstract state and construct corresponding abstract states partitioning $[0, 1/2]$. Then the abstract model will be bisimilar to \eqref{eq:bernoulli_mdp}. The reason is that 
+\begin{equation}
+  f_1(\cdot, s) \circ f_2(\cdot, s) = Id.
+\end{equation}
+To get a finite abstraction, the abstract states contained in $[0, \gamma]$ and $[1- \gamma, 1]$ can be lumped together.
+
+\begin{itemize}
+  \item Pro: exact abstraction for given $s$: $0$-simulation
+  \item Con: is (probably) not $\delta$-simulation when there are multiple possible values of $s$
+\end{itemize}
+
+\paragraph{Commutative:} It holds that $f_1(\cdot, s) \circ f_1(\cdot, s') = f_1(\cdot, s') \circ f_1(\cdot, s)$ and similarly for $f_2$. Therefore the only thing affecting the estimate $q$ is the net number of positive measurements at each confidence level. For two confidence levels, we can then use the following abstract states:
+\begin{equation}
+  \{ (n_{s_1}, n_{s_2}) : n_{s_1}, n_{s_2} \in \mathbb{N} \}. 
+\end{equation}
+For a finite description, we can lump together states that yield values of $q$ very close to 1 or 0. We can get arbitrarily close to $\delta = 0$.
+
 
 
 \printbibliography
