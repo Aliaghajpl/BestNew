@@ -29,14 +29,14 @@
 
 \begin{document}
 
-\title{\huge Report 3 }
+\title{\huge Sequential Value Iteration for Modular Systems Applied to Collaborative Space Robotics}
 
 \author{PN et al}
 
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions, we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting controller can make intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions, we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -54,7 +54,7 @@
     \item Contract with low-level safety-critical? controller
     \item Cooperative robotics (copter explores to maximize probability that rover can satisfy spec)
     \item Efficient sequential value iteration for product MDPs
-    \item Potentially: label-based abstraction for quadrotor (belief or non-belief) dynamics?? 
+    \item More difficult: label-based abstraction for quadrotor (belief or non-belief) dynamics?? 
   \end{itemize}
 \end{itemize}
 
@@ -171,7 +171,7 @@ This policy defined for the product MDP $\MDP \otimes \FSA_\psi$, maps to contro
 \section{Sequential Value Iteration}
 
 
-\subsection{Network of MDPs}
+\subsection{Networks of MDPs}
 
 Consider two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \init_2, \U_2, \tr_2)$. Next we introduce the parallel and serial products between the two.
 \begin{definition}
@@ -277,7 +277,7 @@ It follows that the Bellman update $V \mapsto \bellman V$ for a parallel product
   \begin{itemize}
     \item Decentralized policy is optimal. When is this true?
     \item We consider policy $\mu_2 = \mu_2(x_1', x_2)$ (i.e. $\MDP_1$ moves first).
-    \item If there is no policy maximization (e.g., if it is inside a serial system)
+    \item If there is no policy maximization (e.g., if it is part of a serial product)
   \end{itemize}
 \end{itemize}
 
@@ -329,7 +329,7 @@ In the previous subsection we outlined how Bellman iterations for a value functi
 \red{Variations of problems to solve (decreasing order of difficulty/desirability):
 \begin{itemize}
   \item Simultaneous rover/copter execution
-  \item Copter maps in a way that maximizes success probability of rover
+  \item Copter maps in a way that maximizes success probability of rover (1. copter execution, 2. rover execution)
   \item Exclude rover and consider specification related to copter only
 \end{itemize}}
 
@@ -348,11 +348,11 @@ In the previous subsection we outlined how Bellman iterations for a value functi
     \draw[latex-] (copter) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_c$};
     \draw[latex-] (rover) -- ($(rover.west)!(west)!(rover.east)$) node[above] {$u_r$};
   \end{tikzpicture}
-  \caption{Illustration of aggregate system}
+  \caption{Illustration of aggregate system constructed as parallel and serial products.}
   \label{fig:agg}
 \end{figure}
 
-We consider three system components $\MDP_{copt}$, $\MDP_{rov}$, and $\MDP_{env}$, representing abstract dynamics of the copter and rover, and environment belief state dynamics. The aggregate system is the product system illustrated in Figure \ref{fig:agg}:
+We consider three system components $\MDP_{copt}$, $\MDP_{rov}$, and $\MDP_{env}$, representing abstract dynamics of the copter and rover, and environment belief state dynamics. Adding a specification automaton, the aggregate system is the product system illustrated in Figure \ref{fig:agg}:
 \begin{equation}
   ((\MDP_{copt} \otimes_{ser} \MDP_{env}) \otimes_{par} \MDP_{rov}) \otimes_{ser} \FSA_\psi
 \end{equation}
@@ -512,7 +512,11 @@ To get a finite abstraction, the abstract states contained in $[0, \gamma]$ and 
 \end{equation}
 For a finite description, we can lump together states that yield values of $q$ very close to 1 or 0. We can get arbitrarily close to $\delta = 0$.
 
+\section{Hardware Experiments}
 
+\begin{itemize}
+    \item Copter in CAST
+\end{itemize}
 
 \printbibliography
 
