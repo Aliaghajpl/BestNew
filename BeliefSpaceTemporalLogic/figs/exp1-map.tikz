@@ -115,7 +115,7 @@ x                      y
 --(axis cs:0,-5)
 --cycle;
 
-\path [draw=red, fill=red, opacity=0.5] (axis cs:2,3)
+\path [draw=red, pattern=north west lines, pattern color=red, opacity=0.5] (axis cs:2,3)
 --(axis cs:2,10)
 --(axis cs:0,10)
 --(axis cs:0,3)
@@ -139,7 +139,7 @@ x                      y
 --(axis cs:-9,6)
 --cycle;
 
-\path [draw=blue, fill=blue, opacity=0.5] (axis cs:9,6)
+\path [draw=blue, pattern=north west lines, pattern color=blue, opacity=0.5] (axis cs:9,6)
 --(axis cs:9,9)
 --(axis cs:6,9)
 --(axis cs:6,6)
