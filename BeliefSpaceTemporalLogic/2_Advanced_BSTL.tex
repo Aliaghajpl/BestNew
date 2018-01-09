@@ -2,11 +2,15 @@
 
 \usepackage{amsmath, amsthm, amssymb, dsfont, accents}
 
-\usepackage{tikz}
+\usepackage{tikz,pgfplots}
 \usepackage{hyperref, booktabs}
 \usepackage{biblatex}
 
+\pgfplotsset{compat=1.15}
+
 \usetikzlibrary{calc, automata}
+\newlength\figureheight
+\newlength\figurewidth
 
 \addbibresource{2_references.bib}
 
@@ -231,6 +235,7 @@ Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider 
 \end{equation}
 The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operator $\bellman$ is found via the iterations
 \begin{subequations}
+\label{eq:value_iter}
   \begin{align}
     & V^*_0 \equiv 0, \\
     & V^*_{k+1}  = \bellman V_k \label{eq:iter}, \\
@@ -250,7 +255,7 @@ The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operato
   \begin{equation}
      \max \sum_{t=0}^T J_t(x_t).
   \end{equation} 
-  In this case, if the dynamics programming is initialized with $V_T(x) = J_T(x)$, iterated applications of the Bellman operator corresponding to $g_t(x', v') = J_{t-1}(x') + v'$, i.e.
+  In this case, if the dynamic programming is initialized with $V_T(x) = J_T(x)$, iterated applications of the Bellman operator corresponding to $g_t(x', v') = J_{t-1}(x') + v'$, i.e.
   \begin{equation*}
     V_{t-1}(x) = \bellman_t V_{t} (x) = \max_{\pol} (J_{t-1}(x') + V_{t}(x')) T(x' \mid x, \pol(x))
   \end{equation*}
@@ -308,8 +313,34 @@ As a consequence, the Bellman recursion can be computed without computing the tr
 
 \red{Is this well known/trivial??}
 
+\begin{remark}
+  The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then
+  \begin{equation}
+  \label{eq:tensor_sequential}
+  \begin{aligned}
+      & W_{x_1' \ldots, x_n'} = g(V_{x_1, \ldots, x_n}) \\
+      & \text{for $i = n, n-1, \ldots, 2$}: \\
+      & \quad W_{x_1'\ldots x_i x_{i+1} \ldots x_n'} = U_{x_{i-1}}^{u_i} T_{u_i x_i}^{x_i'}  W_{x_1'\ldots x_i' x_{i+1} \ldots x_n'} \quad \\
+      & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
+  \end{aligned}
+  \end{equation}
+  This can be contrasted with the naive approach where one first constructs the aggregate transition tensor $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ and then computes
+  \begin{equation}
+  \label{eq:tensor_naive}
+    V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} V_{x_1', \ldots x_n'}.
+  \end{equation}
+  Eq \eqref{eq:tensor_naive} does the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
+\end{remark}
+
 \begin{example}
-  \red{TODO: Run some randomized experiments (with dense and sparse matrices) to show how sequential value iteration performs against centralized value iteration.}
+  \begin{figure}[h]
+    \setlength\figurewidth{0.8\columnwidth} 
+    \setlength\figureheight{0.4\columnwidth} 
+    \input{figs/scale}
+    \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
+    \label{fig:scalability}
+  \end{figure}
+  We demonstrate the advantage of sequential value iteration with a numerical example. We consider $k$-length serial products of MDPs with two actions and six states each; the total number of states in such a product is $6^k$. For increasing values of $k$ we compute the probability of reaching a certain part of the state space by sequential value iteration, and by naively forming the overall transitions matrices. Figure \ref{fig:scalability} illustrates the computation time for increasing values of $k$ over 10 trials. As can be seen, the advantage of sequential value iteration over the naive approach is significant.
 \end{example}
 
 \begin{remark}
