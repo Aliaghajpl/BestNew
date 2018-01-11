@@ -40,7 +40,7 @@
 
 \begin{abstract}
 In this paper, we consider the problem of planetary exploration with a two-agent team composed of a Mars rover and copter. Images by a copter can help estimation or navigation of a rover. In such a mission, how a copter learns where to map for a rover is of great interest in a two-agent team. 
-This paper answers this where to map by a copter while minimizing uncertainty of images from a rover’s camera.
+This paper answers this where to map by a copter while minimizing uncertainty of a map.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -48,32 +48,79 @@ This paper answers this where to map by a copter while minimizing uncertainty of
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
+\subsection*{Motivations}
+About Mars exploration---------
 
-%\subsection*{Related Work}
-%\subsection*{Contributions}
+About Mars copter exploration or multi-agent Mars exploration and PDF project---------
+
+This study considers a two-agent team composed of a rover and a copter. Figures~\ref{fig:8_1} and \ref{fig:8_2} show an example of comparison between rover and two-agent team cases. An expected effectiveness of a two-agent team is also shown. Assuming that a rover has only low-resolution images from Mars orbiters at the start, a rover executes path planning using those images.
+In Fig.~\ref{fig:8_1}, the green line represents the initial rover path executed by a low-resolution image including the risk regions, and the black solid lines and the red dashed line show the updated rover’s paths and the copter’s path, respectively. In this case, the risk region is the obstacle which the rover cannot go through and have to avoid. Figure~\ref{fig:8_1}~(a) shows an example of rover exploration without a copter. In this case, once a rover is close to the risk region, it proves to have obstacles by a rover’s camera. On the other hand, Fig.~\ref{fig:8_1}~(b) shows an example of rover exploration with a copter. In this case, a rover can learn that the risk region includes obstacles in advance by copter’s camera images. Therefore, a rover can re-execute the optimal path planning before starting the exploration by a copter.
+Figure~\ref{fig:8_2} shows the case that the risk region is the feature-poor areas which the rover can go through but the accurate estimation of a rover is difficult to realize. The green and black solid lines show the initial and updated rover’s paths, respectively, and the red dashed line shows the copter’s path for updating the initial rover’s path. The yellow and blue ellipses areas are covariance along each path. In the case of a two-agent team, a rover can learn that the risk region includes feature-poor areas in advance by copter’s camera images. Therefore, a rover can re-execute the optimal path planning by a copter, again.
+Figure~\ref{fig:8_4} shows the relationship of rover/copter cooperation.
+
+\begin{figure}[h]
+		\centering
+		\includegraphics[width=1.0\columnwidth]{figs/8_1.png}
+		\caption{Rover/copter paths with an obstacle.}
+		\label{fig:8_1}
+		\centering
+		\includegraphics[width=0.6\columnwidth]{figs/8_2.png}
+		\caption{Rover/copter paths with feature-poor areas.}
+		\label{fig:8_2}
+		\vspace{5mm}
+		\centering
+		\includegraphics[width=0.6\columnwidth]{figs/8_4.png}
+		\caption{Relationship of rover/copter cooperation.}
+		\label{fig:8_4}
+\end{figure}
+
+\subsection*{Related Work}
+Multi-agent on the Earth-----------
+
+Multi-agent on Mars-----.
+
+\subsection*{Contributions}
 
 \section{Problem Description}
 This section gives a formal definition of the problem we are going to address. 
 
 \pr{Problem}
-A two-agent team composed of a Mars rover and copter is considered. This paper automates the process of where to map by a copter in order to minimize the covariance or the localization belief of a rover while considering the copter’s body path.
+A two-agent team composed of a Mars rover and copter is considered. This paper automates the process of where to map by a copter in order to minimize the covariance of a rover while considering the copter’s body path.
 Copter’s constraints coming from a battery is described as follows:
 \begin{itemize}
     \item Three flights per sol
     \item Two minutes per flight
 \end{itemize}
- %Figure~\ref{fig:8_1} shows a belief propagation of a rover and Fig.~\ref{fig:8_2} illustrates an image of where to map by a copter. The copter can take images within the limitation of the battery at one step of the rover.
- 
-\pr{Rover and Helicopter Description}
-The rover and helicopter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
 
-\pr{Rover and Helicopter Measurements}
+
+
+
+
+
+ %Figure~\ref{fig:8_1} shows a belief propagation of a rover and Fig.~\ref{fig:8_2} illustrates an image of where to map by a copter. The copter can take images within the limitation of the battery at one step of the rover.
+ Assuming that aaaaa.
+ 
+ \begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\columnwidth]{figs/8_3.png}
+		\caption{Definition of the rover/copter time step.}
+		\label{fig:8_3}
+\end{figure}
+
+\pr{Rover and copter Description}
+The rover and copter configurations are denoted by $x^r$ and $x^c$, respectively. The extended state $x=(x^r,~x^c)$ includes both.
+$i, k, T, 0$aaaaa rover's path$x^r_{0:j}$
+
+\pr{Rover and copter Measurements}
 Let $z^r_k$ and $z^c_k$ the measurements (images) by the rover and the copter at the $k$-th time step, respectively. Sequences of observations are defined as
 \begin{align}
     z^r_{0:k}&=\{z^r_0,z^r_1,\cdots,z^r_k\}\\
     z^c_{k,1:j}&=\{z^c_{k,1},z^c_{k,2},\cdots,z^c_{k,j}\}
 \end{align}
 where $0 \leq k \leq T$ and a copter takes $j$ images at the $k$-th rover step.
+
+\pr{Map Description}
+The map coming from the satellite's images is denoted by $m^s$. The maps from the rover/copter's images are denotd by $m^r$ and $m^c$, respectively. From these maps, the unified map $m$ can be obtained.
 
 \pr{Map Belief}
 We denote the map of the environment by $m$ and assume the environment is stationary. The knowledge we have about the environment is obtained via noisy sensors. Therefore, the best we can have is a probabilistic representation of $m$, i.e., the map belief
@@ -86,6 +133,9 @@ The measurement model describes the probability distribution over all possible o
 \begin{align}
     p(z|m, x)
 \end{align}
+
+
+\pr{Scenario}
 
 %\begin{figure}[h]
 %		\centering
@@ -147,76 +197,70 @@ Belief update of a rover localization is given by
 
 We find a helicopter position that minimizes the following cost function:
 \begin{align}
-    &x^{c*}=\arg\min_{x^c \in X^c} \sum^T_{k=1} P^{r+}_k\label{eq:c1}\\
-     &{\rm s.t.} \hspace{5mm} D^c_{\min}(x^c_{alt}) \leq D^c_k \leq D^c_{\max}(x^c_{alt})\label{eq:st1}\\
-    &\hspace{10mm} \sum^{n}_{i=0} L^c_{k,i} \leq L^c_{\max}(t^c_{search}), ~~0\leq i \leq n \label{eq:st2}
+  &\{ x^{r*}_{0:i}, x^{c*}_{0:k}\}={\rm arg} \min_{x^r_{0:i},x^c_{0:k}} J\\
+  &\hspace{3mm}{\rm s.t.}\hspace{3mm}x^r_{T} \in X^r_{goal}\\
+  &\hspace{10.5mm} h_{\min} \leq z^c \leq h_{\max}\\
+  &\hspace{10.5mm} 0 \leq N \leq k_{\max}\\
+  &\hspace{10.5mm} d_{\min} \leq ||x^c_t-x^r_t|| \leq d_{\max},~ \forall t \in [0,k_{max}]
 \end{align}
 where
 \begin{align}
-P^{r+}_k&={\rm Cov}(x^{r+}_k) = {\rm Cov}(x^{r}_k | z^r_{0:k})\label{eq:p1}\\
-&={\rm VO}(z^r_0,~z^r_1,\cdots,~z^r_k)\simeq {\rm VO}(z^r_k).\label{eq:p2}
+    J=(1-\alpha) \sum^T_{i=0}  {\rm tr}(P^r_i) +\alpha \sum^T_{i=1} d_{i,i+1}
 \end{align}
+
 Note that Cov($\cdot$) and VO($\cdot$) denote the covariance and the visual odometry, respectively.
 
 \subsection{Constraints}
 
-\pr{Resolution constraint}
-A resolution of an image from a copter depends on a camera performance and a altitude of a copter $x^c_{alt}$.
+%\pr{Resolution constraint}
+%A resolution of an image from a copter depends on a camera performance and a altitude of a copter $x^c_{alt}$.
 %\begin{align}
 %    \zeta=k x^c_{alt}
 %\end{align}
 
-\pr{Field-of-view constraint}
-Equation~\eqref{eq:st1} represents the constraint that the area of the image depends on the altitude of the copter.
-A field-of-view (FOV) $D^c$ is determined by an altitude of a copter.
-\begin{align}
-    D^c_{\min}(x^c_{alt}) \leq D^c_k \leq D^c_{\max}(x^c_{alt})
-\end{align}
+%\pr{Field-of-view constraint}
+%Equation~\eqref{eq:st1} represents the constraint that the area of the image depends on the altitude of the copter.
+%A field-of-view (FOV) $D^c$ is determined by an altitude of a copter.
+%\begin{align}
+%    D^c_{\min}(x^c_{alt}) \leq D^c_k \leq D^c_{\max}(x^c_{alt})
+%\end{align}
 
-\pr{Flight time constraint}
-Equation~\eqref{eq:st2} represents the constraint that the searching range $L^c$ depends on the flight time $t^c_{search}$ coming from the battery limitation of the copter.
-\begin{align}
-    \sum^{n}_{i=0} L^c_{k,i} \leq L^c_{\max}(t^c_{search})
-\end{align}
-where $n$ is the number of the areas for searching by the copter.
+%\pr{Flight time constraint}
+%Equation~\eqref{eq:st2} represents the constraint that the searching range $L^c$ depends on the flight time $t^c_{search}$ coming from the battery limitation of the copter.
+%\begin{align}
+%    \sum^{n}_{i=0} L^c_{k,i} \leq L^c_{\max}(t^c_{search})
+%\end{align}
+%where $n$ is the number of the areas for searching by the copter.
 
-\pr{Flight interval constraint}
-``{\it When to map}'' is also an interesting problem.
-
-\subsection{Search Method}
-
-
-\section{Planning: copter body path planning}
-\subsection{Planning Objective}
-Using the cost $C(b_k, u_k)$,
-\begin{align}
-    &u^{c*}_{0:k}=\arg\min_{x^c \in X^c} \mathbb{E} \sum^T_{k=0} C(b^r_k, u_k; m_k (u^c_{0:k}))\\
-    &{\rm s.t.} \hspace{5mm} ||u^c_{0:k}||< \delta\label{eq:st10}\\
-    &\hspace{10mm} x^r_T \in goal^r\label{eq:st20}
-\end{align}
-
-\subsection{Constraints}
-\pr{Input constraint}
-Equation~\eqref{eq:st10} represents the constraint that the limitation of the copter control input as follow:
-\begin{align}
-    ||u^c_{0:k}||< \delta
-\end{align}
-
-\pr{Position constraint}
-Equation~\eqref{eq:st20} represents the constraint that the rover need to reach the goal at the final step $T$.
-\begin{align}
-    x^r_T \in goal^r
-\end{align}
+%\pr{Flight interval constraint}
+%``{\it When to map}'' is also an interesting problem.
 
 \subsection{Search Method}
+RRT
 
+%\section{Planning: copter body path planning}
+%\subsection{Planning Objective}
+%Using the cost $C(b_k, u_k)$,
+%\begin{align}
+%    &u^{c*}_{0:k}=\arg\min_{x^c \in X^c} \mathbb{E} \sum^T_{k=0} C(b^r_k, u_k; m_k (u^c_{0:k}))\\
+%    &{\rm s.t.} \hspace{5mm} ||u^c_{0:k}||< \delta\label{eq:st10}\\
+%    &\hspace{10mm} x^r_T \in goal^r\label{eq:st20}
+%\end{align}
 
+%\subsection{Constraints}
+%\pr{Input constraint}
+%Equation~\eqref{eq:st10} represents the constraint that the limitation of the copter control input as follow:
+%\begin{align}
+%    ||u^c_{0:k}||< \delta
+%\end{align}
 
+%\pr{Position constraint}
+%Equation~\eqref{eq:st20} represents the constraint that the rover need to reach the goal at the final step $T$.
+%\begin{align}
+ %   x^r_T \in goal^r
+%\end{align}
 
-
-\subsection{Search the optimal path}
-From the obtained the areas to map, next we search the optimal path (shortest path) using a traveling salesman problem (TSP).
-
+%\subsection{Search Method}
 
 
 \section{Simulation Results}
