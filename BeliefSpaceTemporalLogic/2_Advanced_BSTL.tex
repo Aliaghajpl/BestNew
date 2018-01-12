@@ -40,7 +40,7 @@
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions, we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -177,6 +177,7 @@ This policy defined for the product MDP $\MDP \otimes \FSA_\psi$, maps to contro
 
 
 \section{Sequential Value Iteration}
+\label{sec:sequential_val_iter}
 
 
 \subsection{Networks of MDPs}
@@ -314,11 +315,11 @@ As a consequence, the Bellman recursion can be computed without computing the tr
 \red{Is this well known/trivial??}
 
 \begin{remark}
-  The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then
+  The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
   \begin{equation}
   \label{eq:tensor_sequential}
   \begin{aligned}
-      & W_{x_1' \ldots, x_n'} = g(V_{x_1, \ldots, x_n}) \\
+      & W_{x_1' \ldots, x_n'} = g(x_1', \ldots, x_n', V_{x_1', \ldots, x_n'}) \\
       & \text{for $i = n, n-1, \ldots, 2$}: \\
       & \quad W_{x_1'\ldots x_i x_{i+1} \ldots x_n'} = U_{x_{i-1}}^{u_i} T_{u_i x_i}^{x_i'}  W_{x_1'\ldots x_i' x_{i+1} \ldots x_n'} \quad \\
       & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
@@ -327,16 +328,16 @@ As a consequence, the Bellman recursion can be computed without computing the tr
   This can be contrasted with the naive approach where one first constructs the aggregate transition tensor $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ and then computes
   \begin{equation}
   \label{eq:tensor_naive}
-    V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} V_{x_1', \ldots x_n'}.
+    V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} g(x_1', \ldots, x_n', V_{x_1', \ldots x_n'}).
   \end{equation}
-  Eq \eqref{eq:tensor_naive} does the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
+  Eq \eqref{eq:tensor_naive} involves the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
 \end{remark}
 
 \begin{example}
   \begin{figure}[h]
     \setlength\figurewidth{0.8\columnwidth} 
     \setlength\figureheight{0.4\columnwidth} 
-    \input{figs/scale}
+    \input{2figs/scale}
     \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
     \label{fig:scalability}
   \end{figure}
@@ -351,12 +352,28 @@ As a consequence, the Bellman recursion can be computed without computing the tr
   \red{Talk about extension to non-deterministic products by introducing a minimization term. Point out connection to errors in abstractions.} 
 \end{remark}
 
-\subsection{Sparse Value Function via Tensor Products}
+\subsection{Sparse Value Function via Tensor Decomposition}
 
-In the previous subsection we outlined how Bellman iterations for a value function can be performed sequentially in product systems. However, a dense value function representation is still of size $\mathcal O (|\X_1| |\X_2|)$ which can constitute a bottleneck for large products. In this section we explore how computational efficiency can be improved by using sparse value function representations. The cost is a loss of precision and guarantees in the final value function.
+In the previous subsection we outlined how Bellman iterations for a value function can be performed sequentially in product systems. However, a dense value function representation is still of size $\mathcal O (|\X_1| |\X_2|)$ which can constitute a bottleneck for large products. In this section we explore how computational efficiency can be improved by using sparse value function representations. The cost is a loss of precision and guarantees with respect to the final value function.
 
+Possible sparse representations
 \begin{itemize}
-  \item \red{No theory for this section yet, don't know if its possible...}
+  \item CP representation
+  \begin{itemize}
+    \item Pro: can be mapped through CP linear operators via ALS
+    \item Con: value iteration is nonlinear
+    \item What about policy iteration with sparse policy? 
+  \end{itemize}
+  \item TT representation
+  \begin{itemize}
+    \item Pro: Black-box cross algorithm to approximate tensor via sampling
+    \item Con: No analysis, brute force
+  \end{itemize}
+  \item Serial-parts, e.g. $V^1_{x_r e_1 \phi} \ldots V^n_{x_r e_n \phi}$
+  \begin{itemize}
+    \item Pro: May be suited to problem
+    \item Con: Don't know how to update components, convergence not understood
+  \end{itemize}
 \end{itemize}
 
 \section{Case Study}
@@ -369,183 +386,184 @@ In the previous subsection we outlined how Bellman iterations for a value functi
 \end{itemize}}
 
 \begin{figure}
-  \begin{tikzpicture}
-    \node[draw, node distance=3cm, rounded corners] (copter) {Copter};
-    \node[draw, node distance=3cm, rounded corners, right of=copter] (environment) {Environment belief};
-    \node[xshift=-1cm, draw, node distance=1cm, rounded corners, below of=environment] (rover) {Rover};
-    \node[yshift=-0.5cm, draw, node distance=3cm, rounded corners, right of=environment] (fsa) {$\FSA_\psi$};
+\begin{center}
+    \begin{tikzpicture}
+    \node[draw, node distance=2cm, rounded corners] (rover) {$\MDP_{rov}$};
+    \node[draw, node distance=2cm, rounded corners, right of=rover] (environment) {$\MDP_{env}$};
+    \node[draw, node distance=2cm, rounded corners, right of=environment] (fsa) {$\MDP_\varphi$};
 
-    \draw ([xshift=-2mm, yshift=2mm]$(copter.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$ (rover.south west)!(environment.east)!(rover.south east) $) node[coordinate] (east) {};
+    \draw[-latex] (rover) --  (environment);
+    \draw[-latex] (environment) --  (fsa);
+    \draw[-latex] (rover) to[out=-17, in=197] (fsa);
 
-    \draw[-latex] (copter) -- node[above] {ser.} (environment);
-    \draw[latex-] (fsa) -- node[above] {ser.} ($(fsa.west)!(east)!($(fsa.west)-(1,0)$)$);
+    \draw ([xshift=-2mm, yshift=2mm]$(rover.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(fsa.south east)$) {};
+    \node[above of=rover, node distance=0.75cm] {$\MDP_1$};
+
+    \draw[latex-] (rover) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_r$};
+
+    \node[below of=rover, draw, node distance=1.6cm, rounded corners] (copter) {$\MDP_{cop}$};
+    \node[draw, node distance=2cm, rounded corners, right of=copter] (env2) {$\MDP_{env}$};
+
+    \draw[-latex] (copter) --  (env2);
+
+    \draw ([xshift=-2mm, yshift=2mm]$(copter.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(env2.south east)$) {};
+    \node[above of=copter, node distance=0.75cm] {$\MDP_2$};
 
     \draw[latex-] (copter) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_c$};
-    \draw[latex-] (rover) -- ($(rover.west)!(west)!(rover.east)$) node[above] {$u_r$};
+
   \end{tikzpicture}
-  \caption{Illustration of aggregate system constructed as parallel and serial products.}
+\end{center}
+  \caption{Illustration of aggregate systems $\MDP_1$ and $\MDP_2$ constructed as serial products, where $\MDP_{env}$ is itself a parallel product.}
   \label{fig:agg}
 \end{figure}
 
-We consider three system components $\MDP_{copt}$, $\MDP_{rov}$, and $\MDP_{env}$, representing abstract dynamics of the copter and rover, and environment belief state dynamics. Adding a specification automaton, the aggregate system is the product system illustrated in Figure \ref{fig:agg}:
-\begin{equation}
-  ((\MDP_{copt} \otimes_{ser} \MDP_{env}) \otimes_{par} \MDP_{rov}) \otimes_{ser} \FSA_\psi
-\end{equation}
-That is, the Copter provides input to the map in a serial product, and the combined system provides input to a specification DFSA $\FSA_\psi$. 
+We consider a two-asset mission consisting of a ground rover and a flying copter 
 
-\paragraph{Abstract Robot Models:}
+\subsection{Problem setup}
 
-For now, $n \times n$ grid with free movement. Copter also has a clock $\MDP_{clock}$ that limits total movement.
+\paragraph{Abstract Robot Models}
 
-\paragraph{Low-level Robot Controllers:}
+We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_d \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis. 
 
-How quadrotors are controlled to move between grid cells. \red{Can we provide some guarantees under reasonable assumptions?}
+We assume that both robots freely can move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
 
-\paragraph{Environment Belief Model:}
+\paragraph{Low-level Robot Controllers}
+
+How quadrotors are controlled to move between discrete states. \red{Can we provide some guarantees under reasonable assumptions?}
+
+\paragraph{Environment Belief Model}
 
 \begin{figure}
   \begin{center}
   \begin{tikzpicture}
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, initial above,initial text={} ] (b0) {$p_0$};
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b0] (b1) {0};
-    \node[draw, minimum width=0.75cm, node distance=2.5cm, circle, right of=b1] (b2) {1};
+    \node[draw, minimum width=0.75cm, node distance=1.2cm, circle, initial above,initial text={} ] (bi) {$p_0$};
+    \node[draw, minimum width=0.75cm, node distance=1.2cm, circle, left of=bi] (bm) {$p_-$};
+    \node[draw, minimum width=0.75cm, node distance=1.2cm, circle, right of=bi] (bp) {$p_+$};
+    \node[draw, minimum width=0.75cm, node distance=1.2cm, circle, right of=bp] (b1) {$1$};
+    \node[draw, minimum width=0.75cm, node distance=1.2cm, circle, left of=bm] (b0) {$0$};
 
-    \draw[-latex, red] (b0) to node[black, above] {$p = 1-p_0$} (b1);
-    \draw[-latex, red] (b0) to[out=45, in=145] node[black, above] {$p = p_0$} (b2);
-
-    \draw[-latex, blue, dashed] (b0) to[loop left] (b0);
-    \draw[-latex, red] (b1) to[loop right] (b1);
-    \draw[-latex, red] (b2) to[loop right] (b2);
-    \draw[-latex, blue, dashed] (b1) to[loop above] (b1);
-    \draw[-latex, blue, dashed] (b2) to[loop above] (b2);
+    \draw[-latex, red] (bi) to[out=45, in=135] node[black, above] {$\bar q p_0$} (bp);
+    \draw[-latex, red] (bi) to[out=135, in=45] node[black, above] {$\bar q \bar p_0$} (bm);
+    \draw[-latex, red] (bi) to[out=45, in=135] node[black, above] {$q p_0$} (b1);
+    \draw[-latex, red] (bi) to[out=135, in=45] node[black, above] {$q \bar p_0$} (b0);
+    \draw[-latex, blue] (bi) to[out=-45, in=-135]  node[black, below] {$p_0$} (b1);
+    \draw[-latex, blue] (bi) to[out=-135, in=-45]  node[black, below] {$\bar p_0$} (b0);
+    \draw[-latex, black] (bi) to[loop below] node[below, black] {1} (bi);
   \end{tikzpicture}
   \end{center}
-  \caption{Illustration of environment belief model for a single region. At the beginning the belief is $p_0$. When a measurement is received (solid red edges), the belief transitions to $1$ with probability $p_0$ and to $0$ with probability $1-p_0$. That is, one measurement is sufficient to determine the state of the region. When no measurement is taken (blue dashed edges), or if a measurement has already been taken, the state does not change.}
+  \caption{Illustration of environment belief model for a single region, only transitions from initial state $p_0$ are shown. Bars denote the complementary probability, i.e. $\bar p = 1-p$. When a high-quality measurement is received (blue edges), the belief transitions to $1$ with probability $p_0$ and to $0$ with probability $1-p_0$, whereas a low-quality measurement yields certainty with probability $q$ but with probability $1-q$ results in an intermediate belief $p_-$ or $p_+$. When no measurement is taken (black) the state does not change. The full transition matrices are given in}
   \label{fig:envmdp}
 \end{figure}
 
-We assume that there are collections of regions of interest, where samples and/or obstacles may be located. Associated to each region is a belief state that evolves according to an MDP representing belief dynamics. A measurement is taken when the copter flies over a region.
+We assume that regions of interest have been extracted from low-resolution satellite imagery, along with prior probability estimates for the likelihood that the regions exhibit certain traits. Here we restrict attention to \emph{risk regions} that may contain obstacles the rover can not traverse, and \emph{target regions} that are likely places where scientific samples can be extracted. We associate to each region $R_i$ a belief MDP $\MDP_{R_i}$ with five states $\zeta_i \in \{ 0, p^i_-, p^i_0, p^i_+, 1\}$ and three inputs $v_i \in \{ N, W, S \}$ for (N)o measurement, (W)eak measurement, and (S)trong measurement. The transition matrices are $T_N = I_5$, 
+\begin{equation}
+  T_{S} = \left[\begin{smallmatrix}
+    1        &  0  &  0  &  0  &  0   \\
+    \bar p_- &  0  &  0  &  0  &  p_- \\
+    \bar p_0 &  0  &  0  &  0  &  p_0 \\
+    \bar p_+ &  0  &  0  &  0  &  p_+ \\
+    0        &  0  &  0  &  0  &  1
+  \end{smallmatrix}\right],
+  T_{W} = \left[\begin{smallmatrix}
+    1        &  0                &  0  &  0           &  0   \\
+    q\bar p_-&  \bar q \bar p_-  &  0  &  \bar q p_-  &  q p_- \\
+    q\bar p_0&  \bar q \bar p_0  &  0  &  \bar q p_0  &  q p_0 \\
+    q\bar p_+&  \bar q \bar p_+  &  0  &  \bar q p_+  &  q p_+ \\
+    0        &  0  &  0  &  0  &  1
+  \end{smallmatrix}\right].
+\end{equation}
+Here $q$ is a parameter denoting the quality of the weak measurement: if $q=0$ weak measurements are incapable of determining the true nature of the region, only intermediate beliefs $p_-$ and $p_+$ can be reached. For $q \in (0,1]$ there is a probability of a transition to a belief state 0 or 1. The outgoing transitions from $p_0$ are illustrated in Figure \ref{fig:envmdp}.
 
-\red{Can do simple model in Figure \ref{fig:envmdp}, or more elaborate Bernoulli model (next section)}
+Given belief MDPs $\MDP_{R_i}$ for every region of interest, we construct the environment model $M_{env}$ as the parallel product
+\begin{equation}
+  \MDP_{env} = \MDP_{R_1} \otimes_{par} \MDP_{R_1}  \otimes_{par} \ldots \otimes_{par} \MDP_{R_n}. 
+\end{equation}
 
+\paragraph{Specification}
 
-\paragraph{Specification:}
-
+The objective of the mission is to satisfy a scLTL specification $\varphi$ over propositions over states in $\MDP_{rov}$ and $\MDP_{env}$. Examples of such propositions include
 \begin{itemize}
-  \item Rover should collect a sample and avoid obstacles
-  \item Copter should land in safe area before battery is exhausted
+  \item Don't enter a risk region $R_1$ that may contain an obstacle: $\xi_r \not  \in R_1 \lor \xi_1 = 0$.
+  \item Collect a sample at region $R_2$: $\xi_r \in R_2 \land \xi_2 = 1$.
 \end{itemize}
 
-\section{Bernoulli belief}
+We posit that the rover has a time window of length $T_r$ to fulfill its mission, and that the copter has battery sufficient to operate for a time $T_c$. In addition, the copter must land in a pre-designated landing area $X_l$ at the end of the execution. Given these constraints, the challenge is to find strategies for both the copter and rover that maximize the probability that the science specification is fulfilled.
 
-\subsection{Belief model}
 
-Suppose we want to estimate an unknown label $\bar l \in \{ 0,1 \}$.
+\subsection{Turn-based solution}
+
+We decouple the problem by letting the copter execute first, followed by the rover. The goal of the copter is then one of exploring the uncertain environment in a way that maximizes the probability of success in the rover's execution. To solve this problem via sequential value iteration we convert the scLTL specification into a DFSA $\MDP_{\varphi}$ and consider the following two product systems:
+\begin{equation}
+\begin{aligned}
+  \MDP_{1} &= \left( \MDP_{rov} \otimes_{ser} \MDP_{env} \right) \otimes_{ser} \MDP_{\varphi}, \\
+  \MDP_{2} &= \MDP_{cop} \otimes_{ser} \MDP_{env}.
+\end{aligned}
+\end{equation}
+The serial connections are defined via connections that map the state of one system to the output of the next. These connections are defined as follows:
 \begin{itemize}
-  \item Prior distribution: $p(\bar l) = \begin{cases}
-    q   & \bar l=0 \\
-    1-q & \bar l=1
-  \end{cases}$
-  \item Measurement $m \sim p(m \mid \bar l) = \begin{cases}
-    s & \bar l=0, m = 0, \\
-    1-s & \bar l=0, m=1, \\
-    s & \bar l=1, m= 1, \\
-    1-s & \bar l=1, m=0.
-  \end{cases}$ with accuracy $s > 1/2$.
+  \item If the rover is adjacent to a region $R_i$ it triggers a (S)trong measurement of that region,
+  \item If the copter is at low altitude and in region $R_i$, it triggers a (S)trong measurement of that region,
+  \item If the copter is at high altitude and within distance $2$ of region $R_i$, it triggers a (W)eak measurement of that region,
+  \item The connection between the $\MDP_{rov} \otimes_{ser} \MDP_{env}$ product and $\MDP_{\varphi}$ is given by the truth value of atomic propositions for the state $(\xi_r, \xi_e)$.
 \end{itemize}
-We can thus write the posterior as
-\begin{equation}
-  p(\bar l \mid m) \propto p(m \mid \bar l) p(\bar l) = \begin{cases}
-    q s & \bar l=0, m=0, \\
-    q(1-s) & \bar l=0, m=1, \\
-    (1-q) s & \bar l=1, m=1, \\
-    (1-q)(1-s) & \bar l=1, m=0.
-  \end{cases}
-\end{equation}
-After re-normalizing we can the update $q$ depending on the measurement $m$ as 
-\begin{equation}
-  q \mapsto \begin{cases}
-    \frac{qs}{qs + (1-q)(1-s)} & m = 0, \\
-    \frac{q(1-s)}{q(1-s) + (1-q)s} & m = 1, 
-  \end{cases}
-\end{equation}
-These are the dynamics of the belief state. We assume that $m$ is sampled from the current belief $p(\bar l)$ which results in an MDP with state $q$ and action $s$:
-\begin{equation}
-\label{eq:bernoulli_mdp}
-\begin{aligned}
-  q & \longrightarrow \frac{qs}{qs + (1-q)(1-s)} \quad &  \text{w.p} \; & qs + (1-q)(1-s) \\
-  q & \longrightarrow \frac{q(1-s)}{q(1-s) + (1-q)s} \quad &  \text{w.p} \; & q(1-s) + (1-q)s 
-\end{aligned}
-\end{equation}
+Figure \ref{fig:agg} illustrates the two systems. We assume that the initial position $\xi_r^0$ of the rover is known, and let $\xi_\varphi^0$ be the initial state of the specification automaton. We propose the following two-step solution:
+\begin{enumerate}
+  \item For $\xi_1 = (\xi_r, \xi_e, \xi_\varphi)$ let $g(\xi_1', v') = \max( \ind_{X_f}(\xi_\varphi'), v' )$ and compute the value functions $V^1_t(\xi_1)$ for $t = T_r, T_r-1 \ldots, 0$ via the Bellman iterations
+  \begin{equation}
+  \label{eq:valit1}
+  \begin{aligned}
+      V^1_{T_r}(\xi_1) & = g(\xi_1, 0), \\
+      V^1_{t-1} (\xi_1) & = \max_{u_r} \sum_{\xi_1'} T(\xi_1' \mid \xi_1, u_r) g(\xi_1', V_t(\xi_1')).
+  \end{aligned}
+  \end{equation} 
+  \item For $\xi_2 = (\xi_c, \xi_e)$, compute the value functions $V^2_t(\xi_2)$ for $t = T_c, T_c-1, \ldots, 0$ via the Bellman iterations
+  \begin{equation}
+  \label{eq:valit2}
+  \begin{aligned}
+    V_{T_c}^2(\xi_2) & = \ind_{X_l} (\xi_c) \times V^1_0(\xi_r^0, \xi_e, \xi_\varphi^0), \\
+    V_{t-1}^2(\xi_2) & = \max_{u_c} \sum_{\xi_2'} T(\xi_2' \mid \xi_2, u_c) V^2_t(\xi_2').
+  \end{aligned}
+  \end{equation}
+\end{enumerate}
+The interpretation of these value functions are as follows: $V_t^1(\xi_r, \xi_e, \xi_\varphi)$ is the probability that the rover will satisfy its mission if at time $t$ the state of the rover-environment belief-specification automaton system is $(\xi_r, \xi_e, \xi_\varphi)$. The copter is tasked with maximizing this probability at the initial states $\xi_r^0, \xi_\varphi^0$ that the rover \emph{can not affect}, by updating the belief $\xi_e$ that it \emph{can affect} via environment exploration in the way most beneficial for the rover. In addition, the requirement that the rover must be in the landing zone $X_l$ at time $T_c$ has been incorporated in the value function. Thus, $V_t^2(x_c, x_e)$ represents the probability that the rover will have a successful execution, and that the copter can land in $X_l$, if the copter-environment state at time $t$ is $(x_c, x_e)$. In addition to the value functions, time-dependent policies that maximize the value functions can be extracted as the maximizing argument.
 
-\subsection{Belief abstraction}
+Both iterations \eqref{eq:valit1} and \eqref{eq:valit2} fall within the framework of sequential value iteration for parallel and serial products in Section \ref{sec:sequential_val_iter}. As a consequence there is no need to construct the aggregate transition matrices for $\MDP_1$ and $\MDP_2$.
 
-\subsubsection{Uniform abstraction}
 
-Consider an abstract state $\tilde q$ such that $|q - \tilde q| \leq \epsilon$, in an abstraction with state discretization $\eta$. The abstract state $\tilde q$ is updated in synchrony with $q$ according to
-\begin{equation}
-\begin{aligned}
-  \tilde q &  \longrightarrow \left \lfloor \frac{\tilde qs}{\tilde qs + (1-\tilde q)(1-s)} \right \rfloor_\eta \quad &  \text{if $q$ grows} \\
-  \tilde q & \longrightarrow \left \lfloor \frac{\tilde q(1-s)}{\tilde q(1-s) + (1-\tilde q)s} \right \rfloor_\eta \quad &  \text{if $q$ shrinks}
-\end{aligned}
-\end{equation}
-Let 
-\begin{equation}
-\begin{aligned}
-  f_1(q,s) = \frac{qs}{qs + (1-q)(1-s)}, \\
-  f_2(q,s) = \frac{q(1-s)}{q(1-s) + (1-q)s}.
-\end{aligned}
-\end{equation}
-Then, 
+\subsection{Illustrations}
+
+We demonstrate the features of the proposed solution in a few example scenarios.
+
+\paragraph{Scenario 1} Collect one sample of type $A$ and one sample of type $B$ while avoiding obstacles:
 \begin{equation*}
-\begin{aligned}
-  \mathbb{P} \left[ |q' - \tilde q'| \leq \epsilon \right] = \left[qs + (1-q)(1-s)\right] \\
-  \times \mathds{1} \left[ |f_1(q,s) - f_1(\tilde q,s)| \leq \epsilon - \frac{\eta}{2} \right] \\ + \left[q(1-s) + (1-q)s \right] \times \mathds{1} \left[ |f_2(q,s) - f_2(\tilde q,s)| \leq \epsilon - \frac{\eta}{2} \right]
-\end{aligned}
+  \left( \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sampleA} \right) \land \left( \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sampleB} \right)
 \end{equation*}
-It can be shown that
-\begin{equation*}
-\begin{aligned}
-  & |f_1(q,s) - f_1(\tilde q,s)| \\ 
-  & \; = s(1-s) \frac{|q - \tilde q|}{(qs + (1-q)(1-s))(\tilde qs + (1-\tilde q)(1-s))}, \\
-  & |f_2(q,s) - f_2(\tilde q,s)| \\ 
-  & \; = s(1-s) \frac{|q - \tilde q|}{(q(1-s) + (1-q)s)(\tilde q(1-s) + (1-\tilde q)s)}.
-\end{aligned}
-\end{equation*}
-Under the assumption $q = \tilde q$ it follows that
-\begin{equation}
-\begin{aligned}
-  \mathbb{P} \left[ |q' - \tilde q'| \leq \epsilon \mid |q-\tilde q| \leq \epsilon \right] \geq 1 - \sqrt{\frac{s(1-s) \epsilon}{\epsilon - \frac{\eta}{2}}}.
-\end{aligned}
-\end{equation}
+The maximum execution lengths are 15 for the rover and 20 for the copter, and the copter must return to its initial state at the end of its execution. Figure \ref{fig:workspace1} illustrates the workspace and Figure \ref{fig:values1} the resulting value functions. In this environment, the success probability for the rover is 12.4\% if copter-aided exploration is not available, as reflected by the purple color in the lower left corner of Figure \ref{fig:values1}. However, copter exploration lifts the success probability to 29.4\%. Note that this is the probability of success without assuming any additional information about the environment---the joint probability that a sample of type $A$ exists and that sample $B$ can be accessed is $0.64 \times 0.75 = 0.48$, which is thus an upper bound on the success probability of this mission. The increased success probability is solely due to the fact that the copter can explore, thus alleviating the rover from having to guess the true nature of the environment.
 
-\begin{itemize}
-  \item Pro: can use lowest $\bar s$ to get inequality that holds for all $s > \bar s$
-  \item Con: relatively high $\delta$.
-\end{itemize}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.6\columnwidth]{2figs/exp1-map.pdf}
+  \end{center}
+  \caption{Workspace where regions of interest $R_i$, $A_i$, and $B_i$ are marked for risk regions, sample A targets, and sample B targets, along with associated prior probabilities. The initial states $\xi_r^0$ and $\xi_c^0$ are marked, as well as the green region where the copter can safely land. Regions with $p=1$ are known and thus not modeled with belief state.}
+  \label{fig:workspace1}
+\end{figure}
 
-\subsubsection{Non-uniform abstraction}
-
-For a fixed $s$, consider the sequence
-\begin{equation}
-  c_0 = 1/2, \; c_{k+1} = f_1(c_k, s).
-\end{equation}
-Let each interval $[c_k, c_{k+1}]$ represent an abstract state and construct corresponding abstract states partitioning $[0, 1/2]$. Then the abstract model will be bisimilar to \eqref{eq:bernoulli_mdp}. The reason is that 
-\begin{equation}
-  f_1(\cdot, s) \circ f_2(\cdot, s) = Id.
-\end{equation}
-To get a finite abstraction, the abstract states contained in $[0, \gamma]$ and $[1- \gamma, 1]$ can be lumped together.
-
-\begin{itemize}
-  \item Pro: exact abstraction for given $s$: $0$-simulation
-  \item Con: is (probably) not $\delta$-simulation when there are multiple possible values of $s$
-\end{itemize}
-
-\paragraph{Commutative:} It holds that $f_1(\cdot, s) \circ f_1(\cdot, s') = f_1(\cdot, s') \circ f_1(\cdot, s)$ and similarly for $f_2$. Therefore the only thing affecting the estimate $q$ is the net number of positive measurements at each confidence level. For two confidence levels, we can then use the following abstract states:
-\begin{equation}
-  \{ (n_{s_1}, n_{s_2}) : n_{s_1}, n_{s_2} \in \mathbb{N} \}. 
-\end{equation}
-For a finite description, we can lump together states that yield values of $q$ very close to 1 or 0. We can get arbitrarily close to $\delta = 0$.
+\begin{figure}
+  \begin{center}
+    \footnotesize
+    \begin{tikzpicture}
+      \node[inner sep=0] (p1) {\includegraphics[height=0.24\columnwidth]{2figs/value-rov.pdf}};
+      \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p1.east)$) (p2) {\includegraphics[height=0.24\columnwidth]{2figs/value-cop.pdf}};
+      \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p2.east)$) (n1) {\includegraphics[height=0.24\columnwidth]{2figs/cbar.pdf}};
+      \node at ([yshift=2mm]$(p1.north)$) {$V_0^1(\xi_r, \xi_e^0, \xi_\varphi^0)$};
+      \node at ([yshift=2mm]$(p2.north)$) {$V_0^2(\xi_c, \xi_e^0)$};
+      \node at ([xshift=6mm]$(n1.north east)$) {$p = 0.48$};
+      \node at ([xshift=6mm]$(n1.south east)$) {$p = 0$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{Illustration of value functions. As can be seen, the advantage of the copter is equivalent to having the rover's initial state be near a target region.}
+  \label{fig:values1}
+\end{figure}
 
 \section{Hardware Experiments}
 
