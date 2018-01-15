@@ -323,6 +323,8 @@ It follows that the Bellman update $V \mapsto \bellman V$ for a serial product c
 As a consequence, the Bellman recursion can be computed without computing the transition matrices for the aggregate system $\MDP_1 \otimes_{ser} \MDP_2$. That is, instead of dealing with objects of size $\mathcal O(| \X_1 \times \X_2 |^2)$, we can deal with objects of size $\mathcal O(|\X_1|^2 + |\X_2|^2)$. The procedure generalizes to serial products of arbitrary length with a potential for significant computational savings. 
 
 \red{Is this well known/trivial??}
+
+\sofie{Take a look at this: \url{https://arxiv.org/abs/1507.00509}}
 \begin{remark}
   The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
   \begin{equation}
