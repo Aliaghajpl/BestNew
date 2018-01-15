@@ -6,7 +6,7 @@
 \usepackage{hyperref, booktabs}
 \usepackage{biblatex}
 
-\pgfplotsset{compat=1.15}
+\pgfplotsset{compat=1.14}
 
 \usetikzlibrary{calc, automata}
 \newlength\figureheight
@@ -30,7 +30,7 @@
 \newtheorem{example}{Example}
 
 \newcommand{\red}[1]{{\color{red} #1 }}
-
+\newcommand{\sofie}[1]{{\color{orange} #1 }}
 \begin{document}
 
 %\title{\huge Sequential Value Iteration for Modular Systems Applied to Collaborative Space Robotics}
@@ -50,7 +50,7 @@
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions, we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments, we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -88,7 +88,7 @@
 \subsection{Preliminaries}
 
 \begin{itemize}
-  \item $\mathcal P(\X)$: probability densities over $\X$
+  \item $\mathcal P(\X)$: probability densities \sofie{[or distributions?]} over $\X$
 \end{itemize}
 
 \subsection{Paper layout}
@@ -111,7 +111,7 @@ We first define Markov decision processes over finite state spaces as follows \c
     \item $\tr$ is a conditional stochastic kernel that assigns to each state $x\in \X$ and control $u\in \U$ a probability density $\tr(\cdot\mid x,u)$ over $\X$.
   \end{itemize}
 \end{definition}
-
+\sofie{I'd refer to probability distributions.  The notion $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$ doesnt hold for a density. As alternative the probability distribution $T(\cdot)$ with the associated probability density distribution$t$ such that $ T(A)=\int_A t(x)dx$.}
 An execution of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$ for inputs $u_k \in \U$. 
 
 \subsection{Specifications}
