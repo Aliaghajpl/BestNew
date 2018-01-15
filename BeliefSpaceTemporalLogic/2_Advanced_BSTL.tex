@@ -45,12 +45,12 @@
 
 %\title{\huge Satisfaction-oriented Active Exploration: Applications to Safety-critical Mars Rover-Copter Team}
 
-\author{PN et al}
+\author{Anonymous submission}
 
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and by using sparse tensor product representations for value function and control policy. With hardware experiments we demonstrate that the resulting policy makes intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and demonstrate on hardware that the resulting policy makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -61,45 +61,42 @@
 
 \section{Introduction}
 
-\begin{itemize}
-  \item Main (potential) contributions:
-  \begin{itemize}
-    \item Reactive control in environment belief space
-    \item Contract with low-level safety-critical? controller
-    \item Cooperative robotics (copter explores to maximize probability that rover can satisfy spec)
-    \item Efficient sequential value iteration for product MDPs
-    \item More difficult: label-based abstraction for quadrotor (belief or non-belief) dynamics?? 
-  \end{itemize}
-  \item Other ideas
-  \begin{itemize}
-  	\item Abstract systems to MDPs modularly based on relative degree (e.g. velocities and positions) and connect the resulting MDPs in series. Problem: connection not sparse. What is continuous analogue?
-  \end{itemize}
-\end{itemize}
+Map exploration and task planning are crucial aspects of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is done to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for achieving a given specification. 
+
+We are motivated by autonomy in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important in such a mission due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. By computing the most important areas to explore, the autonomy and efficiency of the team can be improved. 
+
+Our approach lies at the intersection of formal synthesis methods and optimal control. The exploration problem can be phrased as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and do value iteration via sequential back stepping, which avoids construction of the overall system. 
 
 \begin{itemize}
   \item Work for literature review
   \begin{itemize}
-    \item \cite{Papusha2016}
-    \item \cite{Alora2016}
-    \item Maybe (need to read): \cite{Lavaei2017}
+    \item Optimal control/LTL approaches such as \cite{Papusha2016} and \cite{Alora2016}
+    \item Some pointers for value iteration and MDP approaches
+    \item Short review of current exploration methods
   \end{itemize}
 \end{itemize}
 
-\subsection{Preliminaries}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.8\columnwidth]{figs/heli-rover.png}
+  \end{center}
+  \caption{Two-asset Mars exploration team.}
+  \label{fig:heli-rover}
+\end{figure}
+
+\subsection{Paper layout}
+
+\section{Preliminaries}
+
+Notation
 
 \begin{itemize}
   \item $\mathcal P(\X)$: probability densities over $\X$
 \end{itemize}
 
-\subsection{Paper layout}
-
-\section{Markov Decision Processes and Temporal Logics}
-
-We give definitions related to Markov Decision Process (MDPs), followed by basic concepts related to linear temporal logics.
-
 \subsection{Markov Decision Processes}
 
-We first define Markov decision processes over finite state spaces as follows \cite{hll1996}.
+A finite Markov decision processes is defined as follows \cite{hll1996}.
 % \cite{mt1993,bertsekas2004stochastic}.
 \begin{definition}
 \label{def:MDP}
@@ -112,7 +109,7 @@ We first define Markov decision processes over finite state spaces as follows \c
   \end{itemize}
 \end{definition}
 
-An execution of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$ for inputs $u_k \in \U$. 
+An \emph{execution} of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$ for inputs $u_k \in \U$. A \emph{policy} $\pol = \pol_0 \pol_1 \ldots$ is a sequence of conditional probability distributions $\pol_k( \cdot \mid x_0, \ldots, x_{k})$. We say that a policy is \emph{Markov} if $\pol_k( \cdot \mid x_0, \ldots, x_{k}) = \pol_k( \cdot \mid x_{k})$ for all $k$. If a trajectory is such that $u_k \sum \pol_k ( \cdot \mid x_0, \ldots, x_{k})$ we say that the trajectory is \emph{generated} by $\pol$.
 
 \subsection{Specifications}
 
@@ -153,37 +150,41 @@ To define the interpretation of a formula, i.e. the \emph{semantics}, consider a
 
 We say that a trajectory $\mathbf{x} = x_0 x_1 x_2 \ldots$ satisfies a specification $\psi$, written $\mathbf{x} \models \psi$, if the generated word $\word =\lab(x_0) \lab(x_1) \lab(x_2) \ldots$ satisfies $\psi$ at time 0, i.e. $\word_0 \models \psi$.
 
-\subsection{Problem Statement}
 
-The objective of this work is to design a policy $\pol$ such that a specification $\psi$ is satisfied with a given probability.
+\section{Problem Statement}
+
+A common way to represent a map for planning purposes is to attach labels such as ``sand'' or ``rock'' to different locations. Uncertainty in the environment can then be captured with MDPs $\MDP_{e_i}$ that model belief dynamics over labels. Transitions occur when measurements are taken from on-board sensors, i.e. the robots need to be physically close to a region to determine its labels. 
+
+Belief MDPs can then be combined with models of robots that can move around and take measurements, resulting in systems such as the one in Figure \ref{fig:robot-env}. In an uncertain environment satisfaction of a given specification is a function of the true environment, and thus stochastic. Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task, in particular we seek to minimize the entropy of the Bernoilli random variable corresponding to specification satisfaction. Minimizing the entropy promotes both exploration that leads to high confidence that the specification can be satisfied, but also exploration that potentially shows that the task can not be satisfied. Also the latter is a desirable outcome as it admits resources to be redirected towards feasible objectives.  
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+    \node[draw, node distance=2cm, rounded corners] (rover) {$\MDP_{robot1}$};
+    \node[draw, node distance=1cm, rounded corners, below of=rover] (rover2) {$\MDP_{robot2}$};
+    \node[draw, node distance=2cm, yshift=1.3mm, rounded corners, right of=rover] (e1) {$\MDP_{e_1}$};
+    \node[node distance=0.5cm, below of=e1] (e2) {$\vdots$};
+    \node[draw, node distance=0.7cm, rounded corners, below of=e2] (e3) {$\MDP_{e_3}$};
+
+    \draw[-latex] (rover) -- (e1);
+    \draw[-latex] (rover2) -- (e1);
+    \draw[-latex] (rover) -- (e3);
+    \draw[-latex] (rover2) -- (e3);
+  \end{tikzpicture}
+  \end{center}
+  \caption{Illustration of a cooperative robotics system with two robots that can affect the belief states of environment labels via measurements.}
+  \label{fig:robot-env}
+\end{figure}
+
 \begin{problem}
 \label{prob:main}
-  Consider a model $\MDP = (\X, \rho, \tr, \U)$ generating trajectories $\mathbf{b} = x_0 x_1 x_2 \ldots$, a labeling function $\lab : \X \rightarrow AP$, and a scLTL formula $\psi$ defined over $AP$. Construct a policy $\pol$ such that
+  Consider MDP models of robots model $\MDP_{r_1}$ and $\MDP_{r_2}$ and MDP models for environment belief dynamics $\MDP_{e_1}, \ldots \MDP_{e_n}$, together with a task $\varphi$ for $\MDP_1$ expressed in scLTL. Design a policy $\pol^1$ for $\MDP_{r_1}$ and a policy $\pol^2$ for $\MDP_{r_2}$ such that for the resulting executions $\mathbf{x}_1, \mathbf{x}_2, \mathbf{e}$,
   \begin{equation}\label{eq:probstatement}
-    \Prob_\init^\pol ( \mathbf{b} \models \psi )\geq p,
+    - \Prob_\init^\pol ( (\mathbf{x}_1, \mathbf{e}) \models \varphi ) \log \left( \Prob_\init^\pol ( (\mathbf{x}_1, \mathbf{e}) \models \varphi ) \right)
   \end{equation}
-  where $p$ is either given or to be maximized.
+  is minimized.
 \end{problem}
 
-\subsection{Policy Synthesis via Value Iteration}
-
-Policy synthesis for a scLTL specification over a space $\X$ is equivalent to reachability of $\X\times Q_f$ on the product system $\MDP \otimes \FSA_\psi$. In this case, the Bellman operator is
-\begin{equation}
-\label{eq:V_recopt_inf_mu}
-%\begin{aligned}
-  \bellman_\pol (\mathbf V)(b,q)\! = \hspace{-1mm} \int_{\X} \hspace{-1mm} \max \left( \mathbf 1_{Q_f}(q'), \!\mathbf V( b'\!, q') \right)\! {\tr}(\mathrm{d} b' |b,\pol(b,q))\!
-%\end{aligned}
-\end{equation}
-with the implicit DFSA transitions  $q' =\delta_\FSA(q,\lab(b'))$, %\red{$\mathrm{d} b'= d b'\times\{q'\}$},
-and similarly for the policy-optimal version $\bellman_*$.  For the converged value function $\mathbf V^\infty_* =  \lim_{K\rightarrow\infty}\bellman_*^K\! \mathbf V^0$, now expresses the value of
-\begin{equation}
-\label{eq:prob:_optimal} 
- \sup_{\pol}\mathbf{P}_\init^{\pol}( {\mathbf{b}} \vDash\! \psi)\! =\!
-  \int_{\X} \! \max \left( \mathbf 1_{Q_f}( q'), 
-   \mathbf V^\infty_*(x_0, q') \right) \init(\mathrm{d} x_0) \!
-\end{equation}
-with the associated deterministic and stationary policy $ \pol_*=(\pol_*,\pol_*,\ldots)$ obtained as the maximizing argument. 
-This policy defined for the product MDP $\MDP \otimes \FSA_\psi$, maps to control actions as a function of the state $(b,q) \in \X \times Q$, and can be translated to a non-stationary policy for the original MDP $\MDP$ that includes $\FSA_\psi$ as a memory model.
+An advantage of considering the scLTL fragment is that policy synthesis for a scLTL specification over a space $\X$ is equivalent to reachability of $\X\times Q_f$ on the product system $\MDP \otimes_{ser} \FSA_\psi$, where $\FSA_\varphi$ is a finite-state automaton constructed from $\varphi$ \cite{Belta2017} with accepting set $Q_f$. A finite-state automaton is a special case of an MDP, thus also the product system is an MDP. It is well known that reachability probability can be computed via value iteration of a Bellman operator \cite{Baier2008}. In the next section we discuss value iteration for the type of product MDPs we are interested in, and show that there is no need to compute the aggregate systems.
 
 
 \section{Sequential Value Iteration}
@@ -192,13 +193,9 @@ This policy defined for the product MDP $\MDP \otimes \FSA_\psi$, maps to contro
 
 \subsection{Networks of MDPs}
 
-Consider two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \init_2, \U_2, \tr_2)$. Next we introduce the parallel and serial products between the two.
+We first define two types of products between two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \init_2, \U_2, \tr_2)$: serial and parallel products.
 \begin{definition}
-  The \textbf{parallel product} of $\MDP_1$ and $\MDP_2$ is the MDP 
-  \begin{equation}
-    \MDP_1 \otimes_{par} \MDP_2 = (\X_1 \times \X_2, \init_{par}, \U_1 \times \U_2, \tr_{par}),
-  \end{equation}
-  where
+  The \textbf{parallel product} of $\MDP_1$ and $\MDP_2$ is the MDP $\MDP_1 \otimes_{par} \MDP_2 = (\X_1 \times \X_2, \init_{par}, \U_1 \times \U_2, \tr_{par})$, where
   \begin{equation}
     \init_{par}(x_1, x_2) = \init_1(x_1) \init_2(x_2)
   \end{equation}
@@ -212,10 +209,7 @@ Consider two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \
 \end{definition}
 
 \begin{definition}
-  The \textbf{serial product} of $\MDP_1$ and $\MDP_2$ given a \textbf{connection} $C : \X_1 \rightarrow \U_2$ is the MDP 
-  \begin{equation}
-    \MDP_1 \otimes_{ser} \MDP_2 = (\X_1 \times \X_2, \init_{ser}, \U_1, \tr_{ser}),
-  \end{equation}
+  Given a \textbf{connection} $C : \X_1 \rightarrow \U_2$, the \textbf{serial product} of $\MDP_1$ and $\MDP_2$ is the MDP $\MDP_1 \otimes_{ser}^C \MDP_2 = (\X_1 \times \X_2, \init_{ser}, \U_1, \tr_{ser})$,
   where
   \begin{equation}
     \init_{ser}(x_1, x_2) = \init_1(x_1) \init_2(x_2)
@@ -228,23 +222,18 @@ Consider two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \
   \end{aligned}
   \end{equation}
 \end{definition}
-That is, a transition $x_1 \rightarrow x_1'$ in $\MDP_1$ triggers an action $C(x_1')$ in $\MDP_2$ that results in a transition in $x_2' \sim T_2(\cdot \mid x_2, C(x_1'))$
+In a parallel product there is no interaction between the two MDPs. Conversely, in a serial product a transition $x_1 \rightarrow x_1'$ in $\MDP_1$ triggers an action $C(x_1')$ in $\MDP_2$ that results in a transition in $x_2' \sim T_2(\cdot \mid x_2, C(x_1'))$
 
-\begin{itemize}
-  \item \red{Can we do more general MDP graph?}
-\end{itemize}
+Both products can be generalized to more than two components and products can also be nested: e.g. $\MDP_1 \otimes_{ser}^C \left( \MDP_2 \otimes_{par} \MDP_3 \right)$. Large nested products lead to large state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. However, we next show that value iteration can be done sequentially over subsystems without computing the aggregate transition matrices.
+
 
 \subsection{Sequential Iteration of Bellman Operator}
-
-\begin{itemize}
-  \item \red{Can we include action in Bellman op?}
-\end{itemize}
 
 Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator $\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
 \begin{equation}
   (\bellman V) (x) = \max_{\pol \in (\X \rightarrow \U)} \sum_{x' \in \X}  g(x', V(x')) T(x' \mid x, \pol(x)).
 \end{equation}
-The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operator $\bellman$ is found via the iterations
+The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operator $\bellman$ is then found via the iterations
 \begin{subequations}
 \label{eq:value_iter}
   \begin{align}
@@ -273,37 +262,7 @@ The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operato
   computes the value function at times $T-1, T-2, \ldots, 0$.
 \end{example}
 
-We now consider the Bellman iteration step for parallel and serial product MDPs. For a parallel MDP we get
-\begin{equation*}
-\begin{aligned}
-  \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1 \times \U_2)} \sum_{x_1', x_2' \in \X_1 \times \X_2}  g(x_1', x_2', V^*(x_1', x_2')) \\
-  \times T_{par}(x_1', x_2' \mid x_1, x_2, \pol(x_1, x_2)) \\
-  = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1 \times \U_2)} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) \\
-    \sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) T_2(x_2' \mid x_2, \pol(x_1, x_2)).
-\end{aligned}
-\end{equation*}
-It follows that the Bellman update $V \mapsto \bellman V$ for a parallel product can be computed sequentially as follows:
-\begin{equation}
-\begin{aligned}
-  W_2(x_1', x_2') &= g(x_1', x_2', V(x_1', x_2')) \\
-  W_1(x_1, x_1', x_2) &= \max_{\pol_2: \X_1 \times \X_2 \rightarrow \U_2} \sum_{x_2' \in \X_2}  T_2(x_2' \mid x_2, \pol_2(x_1, x_2)) W_2(x_1', x_2')  \\
-  \bellman V(x_1, x_2) &= \max_{\pol_1: \X_1 \times \X_2 \rightarrow \U_1}  \sum_{x_1' \in \X_1}  T_1(x_1' \mid x_1, \pol_1(x_1, x_2)) W_1(x_1', x_2)
-\end{aligned}
-\end{equation}
-
-\red{
-\begin{itemize}
-  \item Decomposition requires that $W_1$ is independent of $x_1$. Satisfied if:
-  \begin{itemize}
-    \item Decentralized policy is optimal. When is this true?
-    \item We consider policy $\mu_2 = \mu_2(x_1', x_2)$ (i.e. $\MDP_1$ moves first).
-    \item If there is no policy maximization (e.g., if it is part of a serial product)
-  \end{itemize}
-\end{itemize}
-
-}
-
-For a serial product we get
+We now consider the Bellman iteration product MDPs. For a serial product we get
 \begin{equation*}
 \begin{aligned}
   \bellman V (x_1, x_2) & = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1', x_2' \in \X_1 \times \X_2}  g(x_1', x_2', V(x_1', x_2')) \\
@@ -317,12 +276,34 @@ It follows that the Bellman update $V \mapsto \bellman V$ for a serial product c
 \begin{aligned}
   W_2(x_1', x_2') & = g(x_1', x_2', V(x_1', x_2')) \\
   W_1(x_1', x_2) & = \sum_{x_2' \in \X_2}  T_2(x_2' \mid x_2, C(x_1')) W_2(x_1', x_2'), \\
-  \bellman V(x_1, x_2) & = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) W_1(x_1', x_2).
+  \bellman V(x_1, x_2) & = \max_{\pol} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) W_1(x_1', x_2).
 \end{aligned}
 \end{equation*}
-As a consequence, the Bellman recursion can be computed without computing the transition matrices for the aggregate system $\MDP_1 \otimes_{ser} \MDP_2$. That is, instead of dealing with objects of size $\mathcal O(| \X_1 \times \X_2 |^2)$, we can deal with objects of size $\mathcal O(|\X_1|^2 + |\X_2|^2)$. The procedure generalizes to serial products of arbitrary length with a potential for significant computational savings. 
+The procedure generalizes immediately to $n$-length serial products and the sequential updates
+\begin{equation}
+\label{eq:general_decomp}
+\begin{aligned}
+  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
+  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_1', \ldots, x_{i-1}')) \\ 
+   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
+    \end{aligned} \right].
+\end{aligned}
+\end{equation}
 
-\red{Is this well known/trivial??}
+\begin{remark}
+  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \X_1 \times \ldots \times \X_{i-1} \rightarrow \U_i$. In the latter case the connection potentially becomes a non-sparse object.
+\end{remark}
+
+In addition, if $\MDP_{i+1}$ is itself a serial or parallel product, \eqref{eq:general_decomp} can again be decomposed. If for instance $\MDP_{i} = \MDP_{i_1} \otimes_{par} \MDP_{i_2}$ is a parallel product we can write $x_i = (x_{i_1}, x_{i_2})$ and \eqref{eq:general_decomp} can be computed as
+\begin{equation}
+\begin{aligned}
+  & W_{i_1}(x_1', \ldots, (x_{i_1}', x_{i_2}), \ldots, x_n) \\
+  & \quad = \sum_{x_{i_2}' \in \X_{i_2}} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_1', \ldots, x_{i-1}') ), \\
+  & W_{i-1}(x_1', \ldots, (x_{i_1}, x_{i_2}), \ldots, x_n) \\
+  & \quad = \sum_{x_{i_1}' \in \X_{i_1}} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_1', \ldots, x_{i-1}') ). \\
+\end{aligned}
+\end{equation}
+As a consequence, for any aggregate system constructed from serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing aggregate transition probabilities. The sequential approach is advantageous when the connections are sparse, i.e. the connection mappings $C$ can be compactly represented.
 
 \begin{remark}
   The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
@@ -330,8 +311,8 @@ As a consequence, the Bellman recursion can be computed without computing the tr
   \label{eq:tensor_sequential}
   \begin{aligned}
       & W_{x_1' \ldots, x_n'} = g(x_1', \ldots, x_n', V_{x_1', \ldots, x_n'}) \\
-      & \text{for $i = n, n-1, \ldots, 2$}: \\
-      & \quad W_{x_1'\ldots x_i x_{i+1} \ldots x_n'} = U_{x_{i-1}}^{u_i} T_{u_i x_i}^{x_i'}  W_{x_1'\ldots x_i' x_{i+1} \ldots x_n'} \quad \\
+      & \text{for $k = n, n-1, \ldots, 2$}: \\
+      & \quad W_{x_1'\ldots x_{k-1}' x_{k} \ldots x_n} = U_{x_{k-1}}^{u_k} T_{u_k x_k}^{x_k'}  W_{x_1'\ldots x_k' x_{k+1} \ldots x_n'} \quad \\
       & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
   \end{aligned}
   \end{equation}
@@ -343,20 +324,18 @@ As a consequence, the Bellman recursion can be computed without computing the tr
   Eq \eqref{eq:tensor_naive} involves the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
 \end{remark}
 
-\begin{example}
   \begin{figure}[h]
     \setlength\figurewidth{0.8\columnwidth} 
     \setlength\figureheight{0.4\columnwidth} 
+    \begin{center}
     \input{2figs/scale}
+    \end{center}
     \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
     \label{fig:scalability}
   \end{figure}
+\begin{example}
   We demonstrate the advantage of sequential value iteration with a numerical example. We consider $k$-length serial products of MDPs with two actions and six states each; the total number of states in such a product is $6^k$. For increasing values of $k$ we compute the probability of reaching a certain part of the state space by sequential value iteration, and by naively forming the overall transitions matrices. Figure \ref{fig:scalability} illustrates the computation time for increasing values of $k$ over 10 trials. As can be seen, the advantage of sequential value iteration over the naive approach is significant.
 \end{example}
-
-\begin{remark}
-  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \X_1 \times \ldots \times \X_{i-1} \rightarrow \U_i$. In the latter case the connection potentially becomes a non-sparse object. \red{Can we restrict the format of the connection to allow for a sparse representation?}
-\end{remark}
 
 \begin{remark}
   \red{Talk about extension to non-deterministic products by introducing a minimization term. Point out connection to errors in abstractions.} 
@@ -385,6 +364,11 @@ Possible sparse representations
     \item Con: Don't know how to update components, convergence not understood
   \end{itemize}
 \end{itemize}
+
+\subsection{Related work}
+
+A generalization of serial and parallel products are \emph{factored MDPs} \cite{Boutilier2000}. In a factored MDP with local states $x_1, \ldots, x_n$ the state update for $x_i$ only depends on the \emph{scope} $C_i$, i.e. $T(x_i \mid x) = T(x_i \mid x_j, j \in C_i)$. Evidently, this structure encompasses parallel and serial products: in a serial product $C_i = \{ i-1, i \}$, whereas in a parallel product $C_i = \{ i \}$. The value function for a factored MDP is not necessarily sparse; a reasonable approach is therefore to resort to approximate methods and represent the value function as a linear combination of factored basis functions. Approximate algorithms for the standard reward-maximizing problem include \cite{Guestrin2003} for approximate policy iteration and approximate linear programming, and \cite{Szita2008} for approximate value iteration. Other work utilizes symbolic representations to improve scalability \cite{Boutilier2000}.
+
 
 \section{Case Study}
 
@@ -432,7 +416,8 @@ We assume that both robots freely can move east, north, west, or south between t
 
 \paragraph{Low-level Robot Controllers}
 
-How quadrotors are controlled to move between discrete states. \red{Can we provide some guarantees under reasonable assumptions?}
+How quadrotors are controlled to move between discrete states.
+
 
 \paragraph{Environment Belief Model}
 
@@ -495,14 +480,14 @@ We posit that the rover has a time window of length $T_r$ to fulfill its mission
 
 \subsection{Turn-based solution}
 
-We decouple the problem by letting the copter execute first, followed by the rover. The goal of the copter is then one of exploring the uncertain environment in a way that maximizes the probability of success in the rover's execution. To solve this problem via sequential value iteration we convert the scLTL specification into a DFSA $\MDP_{\varphi}$ and consider the following two product systems:
+We decouple the problem by letting the copter execute first, followed by the rover. The goal of the copter is then one of exploring the uncertain environment in a way that maximizes knowledge about the satisfiability of the rover task. To solve this problem via sequential value iteration we convert the scLTL specification into a DFSA $\MDP_{\varphi}$ and consider the following two product systems:
 \begin{equation}
 \begin{aligned}
   \MDP_{1} &= \left( \MDP_{rov} \otimes_{ser} \MDP_{env} \right) \otimes_{ser} \MDP_{\varphi}, \\
   \MDP_{2} &= \MDP_{cop} \otimes_{ser} \MDP_{env}.
 \end{aligned}
 \end{equation}
-The serial connections are defined via connections that map the state of one system to the output of the next. These connections are defined as follows:
+The serial connections are defined via connections that map the state of one system to the input of the next. These connections are defined as follows:
 \begin{itemize}
   \item If the rover is adjacent to a region $R_i$ it triggers a (S)trong measurement of that region,
   \item If the copter is at low altitude and in region $R_i$, it triggers a (S)trong measurement of that region,
@@ -528,7 +513,7 @@ Figure \ref{fig:agg} illustrates the two systems. We assume that the initial pos
   \end{aligned}
   \end{equation}
 \end{enumerate}
-The interpretation of these value functions are as follows: $V_t^1(\xi_r, \xi_e, \xi_\varphi)$ is the probability that the rover will satisfy its mission if at time $t$ the state of the rover-environment belief-specification automaton system is $(\xi_r, \xi_e, \xi_\varphi)$. The copter is tasked with maximizing this probability at the initial states $\xi_r^0, \xi_\varphi^0$ that the rover \emph{can not affect}, by updating the belief $\xi_e$ that it \emph{can affect} via environment exploration in the way most beneficial for the rover. In addition, the requirement that the rover must be in the landing zone $X_l$ at time $T_c$ has been incorporated in the value function. Thus, $V_t^2(x_c, x_e)$ represents the probability that the rover will have a successful execution, and that the copter can land in $X_l$, if the copter-environment state at time $t$ is $(x_c, x_e)$. In addition to the value functions, time-dependent policies that maximize the value functions can be extracted as the maximizing argument.
+The interpretation of these value functions are as follows: $V_t^1(\xi_r, \xi_e, \xi_\varphi)$ is the probability that the rover will satisfy its mission if at time $t$ the state of $\MDP_1$ is $(\xi_r, \xi_e, \xi_\varphi)$. The copter is tasked with minimizing the entropy at the initial states $\xi_r^0, \xi_\varphi^0$ that the rover \emph{can not affect}, by updating the belief $\xi_e$ that it \emph{can affect} via environment exploration in the way most beneficial for task knowledge. In addition, the requirement that the rover must be in the landing zone $X_l$ at time $T_c$ has been incorporated in the value function. Thus, $V_t^2(x_c, x_e)$ represents the probability that the rover will have a successful execution, and that the copter can land in $X_l$, if the copter-environment state at time $t$ is $(x_c, x_e)$. In addition to the value functions, time-dependent policies that maximize the value functions can be extracted as the maximizing argument.
 
 Both iterations \eqref{eq:valit1} and \eqref{eq:valit2} fall within the framework of sequential value iteration for parallel and serial products in Section \ref{sec:sequential_val_iter}. As a consequence there is no need to construct the aggregate transition matrices for $\MDP_1$ and $\MDP_2$.
 
