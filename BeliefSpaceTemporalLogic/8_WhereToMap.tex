@@ -34,7 +34,7 @@
 % paper title
 \title{\huge Mobile Eye in the Sky: Copter-Rover Coordination for Space Exploration}
 
-%\author{Takahiro Sasaki, Kyohei Otsu, Ali-akbar Agha-mohammadi, Kamak Ebadi}
+%\author{Takahiro Sasaki, Kyohei Otsu, Ali-akbar Agha-mohammadi, Kamak Ebadi, Rohan}
 
 \maketitle
 
@@ -140,6 +140,10 @@ The measurement model describes the probability distribution over all possible o
 \pr{Proposed Scenario}
 The proposed scenario is given in Algorithm~\ref{alg:1}.
 
+
+(the number of copter's flights)
+
+
 \begin{algorithm}[!ht]
 \caption{Scenario for rover/copter exploration}
 \label{alg:1}
@@ -149,12 +153,12 @@ Making an initial map $m=m^s$ using the satellite's image\;
 %%%%
 Choose an initial rover's path $x^r_{0:i}$ by the rover path planner (Section~\ref{sec:r})\;
 %%%%
-\For{$1$ \KwTo $n$ (the number of copter's flights)}{
-    Choose the rover/copter paths $x^r_{0:i}$ and $x^c_{0:k}$ by the rover/copter path planner (Section~\ref{sec:r/c})\;
-    Update the map $m$ using the copter's images $z^{c_j}_{0:k}$\;
-    Keep a rover tracking until next viewpoint or goal while propagating the rover covariance and updating\;
+\For{$j=1$ \KwTo $n$ }{
+    Choose the rover/copter paths $x^r_{0:i}$ and $x^{c_j}_{0:k}$ by the rover/copter path planner (Section~\ref{sec:r/c})\;
+    Update the map $m$ using the copter's images $z^{c_j}_{0:N}$\;
+    Keep a rover tracking until next viewpoint or goal while propagating the rover covariance and updating the map $m$ using the rover's images $z^{r_j}_{0:k}$\;
 }
-\Return distance and covariance of the rover at the goal $(d_{0,T}, P_T)$
+\Return distance and covariance of the rover at the goal $(d_{0,T}, P^r_T)$
 \end{algorithm}
 
 
