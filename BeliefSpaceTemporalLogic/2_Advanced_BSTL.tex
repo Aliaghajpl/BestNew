@@ -50,7 +50,7 @@
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotic system with a copter and a rover. The copter explores an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We mitigate the curse of dimensionality for this large system by leveraging its decomposed nature, and demonstrate on hardware that the resulting policy makes intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotics system with a copter and a rover. The goal of the copter is to explore an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We formulate the problem as a two-step dynamical program and mitigate the curse of dimensionality for this large system by leveraging its decomposed nature. We demonstrate in simulations and on hardware that the resulting policy makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -61,33 +61,35 @@
 
 \section{Introduction}
 
-Map exploration and task planning are crucial aspects of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is done to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for achieving a given specification. 
+Map exploration and task planning are components aspects of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for achieving a given task. 
 
-We are motivated by autonomy in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important in such a mission due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. By computing the most important areas to explore, the autonomy and efficiency of the team can be improved. 
+We are motivated by autonomy in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
 
-Our approach lies at the intersection of formal synthesis methods and optimal control. The exploration problem can be phrased as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and do value iteration via sequential back stepping, which avoids construction of the overall system. 
+Our approach lies at the intersection of formal synthesis methods and optimal control. The exploration problem can be phrased as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 
 \begin{itemize}
-  \item Work for literature review
-  \begin{itemize}
-    \item Optimal control/LTL approaches such as \cite{Papusha2016} and \cite{Alora2016}
-    \item Some pointers for value iteration and MDP approaches
-    \item Short review of current exploration methods
-    \item read this earlier work too: \url{https://arxiv.org/abs/1507.00509} Also there is a reference in this paper to work they build on that has been developed for belief space models.
-  \end{itemize}
+	\item \textcolor{red}{Short review of state-of-the-art mapping methods}
 \end{itemize}
+
+Three principal methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Unfortunately, all three methods are limited to finite-state systems of moderate size. For systems with continuous state spaces, or systems that are very large, approaches include approximate dynamic programming (also known as reinforcement learning) \cite{Powell2011} and abstraction-based methods \cite{Zamani2015,Haesaert2017}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem.
+
+
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.8\columnwidth]{figs/heli-rover.png}
   \end{center}
-  \caption{Two-asset Mars exploration team.}
+  \caption{Cooperative robotics team for Mars exploration.}
   \label{fig:heli-rover}
 \end{figure}
 
 \subsection{Paper layout}
 
+The following Section \ref{sec:preliminaries} introduces pertinent notation along with basics of probabilistic systems and temporal logics. Subsequently, Section \ref{sec:problem} introduces the problem we seek to solve, with our proposed solution in Section \ref{sec:solution}. We demonstrate the approach in a Mars-inspired case study in Section \ref{sec:casestudy}, and report experiments performed on our hardware implementation in Section \ref{sec:hardware}. The paper is concluded in Section \ref{sec:conclusion}.
+
+
 \section{Preliminaries}
+\label{sec:preliminaries}
 
 Notation
 
@@ -152,7 +154,8 @@ To define the interpretation of a formula, i.e. the \emph{semantics}, consider a
 We say that a trajectory $\mathbf{x} = x_0 x_1 x_2 \ldots$ satisfies a specification $\psi$, written $\mathbf{x} \models \psi$, if the generated word $\word =\lab(x_0) \lab(x_1) \lab(x_2) \ldots$ satisfies $\psi$ at time 0, i.e. $\word_0 \models \psi$.
 
 
-\section{Problem Statement}
+\section{Problem Setup}
+\label{sec:problem}
 
 A common way to represent a map for planning purposes is to attach labels such as ``sand'' or ``rock'' to different locations. Uncertainty in the environment can then be captured with MDPs $\MDP_{e_i}$ that model belief dynamics over labels. Transitions occur when measurements are taken from on-board sensors, i.e. the robots need to be physically close to a region to determine its labels. 
 
@@ -176,23 +179,100 @@ Belief MDPs can then be combined with models of robots that can move around and 
   \label{fig:robot-env}
 \end{figure}
 
+To make things more concrete, consider the following components:
+\begin{enumerate}
+	\item A finite MDP $\MDP_{rov}$ modeling a ground rover in 2D space.
+	\item A finite MDP $\MDP_{copt}$ modeling a copter in 3D space.
+	\item A finite MDP $\MDP_{env}$ that captures belief dynamics over unknown environment labels.
+	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements regions it flies above. Copter measurements depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.    
+\end{enumerate}
+
+We can not state the type of question we attempt to answer in this paper.
 \begin{problem}
 \label{prob:main}
-  Consider MDP models of robots model $\MDP_{r_1}$ and $\MDP_{r_2}$ and MDP models for environment belief dynamics $\MDP_{e_1}, \ldots \MDP_{e_n}$, together with a task $\varphi$ for $\MDP_1$ expressed in scLTL. Design a policy $\pol^1$ for $\MDP_{r_1}$ and a policy $\pol^2$ for $\MDP_{r_2}$ such that for the resulting executions $\mathbf{x}_1, \mathbf{x}_2, \mathbf{e}$,
-  \begin{equation}\label{eq:probstatement}
-    - \Prob_\init^\pol ( (\mathbf{x}_1, \mathbf{e}) \models \varphi ) \log \left( \Prob_\init^\pol ( (\mathbf{x}_1, \mathbf{e}) \models \varphi ) \right)
-  \end{equation}
-  is minimized.
+  Consider the model components listed above. For a given scLTL specification $\varphi$ that specifies a rover task, design a policy for the copter that explores the environment in a way that maximizes the knowledge about specification satisfaction.
 \end{problem}
 
 An advantage of considering the scLTL fragment is that policy synthesis for a scLTL specification over a space $\X$ is equivalent to reachability of $\X\times Q_f$ on the product system $\MDP \otimes_{ser} \FSA_\psi$, where $\FSA_\varphi$ is a finite-state automaton constructed from $\varphi$ \cite{Belta2017} with accepting set $Q_f$. A finite-state automaton is a special case of an MDP, thus also the product system is an MDP. It is well known that reachability probability can be computed via value iteration of a Bellman operator \cite{Baier2008}. In the next section we discuss value iteration for the type of product MDPs we are interested in, and show that there is no need to compute the aggregate systems.
 
+\begin{itemize}
+	\item Remark that we consider finite systems, but that ideas can be extended with appropriate measurability assumptions
+\end{itemize}
 
-\section{Sequential Value Iteration}
-\label{sec:sequential_val_iter}
+
+\section{Specification-Guided Exploration via Two-Stage Dynamic Programming}
+\label{sec:solution}
+
+Due to the nature of the problem (the copter is quick and has short battery life, the rover is slow), it is reasonable to consider a turn-based solution, as we outline in Section \ref{sub:decompose}. In the statement of Problem \ref{prob:main} we were vague about what ``maximizing knowledge'' means, we discuss this further in Section \ref{sub:information} and give different options that may be desirable in different situations. Our proposed solution method requires value iteration over large MDPs. In Sections \ref{sub:products} and \ref{sub:valueit} we show how to partially circumvent scalability issues by exploiting the factored structure.
+
+\subsection{Two-Stage Solution}
+\label{sub:decompose}
+
+\begin{figure}
+\begin{center}
+    \begin{tikzpicture}
+    \node[draw, node distance=2cm, rounded corners] (rover) {$\MDP_{rov}$};
+    \node[draw, node distance=2cm, rounded corners, right of=rover] (environment) {$\MDP_{env}$};
+    \node[draw, node distance=2cm, rounded corners, right of=environment] (fsa) {$\MDP_\varphi$};
+
+    \draw[-latex] (rover) --  (environment);
+    \draw[-latex] (environment) --  (fsa);
+    \draw[-latex] (rover) to[out=-17, in=197] (fsa);
+
+    \draw ([xshift=-2mm, yshift=2mm]$(rover.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(fsa.south east)$) {};
+    \node[above of=rover, node distance=0.75cm] {$\MDP_1$};
+
+    \draw[latex-] (rover) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_r$};
+
+    \node[below of=rover, draw, node distance=1.6cm, rounded corners] (copter) {$\MDP_{cop}$};
+    \node[draw, node distance=2cm, rounded corners, right of=copter] (env2) {$\MDP_{env}$};
+
+    \draw[-latex] (copter) --  (env2);
+
+    \draw ([xshift=-2mm, yshift=2mm]$(copter.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(env2.south east)$) {};
+    \node[above of=copter, node distance=0.75cm] {$\MDP_2$};
+
+    \draw[latex-] (copter) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_c$};
+
+  \end{tikzpicture}
+\end{center}
+  \caption{Illustration of aggregate systems $\MDP_1$ and $\MDP_2$ constructed as serial products, where $\MDP_{env}$ is itself a parallel product.}
+  \label{fig:agg}
+\end{figure}
+
+We decouple the problem by letting the copter execute first, followed by the rover. The goal of the copter is then one of exploring the uncertain environment in a way that maximizes knowledge about the satisfiability of the rover task. To solve this problem via sequential value iteration we convert the scLTL specification into a DFSA $\MDP_{\varphi}$ and consider the two separate systems illustrated in Figure \ref{fig:agg}. We assume that the initial position $\xi_r^0$ of the rover is known, and let $\xi_\varphi^0$ be the initial state of the specification automaton. We propose the following two-step solution:
+\begin{enumerate}
+  \item For $\xi_1 = (\xi_r, \xi_e, \xi_\varphi)$ let $g(\xi_1', v') = \max( \ind_{X_f}(\xi_\varphi'), v' )$ and compute the value functions $V^1_t(\xi_1)$ for $t = T_r, T_r-1 \ldots, 0$ via the Bellman iterations
+  \begin{equation}
+  \label{eq:valit1}
+  \begin{aligned}
+      V^1_{T_r}(\xi_1) & = g(\xi_1, 0), \\
+      V^1_{t-1} (\xi_1) & = \max_{u_r} \sum_{\xi_1'} T(\xi_1' \mid \xi_1, u_r) g(\xi_1', V_t(\xi_1')).
+  \end{aligned}
+  \end{equation} 
+  \item For $\xi_2 = (\xi_c, \xi_e)$, compute the value functions $V^2_t(\xi_2)$ for $t = T_c, T_c-1, \ldots, 0$ via the Bellman iterations
+  \begin{equation}
+  \label{eq:valit2}
+  \begin{aligned}
+    V_{T_c}^2(\xi_2) & = \ind_{X_l} (\xi_c) \times V^1_0(\xi_r^0, \xi_e, \xi_\varphi^0), \\
+    V_{t-1}^2(\xi_2) & = \max_{u_c} \sum_{\xi_2'} T(\xi_2' \mid \xi_2, u_c) V^2_t(\xi_2').
+  \end{aligned}
+  \end{equation}
+\end{enumerate}
+The interpretation of these value functions are as follows: $V_t^1(\xi_r, \xi_e, \xi_\varphi)$ is the probability that the rover will satisfy its mission if at time $t$ the state of $\MDP_1$ is $(\xi_r, \xi_e, \xi_\varphi)$. The copter is tasked with minimizing the entropy at the initial states $\xi_r^0, \xi_\varphi^0$ that the rover \emph{can not affect}, by updating the belief $\xi_e$ that it \emph{can affect} via environment exploration in the way most beneficial for task knowledge. In addition, the requirement that the rover must be in the landing zone $X_l$ at time $T_c$ has been incorporated in the value function. Thus, $V_t^2(x_c, x_e)$ represents the probability that the rover will have a successful execution, and that the copter can land in $X_l$, if the copter-environment state at time $t$ is $(x_c, x_e)$. In addition to the value functions, time-dependent policies that maximize the value functions can be extracted as the maximizing argument.
 
 
-\subsection{Networks of MDPs}
+
+\subsection{Knowledge Optimization}
+\label{sub:information}
+
+\begin{itemize}
+	\item Talk about maximizing prob. of satisfaction, negative entropy, etc
+\end{itemize}
+
+
+\subsection{Product MDPs}
+\label{sub:products}
 
 We first define two types of products between two MDPs $\MDP_1 = (\X_1, \init_1, \U_1, \tr_1)$ and $\MDP_2 = (\X_2, \init_2, \U_2, \tr_2)$: serial and parallel products.
 \begin{definition}
@@ -227,7 +307,8 @@ In a parallel product there is no interaction between the two MDPs. Conversely, 
 Both products can be generalized to more than two components and products can also be nested: e.g. $\MDP_1 \otimes_{ser}^C \left( \MDP_2 \otimes_{par} \MDP_3 \right)$. Large nested products lead to large state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. However, we next show that value iteration can be done sequentially over subsystems without computing the aggregate transition matrices.
 
 
-\subsection{Factored Iteration of Bellman Operator}
+\subsection{Value Iteration for Product MDPs}
+\label{sub:valueit}
 
 \begin{itemize}
   \item \red{Can we include action in Bellman op?}\sofie{Do you mean to do a Q-iteration? Have a value function that ranges over both action and state? This could be troublesome as it would increase the size of the value function.}
@@ -275,13 +356,13 @@ The optimal value function $V^*$ and policy $\pol^*$ for a given bellman operato
 We now consider the Bellman iteration step for product MDPs. For a serial product we get
 \begin{equation*}
 \begin{aligned}
-  \bellman V (x_1, x_2) & = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1', x_2' \in \X_1 \times \X_2}  g(x_1', x_2', V(x_1', x_2')) \\
-  & \quad \times T_{ser}(x_1', x_2' \mid x_1, x_2, \pol(x_1, x_2)) \\
-  & = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) \\
-  & \quad \times \sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) T_2(x_2' \mid x_2, C(x_1')).
+  \bellman V (x_1, x_2) = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1', x_2' \in \X_1 \times \X_2} \hspace{-4mm} g(x_1', x_2', V(x_1', x_2')) \\
+   \quad \times T_{ser}(x_1', x_2' \mid x_1, x_2, \pol(x_1, x_2)) \\
+   = \max_{\pol: (\X_1 \times \X_2 \rightarrow \U_1)} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) \\
+   \quad \times \sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) T_2(x_2' \mid x_2, C(x_1')).
 \end{aligned}
 \end{equation*}
-It follows that the Bellman update $V \mapsto \bellman V$ for a serial product can be computed sequentially as follows:
+It follows that the Bellman update $V \mapsto \bellman V$ for a serial product can be computed via back-stepping as follows:
 \begin{equation*}
 \begin{aligned}
   W_2(x_1', x_2') & = g(x_1', x_2', V(x_1', x_2')) \\
@@ -289,68 +370,75 @@ It follows that the Bellman update $V \mapsto \bellman V$ for a serial product c
   \bellman V(x_1, x_2) & = \max_{\pol} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, \pol(x_1, x_2)) W_1(x_1', x_2).
 \end{aligned}
 \end{equation*}
-The procedure generalizes immediately to $n$-length serial products and the sequential updates
+The procedure generalizes immediately to $n$-length serial products and steps
 \begin{equation}
 \label{eq:general_decomp}
 \begin{aligned}
   & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_1', \ldots, x_{i-1}')) \\ 
+  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\ 
    & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
     \end{aligned} \right].
 \end{aligned}
 \end{equation}
 
 \begin{remark}
-  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \X_1 \times \ldots \times \X_{i-1} \rightarrow \U_i$. In the latter case the connection potentially becomes a non-sparse object.
+  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \prod_{j \in \Gamma_i} \X_j \rightarrow \U_i$ for some index set $\Gamma_i$ that determine which preceding systems that affect the input to system $i$.
 \end{remark}
 
 In addition, if $\MDP_{i+1}$ is itself a serial or parallel product, \eqref{eq:general_decomp} can again be decomposed. If for instance $\MDP_{i} = \MDP_{i_1} \otimes_{par} \MDP_{i_2}$ is a parallel product we can write $x_i = (x_{i_1}, x_{i_2})$ and \eqref{eq:general_decomp} can be computed as
-\begin{equation}
+\begin{equation*}
 \begin{aligned}
-  & W_{i_1}(x_1', \ldots, (x_{i_1}', x_{i_2}), \ldots, x_n) \\
-  & \quad = \sum_{x_{i_2}' \in \X_{i_2}} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_1', \ldots, x_{i-1}') ), \\
-  & W_{i-1}(x_1', \ldots, (x_{i_1}, x_{i_2}), \ldots, x_n) \\
-  & \quad = \sum_{x_{i_1}' \in \X_{i_1}} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_1', \ldots, x_{i-1}') ). \\
+  W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) & = \hspace{-2mm} \sum_{x_{i_2}'  \in \X_{i_2}} \left[ \begin{aligned} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_{i-1}') ) \\ \times W_i(\ldots (x_{i_1}', x_{i_2}') \ldots) \end{aligned} \right], \\
+  W_{i-1}(\ldots (x_{i_1}, x_{i_2}) \ldots)  & =  \hspace{-2mm} \sum_{x_{i_1}' \in \X_{i_1}} \left[ \begin{aligned} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_{i-1}') ) \\
+  	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)	
+  \end{aligned} \right].
 \end{aligned}
-\end{equation}
+\end{equation*}
 As a consequence, for any aggregate system constructed from serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing aggregate transition probabilities. The sequential approach is advantageous when the connections are sparse, i.e. the connection mappings $C$ can be compactly represented.
 
-\sofie{Take a look at this: \url{https://arxiv.org/abs/1507.00509}}
-\begin{remark}
-  The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
-  \begin{equation}
-  \label{eq:tensor_sequential}
-  \begin{aligned}
-      & W_{x_1' \ldots, x_n'} = g(x_1', \ldots, x_n', V_{x_1', \ldots, x_n'}) \\
-      & \text{for $k = n, n-1, \ldots, 2$}: \\
-      & \quad W_{x_1'\ldots x_{k-1}' x_{k} \ldots x_n} = U_{x_{k-1}}^{u_k} T_{u_k x_k}^{x_k'}  W_{x_1'\ldots x_k' x_{k+1} \ldots x_n'} \quad \\
-      & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
-  \end{aligned}
-  \end{equation}
-  This can be contrasted with the naive approach where one first constructs the aggregate transition tensor $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ and then computes
-  \begin{equation}
-  \label{eq:tensor_naive}
-    V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} g(x_1', \ldots, x_n', V_{x_1', \ldots x_n'}).
-  \end{equation}
-  Eq \eqref{eq:tensor_naive} involves the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
-\end{remark}
+% \begin{remark}
+%   The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
+%   \begin{equation}
+%   \label{eq:tensor_sequential}
+%   \begin{aligned}
+%       & W_{x_1' \ldots, x_n'} = g(x_1', \ldots, x_n', V_{x_1', \ldots, x_n'}) \\
+%       & \text{for $k = n, n-1, \ldots, 2$}: \\
+%       & \quad W_{x_1'\ldots x_{k-1}' x_{k} \ldots x_n} = U_{x_{k-1}}^{u_k} T_{u_k x_k}^{x_k'}  W_{x_1'\ldots x_k' x_{k+1} \ldots x_n'} \quad \\
+%       & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
+%   \end{aligned}
+%   \end{equation}
+%   This can be contrasted with the naive approach where one first constructs the aggregate transition tensor $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ and then computes
+%   \begin{equation}
+%   \label{eq:tensor_naive}
+%     V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} g(x_1', \ldots, x_n', V_{x_1', \ldots x_n'}).
+%   \end{equation}
+%   Eq \eqref{eq:tensor_naive} involves the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
+% \end{remark}
 
-  \begin{figure}[h]
-    \setlength\figurewidth{0.8\columnwidth} 
-    \setlength\figureheight{0.4\columnwidth} 
-    \begin{center}
-    \input{2figs/scale}
-    \end{center}
-    \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
-    \label{fig:scalability}
-  \end{figure}
+\begin{figure}[h]
+  \setlength\figurewidth{0.8\columnwidth} 
+  \setlength\figureheight{0.4\columnwidth} 
+  \begin{center}
+  \input{2figs/scale}
+  \end{center}
+  \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
+  \label{fig:scalability}
+\end{figure}
 \begin{example}
   We demonstrate the advantage of sequential value iteration with a numerical example. We consider $k$-length serial products of MDPs with two actions and six states each; the total number of states in such a product is $6^k$. For increasing values of $k$ we compute the probability of reaching a certain part of the state space by sequential value iteration, and by naively forming the overall transitions matrices. Figure \ref{fig:scalability} illustrates the computation time for increasing values of $k$ over 10 trials. As can be seen, the advantage of sequential value iteration over the naive approach is significant.
 \end{example}
 \sofie{I thought the most important part was the memory limitations? That is why I normally implement it.}
 
 \begin{remark}
-  \red{Talk about extension to non-deterministic products by introducing a minimization term. Point out connection to errors in abstractions.} 
+	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that will be triggered. For instance, they result naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer a MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into our back stepping approach by introducing an extra minimizer over non-determinism:
+	\begin{equation*}
+	\begin{aligned}
+	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
+	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\ 
+	   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
+	    \end{aligned} \right].
+	\end{aligned}
+	\end{equation*}
 \end{remark}
 
 % \subsection{Sparse Value Function via Tensor Decomposition}
@@ -379,43 +467,12 @@ As a consequence, for any aggregate system constructed from serial and parallel 
 
 \subsection{Related work}
 
-A generalization of serial and parallel products are \emph{factored MDPs} \cite{Boutilier2000}. In a factored MDP with local states $x_1, \ldots, x_n$ the state update for $x_i$ only depends on the \emph{scope} $C_i$, i.e. $T(x_i \mid x) = T(x_i \mid x_j, j \in C_i)$. Evidently, this structure encompasses parallel and serial products: in a serial product $C_i = \{ i-1, i \}$, whereas in a parallel product $C_i = \{ i \}$. The value function for a factored MDP is not necessarily sparse; a reasonable approach is therefore to resort to approximate methods and represent the value function as a linear combination of factored basis functions. Approximate algorithms for the standard reward-maximizing problem include \cite{Guestrin2003} for approximate policy iteration and approximate linear programming, and \cite{Szita2008} for approximate value iteration. Other work utilizes symbolic representations to improve scalability \cite{Boutilier2000}.
+A generalization of serial and parallel products are \emph{factored MDPs} \cite{Boutilier2000}. In a factored MDP with local states $x_1, \ldots, x_n$ the state update for $x_i$ only depends on the \emph{scope} $\Gamma_i$, i.e. $T(x_i \mid x) = T(x_i \mid x_j, j \in \Gamma_i)$. Evidently, this structure encompasses parallel and serial products: in a serial product $\Gamma_i = \{ i-1, i \}$, whereas in a parallel product $\Gamma_i = \{ i \}$. The value function for a factored MDP is not necessarily sparse; a reasonable approach is therefore to resort to approximate methods and represent the value function as a linear combination of factored basis functions. Approximate algorithms for the standard reward-maximizing problem include \cite{Guestrin2003} for approximate policy iteration and approximate linear programming, and \cite{Szita2008} for approximate value iteration. Other work utilizes symbolic representations to improve scalability \cite{Boutilier2000}.
 
-The sequential Bellman computation is an example of a factored sum-product algorithm \cite{Kschischang2001}, that has previously been used for a similar purpose as ours in the context of MDP abstractions \cite{EsmaeilZadehSoudjani2017}.
+The back-stepping Bellman computation is an example of a factored sum-product algorithm \cite{Kschischang2001}, that has previously been used for a similar purpose as ours in the context of MDP abstractions \cite{EsmaeilZadehSoudjani2017}.
 
 \section{Case Study}
-
-\begin{figure}
-\begin{center}
-    \begin{tikzpicture}
-    \node[draw, node distance=2cm, rounded corners] (rover) {$\MDP_{rov}$};
-    \node[draw, node distance=2cm, rounded corners, right of=rover] (environment) {$\MDP_{env}$};
-    \node[draw, node distance=2cm, rounded corners, right of=environment] (fsa) {$\MDP_\varphi$};
-
-    \draw[-latex] (rover) --  (environment);
-    \draw[-latex] (environment) --  (fsa);
-    \draw[-latex] (rover) to[out=-17, in=197] (fsa);
-
-    \draw ([xshift=-2mm, yshift=2mm]$(rover.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(fsa.south east)$) {};
-    \node[above of=rover, node distance=0.75cm] {$\MDP_1$};
-
-    \draw[latex-] (rover) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_r$};
-
-    \node[below of=rover, draw, node distance=1.6cm, rounded corners] (copter) {$\MDP_{cop}$};
-    \node[draw, node distance=2cm, rounded corners, right of=copter] (env2) {$\MDP_{env}$};
-
-    \draw[-latex] (copter) --  (env2);
-
-    \draw ([xshift=-2mm, yshift=2mm]$(copter.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(env2.south east)$) {};
-    \node[above of=copter, node distance=0.75cm] {$\MDP_2$};
-
-    \draw[latex-] (copter) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_c$};
-
-  \end{tikzpicture}
-\end{center}
-  \caption{Illustration of aggregate systems $\MDP_1$ and $\MDP_2$ constructed as serial products, where $\MDP_{env}$ is itself a parallel product.}
-  \label{fig:agg}
-\end{figure}
+\label{sec:casestudy}
 
 We consider a two-asset mission consisting of a ground rover and a flying copter 
 
@@ -456,7 +513,7 @@ How quadrotors are controlled to move between discrete states. \red{Can we provi
   \label{fig:envmdp}
 \end{figure}
 
-We assume that regions of interest have been extracted from low-resolution satellite imagery, along with prior probability estimates for the likelihood that the regions exhibit certain traits. Here we restrict attention to \emph{risk regions} that may contain obstacles the rover can not traverse, and \emph{target regions} that are likely places where scientific samples can be extracted. We associate to each region $R_i$ a belief MDP $\MDP_{R_i}$ with five states $\zeta_i \in \{ 0, p^i_-, p^i_0, p^i_+, 1\}$ and three inputs $v_i \in \{ N, W, S \}$ for (N)o measurement, (W)eak measurement, and (S)trong measurement. The transition matrices are $T_N = I_5$, 
+We assume that regions of interest have been extracted from low-resolution satellite imagery, along with prior probability estimates for the likelihood that the regions exhibit certain traits. Here we restrict attention to \emph{risk regions} that may contain obstacles the rover can not traverse, and \emph{target regions} that are likely places where scientific samples can be extracted. We associate to each region $R$ a belief MDP $\MDP_{R}$ with five states $\zeta \in \{ 0, p_-, p_0, p_+, 1\}$ and three inputs $v \in \{ N, W, S \}$ for (N)o measurement, (W)eak measurement, and (S)trong measurement. The transition matrices are $T_N = I_5$, 
 \begin{equation}
   T_{S} = \left[\begin{smallmatrix}
     1        &  0  &  0  &  0  &  0   \\
@@ -491,86 +548,96 @@ The objective of the mission is to satisfy a scLTL specification $\varphi$ over 
 We posit that the rover has a time window of length $T_r$ to fulfill its mission, and that the copter has battery sufficient to operate for a time $T_c$. In addition, the copter must land in a pre-designated landing area $X_l$ at the end of the execution. Given these constraints, the challenge is to find strategies for both the copter and rover that maximize the probability that the science specification is fulfilled.
 
 
-\subsection{Turn-based solution}
+\paragraph{Measurement model}
 
-We decouple the problem by letting the copter execute first, followed by the rover. The goal of the copter is then one of exploring the uncertain environment in a way that maximizes knowledge about the satisfiability of the rover task. To solve this problem via sequential value iteration we convert the scLTL specification into a DFSA $\MDP_{\varphi}$ and consider the following two product systems:
-\begin{equation}
-\begin{aligned}
-  \MDP_{1} &= \left( \MDP_{rov} \otimes_{ser} \MDP_{env} \right) \otimes_{ser} \MDP_{\varphi}, \\
-  \MDP_{2} &= \MDP_{cop} \otimes_{ser} \MDP_{env}.
-\end{aligned}
-\end{equation}
 The serial connections are defined via connections that map the state of one system to the input of the next. These connections are defined as follows:
 \begin{itemize}
-  \item If the rover is adjacent to a region $R_i$ it triggers a (S)trong measurement of that region,
-  \item If the copter is at low altitude and in region $R_i$, it triggers a (S)trong measurement of that region,
-  \item If the copter is at high altitude and within distance $2$ of region $R_i$, it triggers a (W)eak measurement of that region,
+  \item If the rover is adjacent to a region $R_i$ it takes a (S)trong measurement of that region,
+  \item If the copter is at low altitude and in region $R_i$, it takes a (S)trong measurement of that region,
+  \item If the copter is at high altitude and within distance $2$ of region $R_i$, it takes a (W)eak measurement of that region,
   \item The connection between the $\MDP_{rov} \otimes_{ser} \MDP_{env}$ product and $\MDP_{\varphi}$ is given by the truth value of atomic propositions for the state $(\xi_r, \xi_e)$.
 \end{itemize}
-Figure \ref{fig:agg} illustrates the two systems. We assume that the initial position $\xi_r^0$ of the rover is known, and let $\xi_\varphi^0$ be the initial state of the specification automaton. We propose the following two-step solution:
-\begin{enumerate}
-  \item For $\xi_1 = (\xi_r, \xi_e, \xi_\varphi)$ let $g(\xi_1', v') = \max( \ind_{X_f}(\xi_\varphi'), v' )$ and compute the value functions $V^1_t(\xi_1)$ for $t = T_r, T_r-1 \ldots, 0$ via the Bellman iterations
-  \begin{equation}
-  \label{eq:valit1}
-  \begin{aligned}
-      V^1_{T_r}(\xi_1) & = g(\xi_1, 0), \\
-      V^1_{t-1} (\xi_1) & = \max_{u_r} \sum_{\xi_1'} T(\xi_1' \mid \xi_1, u_r) g(\xi_1', V_t(\xi_1')).
-  \end{aligned}
-  \end{equation} 
-  \item For $\xi_2 = (\xi_c, \xi_e)$, compute the value functions $V^2_t(\xi_2)$ for $t = T_c, T_c-1, \ldots, 0$ via the Bellman iterations
-  \begin{equation}
-  \label{eq:valit2}
-  \begin{aligned}
-    V_{T_c}^2(\xi_2) & = \ind_{X_l} (\xi_c) \times V^1_0(\xi_r^0, \xi_e, \xi_\varphi^0), \\
-    V_{t-1}^2(\xi_2) & = \max_{u_c} \sum_{\xi_2'} T(\xi_2' \mid \xi_2, u_c) V^2_t(\xi_2').
-  \end{aligned}
-  \end{equation}
-\end{enumerate}
-The interpretation of these value functions are as follows: $V_t^1(\xi_r, \xi_e, \xi_\varphi)$ is the probability that the rover will satisfy its mission if at time $t$ the state of $\MDP_1$ is $(\xi_r, \xi_e, \xi_\varphi)$. The copter is tasked with minimizing the entropy at the initial states $\xi_r^0, \xi_\varphi^0$ that the rover \emph{can not affect}, by updating the belief $\xi_e$ that it \emph{can affect} via environment exploration in the way most beneficial for task knowledge. In addition, the requirement that the rover must be in the landing zone $X_l$ at time $T_c$ has been incorporated in the value function. Thus, $V_t^2(x_c, x_e)$ represents the probability that the rover will have a successful execution, and that the copter can land in $X_l$, if the copter-environment state at time $t$ is $(x_c, x_e)$. In addition to the value functions, time-dependent policies that maximize the value functions can be extracted as the maximizing argument.
-
-Both iterations \eqref{eq:valit1} and \eqref{eq:valit2} fall within the framework of sequential value iteration for parallel and serial products in Section \ref{sec:sequential_val_iter}. As a consequence there is no need to construct the aggregate transition matrices for $\MDP_1$ and $\MDP_2$.
 
 
 \subsection{Illustrations}
 
 We demonstrate the features of the proposed solution in a few example scenarios.
 
-\paragraph{Scenario 1} Collect one sample of type $A$ and one sample of type $B$ while avoiding obstacles:
+\paragraph{Scenario 1} If a sample of type $A$ exists, collect samples of types $A$ and $B$, otherwise collect a sample of type $C$, all while avoiding obstacles. Letting $\lozenge_o \varphi = \lnot \texttt{obstacle} \; \mathcal U \; \varphi$, the specification can be written
 \begin{equation*}
-  \left( \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sampleA} \right) \land \left( \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sampleB} \right)
+  \left( \lozenge_o \texttt{sA} \land \lozenge_o \right) \texttt{sB} \lor \left( \lozenge_o ( \texttt{eA} \land \texttt{sC} ) \right).
 \end{equation*}
-The maximum execution lengths are 15 for the rover and 20 for the copter, and the copter must return to its initial state at the end of its execution. Figure \ref{fig:workspace1} illustrates the workspace and Figure \ref{fig:values1} the resulting value functions. In this environment, the success probability for the rover is 12.4\% if copter-aided exploration is not available, as reflected by the purple color in the lower left corner of Figure \ref{fig:values1}. However, copter exploration lifts the success probability to 29.4\%. Note that this is the probability of success without assuming any additional information about the environment---the joint probability that a sample of type $A$ exists and that sample $B$ can be accessed is $0.64 \times 0.75 = 0.48$, which is thus an upper bound on the success probability of this mission. The increased success probability is solely due to the fact that the copter can explore, thus alleviating the rover from having to guess the true nature of the environment.
+The atomic propositions are defined as follows:
+\begin{itemize}
+	\item \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC},
+	\item \texttt{eA} is $\True$ if $\zeta_A = 0$ (there is no sample at $A$)
+\end{itemize}
+The workspace is shown in Figure \ref{fig:workspace1}; the prior probability estimates are $0.5$ for each region. We assume that the rover can move 15 length units, and that the copter has enough battery to move 30 length units (including changes of altitude). With the two-stage approach described in Section \ref{sec:solution} we can then compute 1) a value function $V_r(\xi_r, \xi_e, \xi_\varphi)$ and corresponding policy for the rover, and 2) a policy for the quadrotor that maximizes the following expression:
+\begin{equation}
+	\max \left( 2 | V_r(\xi_r^0, \xi_e, \xi_\varphi^0) - 0.5 |, 0.5 \right).
+\end{equation}
+This objective favors probabilities close to 0 and 1, but does not punish probabilities around 0.5 excessively. 
+
+Copter executions generated from this policy are shown in Figure \ref{fig:copter_executions} for different configurations of the true environment state. Without only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter executions all uncertainty is removed: for the two upper examples in Figure \ref{fig:copter_executions} $V_r(\xi_r^0, \xi_e(T_{c}), \xi_\varphi^0) = 1$, and for the lower examples $V_r(\xi_r^0, \xi_e(T_{c}), \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be achieved.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.6\columnwidth]{2figs/exp1-map.pdf}
+    \includegraphics[width=0.6\columnwidth]{2figs/arena.pdf}
   \end{center}
-  \caption{Workspace where regions of interest $R_i$, $A_i$, and $B_i$ are marked for risk regions, sample A targets, and sample B targets, along with associated prior probabilities. The initial states $\xi_r^0$ and $\xi_c^0$ are marked, as well as the green region where the copter can safely land. Regions with $p=1$ are known and thus not modeled with belief state.}
+  \caption{Workspace where regions of interest $R_1$, $R_2$, $A$, $B$, and $C$ are marked along with associated prior probabilities. The black square marks the required landing zone for the copter.}
   \label{fig:workspace1}
 \end{figure}
 
 \begin{figure}
-  \begin{center}
-    \footnotesize
-    \begin{tikzpicture}
-      \node[inner sep=0] (p1) {\includegraphics[height=0.24\columnwidth]{2figs/value-rov.pdf}};
-      \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p1.east)$) (p2) {\includegraphics[height=0.24\columnwidth]{2figs/value-cop.pdf}};
-      \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p2.east)$) (n1) {\includegraphics[height=0.24\columnwidth]{2figs/cbar.pdf}};
-      \node at ([yshift=2mm]$(p1.north)$) {$V_0^1(\xi_r, \xi_e^0, \xi_\varphi^0)$};
-      \node at ([yshift=2mm]$(p2.north)$) {$V_0^2(\xi_c, \xi_e^0)$};
-      \node at ([xshift=6mm]$(n1.north east)$) {$p = 0.48$};
-      \node at ([xshift=6mm]$(n1.south east)$) {$p = 0$};
-    \end{tikzpicture}
-  \end{center}
-  \caption{Illustration of value functions. As can be seen, the advantage of the copter is equivalent to having the rover's initial state be near a target region.}
-  \label{fig:values1}
+	\begin{center}
+	\includegraphics[width=0.4\columnwidth]{2figs/exp0-map.pdf} ~ 
+	\includegraphics[width=0.4\columnwidth]{2figs/exp1-map.pdf} \\
+	\vspace{1mm} 
+	\includegraphics[width=0.4\columnwidth]{2figs/exp2-map.pdf} ~ 
+	\includegraphics[width=0.4\columnwidth]{2figs/exp3-map.pdf}
+	\end{center}
+	\caption{Illustration of the copter and rover policies for different environment configurations: a shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle). The region probabilities indicate the belief states after the copter exploration phase. Copter trajectories are shown in blue, and rover trajectories in orange, if the specification can not be satisfied the rover does not move. All four executions are generated by the exact same policies; they adapt according to measurements received during the execution. Each dot represents an abstract state.}
+	\label{fig:copter_executions}
 \end{figure}
 
+% \begin{figure}
+%   \begin{center}
+%     \footnotesize
+%     \begin{tikzpicture}
+%       \node[inner sep=0] (p1) {\includegraphics[height=0.24\columnwidth]{2figs/value-rov.pdf}};
+%       \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p1.east)$) (p2) {\includegraphics[height=0.24\columnwidth]{2figs/value-cop.pdf}};
+%       \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p2.east)$) (n1) {\includegraphics[height=0.24\columnwidth]{2figs/cbar.pdf}};
+%       \node at ([yshift=2mm]$(p1.north)$) {$V_0^1(\xi_r, \xi_e^0, \xi_\varphi^0)$};
+%       \node at ([yshift=2mm]$(p2.north)$) {$V_0^2(\xi_c, \xi_e^0)$};
+%       \node at ([xshift=6mm]$(n1.north east)$) {$p = 0.48$};
+%       \node at ([xshift=6mm]$(n1.south east)$) {$p = 0$};
+%     \end{tikzpicture}
+%   \end{center}
+%   \caption{Illustration of value functions. As can be seen, the advantage of the copter is equivalent to having the rover's initial state be near a target region.}
+%   \label{fig:values1}
+% \end{figure}
+
 \section{Hardware Experiments}
+\label{sec:hardware}
 
 \begin{itemize}
     \item Copter in CAST
 \end{itemize}
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\begin{itemize}
+	\item Point out that approach is compatible with label-based abstractions
+\end{itemize}
+
+Future work:
+\begin{itemize}
+	\item Improved scalability via approximate DP, sparse value function representations
+	\item 
+\end{itemize}
+
 
 \printbibliography
 
