@@ -5,6 +5,7 @@
 \usepackage{tikz,pgfplots}
 \usepackage{hyperref, booktabs}
 \usepackage{biblatex}
+\usepackage{todonotes}
 
 \pgfplotsset{compat=1.14}
 
@@ -67,9 +68,7 @@ We are motivated by autonomy in multi-asset robotics teams for space exploration
 
 Our approach lies at the intersection of formal synthesis methods and optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 
-\begin{itemize}
-	\item \textcolor{red}{Short review of state-of-the-art mapping methods}
-\end{itemize}
+\todo[inline]{Cristi/Ali: Short review of state-of-the-art mapping methods; active exploration; other related work}
 
 Three principal methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
 
@@ -283,9 +282,7 @@ This function can be computed via value iteration as explained in later sections
 \subsection{Knowledge Optimization}
 \label{sub:information}
 
-\begin{itemize}
-	\item Talk about maximizing prob. of satisfaction, negative entropy, etc
-\end{itemize}
+\todo[inline]{Sofie to write: Talk about why ``intuitive'' objectives such as maximizing prob. of satisfaction, negative entropy, etc are not good. Define set we want to reach + references}
 
 \begin{equation}
 \label{eq:coptervalue}
@@ -439,7 +436,9 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 \begin{example}
   We demonstrate the advantage of sequential value iteration with a numerical example. We consider $k$-length serial products of MDPs with two actions and six states each; the total number of states in such a product is $6^k$. For increasing values of $k$ we compute the probability of reaching a certain part of the state space by sequential value iteration, and by naively forming the overall transitions matrices. Figure \ref{fig:scalability} illustrates the computation time for increasing values of $k$ over 10 trials. As can be seen, the advantage of sequential value iteration over the naive approach is significant.
 \end{example}
-\sofie{I thought the most important part was the memory limitations? That is why I normally implement it.}
+
+\todo[inline]{PN: Plot also memory utilization}
+
 
 \begin{remark}
 	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that will be triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer a MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
@@ -493,14 +492,10 @@ We consider a two-asset mission consisting of a ground rover and a flying copter
 
 \paragraph{Abstract Robot Models}
 
-We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_d \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis. 
+Finite-state abstractions for continuous-state models can be constructed in a principled way, but for the purpose of clarity we bypass this step here and directly introduce finite-state models that capture the essentials of agents that moving around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_d \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis. 
 
-We assume that both robots freely can move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
+We assume that low-level controllers are available for both robots so that they move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
 
-\paragraph{Low-level Robot Controllers}
-
-How quadrotors are controlled to move between discrete states. \red{Can we provide some guarantees under reasonable assumptions?}
-\sofie{What are the options? Can you compute a barrier function ? Can you do something like lyapunov stability? Input output stability.. }
 
 \paragraph{Environment Belief Model}
 
