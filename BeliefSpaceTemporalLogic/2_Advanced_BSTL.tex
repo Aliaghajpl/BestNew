@@ -553,7 +553,7 @@ The objective of the mission is to satisfy a scLTL specification $\varphi$ over 
   \item Collect a sample at region $R_2$: $\xi_r \in R_2 \land \zeta_2 = 1$.
 \end{itemize}
 
-We posit that the rover has a time window of length $T_r$ to fulfill its mission, and that the copter has battery sufficient to operate for a time $T_c$. In addition, the copter must land in a pre-designated landing area $X_l$ at the end of the execution.
+We posit that the rover has a time window of length $T_r$ to fulfill its mission, and that the copter has battery sufficient to operate for a time $T_c$. In addition, the copter must land in a pre-designated landing area $X_l$ at the end of the execution. This auxiliary objective is straightforward to incorporate into \eqref{eq:coptervalue} by restricting the value iteration to policies that land safely with some high probability $1-\delta_l$.
 
 \paragraph{Measurement model}
 
@@ -581,13 +581,13 @@ The atomic propositions are defined as follows:
 \end{itemize}
 The workspace is shown in Figure \ref{fig:workspace1}; the prior probability estimates are $0.5$ for each region. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). With the two-stage approach described in Section \ref{sec:solution} we can then compute 1) a value function $V_r(\xi_r, \xi_e, \xi_\varphi)$ and corresponding policy for the rover, and 2) a policy for the quadrotor that maximizes the probability of reaching a state where $V_r(\xi_r^0, \xi_e, \xi_\varphi^0)$ is either close to 0 or close to 1.
 
-Executions generated from the resulting copter and rover policies are shown in Figure \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure \ref{fig:copter_executions} $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
+Executions generated from the resulting copter and rover policies are shown in Fig. \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure. \ref{fig:copter_executions}, $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.6\columnwidth]{2figs/arena.pdf}
   \end{center}
-  \caption{Workspace where regions of interest $R_1$, $R_2$, $A$, $B$, and $C$ are marked along with associated prior probabilities. The black square marks the required landing zone for the copter.}
+  \caption{2D view of the work space where regions of interest $R_1$, $R_2$, $A$, $B$, and $C$ are marked along with associated prior probabilities. Each abstract state is illustrated with a dot. The black square marks the required landing zone for the copter.}
   \label{fig:workspace1}
 \end{figure}
 
