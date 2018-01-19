@@ -51,7 +51,8 @@
 \maketitle
 
 \begin{abstract}
-  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotics system with a copter and a rover. The goal of the copter is to explore an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We formulate the problem as a two-step dynamic program and mitigate the curse of dimensionality for this large system by leveraging its decomposed nature. We demonstrate in simulations and on hardware that the resulting policy makes intelligent decisions in the face of uncertainty.
+  As a step towards achieving autonomy in space exploration missions we consider a collaborative robotics system with a copter and a rover. The goal of the copter is to explore an unknown environment so as to maximize the probability that the rover can satisfy a science mission expressed in Linear Temporal Logic. We formulate the problem as a two-step dynamic program and mitigate the curse of dimensionality for this large system by leveraging its decomposed nature. We demonstrate in simulations and on hardware that the resulting \sofie{robot team}%policy 
+  makes intelligent decisions in the face of uncertainty.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -64,9 +65,10 @@
 
 Environment exploration and task planning are crucial components of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for achieving a given task. 
 
-We are motivated by autonomy in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
+We are motivated by autonomy \todo{\tiny Autonomy comes in many levels, can we be a bit more precise?} in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions, partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
 
-Our approach lies at the intersection of formal synthesis methods and optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
+Our approach lies at the intersection of formal synthesis methods and optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of robot poses and environment beliefs. \todo{\tiny I was expecting a sentence about the copter.}
+To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 
 \todo[inline]{Cristi/Ali: Short review of state-of-the-art mapping methods; active exploration; other related work}
 
@@ -113,7 +115,7 @@ A Markov decision processes is defined as follows \cite{hll1996}.
 \end{definition}
 
 An \emph{execution} of $\MDP$ is a state-input sequence $(x_0, u_0)(x_1, u_1)\ldots$ where $x_0 \sim \rho$ and $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$ for inputs $u_k \in \U$. A \emph{policy} $\pol = \pol_0 \pol_1 \ldots$ is a sequence of conditional probability distributions $\pol_k( \cdot \mid x_0, \ldots, x_{k})$. We say that a policy is \emph{Markov} if $\pol_k( \cdot \mid x_0, \ldots, x_{k}) = \pol_k( \cdot \mid x_{k})$ for all $k$. If a trajectory $(x_0, u_0)(x_1, u_1)\ldots$ is such that $u_k \sim \pol_k ( \cdot \mid x_{k})$ we say that the trajectory is \emph{generated} by $\pol$.
-
+\todo[inline]{Sofie: Would it make sense to introduce a example here, explaining the Markov process notation. Perhaps specifically how we use it to catch the uncertainty in the environment?}
 \subsection{Specifications}
 
 The basic building blocks of specifications are \emph{atomic propositions} that take values $\True$ or $\False$. An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$. By combining atomic propositions into a formula, desired system behavior is expressed as set membership constraints (atomic propositions) together with temporal relations (operators).
@@ -193,7 +195,8 @@ We can now state the type of question we attempt to answer in this paper.
 
 Knowledge maximization is an interesting concept on its own, in Section \ref{sub:information} we will discuss the precise notion of knowledge we use in this paper. An advantage of considering the scLTL fragment is that policy synthesis for a scLTL specification over a space $\X$ is equivalent to reachability of $\X\times Q_f$ on the product system $\MDP \otimes_{ser} \FSA_\psi$, where $\FSA_\varphi$ is a finite-state automaton constructed from $\varphi$ \cite{Belta2017} with accepting set $Q_f$. A finite-state automaton is a special case of an MDP, thus also the product system is an MDP. It is well known that the optimal reachability probability can be computed via value iteration of a Bellman operator \cite{Baier2008}. In the following we discuss how we use reachability-based techniques to decompose the problem in a way that paves the way for optimized knowledge extraction.
 
-In the rest of the paper we will assume that all MDPs are finite, i.e. they have finite state and input spaces. To handle continuous-state MDPs, there are principled methods to construct finite-state approximations in a principled way. Furthermore, notions of simulation relations can be employed to quantify the difference between an abstraction and the concrete continuous-state system in a way that allows controllers designed for the finite-state abstraction to be implemented on the concrete system with preserved guarantees \cite{Zamani2015,Haesaert2017}. An alternative is to use approximate dynamic programming (also known as reinforcement learning) directly on the continuous state space \cite{Powell2011}. Approximate methods allow a trade-off between optimality and scalability.
+In the rest of the paper we will assume that all MDPs are finite, i.e. they have finite state and input spaces. \red{To handle continuous-state MDPs, there are principled methods to construct finite-state approximations in a principled way[double]. Furthermore, notions of simulation relations can be employed to quantify the difference between an abstraction and the concrete continuous-state system in a way that allows controllers designed for the finite-state abstraction to be implemented on the concrete system with preserved guarantees \cite{Zamani2015,Haesaert2017}.} \sofie{[replace with:] To handle continuous-state MDPs, there are principled methods to construct and use their finite-state approximations  \cite{Zamani2015,Haesaert2017}. }
+ An alternative is to use approximate dynamic programming (also known as reinforcement learning) directly on the continuous state space \cite{Powell2011}. Approximate methods allow a trade-off between optimality and scalability.\sofie{This is for standard dynamic programming, most of the bounds require some type of contractivity (enforced by the discounting.)}
 
 
 \section{Specification-Guided Exploration via Two-Stage Dynamic Programming}
@@ -245,7 +248,7 @@ We decouple the problem by letting the copter execute first, followed by the rov
 	& \; = \mathbb{P} \left[ \mathbf{x} \models \varphi \mid (x_r, x_e, x_\varphi) (T_c) = (x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi) \right].
 \end{aligned}
 \end{equation}
-This function can be computed via value iteration as explained in later sections. The copter can not affect $x_r^{T_c}$ or $x_\varphi^{T_c}$ during its execution on $[0, T_c]$, but it can affect $x_e^{T_c}$ via exploration. We next discuss the copter's objective: given $V_r(x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi)$, how should it explore the environment in order to maximize knowledge?
+This function can be computed via value iteration as explained in later sections. The copter cannot affect $x_r^{T_c}$ or $x_\varphi^{T_c}$ during its execution on $[0, T_c]$, but it can affect $x_e^{T_c}$ via exploration. We next discuss the copter's objective: given $V_r(x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi)$, how should it explore the environment in order to maximize knowledge?
 
 \begin{figure}
 	\begin{center}
@@ -279,7 +282,7 @@ This function can be computed via value iteration as explained in later sections
 	\label{fig:execorder}
 \end{figure}
 
-\subsection{Knowledge Optimization}
+\subsection{Task specific information gathering}%{Knowledge Optimization}
 \label{sub:information}
 
 \todo[inline]{Sofie to write: Talk about why ``intuitive'' objectives such as maximizing prob. of satisfaction, negative entropy, etc are not good. Define set we want to reach + references}
@@ -599,7 +602,7 @@ Executions generated from the resulting copter and rover policies are shown in F
 	\includegraphics[width=0.4\columnwidth]{2figs/exp2-map.pdf} ~ 
 	\includegraphics[width=0.4\columnwidth]{2figs/exp3-map.pdf}
 	\end{center}
-	\caption{Illustration of the copter and rover policies for different environment configurations: a shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle). The region probabilities indicate the belief states after the copter exploration phase. Copter trajectories are shown in blue, and rover trajectories in orange, if the specification can not be satisfied the rover does not move. All four executions are generated by the exact same policies; they adapt according to measurements received during the execution.}
+	\caption{Illustration of the copter and rover policies for different environment configurations: a shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle). The region probabilities indicate the belief states after the copter exploration phase. Copter trajectories are shown in blue, and rover trajectories in orange, if the specification can not be satisfied the rover does not move. All four executions are generated by the exact same policies; they adapt according to measurements received during the execution.\sofie{can you also differentiate height of the copter. Picture is not black/white proof. } }
 	\label{fig:copter_executions}
 \end{figure}
 
