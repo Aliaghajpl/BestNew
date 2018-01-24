@@ -63,14 +63,18 @@
 
 \section{Introduction}
 
-Environment exploration and task planning are crucial components of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for achieving a given task. 
+Environment exploration and task planning are crucial components of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work, we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for accomplishing a given task. 
 
-We are motivated by autonomy \todo{\tiny Autonomy comes in many levels, can we be a bit more precise?} in multi-asset robotics teams for space exploration, in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). Autonomy is important due to severe communication delays, and efficiency is desirable since resources like battery time and hours of sunlight are limited. In these missions, partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
+Due to the growing complexity and uncertainty in future space missions, autonomy is a crucial ability for missions' success. In this work, we will focus on multi-asset missions (team of robots), in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). To increase productivity and science return, the robotic team needs to autonomously perform multi-sol (sol: martian day) navigation without human intervention. Severe communication delays and resource constraints (like battery time and limited hours of sunlight) pose further challenges in achieving such autonomy. In these missions, partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
 
-Our approach lies at the intersection of formal synthesis methods and optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.
+Our approach lies at the intersection of formal synthesis methods and stochastic optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.
 To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 
 \todo[inline]{Cristi/Ali: Short review of state-of-the-art mapping methods; active exploration; other related work}
+
+vision-based planning-oriented mapping...
+confidence-rich mapping...
+but these methods typcally do not consider specificaitons and cannot handle constraints...
 
 Three principal methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
 
