@@ -544,8 +544,18 @@ as a function of the environment belief state,  $x_e^{T_c}$,  at the end of the 
 We now question what a good result would be. 
 As a first consideration, one could consider
 \begin{equation}
-	\mathbb E_{\mathbb M_1} (R(\cdot)  )
+	\max_{\mu_{EX}}\  \mathbb E_{\mathbb M_{EX}} (R(x^{T_c}_e)  ) \mbox{ s.t.  }\mathbb M_{EX}.
 \end{equation}
+ This kind of objective would help us assess the best path to take, by reducing unknown factors.  We will give a small example, distilled from the larger Mars mission that clarifies potential issues with this objective.
+\begin{example}[]
+	Consider an environment with a single belief state $x_e\in[0,1]$ that expresses the credibility that region $A$ contains a sample of interest.
+	We specify the science mission as  ``\emph{get  sample of $A$}", i.e.,  $\lozenge A_s$, which is satisfied when $A$ is reached and $A$ contains a sample.
+	Without loss of generality, assume that the rover can reach $A$ with probability 1 for policy $\mu_R$. Then policy $\mu_R$ is an optimal policy for the rover and the satisfaction probability is equal to the belief state $x_e^{T_e}$.
+	\\
+Even if the copter can easily reach the region $A$ and tell us exactly whether or not the mission will fail, it will not since there is no benefit. 
+Visiting $A$ gives $E_{\mathbb M_{EX}} (x^{T_c}_e ) = 1\times x_e^{0} +  0\times (1- x_e^{0})$, which is equal to not exploring $A$ for which $ x_e^{0}= x_e^{T_c}$.
+
+\end{example} 
  
  
  how should it explore the environment in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{env}^{T_c}$)?
