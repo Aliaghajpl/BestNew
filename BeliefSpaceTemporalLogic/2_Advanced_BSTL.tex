@@ -556,7 +556,7 @@ As a first consideration, one could consider
 \begin{equation}
 	\max_{\mu_{EX}}\  \mathbb E_{\mathbb M_{EX}} (R(x^{T_c}_e)  ) \mbox{ s.t.  }\mathbb M_{EX}.
 \end{equation}
- This kind of objective would help us assess the best path to take, by reducing unknown factors.  We will give a small example, distilled from the larger Mars mission that clarifies potential issues with this objective.
+ This kind of objective helps us assess the best path to take by reducing unknown factors.  We will give a small example, distilled from the larger Mars mission, that clarifies potential issues with this objective.
 \begin{example}[]
 	Consider an environment with a single belief state $x_e\in[0,1]$ that expresses the credibility that region $A$ contains a sample of interest.
 	We specify the science mission as  ``\emph{get  sample of $A$}", i.e.,  $\lozenge A_s$, which is satisfied when $A$ is reached and $A$ contains a sample.
@@ -567,24 +567,40 @@ Visiting $A$ gives $E_{\mathbb M_{EX}} (x^{T_c}_e ) = 1\times x_e^{0} +  0\times
 
 \end{example} 
  
- 
- how should it explore the environment in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{env}^{T_c}$)?
+ Of interest to us is an objective that reduces the risk of the overall Mars mission, such that the mission can continue as long as possible. 
+ As such, if we can decide that a mission is probably infeasible this also carries merit. Based on this knowledge, we can decide to skip that science mission and continue to the next science task. 
 
+Thus, we can separate the outcomes of the exploration phase into:
+\begin{enumerate}
+	\item High confidence in mission satisfaction, i.e.,
+\begin{equation}\label{eq:accept}
+	R(x_e^{T_c})\geq 1-\delta_{acc}
+\end{equation}
+where $\delta_{acc}$ is the acceptable mission risk and the mission can be accepted
+	\item Very low confidence in mission satisfaction,  i.e., 
+\begin{equation}\label{eq:reject}
+	R(x_e^{T_c})\leq \delta_{rej},
+\end{equation}
+where $\delta_{rej}$ is the acceptable rejection risk for which the  rover mission can be aborted and continue to the next science mission,
+	\item Neither low nor high confidence in the mission satisfaction.
+	 \begin{equation}
+	\delta_{rej} \leq R(x_e^{T_c})\leq 1-\delta_{acc},
+\end{equation}
+\end{enumerate}
+It is actually the third outcome that is the least useful as for the other two outcomes, we can make a clear decision.
 
-\todo[inline]{Sofie to write: Talk about why ``intuitive'' objectives such as maximizing prob. of satisfaction, negative entropy, etc are not good. Define set we want to reach + references}
-
-We use the copter to scout the environment.    
-
-Define set 
- \[Y_\delta:=\{x^{T_c}_c,\}\times \left\{x_e \mid   \mathbb{P} \left[ \mathbf{x}_{[0, T_c]} \models\varphi \mid  x(0) = (x^{T_c}_r, x_e, x^{T_c}_\varphi)
-\right]\right\}.\]
- 
- 
+Hence the mission exploration is a success at the end $x_e^{T_c}$  is in either the acceptable region or the abort region. Additionally by the end of the exploration the copter should land  in region $x^{T_c}_c$. Thus the target region in the copter - environment space is given as
+\begin{equation}
+Y_\delta:=\{x^{T_c}_c\}\times 
+	\{x_e^{T_c} \mbox{ s.t.  }\eqref{eq:accept}\mbox{ or s.t. }\eqref{eq:reject} \}.
+\end{equation}
+And we can specify the objective of the copter as 
 \begin{equation}
 \label{eq:coptervalue}
-	V_c(x^0_c, x^0_e) = \mathbb{P} \left[ \mathbf{x}_{[T_c, T_c+T_r]} \models \lozenge Y_\delta \right].
+	\max \mathbb{P} \left[ \mathbf{x}_{[T_c, T_c+T_r]} \models \lozenge Y_\delta \right].
 \end{equation}
-Also this function can be computed via value iteration.
+where we have used the symbol $ Y_\delta $ as an atomic proposition for the associated set.
+Again this value and the associated optimal policy can be computed with value iterations.
 
 \begin{theorem}
 	For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase will result in the task $\varphi$ being satisfiable with either probability at least $1- \delta$, or with probability at most $\delta$.  
