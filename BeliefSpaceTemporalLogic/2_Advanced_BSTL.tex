@@ -272,7 +272,7 @@ In the rest of the paper we will assume that all MDPs are finite, i.e. they have
 
 
 \section{Product MDPs and Value Iteration}
-
+\red{[Why not call this solving the second phase?] }
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
@@ -526,17 +526,43 @@ Equipped with the back-stepping method for value iteration on product systems we
 	& \; = \mathbb{P} \left[ \mathbf{x} \models \varphi \mid (x_r, x_e, x_\varphi) (T_c) = (x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi) \right].
 \end{aligned}
 \end{equation}
-As mentioned above, satisfaction of the specification is equivalent to reachability of the set $\X_{rov} \times \X_{env} \times Q_f$ in the product system $\MDP_1$, where $Q_f$ is the accepting set of the specification automaton. Thus \eqref{eq:rovervalue} can be computed via value iteration using the bellman operator \eqref{eq:bellman_reach}. We point out that the copter cannot affect $x_r^{T_c}$ or $x_\varphi^{T_c}$ during its execution on $[0, T_c]$, but it can affect $x_e^{T_c}$ via exploration and thus influence the value of $V_r$ at the beginning of the science mission. We next discuss the copter's objective: given $V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi)$, how should it explore the environment in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{env}^{T_c}$)?
+As mentioned above, satisfaction of the specification is equivalent to reachability of the set $\X_{rov} \times \X_{env} \times Q_f$ in the product system $\MDP_1$, where $Q_f$ is the accepting set of the specification automaton. Thus \eqref{eq:rovervalue} can be computed via value iteration using the bellman operator \eqref{eq:bellman_reach}. We point out that the copter cannot affect $x_r^{T_c}$ or $x_\varphi^{T_c}$ during its execution on $[0, T_c]$, but it can affect $x_e^{T_c}$ via exploration and thus influence the value of $V_r$ at the beginning of the science mission. \red{We next discuss the copter's objective: given $V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi)$, how should it explore the environment in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{env}^{T_c}$)?}
 
 
 \subsection{Task-Specific Information Gathering}
 \label{sub:information}
 
+Task non-specific objectives: waist of resources. The surface we will deal with in the future is very large. Hence, we need to target the task at hand. 
+\todo[inline]{formalize and add  citations.}
+
+We know that the exploration of the environment will effect the mission via the improved belief state of the environment state.
+Thus can express the effect of the exploration based on its impact on the satisfaction probability. That is, we express the mission risk $R:\X_{env}\rightarrow [0,1]$ 
+\begin{equation}
+	R(\cdot) = V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi),
+\end{equation}
+as a function of the environment belief state,  $x_e^{T_c}$,  at the end of the exploration phase.
+We now question what a good result would be. 
+As a first consideration, one could consider
+\begin{equation}
+	\mathbb E_{\mathbb M_1} (R(\cdot)  )
+\end{equation}
+ 
+ 
+ how should it explore the environment in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{env}^{T_c}$)?
+
+
 \todo[inline]{Sofie to write: Talk about why ``intuitive'' objectives such as maximizing prob. of satisfaction, negative entropy, etc are not good. Define set we want to reach + references}
 
+We use the copter to scout the environment.    
+
+Define set 
+ \[Y_\delta:=\{x^{T_c}_c,\}\times \left\{x_e \mid   \mathbb{P} \left[ \mathbf{x}_{[0, T_c]} \models\varphi \mid  x(0) = (x^{T_c}_r, x_e, x^{T_c}_\varphi)
+\right]\right\}.\]
+ 
+ 
 \begin{equation}
 \label{eq:coptervalue}
-	V_c(x^0_c, x^0_e) = \mathbb{P} \left[ \mathbf{x}_{[0, T_c]} \models \lozenge Y_\delta \right].
+	V_c(x^0_c, x^0_e) = \mathbb{P} \left[ \mathbf{x}_{[T_c, T_c+T_r]} \models \lozenge Y_\delta \right].
 \end{equation}
 Also this function can be computed via value iteration.
 
