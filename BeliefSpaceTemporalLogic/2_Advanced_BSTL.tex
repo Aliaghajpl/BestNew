@@ -3,8 +3,8 @@
 \usepackage{amsmath, amsthm, amssymb, dsfont, accents}
 
 \usepackage{tikz,pgfplots}
-\usepackage{hyperref, booktabs}
-\usepackage{biblatex}
+\usepackage{booktabs}
+\usepackage{natbib}
 \usepackage{todonotes}
 
 \pgfplotsset{compat=1.14}
@@ -13,7 +13,7 @@
 \newlength\figureheight
 \newlength\figurewidth
 
-\addbibresource{2_references.bib}
+\renewcommand{\cite}[1]{\citet{#1}}
 
 \pdfinfo{
    /Author (Homer Simpson)
@@ -809,9 +809,9 @@ Future work:
 	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods. 
 \end{itemize}
 
-%\bibliographystyle{aaai} 
-%\bibliography{AliAgha}
-\printbibliography
+\bibliographystyle{abbrvnat} 
+\bibliography{2_references, AliAgha}
+ 
 
 \end{document}
 
