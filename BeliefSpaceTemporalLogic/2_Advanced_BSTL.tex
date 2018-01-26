@@ -170,10 +170,10 @@ In the sequel we focus on a fragment of linear temporal logic.
 \begin{definition}
   \label{def:gdtl-syntax}
   Formulas in the \textbf{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
-  \begin{equation*}
+  \begin{equation}
     \label{eq:scLTL}
-    \psi ::=  \True \ |\ p \ |\ \lnot p \ |\ \psi_1 \vee\psi_2  \ |\ \psi_1 \land \psi_2 \ |\ \psi_1 \ltluntil \psi_2 \ |\ \ltlnext \psi,
-  \end{equation*}
+    \psi ::=  \True \, |\,p \, |\, \lnot p \, |\, \psi_1 \vee\psi_2  \, |\, \psi_1 \land \psi_2 \, |\, \psi_1 \ltluntil \psi_2 \, |\, \ltlnext \psi, 
+  \end{equation}
   where $p\in \AP$ is an atomic proposition.
 \end{definition}
 The syntax defines the symbols and their correct ordering to form a formulae. In contrast, the semantics defined next give the interpretation.
@@ -200,12 +200,19 @@ Additionally, }an advantage of considering the scLTL fragment is that policy syn
 
 \subsection{Problem formulation}
 
+\begin{problem}
+\label{prob:main}
+Consider a robot-copter team in an uncertain environment modeled as an MDP.  Design a strategy for the robot-copter team that reduces the inherent risk of the scientific mission given in scLTL \eqref{eq:scLTL}.
+%  Consider the model components listed above. Design a policy for the copter exploration phase that explores the environment in a way that maximizes the expected knowledge about satisfaction of the scientific mission at time $T_c$.
+\end{problem}
 
-  Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives.  
+
+
+  Due to the nature of the rover-copter team, the copter is quick and has short battery life whereas the rover is slow,  it is reasonable subdivide the problem into two subproblems.
   
-  Due to the nature of the problem (the copter is quick and has short battery life, the rover is slow), it is reasonable to consider a turn-based solution.
-\sofie{[solution to which problem?]}
- We therefore propose to solve the problem sequentially by dividing it into two phases: exploration and mission execution.  As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.  %
+  More specifically, without loss of generality, we can  assume that the copter can complete its exploration mission before the rover has to start the critical mission. 
+ We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution.  As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$. 
+  %
 %\begin{figure}
 %	\begin{center}
 %		\begin{tikzpicture}
@@ -243,7 +250,6 @@ Additionally, }an advantage of considering the scLTL fragment is that policy syn
 %	\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}
 %	\label{fig:execorder}
 %\end{figure}
-
 \begin{figure}
 	
 \centering	
@@ -295,8 +301,16 @@ Additionally, }an advantage of considering the scLTL fragment is that policy syn
 %	\item An MDP $\MDP_{copt}$ modeling a copter in 3D space.
 %	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.    
 %\end{enumerate}
+These times can be quantified exactly based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover.  \\
+\noindent{\bfseries Mission Problem.}
+\todo[inline]{bla bla bla : connect also to existing literature. Remark clearly that this computation needs to yield a policy that maximizes the specification for all possible initial belief spaces.}
+\todo[inline]{Should we state here that mission which will probably fail are skipped?}
 
-These times can be informed e.g. by available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover. We can now state the question we attempt to answer in this paper.
+\noindent{\bfseries Exploration Problem.}
+ 
+  Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives. 
+  
+We can now state the question we attempt to answer in this paper.
 \begin{problem}
 \label{prob:main}
   Consider the model components listed above. Design a policy for the copter exploration phase that explores the environment in a way that maximizes the expected knowledge about satisfaction of the scientific mission at time $T_c$.
@@ -304,8 +318,12 @@ These times can be informed e.g. by available battery capacity and remaining hou
 
 
 
+\noindent{\bfseries Computational Challenge.}
+\todo[inline]{This is where we need to clarify that we know what we are doing. Additionally, we should show that the presented methods for structured MDPs will allow (also for continuous space case studies) this method to be applied to realistic case studies.}
 
-In the rest of the paper we will assume that all MDPs are finite, i.e. they have finite state and input spaces. To handle continuous-state MDPs, there are principled methods to construct finite-state approximations and relate finite solutions to the original problem \cite{Zamani2015,Haesaert2017}, and sampling-based methods that build probabilistic road maps to serve as approximate finite models \cite{Kavraki1996, Agha-mohammadi2014}. An alternative is to use approximate dynamic programming (also known as reinforcement learning) \sofie{[ADP is not equal to RL. ADP is model-based, whereas RL is model-free.]} directly on the continuous state space \cite{Powell2011}. Approximate methods allow a trade-off between the degree of approximation and scalability.\sofie{[This is for standard dynamic programming, most of the bounds require some type of contractivity (enforced by the discounting.)]}
+In the rest of the paper we will work only with MDPs that are finite, i.e. they have finite state and input spaces.  Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, this has been omitted from the paper to improve the clarity of the presentation.  
+These  principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in \cite{Zamani2015,Haesaert2017}. Alternative, sampling-based methods,  that build probabilistic road maps to serve as approximate finite models  can be found in \cite{Kavraki1996, Agha-mohammadi2014}. 
+%An alternative is to use approximate dynamic programming (also known as reinforcement learning) \sofie{[ADP is not equal to RL. ADP is model-based, whereas RL is model-free.]} directly on the continuous state space \cite{Powell2011}. Approximate methods allow a trade-off between the degree of approximation and scalability.\sofie{[This is for standard dynamic programming, most of the bounds require some type of contractivity (enforced by the discounting.)]}
 
 
 \section{Product MDPs and Value Iteration}
