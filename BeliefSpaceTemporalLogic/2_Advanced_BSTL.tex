@@ -108,13 +108,13 @@ Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on
 
 \section{Problem Framework}
 \label{sec:problem}
-
+{\color{orange}
 In this section, we will go over the two-robot scenario .... of reaching goal... satisfying some specification...
 
 We will start by modeling the decision making process in its most general form as an MDP... Then, we will discuss how the map uncertainty is modeled.... and defined concrete specifications in and resource-constraints/requirements, ....
 
 Objectives of this work is threefold: 1) compute ..., 2) analyze ..., 3) develop ...
-
+}
 
 
 \subsection{Models as Markov decision processes }
@@ -210,7 +210,7 @@ Consider a robot-copter team in an uncertain environment modeled as an MDP.  Des
 
   Due to the nature of the rover-copter team, the copter is quick and has short battery life whereas the rover is slow,  it is reasonable subdivide the problem into two subproblems.
   
-  More specifically, without loss of generality, we can  assume that the copter can complete its exploration mission before the rover has to start the critical mission. 
+  More specifically, without loss of generality, we can  assume that the copter can complete its exploration  before the rover has to start the critical scientific mission. 
  We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution.  As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$. 
   %
 %\begin{figure}
@@ -327,7 +327,8 @@ These  principled methods to construct finite-state approximations and to relate
 
 
 \section{Product MDPs and Value Iteration}
-\red{[Why not call this solving the second phase?] }
+\red{[I think the next section should come before this section together with a basic characterisation of the value iteration problem for the mission phase. 
+Then we can refer to the problem as solving the computational challenges (see problem statement)] }
 \begin{figure}
 \begin{center}
     \begin{tikzpicture}
