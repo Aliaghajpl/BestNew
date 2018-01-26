@@ -68,9 +68,16 @@ Environment exploration and task planning are crucial components of any autonomo
 
 Due to the growing complexity and uncertainty in future space missions, autonomy is a crucial ability for missions' success. In this work, we will focus on multi-asset missions (team of robots), in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). To increase productivity and science return, the robotic team needs to autonomously perform multi-sol (sol: martian day) navigation without human intervention. Severe communication delays and resource constraints (like battery time and limited hours of sunlight) pose further challenges in achieving such autonomy. In these missions, partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. 
 
-Our approach lies at the intersection of formal synthesis methods and stochastic optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.
+
+% What is missing... what is the problem 
+\sofieNew{In this paper,  we consider as a problem the multi-asset mission in which a copter assists the rover in the autonomous execution of mission tasks.  We specifically show that the mission specifications can be written as probabilistic temporal logic specifications.   Furthermore, we question how and what the copter should explore to assist the rover in its mission.
+}
+%  How do we plan to fill the gap of what is missing
+Our approach lies at the intersection of formal synthesis methods and stochastic optimal control: we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.  \sofie{where is the rover? Should we call control planning for this audiance?}
 To partially circumvent the curse of dimensionality in the resulting large system we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 
+
+% comparison to literature
 \todo[inline]{Cristi/Ali: Short review of state-of-the-art mapping methods; active exploration; other related work}
 
 vision-based planning-oriented mapping...
