@@ -76,20 +76,6 @@ Due to the growing complexity and uncertainty in future space missions, autonomy
 Our approach lies at the intersection of formal synthesis methods and stochastic optimal control; we phrase also the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.  
 To partially circumvent the curse of dimensionality, %in the resulting large system 
 we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
-
-\subsection{Literature}
-% comparison to literature
-\todo[inline]{Cristi/Ali: Short review of state-of-the-art mapping methods; active exploration; other related work}
-
-vision-based planning-oriented mapping...
-confidence-rich mapping...
-but these methods typcally do not consider specificaitons and cannot handle constraints...
-
-Three principal methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
-
-% Unfortunately, in practice all three methods are limited to finite-state systems of moderate size. For systems with continuous state spaces, or systems that are very large, approaches include approximate dynamic programming (also known as reinforcement learning) \cite{Powell2011} and abstraction-based methods \cite{Zamani2015,Haesaert2017}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
-
-
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.8\columnwidth]{figs/heli-rover.png}
@@ -98,10 +84,19 @@ Three principal methods exist to solve stochastic optimal control problems: valu
   \label{fig:heli-rover}
 \end{figure}
 
+\subsection{Related work}
+Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy. \cite{Thrun2005,stachniss2009Bbook,thrun2002robotic} discuss many variants of these methods. While these mapping algorithms can be developed separately from the planning algorithms, in this work, we are interested in the ``joint planning and mapping" methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. 
+Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop novel framework that allows for principled incorporation of mission specification where the ``active" perception not only helps the navigation, but also helps the satisfaction of mission goals. We will model this problem as a stochastic optimal control problem.
+
+Three major classes of methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
+
+% Unfortunately, in practice all three methods are limited to finite-state systems of moderate size. For systems with continuous state spaces, or systems that are very large, approaches include approximate dynamic programming (also known as reinforcement learning) \cite{Powell2011} and abstraction-based methods \cite{Zamani2015,Haesaert2017}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
+
 \subsection{Contributions and Paper Layout}
 \sofieNew{The contributions of this paper are threefold. Firstly, in this paper we present a novel problem framework for the future Mars mission.  More specifically in the next section, we will show that the two mission asset problem can be modeled with Markov Decision Processes and that the tasks of interest can be described via temporal logics. 
 Secondly in the subsequent section, we introduce computational methods levering the inherent decomposed structure of the problem to ameliorate the curse of dimensionality. 
-Thirdly in Section \ref{sec:solution}, we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to the task performed by the rover.  
+Thirdly in Section \ref{sec:solution}, we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to 
+the task performed by the rover.  
 Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on a case study that represents the typical aspects of a Mars exploration problem.}
 % The following Section \ref{sec:preliminaries} introduces pertinent notation along with basics of probabilistic systems and temporal logics. Subsequently, Section \ref{sec:problem} introduces the problem we seek to solve, followed by our proposed solution in Section \ref{sec:solution}. We demonstrate the approach in a Mars-inspired case study in Section \ref{sec:casestudy}, and report our experience from hardware experiments in Section \ref{sec:hardware}. The paper is concluded in Section \ref{sec:conclusion}.
 
@@ -814,7 +809,8 @@ Future work:
 	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods. 
 \end{itemize}
 
-
+%\bibliographystyle{aaai} 
+%\bibliography{AliAgha}
 \printbibliography
 
 \end{document}
