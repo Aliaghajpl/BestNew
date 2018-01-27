@@ -190,8 +190,8 @@ We say that a state trajectory $\mathbf{x} = x_0 x_1 x_2 \ldots$ satisfies a spe
 
 \sofieNew{In general, we cannot say that an MDP system (for a given policy) satisfies a property $\psi$. Instead, we can quantify the probability with which the system will satisfy the property, that is  \begin{equation}\label{eq:probLTL}\mathbb P[\mathbf x \vDash \psi ] .\end{equation}
 }
-\sofieNew{Remark that we have chosen to work with the scLTL fragment in this paper.  For the purpose of Mars exploration, in which tasks can only be described on a daily basis, this fragment is sufficiently strong.
-Additionally, }an advantage of considering the scLTL fragment is that policy synthesis for an scLTL specification over a space $\X$ is equivalent to reachability of $\X\times Q_f$ on the product system $\MDP \otimes_{ser} \FSA_\psi$, where $\FSA_\varphi$ is a finite-state automaton constructed from $\varphi$ \cite{Belta2017} with accepting set $Q_f$. A finite-state automaton is a special case of an MDP, thus also the product system is an MDP. It is well known that the optimal reachability probability can be computed via value iteration of a Bellman operator \cite{Baier2008}. To define the interpretation of a formula, i.e. the \emph{semantics}, consider a word $\word$.
+\sofieNew{Remark that we have chosen to work with the scLTL fragment in this paper.  For the purpose of Mars exploration, in which tasks can only be described on a daily basis, this fragment is sufficiently strong.}
+
 
 \todo[inline]{Example of a specification in rover and environment belief}
 
@@ -325,19 +325,162 @@ These  principled methods to construct finite-state approximations and to relate
 %An alternative is to use approximate dynamic programming (also known as reinforcement learning) \sofie{[ADP is not equal to RL. ADP is model-based, whereas RL is model-free.]} directly on the continuous state space \cite{Powell2011}. Approximate methods allow a trade-off between the degree of approximation and scalability.\sofie{[This is for standard dynamic programming, most of the bounds require some type of contractivity (enforced by the discounting.)]}
 
 \section{A Stochastic Optimal Control Approach}
-\todo[inline]{UNDER CONSTRUCTION}
-\todo[inline]{Write that we solve everything with dynamic programming.}
-\todo[inline]{Comment on the fact that all the problems will have a finite  end time.}
+In this section, we given the design of a policy for the rover mission and in the design of a control policy for the copter exploration task. 
+We will show that both subproblems can be solved as a stochastic optimal control problem. More precisely, we will show that both optimal control problems can be characterized by a Bellman operator 
+%Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator 
+%$\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
+\begin{equation}
+  (\bellman V) (x) =  \max_{u \in \U}\mathbb E\, \,g(x', V(x'))  \mbox{ for } x'\sim  T(\cdot \mid x, u).
+\end{equation}
+where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem specific function and the value functions are positive definite mappings from a state space $\X$, that is, $V:\X\rightarrow  \mathbb{R}_+$. 
+
+The exploration phase will impact the execution of the mission phase via the shared knowledge of the environment. 
+Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we will first characterize the rover mission for a variable belief state of the environment.  Then in the second subsection, we will design an exploration optimal control problem that leverages the mission parameters.  
 
 
-\subsection{Mission Problem}
+\subsection{Mission Optimal Control}
+In this subsection, we will first show that the specification satisfaction is related to a reachability problem over an extended MDP. Subsequently, we will show that this stochastic reachability problem can be written as a finite horizon, stochastic dynamic programming problem.\\
+Consider as an example mission specification $\varphi:= \lozenge a \wedge \lozenge b$, for this formal specification we can verify whether a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots $ satisfies the specification by verifying whether the sequence of control inputs $\pi$ to this system yield a trajectory that reaches the target state $q_f$.
+\begin{figure}[htp]
+\begin{tikzpicture}[node distance =2cm,scale=0.9]
+			\node[initial,  initial text={},name = init,circle,draw] {$x_0$};
+		\node[circle, draw,right of = init, yshift = .75cm,align=center] (x1){$x_1$ \\ $\{a\}$ };
+		\node[circle, draw, right of = init, yshift = -.75cm, align=center](x2) {$x_2$ \\ $\{b\}$};
+		\path[->] (init) edge [bend left, dashed, red]
+ node[above] {\small $ 0.8$} (x1)
+ (init) edge [loop above, dashed, red]
+ node[left] {\small$0.2$} (init)
+ (init) edge [bend right, blue]
+ node[below] {\small$ 0.7$} (x2)
+  (init) edge [loop below, blue]
+ node[left] {\small$0.3$} (init)
+ (x2) edge [bend right,dashed, red]
+ node[left] {\small$0.7$} (x1) 
+  (x2) edge [loop below, blue](x2) 
+   (x2) edge [loop below,dashed, red]
+ node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2) 
+  (x1) edge [loop above, blue](x1) 
+   (x1) edge [loop above,dashed, red]
+ node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
+ \node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$}; 
+ %		\path[->] (init) edge [bend left] node[above] {$a$} (A)
+%		(init) edge [bend right] node[below] {$b$} (B)
+%		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
+%		(A) edge [loop above] node[left] {$\neg a$} (A)
+%		(B) edge [loop below] node[right] {$\neg b $} (B)
+%		(B) edge [bend right] node[below] {$u_1$} (AB)
+%		(A) edge [bend left] node[above] {$u_1$} (AB);
+		\node[initial, right of = prod,initial text={},name = init,circle,draw, node distance=1.5cm] {$q_0$};
+		\begin{scope}[node distance =1cm]
+			\node[circle, draw,right of = init, yshift = .5cm] (A){$q_1$};
+		\node[circle, draw, right of = init, yshift = -.5cm](B) {$q_2$};
+		\node[ circle, draw,right of = B, yshift = .5cm, double, double distance=1pt] (AB){$q_f$};
+		\path[->] (init) edge [bend left] node[above] {$a$} (A)
+		(init) edge [bend right] node[below] {$b$} (B)
+		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
+		(A) edge [loop above] node[left] {$\neg a$} (A)
+		(B) edge [loop below] node[right] {$\neg b $} (B)
+		(B) edge [bend right] node[below] {$a$} (AB)
+		(A) edge [bend left] node[above] {$b$} (AB);
+		\end{scope}
+		
+	\end{tikzpicture}
+	\caption{On the left an example MDP, and on the right a finite state system associated to mission specification $\varphi:= \lozenge A \wedge \lozenge B$.  }
+\end{figure} 
+In fact, for any specification $\varphi$ in the scLTL fragment it is possible to define such a  finite-state automaton $\FSA_\varphi$ \cite{Belta2017} with accepting set $Q_f$.
+
+Thus, we can now observe that the probability that a specification is satisfied \eqref{eq:probLTL}
+for an MDP  $\MDP$  with state space $\X$ is equivalent to the probability that a set $\X\times Q_f$ in the state space of the extended product system $\MDP \otimes_{ser}^L \FSA_\psi$ is reached. 
+Since $\FSA_\psi$ can trivially be modeled as an MDP, the product  $ \otimes_{ser}^L$ follows the definition of the serial connection between MDPs with connection map $L$, as given next, 
+\begin{definition} Consider two MDPs  $\MDP_1$ and $\MDP_2$, then  for a given   \textbf{connection} $C : \X_1 \rightarrow \U_2$, their \textbf{serial product} is the MDP $\MDP_1 \otimes_{ser}^C \MDP_2 = (\X_1 \times \X_2, \init_{ser}, \U_1, \tr_{ser})$,
+  where $\init_{ser}(x_1, x_2) = \init_1(x_1) \init_2(x_2)$
+  and
+  \begin{equation}\label{eq:serial}
+  \begin{aligned}
+      \tr_{ser}&(x_1', x_2' \mid x_1, x_2, u_1) \\
+      & = \tr_1 (x_1' \mid x_1, u_1) \tr_2 (x_2' \mid x_2, C(x_1') )
+  \end{aligned}
+  \end{equation}
+  Additionally, we say that their  \textbf{parallel product} is the MDP $\MDP_1 \otimes_{par} \MDP_2 = (\X_1 \times \X_2, \init_{par}, \U_1 \times \U_2, \tr_{par})$, where $\init_{par}(x_1, x_2) = \init_1(x_1) \init_2(x_2)$
+  and
+  \begin{equation}
+  \begin{aligned}
+      \tr_{par}&(x_1', x_2' \mid x_1, x_2, u_1, u_2) \\
+      & = \tr_1 (x_1' \mid x_1, u_1) \tr_2 (x_2' \mid x_2, u_2)
+  \end{aligned}
+  \end{equation}
+\end{definition}
+ 
+ Let us now look at the specific case of the rover mission. The MDP model of this mission contains both the rover $\MDP_{rov}$ and environment $\MDP_{env}$. 
+Since   the environment belief MDP itself is composed of several belief MDPs over individual labels, i.e., $\MDP_{env}:=\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) $, it follows that the mission MDP is given as 
+ \[\left( \MDP_{rov} \otimes_{ser}^{C_1}\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right)
+  \]
+  where $C_1 : \X_{rov} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$  is the map of poses of the rover to measurements of the environment labels.
+ 
+ Hence, once combined with the temporal specification we get an extended MDP  
+ composed of different parts: the rover, the environment belief model and the specification automaton.
+ \begin{equation}
+\label{eq:syst_prod_def}
+\begin{aligned}
+	\MDP_1 & = \left( \MDP_{rov} \otimes_{ser}^{C_1} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right) \otimes_{ser}^{L} \mathcal A_{\varphi}, \\
+	\end{aligned}
+\end{equation}
+To design a policy for the mission, it is now sufficient to maximize the reachability over this extended MDP \eqref{eq:syst_prod_def}.
+Remark that $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint space of rover poses and environment belief states to $2^{AP}$, where $AP$ is the set of atomic propositions used to construct $\varphi$.
+
+Remember that the rover will perform the mission task from time instant $T_c$ (the end time of the copter exploration) to  $T_r + T_c$.  Thus the satisfaction of the mission specification $\varphi$ \eqref{eq:probLTL}, can also be expressed as
+\begin{equation}
+\begin{aligned}
+\mathbb{P}_{\mu} \left[ \mathbf{x}^{[T_c,T_c+T_r]} \models \varphi \right].
+\end{aligned}
+\end{equation}
+where $\mathbf{x}^{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of the rover and environment.
+This can now be rewritten as 
+\begin{equation}\label{eq:ev_target}\mathbb{P}_{\mu} \left[ \mathbf{x}^{[T_c,T_c+T_r]}_1 \models \lozenge X_f \right]\end{equation} with  $\mathbf{x}^{[T_c,T_c+T_r]}_1$  the state trajectory of the extended MDP $\MDP_1$ and with the target set $X_f=\X\times Q_f$.
+Given an indicator function $\mathbf 1_{X_f}:\X_1\rightarrow\{0,1\}$ with  $ \mathbf 1_{X_f}(x) =1 $ if $x\inX_f$ and $0$ else, then the probability \eqref{eq:ev_target} is equal to \(\mathbb{P}_{\mu} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]\)
+and for a given set of policies $\Pi$, the design problem is equal to 
+ \begin{equation}\label{eq:optmission}\max_{\mu\in \Pi}\mathbb{P}_{\mu} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]\end{equation}
+Remark that we only need to consider the mission design $\mu=\mu_{T_c}\mu_{T_c+1}\ldots \mu_{T_c+T_r}$ for which each policy instance only controls the rover, that is, $\mu_{t}:\X_r\times\X_e\times\X_\varphi\rightarrow \U_{rov}$.
+
+To solve the optimal reachability problem \eqref{eq:optmission}, we define a value function $V_r$ that quantifies the probability that the rover will satisfy its specification before time $T_r + T_c$ as a function of the system state $x^{t}=(x^{t}_r, x^{t}_e, x^{t}_\varphi)$ of $\MDP_1$ at time $t\geq T_c$:
+\begin{equation}
+\label{eq:rovervalue}
+\begin{aligned}
+	& V_r(x^{t}_r, x^{t}_e, x^{t}_\varphi)  = \mathbb{P} \left[\max_{x\in \mathbf{x}^{[t+1,T_c+T_r]}} \mathbf 1_{X_f}(x) \ \mid \mathbf{x}^{[t]} = x^{t} \right].
+\end{aligned}
+\end{equation}
+Starting from $ V^{T_c+T_r}\equiv 0$, we can now quantify inductively the optimal value and policy as
+\begin{subequations}
+\label{eq:value_iter_mission}
+  \begin{align} 
+    & V^{t}  = \bellman V^{t+1} \label{eq:iter}, \\
+    & \pol_t(x) \in \argmax_{u\in \U_{rov}} \mathbb E\, \,g(x', V^{t+1}(x')) .  \end{align}
+\end{subequations}
+ for $x'\sim  T(\cdot \mid x, u)$.
+And 
+  for the Bellman operator corresponding to reaching a set $X_f$, the function $g$ is given by
+  \begin{equation}
+  \label{eq:bellman_reach}
+    g(x', v') = \max( \ind_{X_f}(x'), v').
+  \end{equation}
+This can be found in inter alia \cite{Abate2008}.
+
+ 
+  %In a parallel product there is no interaction between the two MDPs, but in a serial product a transition $x_1 \rightarrow x_1'$ in $\MDP_1$ triggers an action $C(x_1')$ in $\MDP_2$ that results in a transition in $x_2' \sim T_2(\cdot \mid x_2, C(x_1'))$. %Both products can be generalized to more than two components, and products can also be nested: e.g. $\MDP_1 \otimes_{ser}^C \left( \MDP_2 \otimes_{par} \MDP_3 \right)$. 
+We now have a full characterization of the value iteration and policy computation. But the used nested products lead to large state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. However, we next section we will show that value iteration can be done sequentially over subsystems without computing the aggregate transition matrices.
+
+
+%It is well known that the optimal reachability probability can be computed via value iteration of a Bellman operator \cite{Baier2008}. 
 
 
 
-\subsection{From Mission to Exploration problem}
+\subsection{From Mission to Exploration Problem}
 \label{sec:solution}
 
-Equipped with the back-stepping method for value iteration on product systems we turn back to the main problem of the paper: specification-guided information gathering. Consider again the two separate systems in \eqref{eq:syst_prod_def} (also Fig. \ref{fig:agg}): the aggregate system $\MDP_1$ for the mission phase and $\MDP_2$ for the exploration phase. We define a function $V_r$ that quantifies the probability that the rover will satisfy its specification before time $T_r + T_c$ as a function of the system state $(x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi)$ of $\MDP_1$ at time $T_c$:
+ 
+Equipped with the back-stepping method for value iteration on product systems we turn back to the main problem of the paper: specification-guided information gathering. Consider again the two separate systems in \eqref{eq:syst_prod_def} (also Fig. \ref{fig:agg}): the aggregate system $\MDP_1$ for the mission phase and $\MDP_2$ for the exploration phase. 
+
+We define a function $V_r$ that quantifies the probability that the rover will satisfy its specification before time $T_r + T_c$ as a function of the system state $(x^{T_c}_r, x^{T_c}_e, x^{T_c}_\varphi)$ of $\MDP_1$ at time $T_c$:
 \begin{equation}
 \label{eq:rovervalue}
 \begin{aligned}
@@ -349,8 +492,8 @@ As mentioned above, satisfaction of the specification is equivalent to reachabil
 
 \subsection{Exploration Problem: Task-Specific Information Gatherin}
 \label{sub:information}
-
-Task non-specific objectives: waist of resources. The surface we will deal with in the future is very large. Hence, we need to target the task at hand. 
+{\color{orange}
+Task non-specific objectives: waist of resources. The surface we will deal with in the future is very large. Hence, we need to target the task at hand. }
 \todo[inline]{formalize and add  citations.}
 
 We know that the exploration of the environment will effect the mission via the improved belief state of the environment state.
@@ -619,7 +762,7 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 
 
 \begin{remark}
-	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that will be triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer a MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
+	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that will be triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer an MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
 	\begin{equation*}
 	\begin{aligned}
 	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
