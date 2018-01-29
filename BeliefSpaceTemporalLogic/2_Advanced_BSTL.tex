@@ -431,14 +431,14 @@ with  $\mathbf{x}_{[T_c,T_c+T_r]}^1$ being the state trajectory of the extended 
 % \end{equation}
 % Remark that we only need to consider the mission design $\mu=\mu_{T_c}\mu_{T_c+1}\ldots \mu_{T_c+T_r}$ for which each policy instance only controls the rover, that is, $\mu_{t}:\X_{rov}\times\X_{env}\times\X_\varphi\rightarrow \U_{rov}$.
 
-To solve the optimal reachability problem \eqref{eq:ev_target}, we define a value function $V_r$ that quantifies the probability that the rover satisfies its specification before time $T_r + T_c$ as a function of the system state $x_{t}=(x_{t}^r, x_{t}^e, x_{t}^\varphi)$ of $\MDP_1$ at time $t\geq T_c$:
+To solve the optimal reachability problem \eqref{eq:ev_target}, we define a value function $V_r$ that quantifies the probability that the rover satisfies its specification before time $T_r + T_c$ as a function of the system state $x_{t}:=(x_{t}^r, x_{t}^e, x_{t}^\varphi)$ of $\MDP_1$ at time $t\geq T_c$:
 \begin{equation}
 \label{eq:rovervalue}
 \begin{aligned}
-	& V_r(x_{t}^r, x_{t}^e, x_{t}^\varphi)  = \max_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[\mathbf{x}^1_{[t,T_c+T_r]} \models \lozenge X_f \mid \mathbf{x}_{[t]} = x_{t} \right].
+	& V_r(x_{t}^r, x_{t}^e, x_{t}^\varphi)  = \max_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[\mathbf{x}^1_{[t,T_c+T_r]} \models \lozenge X_f \mid \mathbf{x}_{[t]}^1 = x_{t} \right].
 \end{aligned}
 \end{equation}
-Starting from $ V^{T_c+T_r}\equiv 0$, this probability can be inductively computed, via \emph{value iterations}, along with the optimal policy as
+Starting from $ V^{T_c+T_r}(x)\equiv \ind_{X_f}(x)$, this probability can be inductively computed, via \emph{value iterations}, along with the optimal policy as
 \begin{subequations}
 \label{eq:value_iter_mission}
   \begin{align} 
@@ -460,25 +460,25 @@ Similarly to above, we can model the overall stochastic system that is active in
 \end{aligned}
 \end{equation}
 with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a measurement model that maps copter poses to measurements of the environment labels. 
-The exploration phase affects the environment belief $x_e$ at time $T_c$. We quantify the effect of the exploration as \emph{mission risk} $R:\X_{env}\rightarrow [0,1]$ defined as
+The exploration phase affects the environment belief $x^e$ at time $T_c$. We quantify the effect of the exploration as \emph{mission risk} $R:\X_{env}\rightarrow [0,1]$ defined as
 \begin{equation}
-	R(\cdot) = V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi),
+	R(\cdot) = V_r(x_{T_c}^r, \cdot, x_{T_c}^\varphi),
 \end{equation}
-as a function of the environment belief state $x_e^{T_c}$, at the end of the exploration phase. Given $V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi)$, the question becomes how the environment should be explored in order to maximize knowledge (i.e. maximize the probability of a favorable $x_{e}^{T_c}$)?
+as a function of the environment belief state $x^e_{T_c}$, at the end of the exploration phase. Given $V_r(x_{T_c}^r, \cdot, x_{T_c}^\varphi)$, the question becomes how the environment should be explored in order to maximize knowledge (i.e. maximize the probability of a favorable $x^{e}_{T_c}$)?
 
 We now question what a good result would be. As a first consideration, one could choose the exploration objective
 \begin{equation}
 \label{eq:badmeasure}
-	\max_{\mu_{2}}\  \mathbb E^{\mathbb M_{2}}_{\mu_2} (R(x^{T_c}_e) )
+	\max_{\mu_{2}}\  \mathbb E^{\mathbb M_{2}}_{\mu_2} (R(x_{T_c}^e) )
 \end{equation}
 which simply attempts to maximize the probability that the rover can satisfy the mission specification. We give a small example, distilled from the larger Mars mission, that highlights issues with this objective.
 
 \begin{example}[]
-	Consider an environment with a single belief state $x_e\in[0,1]$ that expresses the belief that region $A$ contains a sample of interest.
+	Consider an environment with a single belief state $x^e\in[0,1]$ that expresses the belief that region $A$ contains a sample of interest.
 	We specify the science mission as ``\emph{get  sample of $A$}'', i.e.,  $\lozenge A_s$, which is satisfied when $A$ is reached and $A$ contains a sample.
-	Without loss of generality, assume that the rover can reach $A$ with probability 1 for a policy $\mu_R$. Then $\mu_R$ is an optimal policy for the rover and the satisfaction probability is equal to the initial belief state $x_e^{0}$.
+	Without loss of generality, assume that the rover can reach $A$ with probability 1 for a policy $\mu_R$. Then $\mu_R$ is an optimal policy for the rover and the satisfaction probability is equal to the initial belief state $x^e_{0}$.
   
-  Even if the copter can explore region $A$ and thus determine exactly whether the mission can succeed or not, there is no benefit in doing so under the objective \eqref{eq:badmeasure}. Exploring $A$ has an expected utility of $\mathbb{E} \left[ x^{T_c}_e \right] = 1\times x_e^{0} +  0\times (1- x_e^{0}) = x_e^0$, i.e. identical to the initial value of \eqref{eq:badmeasure}. 
+  Even if the copter can explore region $A$ and thus determine exactly whether the mission can succeed or not, there is no benefit in doing so under the objective \eqref{eq:badmeasure}. Exploring $A$ has an expected utility of $\mathbb{E} \left[ x_{T_c}^e \right] = 1\times x^e_{0} +  0\times (1- x^e_{0}) = x^e_0$, i.e. identical to the initial value of \eqref{eq:badmeasure}. 
 \end{example}
  
 Rather than naively maximizing the probability of satisfaction which can discourage exploration, we also consider it a positive outcome if the exploration phase shows that the probability of satisfying the mission is very low. Based on such knowledge resources can be redirected to more promising missions. We can separate possible outcomes of the exploration phase into:
@@ -486,36 +486,36 @@ Rather than naively maximizing the probability of satisfaction which can discour
 \begin{enumerate}
 	\item High confidence in mission satisfaction, i.e.,
 \begin{equation}\label{eq:accept}
-	R(x_e^{T_c})\geq 1-\delta_{acc}
+	R(x^e_{T_c})\geq 1-\delta_{acc}
 \end{equation}
 where $\delta_{acc}$ is the acceptable mission risk and the mission can be accepted,
 	\item Very low confidence in mission satisfaction,  i.e., 
 \begin{equation}\label{eq:reject}
-	R(x_e^{T_c})\leq \delta_{rej},
+	R(x^e_{T_c})\leq \delta_{rej},
 \end{equation}
 where $\delta_{rej}$ is the acceptable rejection risk for which the  rover mission can be aborted,
 	\item Neither low nor high confidence in the mission satisfaction,
 	 \begin{equation}
-	\delta_{rej} \leq R(x_e^{T_c})\leq 1-\delta_{acc}.
+	\delta_{rej} \leq R(x^e_{T_c})\leq 1-\delta_{acc}.
 \end{equation}
 \end{enumerate}
 The third outcome is the least useful for decision-making purposes as it is associated with the most uncertainty about task feasibility.
 
 Based on this classification we consider the mission exploration a success if it results in $x_e^{T_c}$ being either in the acceptable region or in the abort region. Additionally, by the end of the exploration the copter should land  in region $x^{T_c}_c$. We can define this target region in the copter - environment space as
 \begin{equation}
-Y_\delta = \{x^{T_c}_c\}\times 
-	\{x_e^{T_c} \mbox{ s.t.  }\eqref{eq:accept}\mbox{ or s.t. }\eqref{eq:reject} \}.
+Y_\delta = \{x_{T_c}^c\}\times 
+	\{x^e_{T_c} \mbox{ s.t.  }\eqref{eq:accept}\mbox{ or s.t. }\eqref{eq:reject} \}.
 \end{equation}
 And we can specify the objective of the copter as 
 \begin{equation}
 \label{eq:coptervalue}
-	V_c(x_c^0, x_e^0) = \max_{\mu_2} \mathbb{P}_{\mu_2}^{\MDP_2} \left[ \mathbf{x}_2^{[0, T_c]} \models \lozenge Y_\delta \mid \mathbf{x}^{[0]} = (x_c^0, x_e^0) \right].
+	V^0_c(x^c_0, x^e_0) = \max_{\mu_2} \mathbb{P}_{\mu_2}^{\MDP_2} \left[ \mathbf{x}^2_{[0, T_c]} \models \lozenge Y_\delta \mid \mathbf{x}_{[0]} = (x^c_0, x^e_0) \right].
 \end{equation}
 where we have used the symbol $Y_\delta$ as an atomic proposition for the associated set.
-Again this value and the associated optimal policy can be computed with value iterations.
+Again this value and the associated optimal policy can be computed with value iterations \eqref{eq:value_iter_mission}.
 
 
-In conclusion, in this section we have derived the following. For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rec}$.  
+In conclusion, in this section we have derived the following. For given initial poses $x^c_0$ and $x^r_0$ of the copter and robot, and an initial environment belief $x^e_0$, the function $V^0_c(x^c_0, x^e_0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rej}$.  
 \subsection{Related work}
 \sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. A Similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
 
