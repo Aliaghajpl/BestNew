@@ -522,102 +522,94 @@ In conclusion, in this section we have derived the following. For given initial 
 \section{ Value Iteration for Product MDPs}
 \label{sec:valueiter}
 
-\todo[inline]{Change to expectation operator, put g outside.}
-
-\red{[You should be able to cut about have a column here. Remove equations 22-24, and incorporate 25 into the text. Equation after 25 looks wrong to me. Just delete.[sofie]]}
-
 As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of these aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over the product components.
 
-Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator\footnote{\sofieNew{Remark that for this set of Bellman recursions, the control input is not rewarded directly, it only influences the value function via its effect on the next state distribution.   }} $\bellman$ on the following form:
-%\begin{equation}
-%  (\bellman V) (x) = \max_{u \in \U} \sum_{x' \in \X} g(x', V(x')) T(x' \mid x, u).
-%\end{equation}
-%
-\sofieNew{
- \begin{equation}
-   (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
- \end{equation}
- where $g$ %:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$
- is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$.
-\sofie{[This is not really a "standard " Bellman recursion at all, take a look at wiki. Normally you have a reward outside of the expectation operator.]}}
+Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator\footnote{\sofieNew{Remark that for this set of Bellman recursions, the control input is not rewarded directly, it only influences the value function via its effect on the next state distribution.}} $\bellman$ on the following form:
+\begin{equation}
+(\bellman V) (x) =  \max_{u \in \U} g \left( x, \mathbb E \left[  V(x') \mid x,u \right] \right).
+\end{equation}
+where $g$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. For example, $g(x, v') = \max(\ind_{X_f}(x), v')$ corresponds to the Bellman operator for reachability of a set $X_f$ that we used in Section \ref{sec:valueiter}. Finite-horizon value iteration over a horizon $[0, T]$ consists of the following iterations:
+\begin{equation}
+\begin{aligned}
+	V_T(x) & = g(x, 0), \quad V_{t-1} = \bellman V_t,\\
+	\mu_t(x) & \in \argmax_{u \in \U} g(x, \mathbb{E}\left[ V(x') \mid x,u \right])
+\end{aligned}
+\end{equation}
 
-If $\mathbf{\Pi}$ is the set of all stationary policies, the optimal value function $V^*$ and policy $\pol^*$ for a given Bellman operator $\bellman$ is then found via the iterations
-
-\red{[Indexing has to decrease! IT should be associated witht he time horizon]}
-
-\begin{subequations}
-\label{eq:value_iter}
-  \begin{align}
-    & V^*_0 \equiv 0, \; V^*_{k+1}  = \bellman V_k \label{eq:iter}, \\
-    & \pol_k^*(x) \in \argmax_{u \in \U} \sum_{x' \in \X}  g(x', V_{k-1}^*(x')) T(x' \mid x, u).
-  \end{align}
-\end{subequations}
-
-\begin{example}
-  As shown previously in the paper, the Bellman operator corresponding to reaching a set $X_f$ is given by
-  \begin{equation}
-  \label{eq:bellman_reach}
-    g(x', v') = \max( \ind_{X_f}(x'), v').
-  \end{equation}
-\end{example}
-
-\begin{example}
-  Consider the finite-horizon optimal control problem
-  \begin{equation}
-     \max \sum_{t=0}^T J_t(x_t).
-  \end{equation}
-  In this case, if the dynamic programming is initialized with $V_T(x) = J_T(x)$, iterated applications of the Bellman operator corresponding to $g_t(x', v') = J_{t-1}(x') + v'$, i.e.
-  \begin{equation*}
-    V_{t-1}(x) = \bellman_t V_{t} (x) = \max_{\pol} (J_{t-1}(x') + V_{t}(x')) T(x' \mid x, \pol(x))
-  \end{equation*}
-  computes the value function at times $T-1, T-2, \ldots, 0$.
-\end{example}
-
-We now consider the Bellman iteration step for product MDPs. For a serial product we get
+We now consider the Bellman iteration step for product MDPs. For a serial product $\MDP = \MDP_1 \otimes_{ser}^{C} \MDP_2$ we get
 \begin{equation*}
 \begin{aligned}
-  & \bellman V (x_1, x_2) = \max_{u_1 \in \U_1} \hspace{-2mm} \sum_{x_1', x_2' \in \X_1 \times \X_2}  \left[ \begin{aligned}
-  	g(x_1', x_2', V(x_1', x_2')) \\
-  	\times T_{ser}(x_1', x_2' \mid x_1, x_2, u_1)
-  \end{aligned} \right] \\
-  & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1}  T_1(x_1' \mid x_1, u_1 ) \left[ \begin{aligned}
-   	\sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) \\
-   	\times  T_2(x_2' \mid x_2, C(x_1'))
-   \end{aligned} \right].
+	&  \mathbb{E}^\MDP\left[ V(x_1', x_2') \mid x_1, x_2, u_1 \right] \\ 
+	& = \mathbb{E}^{\MDP_1} \left[ \mathbb{E}^{\MDP_2} \left[ V(x_1', x_2') \mid x_2, C(x_1')  \right] \mid x_1, u_1   \right],
 \end{aligned}
 \end{equation*}
+where we note that the inner expectation is a function of $x_2$ and $x_1'$.
+% \begin{equation*}
+% \begin{aligned}
+%   & \bellman V (x_1, x_2) = \max_{u_1 \in \U_1} \hspace{-2mm} \sum_{x_1', x_2' \in \X_1 \times \X_2}  \left[ \begin{aligned}
+%   	g(x_1', x_2', V(x_1', x_2')) \\
+%   	\times T_{ser}(x_1', x_2' \mid x_1, x_2, u_1)
+%   \end{aligned} \right] \\
+%   & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1}  T_1(x_1' \mid x_1, u_1 ) \left[ \begin{aligned}
+%    	\sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) \\
+%    	\times  T_2(x_2' \mid x_2, C(x_1'))
+%    \end{aligned} \right].
+% \end{aligned}
+% \end{equation*}
 It follows that the Bellman update $V \mapsto \bellman V$ for a serial product can be computed in back-stepping fashion as follows:
 \begin{equation*}
 \begin{aligned}
-  W_2(x_1', x_2') & = g(x_1', x_2', V(x_1', x_2')) \\
-  W_1(x_1', x_2) & = \sum_{x_2' \in \X_2}  T_2(x_2' \mid x_2, C(x_1')) W_2(x_1', x_2'), \\
-  \bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, u_1) W_1(x_1', x_2).
+	W_2(x_1', x_2) & = \mathbb{E}^{\MDP_2} \left[ V(x_1', x_2') \mid x_2, C(x_1')  \right], \\
+	W_1(u_1, x_1, x_2) & = \mathbb{E}^{\MDP_1} \left[ W_2(x_1', x_2) \mid x_1, u_1   \right], \\
+	\bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} g(x_1, x_2, W_1(u_1, x_1, x_2)).
 \end{aligned}
 \end{equation*}
-The procedure generalizes immediately to $n$-length serial products where the $i$th step becomes:
+% \begin{equation*}
+% \begin{aligned}
+%   W_2(x_1', x_2') & = g(x_1', x_2', V(x_1', x_2')) \\
+%   W_1(x_1', x_2) & = \sum_{x_2' \in \X_2}  T_2(x_2' \mid x_2, C(x_1')) W_2(x_1', x_2'), \\
+%   \bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, u_1) W_1(x_1', x_2).
+% \end{aligned}
+% \end{equation*}
+The procedure generalizes immediately to $n$-length serial products where the $(n-i)$th step becomes
 \begin{equation}
 \label{eq:general_decomp}
 \begin{aligned}
-  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\
-   & \times W_{i} (x_1', \ldots, x_{i-1}', x_i', \ldots, x_n)
-    \end{aligned} \right].
+	& W_i (\ldots, x_{i-1}', x_i, x_{i+1} \ldots) \\
+	& = \mathbb{E}^{\MDP_i}\hspace{-0.5mm}  \left[ W_{i+1} (\ldots, x_{i-1}', x_i', x_{i+1} \ldots) \hspace{-0.5mm} \mid\hspace{-0.5mm}  x_i, C_i(x_{i-1}') \right].
 \end{aligned}
 \end{equation}
+% \begin{equation}
+% \label{eq:general_decomp}
+% \begin{aligned}
+%   & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
+%   & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\ 
+%    & \times W_{i} (x_1', \ldots, x_{i-1}', x_i', \ldots, x_n)
+%     \end{aligned} \right].
+% \end{aligned}
+% \end{equation}
 
 \begin{remark}
   In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \prod_{j \in \Gamma_i} \X_j \rightarrow \U_i$ for some index set $\Gamma_i$ that determines which preceding systems that affect the input to system $i$.
 \end{remark}
 
 In addition, if $\MDP_{i}$ is itself a serial or parallel product, the computation \eqref{eq:general_decomp} can again be performed via recursive back-stepping. If for instance $\MDP_{i} = \MDP_{i_1} \otimes_{par} \MDP_{i_2}$ is a parallel product we can write $x_i = (x_{i_1}, x_{i_2})$ and \eqref{eq:general_decomp} can be computed as
-\begin{equation*}
+\begin{equation}
 \begin{aligned}
-  W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) & = \hspace{-2mm} \sum_{x_{i_2}'  \in \X_{i_2}} \left[ \begin{aligned} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_{i-1}') ) \\ \times W_i(\ldots (x_{i_1}', x_{i_2}') \ldots) \end{aligned} \right], \\
-  W_{i-1}(\ldots (x_{i_1}, x_{i_2}) \ldots)  & =  \hspace{-2mm} \sum_{x_{i_1}' \in \X_{i_1}} \left[ \begin{aligned} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_{i-1}') ) \\
-  	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)
-  \end{aligned} \right].
+	& W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) \\
+	& \quad = \mathbb{E}^{\MDP_{i_2}} \left[ W_{i+1}(\ldots (x_{i_1}', x_{i_2}') \ldots) \mid x_{i_2}, C_i(x_{i-1}) \right], \\
+	& W_{i}(\ldots (x_{i_1}, x_{i_2}) \ldots) \\
+	& \quad = \mathbb{E}^{\MDP_{i_1}} \left[ W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) \mid x_{i_1}, C_i(x_{i-1}) \right].
 \end{aligned}
-\end{equation*}
+\end{equation}
+% \begin{equation*}
+% \begin{aligned}
+%   W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) & = \hspace{-2mm} \sum_{x_{i_2}'  \in \X_{i_2}} \left[ \begin{aligned} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_{i-1}') ) \\ \times W_i(\ldots (x_{i_1}', x_{i_2}') \ldots) \end{aligned} \right], \\
+%   W_{i-1}(\ldots (x_{i_1}, x_{i_2}) \ldots)  & =  \hspace{-2mm} \sum_{x_{i_1}' \in \X_{i_1}} \left[ \begin{aligned} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_{i-1}') ) \\
+%   	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)	
+%   \end{aligned} \right].
+% \end{aligned}
+% \end{equation*}
 As a consequence, for any aggregate system constructed from a hierarchy of serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing any aggregate transition probabilities. The back-stepping approach is advantageous when the connections are sparse, i.e. the connection mappings $C$ can be compactly represented.
 
 % \begin{remark}
@@ -654,18 +646,18 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 
 % \todo[inline]{PN: Plot also memory utilization}
 
+% \begin{remark}
+% 	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that is triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer an MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
+% 	\begin{equation*}
+% 	\begin{aligned}
+% 	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
+% 	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\ 
+% 	   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
+% 	    \end{aligned} \right].
+% 	\end{aligned}
+% 	\end{equation*}
+% \end{remark}
 
-\begin{remark}
-	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that is triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer an MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
-	\begin{equation*}
-	\begin{aligned}
-	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\
-	   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
-	    \end{aligned} \right].
-	\end{aligned}
-	\end{equation*}
-\end{remark}
 
 % \subsection{Sparse Value Function via Tensor Decomposition}
 
