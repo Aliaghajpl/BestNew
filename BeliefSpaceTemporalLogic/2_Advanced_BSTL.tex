@@ -94,7 +94,7 @@ Three major classes of methods exist to solve stochastic optimal control problem
 
 \subsection{Contributions and Paper Layout}
 
-The contributions of this paper are threefold. Firstly, in Section \ref{sec:problem} we construct a novel problem formulation for future multi-asset Mars mission by modeling all systems components as Markov Decision Processes, and by expressing science objectives using temporal logics. In Section \ref{sec:stochopt} we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to the task performed by the rover. In the subsequent Section \ref{sec:valueiter} we introduce computational methods levering the inherent decomposed structure of the problem to mitigate the curse of dimensionality. Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on a case study that exhibits typical aspects of a Mars exploration problem, before concluding the paper in Section \ref{sec:conclusion}.
+The contributions of this paper are threefold. Firstly, in Section \ref{sec:problem} we construct a novel problem formulation for future multi-asset Mars mission by modeling all systems components as Markov Decision Processes, and by expressing science objectives using temporal logics. Secondly in Section \ref{sec:stochopt}, we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to the task performed by the rover. In the subsequent Section \ref{sec:valueiter} we introduce--as the third contribution--computational methods levering the inherent decomposed structure of the problem to mitigate the curse of dimensionality. Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on a case study that exhibits typical aspects of a Mars exploration problem, before concluding the paper in Section \ref{sec:conclusion}.
 
 
 \section{Problem Setup}
@@ -517,7 +517,7 @@ Again this value and the associated optimal policy can be computed with value it
 
 In conclusion, in this section we have derived the following. For given initial poses $x^c_0$ and $x^r_0$ of the copter and robot, and an initial environment belief $x^e_0$, the function $V^0_c(x^c_0, x^e_0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rej}$.
 \subsection{Related work}
-\sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. A Similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
+\sofieNew{The  proposed design methodology depends on  the utility for decision making as described in \cite{lindley2000philosophy}.  A similar formulation   has been proposed in \cite{haesaert2016experiment} for the design of experiments.}
 
 \section{ Value Iteration for Product MDPs}
 \label{sec:valueiter}
