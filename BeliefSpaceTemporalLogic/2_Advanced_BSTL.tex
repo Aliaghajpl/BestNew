@@ -508,11 +508,19 @@ And we can specify the objective of the copter as
 where we have used the symbol $Y_\delta$ as an atomic proposition for the associated set.
 Again this value and the associated optimal policy can be computed with value iterations.
 
-In conclusion we have derived the following. For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rec}$. \sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. As similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
 
+In conclusion, in this section we have derived the following. For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rec}$.  
+\subsection{Related work}
+\sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. As similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
 
 \section{Product MDPs and Value Iteration}
 \label{sec:valueiter}
+\todo[inline]{Fix maximization errors. Change where possible to an expectation operator.}
+
+
+\subsection{Product MDPs and Value Iteration}
+\label{sub:products}
+\red{[You should be able to cut about have a column here. Remove equations 22-24, and incorporate 25 into the text. Equation after 25 looks wrong to me. Just delete.[sofie]]}
 
 As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of the aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over product components.
 
@@ -522,6 +530,9 @@ Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider 
 \end{equation}
 
 If $\mathbf{\Pi}$ is the set of all stationary policies, the optimal value function $V^*$ and policy $\pol^*$ for a given bellman operator $\bellman$ is then found via the iterations
+
+\red{[Indexing has to decrease! IT should be associated witht he time horizon]}
+
 \begin{subequations}
 \label{eq:value_iter}
   \begin{align}
