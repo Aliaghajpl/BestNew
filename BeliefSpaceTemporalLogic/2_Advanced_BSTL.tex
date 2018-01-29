@@ -86,7 +86,7 @@ we leverage its decomposed nature and perform value iteration via sequential bac
 \end{figure}
 
 \subsection{Related work}
-Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy, \cite{Thrun2005,stachniss2009_book,thrun2002robotic} discuss many variants of such methods. While these mapping algorithms can be developed separately from the planning algorithms, in this work, we are interested in ``joint planning and mapping" methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop a novel framework that allows for principled incorporation of mission specification where the ``active" perception not only helps the navigation, but also helps the satisfaction of mission goals. 
+Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy, \cite{Thrun2005,stachniss2009_book,thrun2002robotic} discuss many variants of such methods. While these mapping algorithms can be developed separately from the planning algorithms, in this work, we are interested in ``joint planning and mapping" methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop a novel method that allows for principled incorporation of mission specification where the ``active" perception not only helps the navigation, but also helps the satisfaction of mission goals. 
 
 Three major classes of methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
 
@@ -94,7 +94,7 @@ Three major classes of methods exist to solve stochastic optimal control problem
 
 \subsection{Contributions and Paper Layout}
 
-The contributions of this paper are threefold. Firstly, we present a novel problem framework for the future Mars mission by modeling the two-asset mission with Markov Decision Processes, and by expressing science objectives using temporal logics. In Section \ref{sec:stochopt} we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to the task performed by the rover. In the subsequent Section \ref{sec:valueiter} we introduce computational methods levering the inherent decomposed structure of the problem to mitigate the curse of dimensionality. Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on a case study that represents the typical aspects of a Mars exploration problem, before concluding the paper in Section \ref{sec:conclusion}.
+The contributions of this paper are threefold. Firstly, in Section \ref{sec:problem} we construct a novel problem formulation for future multi-asset Mars mission by modeling all systems components as Markov Decision Processes, and by expressing science objectives using temporal logics. In Section \ref{sec:stochopt} we show that the exploration task can be reformulated as a stochastic optimal control problem that is specific to the task performed by the rover. In the subsequent Section \ref{sec:valueiter} we introduce computational methods levering the inherent decomposed structure of the problem to mitigate the curse of dimensionality. Additionally in Section \ref{sec:casestudy}, we illustrate these new concepts on a case study that exhibits typical aspects of a Mars exploration problem, before concluding the paper in Section \ref{sec:conclusion}.
 
 
 \section{Problem Setup}
@@ -124,15 +124,13 @@ In case of the rover the state space $\X$ represents the two-dimensional space i
 \noindent{\bfseries Environment uncertainty as a belief MDP.}  
 A common way to represent a map for planning purposes is to attach labels such as ``sand'' or ``rock'' to different \emph{regions}, but in a Mars setting the true labels are often only partially known at the time of system deployment. 
 
-We capture this environmental uncertainty with MDPs $\MDP_{e_i}$ that model belief dynamics over labeled regions $i$. The aggregate environment model $\MDP_{env}$ with state $x_e$ is the combination of individual $\MDP_{e_i}$. Transitions in these MDPs occur when measurements are taken from on-board sensors. As such, the stochastic kernels of each of these MDP are parameterized by the physical distance of the robots to the regions as captured by some measurement model. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.    
-Hence the measurement models dictates the structured composition of the copter and rover models with the environment model. The resulting composed MDP represents the full model of the state of both robots and the current knowledge of the environment.
-
+We capture this environmental uncertainty with MDPs $\MDP_{e_i}$ that model belief dynamics over labeled regions $i$ of the two-dimensional rover state space. The aggregate environment model $\MDP_{env}$ with state $x_e$ is the combination of individual MDPs $\MDP_{e_i}$. Transitions in these MDPs occur when measurements are taken from on-board sensors, i.e., the stochastic kernels are parameterized by the physical distance of the robots to the regions in some measurement model. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground. Hence the measurement models dictate the structured composition of the copter and rover models with the environment model. The resulting composed MDP represents the full model of the state of both robots and the current knowledge of the environment.
 
 \subsection{Formal specifications}
-We use temporal logic formulas to formally describe task that the robot has to perform.
+We use temporal logic formulas to formally describe tasks that the robot has to perform.
 The basic building blocks of a temporal logic formula are \emph{atomic propositions} that take values $\True$ or $\False$.  An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$. 
 \todo[inline]{Connect with the previous example on the belief that a region contains a rock or not.}
-By combining atomic propositions into a formula, desired system behavior is expressed as set membership constraints (atomic propositions) together with temporal relations (operators). Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabet$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots$, which should be thought of as the observed output of a system. More specifically, for each execution $\mathbf{x} = x_0 x_1 x_2 \ldots$ of the MDP, a
+By combining atomic propositions into a formula, desired system behavior is expressed as set membership constraints (atomic propositions) together with temporal relations (operators). Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabet$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots$, which should be thought of as the observed output of a system. More specifically, for each execution $\mathbf{x} = x_0 x_1 x_2 \ldots$ of an MDP, a
 labeling function $\lab: \X \rightarrow \alphabet$ yields the associated word as $\word = \lab(x_0)\lab(x_1) \lab(x_2) \ldots$, i.e. for each time instance $k$, $L(x_k)$ maps the current state $x_k$ to a letter in the alphabet $\alphabet$. Desired behavioral properties can now be expressed via temporal logic formulas over the generated words.
 
 In the sequel we focus on a fragment of linear temporal logic. 
@@ -515,11 +513,9 @@ In conclusion, in this section we have derived the following. For given initial 
 
 \section{Product MDPs and Value Iteration}
 \label{sec:valueiter}
-\todo[inline]{Fix maximization errors. Change where possible to an expectation operator.}
 
+\todo[inline]{Change where possible to an expectation operator.}
 
-\subsection{Product MDPs and Value Iteration}
-\label{sub:products}
 \red{[You should be able to cut about have a column here. Remove equations 22-24, and incorporate 25 into the text. Equation after 25 looks wrong to me. Just delete.[sofie]]}
 
 As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of the aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over product components.
@@ -950,10 +946,11 @@ Future work:
 \begin{itemize}
 	\item Improved scalability via approximate DP, sparse value function representations (forego exactness)
 	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods. 
+  \item Specification- and exploration-guided refinement e.g. \cite{Nilsson2017}
 \end{itemize}
 
 \bibliographystyle{plainnat} 
-\bibliography{2_references,AliAgha}
+\bibliography{2_references,AliAgha,references_combined}
  
 
 \end{document}
