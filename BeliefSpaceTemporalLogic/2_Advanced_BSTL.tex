@@ -60,22 +60,22 @@
 
 \IEEEpeerreviewmaketitle
 
-	
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
 
-Environment exploration and task planning are crucial components of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work, we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for accomplishing a given task. 
+Environment exploration and task planning are crucial components of any autonomous system. In most approaches, these two aspects are decoupled in the sense that exploration is performed to maximize knowledge overall, rather than to maximize knowledge \emph{pertaining to the task}. In this work, we aim to improve efficiency in situations where exploration is expensive by limiting exploration to areas crucial for accomplishing a given task.
 
 Due to the growing complexity and uncertainty in future space missions, autonomy is a crucial ability required for mission success. In this work, we focus on multi-asset missions (teams of robots), in particular the 2020 Mars mission that will consist of a ground rover and a copter for exploration (Fig. \ref{fig:heli-rover}). To increase productivity and science return, the robotic team needs to autonomously perform multi-sol (sol: martian day) navigation without human intervention. Severe communication delays and resource constraints (like battery time and limited hours of sunlight) pose further challenges in achieving such autonomy. In these missions, partial knowledge about the environment is typically available from satellite imagery, but it needs to be complemented with observations from on-board sensors. Our goal is to improve both autonomy and efficiency in such missions by developing principled methods that in a specification-guided manner determine the most important areas to explore. We focus specifically on the problem of determining how the copter should behave to assists the rover in the autonomous execution of mission tasks.
 
-% What is missing... what is the problem 
+% What is missing... what is the problem
 % We specifically show that the mission specifications can be written as probabilistic temporal logic specifications.   Furthermore, we question how and what the copter should explore to assist the rover in its mission.
 
 %  How do we plan to fill the gap of what is missing
-Our approach lies at the intersection of formal synthesis methods and stochastic optimal control; we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.  
-To partially circumvent the curse of dimensionality, %in the resulting large system 
+Our approach lies at the intersection of formal synthesis methods and stochastic optimal control; we phrase the exploration problem as a two-stage optimal control problem in the combined space of copter poses and environment beliefs.
+To partially circumvent the curse of dimensionality, %in the resulting large system
 we leverage its decomposed nature and perform value iteration via sequential back stepping, which avoids construction of the overall system.
 \begin{figure}
   \begin{center}
@@ -86,11 +86,11 @@ we leverage its decomposed nature and perform value iteration via sequential bac
 \end{figure}
 
 \subsection{Related work}
-Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy, \cite{Thrun2005,stachniss2009_book,thrun2002robotic} discuss many variants of such methods. While these mapping algorithms can be developed separately from the planning algorithms, in this work, we are interested in ``joint planning and mapping" methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017_ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop a novel method that allows for principled incorporation of mission specification where the ``active" perception not only helps the navigation, but also helps the satisfaction of mission goals. 
+Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy, \cite{Thrun2005,stachniss2009_book,thrun2002robotic} discuss many variants of such methods. While these mapping algorithms can be developed separately from the planning algorithms, in this work, we are interested in ``joint planning and mapping" methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017_ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop a novel method that allows for principled incorporation of mission specification where the ``active" perception not only helps the navigation, but also helps the satisfaction of mission goals.
 
-Three major classes of methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
+Three major classes of methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem.
 
-% Unfortunately, in practice all three methods are limited to finite-state systems of moderate size. For systems with continuous state spaces, or systems that are very large, approaches include approximate dynamic programming (also known as reinforcement learning) \cite{Powell2011} and abstraction-based methods \cite{Zamani2015,Haesaert2017}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem. 
+% Unfortunately, in practice all three methods are limited to finite-state systems of moderate size. For systems with continuous state spaces, or systems that are very large, approaches include approximate dynamic programming (also known as reinforcement learning) \cite{Powell2011} and abstraction-based methods \cite{Zamani2015,Haesaert2017}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem.
 
 \subsection{Contributions and Paper Layout}
 
@@ -100,7 +100,7 @@ The contributions of this paper are threefold. Firstly, in Section \ref{sec:prob
 \section{Problem Setup}
 \label{sec:problem}
 
-We model the rover and copter as well as environment uncertainty as Markov Decision Processes. 
+We model the rover and copter as well as environment uncertainty as Markov Decision Processes.
 
 \todo[inline]{Remove initial distribution}
 
@@ -116,33 +116,33 @@ Consider the definition of a Markov Decision Process (MDP) as in \cite{Bertsekas
     \item $\tr$ is a conditional stochastic kernel that assigns to each state $x\in \X$ and control input $u\in \U$ a probability distribution $\tr(\cdot\mid x,u)$ over $\X$.
   \end{itemize}
 \end{definition}
-For a given sequence of control inputs $u_t \in \U$ with timing $t$, we say that an \emph{execution} of $\MDP$ initialized at $x_0$ is a sequence of states $\mathbf x = x_0x_1x_2x_3\ldots $ for which each state transition is obtained as a realization of the stochastic transition kernel $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$. 
+For a given sequence of control inputs $u_t \in \U$ with timing $t$, we say that an \emph{execution} of $\MDP$ initialized at $x_0$ is a sequence of states $\mathbf x = x_0x_1x_2x_3\ldots $ for which each state transition is obtained as a realization of the stochastic transition kernel $x_{k+1} \sim \tr(\cdot \mid x_k, u_k)$.
 A \emph{policy} $\pol = \pol_0 \pol_1 \ldots$ is a sequence of mappings $\pol_t:\prod_{t}\X\rightarrow \U$ from the state space to the action space.  A policy is \emph{Markov}  if for all $t$ it holds that  $\pol_t:\X\rightarrow \U$. A controlled execution is generated by $\pol$ if each state transition is obtained as a realization of the stochastic transition kernel $x_{t+1} \sim \tr(\cdot\,{ \mid}\, x_t, \mu_t(x_0,\ldots,x_t))$. All systems in this paper are modeled as MDPs, or as combinations (products) of MDPs.
 
-\smallskip 
+\smallskip
 \noindent{\bfseries Rover and copter as MDPs}.
 In case of the rover the state space $\X$ represents the two-dimensional space in which the rovers navigates. Its state transitions can be modeled as either stochastic or deterministic. Similarly, one can represent the dynamics of a copter via its state in three-dimensional space, where the additional dimension represents altitude. Effects of wind and other uncertainty influencing the state transitions can be captured by the stochastic transitions in the copter MDP model. For brevity, we refer to this model as $\MDP_{cop}$ and index its state as $x^c$. Similarly, we refer to the rover model as an MDP $\MDP_{rov}$ with state $x^r$.
 
 \smallskip
-\noindent{\bfseries Environment uncertainty as a belief MDP.}  
-A common way to represent a map for planning purposes is to attach labels such as ``sand'' or ``rock'' to different \emph{regions}, but in a Mars setting the true labels are often only partially known at the time of system deployment. 
+\noindent{\bfseries Environment uncertainty as a belief MDP.}
+A common way to represent a map for planning purposes is to attach labels such as ``sand'' or ``rock'' to different \emph{regions}, but in a Mars setting the true labels are often only partially known at the time of system deployment.
 
 We capture this environmental uncertainty with MDPs $\MDP_{e_i}$ that model belief dynamics over labeled regions $i$ of the two-dimensional rover state space. The aggregate environment model $\MDP_{env}$ with state $x^e$ is the combination of individual MDPs $\MDP_{e_i}$. Transitions in these MDPs occur when measurements are taken from on-board sensors, i.e., the stochastic kernels are parameterized by the physical distance of the robots to the regions in some measurement model. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground. Hence the measurement models dictate the structured composition of the copter and rover models with the environment model. The resulting composed MDP represents the full model of the state of both robots and the current knowledge of the environment.
 
 \subsection{Formal specifications}
 We use temporal logic formulas to formally describe tasks that the robot has to perform.
-The basic building blocks of a temporal logic formula are \emph{atomic propositions} that take values $\True$ or $\False$.  An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$. 
+The basic building blocks of a temporal logic formula are \emph{atomic propositions} that take values $\True$ or $\False$.  An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$.
 \todo[inline]{Connect with the previous example on the belief that a region contains a rock or not.}
 By combining atomic propositions into a formula, desired system behavior is expressed as set membership constraints (atomic propositions) together with temporal relations (operators). Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabet$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots$, which should be thought of as the observed output of a system. More specifically, for each execution $\mathbf{x} = x_0 x_1 x_2 \ldots$ of an MDP, a
 labeling function $\lab: \X \rightarrow \alphabet$ yields the associated word as $\word = \lab(x_0)\lab(x_1) \lab(x_2) \ldots$, i.e. for each time instance $k$, $L(x_k)$ maps the current state $x_k$ to a letter in the alphabet $\alphabet$. Desired behavioral properties can now be expressed via temporal logic formulas over the generated words.
 
-In the sequel we focus on a fragment of linear temporal logic. 
+In the sequel we focus on a fragment of linear temporal logic.
 \begin{definition}
   \label{def:gdtl-syntax}
   Formulas in the \textbf{syntactically co-safe LTL} (scLTL) fragment are constructed according to the grammar
   \begin{equation}
     \label{eq:scLTL}
-    \varphi ::=  \True \, |\,p \, |\, \lnot p \, |\, \varphi_1 \vee\varphi_2  \, |\, \varphi_1 \land \varphi_2 \, |\, \varphi_1 \ltluntil \varphi_2 \, |\, \ltlnext \varphi, 
+    \varphi ::=  \True \, |\,p \, |\, \lnot p \, |\, \varphi_1 \vee\varphi_2  \, |\, \varphi_1 \land \varphi_2 \, |\, \varphi_1 \ltluntil \varphi_2 \, |\, \ltlnext \varphi,
   \end{equation}
   where $p\in \AP$ is an atomic proposition.
 \end{definition}
@@ -183,8 +183,8 @@ We have chosen to work with the scLTL fragment that is restricted to properties 
 
 
 Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable divide the problem into two subproblems.
-  
-More specifically, we assume that the copter can complete its exploration before the rover enters the critical part of its scientific mission. We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$. 
+
+More specifically, we assume that the copter can complete its exploration before the rover enters the critical part of its scientific mission. We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
   %
 %\begin{figure}
 %	\begin{center}
@@ -226,8 +226,8 @@ More specifically, we assume that the copter can complete its exploration before
 
 
 \begin{figure}
-	
-\centering	
+
+\centering
 	\begin{tikzpicture}
 			\draw[|-|] (0,0) node[yshift=-1mm, anchor=north] {$0$} -- (3,0) node[yshift=-1mm, anchor=north] {$T_c$};
 			\draw[|-|] (3,0) -- (6,0) node[xshift=3mm, yshift=-1mm, anchor=north] {$T_c + T_r$};
@@ -253,8 +253,8 @@ More specifically, we assume that the copter can complete its exploration before
 %
 %			\draw[-latex] (3.5,0.9) -- (5.5,0.9);
 %			\draw[-latex] (3.5,0.6) -- (5.5,0.6);
-		
-			
+
+
 			\node (expl) at (1.5, 1.15) {\bfseries \color{black} Exploration};
 			\node (miss) at (4.5, 1.15) {\bfseries \color{black} Mission};
 
@@ -264,7 +264,7 @@ More specifically, we assume that the copter can complete its exploration before
 %			\draw[dashed] (3,0) -- ($(miss.west)$);
 %			\draw[dashed] (6,0) -- ($(miss.east)$);
 
-		\end{tikzpicture} 
+		\end{tikzpicture}
 			\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}	\label{fig:execorder}
 \end{figure}
 %
@@ -272,9 +272,9 @@ More specifically, we assume that the copter can complete its exploration before
 %\begin{enumerate}
 %	\item An MDP $\MDP_{rov}$ with state $x_r$ modeling a ground rover in 2D space.
 %	\item An MDP $\MDP_{env}$ with state $x_e$ that captures belief dynamics over a collection of unknown environment labels.
-%	\item A scLTL specification $\varphi$ that expresses the requirement of the scientific mission. The formula is defined over a set of atomic propositions in $\X_{rov} \times \X_{env}$---the combined space of rover poses and environment beliefs. 
+%	\item A scLTL specification $\varphi$ that expresses the requirement of the scientific mission. The formula is defined over a set of atomic propositions in $\X_{rov} \times \X_{env}$---the combined space of rover poses and environment beliefs.
 %	\item An MDP $\MDP_{copt}$ modeling a copter in 3D space.
-%	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.    
+%	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.
 %\end{enumerate}
 These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover.  \\
 \noindent{\bfseries Mission Problem.}
@@ -289,7 +289,7 @@ Let the MDP for the mission phase be given as $\MDP_1$, then we want to compute 
 
 
 \noindent{\bfseries Exploration Problem.}
- 
+
 Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives. Based on the partition into exploration and mission phases we refine our problem as follows.
 \begin{problem}
 \label{prob:main}
@@ -301,28 +301,28 @@ Our objective is to extract control policies that maximize the knowledge about t
 \noindent{\bfseries Computational Challenge.}
 \todo[inline]{This is where we need to clarify that we know what we are doing. Additionally, we should show that the presented methods for structured MDPs will allow (also for continuous space case studies) this method to be applied to realistic case studies.}
 
-In the rest of the paper, we restrict attention to MDPs that are finite, i.e. they have finite state and input spaces. Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, this has been omitted from the paper to improve the clarity of the presentation. Principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in e.g. \cite{Zamani2015,Haesaert2017}. An alternative is sampling-based methods that build probabilistic road maps to serve as approximate finite models of continuous-state systems \cite{Kavraki1996, Agha-mohammadi2014}. 
+In the rest of the paper, we restrict attention to MDPs that are finite, i.e. they have finite state and input spaces. Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, this has been omitted from the paper to improve the clarity of the presentation. Principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in e.g. \cite{Zamani2015,Haesaert2017}. An alternative is sampling-based methods that build probabilistic road maps to serve as approximate finite models of continuous-state systems \cite{Kavraki1996, Agha-mohammadi2014}.
 
 
 \section{A Stochastic Optimal Control Approach}
 \label{sec:stochopt}
 
-% We now show that both subproblems can be solved as stochastic optimal control problems characterized by a Bellman operator 
-% %Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator 
+% We now show that both subproblems can be solved as stochastic optimal control problems characterized by a Bellman operator
+% %Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator
 % %$\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
 % \begin{equation}
 %   (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
 % \end{equation}
-% where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. 
+% where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$.
 
-The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.  
+The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.
 
 
 \subsection{Mission-Phase Optimal Control}
-We first show that specification satisfaction is related to a stochastic reachability problem over an extended MDP, and then detail how it can be written as a stochastic finite-horizon dynamic programming problem. We start with an example illustrating how product systems can be used to reason about specification satisfaction. 
+We first show that specification satisfaction is related to a stochastic reachability problem over an extended MDP, and then detail how it can be written as a stochastic finite-horizon dynamic programming problem. We start with an example illustrating how product systems can be used to reason about specification satisfaction.
 
 \begin{example}
-\label{example:automaton} 
+\label{example:automaton}
 Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MDP and a mission specification $\varphi = \lozenge a \wedge \lozenge b$ dictating that two tasks $a$ and $b$ should both eventually be satisfied. The atomic proposition $a$ is associated with state $x^a$ whereas $b$ is associated with $x^b$, i.e. the labeling function is $L(x^a) = \{ a \}$, $L(x^b) = \{b \}$ and $L(x^c) =\emptyset$. We can construct the system to the right in Fig. \ref{fig:specautomaton} that has the property that a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots$ satisfies the specification if and only if the sequence of control inputs $\pi$ to this system reaches the target state $q_f$. All trajectories reaching $q_f$ have the property that both $a$ and $b$ have been observed, and all trajectories with this property reach $q_f$.
 
 \begin{figure}[htp]
@@ -339,14 +339,14 @@ Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MD
   (init) edge [loop below, blue]
  node[left] {\small$0.3$} (init)
  (x2) edge [bend right,dashed, red]
- node[left] {\small$0.6$} (x1) 
-  (x2) edge [loop below, blue](x2) 
+ node[left] {\small$0.6$} (x1)
+  (x2) edge [loop below, blue](x2)
    (x2) edge [loop below,dashed, red]
- node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2) 
-  (x1) edge [loop above, blue](x1) 
+ node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2)
+  (x1) edge [loop above, blue](x1)
    (x1) edge [loop above,dashed, red]
  node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
- \node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$}; 
+ \node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$};
 
  %		\path[->] (init) edge [bend left] node[above] {$a$} (A)
 %		(init) edge [bend right] node[below] {$b$} (B)
@@ -368,11 +368,11 @@ Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MD
 		(B) edge [bend right] node[below] {$a$} (AB)
 		(A) edge [bend left] node[above] {$b$} (AB);
 		\end{scope}
-		
+
 	\end{tikzpicture}
 	\caption{On the left an example MDP, and on the right a finite state system associated to mission specification $\varphi:= \lozenge a \wedge \lozenge b$.  }
   \label{fig:specautomaton}
-\end{figure} 
+\end{figure}
 \end{example}
 
 The procedure in Example \ref{example:automaton} is general: for any specification $\varphi$ in the scLTL fragment it is possible to construct a finite-state automaton $\FSA_\varphi$ with accepting set $Q_f$ \cite{Belta2017}. A finite-state automaton is a special case of an MDP. Thus, the probability \eqref{eq:probLTL} that a specification is satisfied for an MDP $\MDP$ with state space $\X$ is equivalent to the probability that a set $\X\times Q_f$ in the state space of the extended product system $\MDP \otimes_{ser}^L \FSA_\psi$ is reached, where the product $\otimes_{ser}^L$ is defined as follows:
@@ -394,20 +394,20 @@ The procedure in Example \ref{example:automaton} is general: for any specificati
   \end{aligned}
   \end{equation}
 \end{definition}
- 
- Let us now look at the specific case of the rover mission. The MDP model of this mission contains both the rover $\MDP_{rov}$ and environment $\MDP_{env}$. 
-Since   the environment belief MDP itself is composed of several belief MDPs over individual labels, i.e., $\MDP_{env}:=\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) $, it follows that the mission MDP is given as 
+
+ Let us now look at the specific case of the rover mission. The MDP model of this mission contains both the rover $\MDP_{rov}$ and environment $\MDP_{env}$.
+Since   the environment belief MDP itself is composed of several belief MDPs over individual labels, i.e., $\MDP_{env}:=\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) $, it follows that the mission MDP is given as
 \begin{equation}
   \left( \MDP_{rov} \otimes_{ser}^{C_1}\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right)
 \end{equation}
 where $C_1 : \X_{rov} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ is a measurement model that maps rover poses to measurements in the environment model.
- 
+
 Moreover, when combined with the temporal specification $\varphi$ we get an extended MDP composed of different parts: the rover, the environment belief model, and also the specification automaton.
  \begin{equation}
 \label{eq:syst_prod_def}
 	\MDP_1 = \left( \MDP_{rov} \otimes_{ser}^{C_1} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right) \otimes_{ser}^{L} \mathcal A_{\varphi}.
 \end{equation}
-Here $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint space of rover poses and environment belief states to $2^{AP}$, where $AP$ is the set of atomic propositions used to construct $\varphi$. To design a policy for the mission, it is now sufficient to maximize the probability that the extended MDP \eqref{eq:syst_prod_def} reaches the target set $\X_{rov} \otimes \X_{env} \otimes Q_f$. 
+Here $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint space of rover poses and environment belief states to $2^{AP}$, where $AP$ is the set of atomic propositions used to construct $\varphi$. To design a policy for the mission, it is now sufficient to maximize the probability that the extended MDP \eqref{eq:syst_prod_def} reaches the target set $\X_{rov} \otimes \X_{env} \otimes Q_f$.
 
 Recall that the rover performs the mission task from time instant $T_c$ (the end time of the copter exploration) until time $T_r + T_c$. Thus for a given policy $\mu$ the probability of mission specification satisfaction \eqref{eq:probLTL} can be expressed as
 \begin{equation}
@@ -416,15 +416,15 @@ Recall that the rover performs the mission task from time instant $T_c$ (the end
 \end{aligned}
 \end{equation}
 where $\mathbf{x}_{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of the rover and environment.
-By incorporating the specification as part of the model we can write the design problem as follows: %  can now be rewritten as 
+By incorporating the specification as part of the model we can write the design problem as follows: %  can now be rewritten as
 \begin{equation}
   \label{eq:ev_target}
   \argmax_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[ \mathbf{x}_{[T_c,T_c+T_r]}^1 \models \lozenge X_f \right]
 \end{equation}
-with  $\mathbf{x}_{[T_c,T_c+T_r]}^1$ being the state trajectory of the extended MDP $\MDP_1$ and with the target set $X_f=\X_{rov} \otimes \X_{env} \otimes Q_f$. 
+with  $\mathbf{x}_{[T_c,T_c+T_r]}^1$ being the state trajectory of the extended MDP $\MDP_1$ and with the target set $X_f=\X_{rov} \otimes \X_{env} \otimes Q_f$.
 
 % Given an indicator function $\mathbf 1_{X_f}:\X_1\rightarrow\{0,1\}$ with  $\mathbf 1_{X_f}(x) = 1 $ if $x\in X_f$ and $\mathbf 1_{X_f}(x) = 0$ otherwise, the probability \eqref{eq:ev_target} is equal to \(\mathbb{P}_{\mu} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]\)
-% and for a given set of policies $\Pi$, the design problem is equal to 
+% and for a given set of policies $\Pi$, the design problem is equal to
 % \begin{equation}
 %   \label{eq:optmission}
 %   \max_{\mu\in \Pi}\mathbb{P}_{\mu}^{\MDP_1} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]
@@ -441,9 +441,9 @@ To solve the optimal reachability problem \eqref{eq:ev_target}, we define a valu
 Starting from $ V^{T_c+T_r}(x)\equiv \ind_{X_f}(x)$, this probability can be inductively computed, via \emph{value iterations}, along with the optimal policy as
 \begin{subequations}
 \label{eq:value_iter_mission}
-  \begin{align} 
+  \begin{align}
     & V^{t}(x)  = \max_{u \in \U_{rov}}  \max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid} x_t=x\right] ) \label{eq:iter_mission}, \\
-    & \pol_1^t(x) \in \argmax_{u\in \U_{rov}} \left(\max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid }x_t=x\right] ) \right)%\mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .  
+    & \pol_1^t(x) \in \argmax_{u\in \U_{rov}} \left(\max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid }x_t=x\right] ) \right)%\mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .
     \end{align}
 \end{subequations}
 for $x_{t+1}\sim  T(\cdot \mid x_t, u)$, and where $\ind_{X_f}$ is the indicator function \cite{Abate2008}.
@@ -452,14 +452,14 @@ We now have a full characterization of the value iteration and policy computatio
 
 \subsection{Exploration Problem: Task-Specific Information Gathering}
 \label{sub:information}
- 
-Similarly to above, we can model the overall stochastic system that is active in the exploration phase as 
+
+Similarly to above, we can model the overall stochastic system that is active in the exploration phase as
 \begin{equation}
-\begin{aligned} 
+\begin{aligned}
 	\MDP_2 & = \MDP_{cop} \otimes_{ser}^{C_3} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right),
 \end{aligned}
 \end{equation}
-with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a measurement model that maps copter poses to measurements of the environment labels. 
+with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a measurement model that maps copter poses to measurements of the environment labels.
 The exploration phase affects the environment belief $x^e$ at time $T_c$. We quantify the effect of the exploration as \emph{mission risk} $R:\X_{env}\rightarrow [0,1]$ defined as
 \begin{equation}
 	R(\cdot) = V_r(x_{T_c}^r, \cdot, x_{T_c}^\varphi),
@@ -477,10 +477,10 @@ which simply attempts to maximize the probability that the rover can satisfy the
 	Consider an environment with a single belief state $x^e\in[0,1]$ that expresses the belief that region $A$ contains a sample of interest.
 	We specify the science mission as ``\emph{get  sample of $A$}'', i.e.,  $\lozenge A_s$, which is satisfied when $A$ is reached and $A$ contains a sample.
 	Without loss of generality, assume that the rover can reach $A$ with probability 1 for a policy $\mu_R$. Then $\mu_R$ is an optimal policy for the rover and the satisfaction probability is equal to the initial belief state $x^e_{0}$.
-  
-  Even if the copter can explore region $A$ and thus determine exactly whether the mission can succeed or not, there is no benefit in doing so under the objective \eqref{eq:badmeasure}. Exploring $A$ has an expected utility of $\mathbb{E} \left[ x_{T_c}^e \right] = 1\times x^e_{0} +  0\times (1- x^e_{0}) = x^e_0$, i.e. identical to the initial value of \eqref{eq:badmeasure}. 
+
+  Even if the copter can explore region $A$ and thus determine exactly whether the mission can succeed or not, there is no benefit in doing so under the objective \eqref{eq:badmeasure}. Exploring $A$ has an expected utility of $\mathbb{E} \left[ x_{T_c}^e \right] = 1\times x^e_{0} +  0\times (1- x^e_{0}) = x^e_0$, i.e. identical to the initial value of \eqref{eq:badmeasure}.
 \end{example}
- 
+
 Rather than naively maximizing the probability of satisfaction which can discourage exploration, we also consider it a positive outcome if the exploration phase shows that the probability of satisfying the mission is very low. Based on such knowledge resources can be redirected to more promising missions. We can separate possible outcomes of the exploration phase into:
 
 \begin{enumerate}
@@ -489,7 +489,7 @@ Rather than naively maximizing the probability of satisfaction which can discour
 	R(x^e_{T_c})\geq 1-\delta_{acc}
 \end{equation}
 where $\delta_{acc}$ is the acceptable mission risk and the mission can be accepted,
-	\item Very low confidence in mission satisfaction,  i.e., 
+	\item Very low confidence in mission satisfaction,  i.e.,
 \begin{equation}\label{eq:reject}
 	R(x^e_{T_c})\leq \delta_{rej},
 \end{equation}
@@ -503,10 +503,10 @@ The third outcome is the least useful for decision-making purposes as it is asso
 
 Based on this classification we consider the mission exploration a success if it results in $x_e^{T_c}$ being either in the acceptable region or in the abort region. Additionally, by the end of the exploration the copter should land  in region $x^{T_c}_c$. We can define this target region in the copter - environment space as
 \begin{equation}
-Y_\delta = \{x_{T_c}^c\}\times 
+Y_\delta = \{x_{T_c}^c\}\times
 	\{x^e_{T_c} \mbox{ s.t.  }\eqref{eq:accept}\mbox{ or s.t. }\eqref{eq:reject} \}.
 \end{equation}
-And we can specify the objective of the copter as 
+And we can specify the objective of the copter as
 \begin{equation}
 \label{eq:coptervalue}
 	V^0_c(x^c_0, x^e_0) = \max_{\mu_2} \mathbb{P}_{\mu_2}^{\MDP_2} \left[ \mathbf{x}^2_{[0, T_c]} \models \lozenge Y_\delta \mid \mathbf{x}_{[0]} = (x^c_0, x^e_0) \right].
@@ -515,7 +515,7 @@ where we have used the symbol $Y_\delta$ as an atomic proposition for the associ
 Again this value and the associated optimal policy can be computed with value iterations \eqref{eq:value_iter_mission}.
 
 
-In conclusion, in this section we have derived the following. For given initial poses $x^c_0$ and $x^r_0$ of the copter and robot, and an initial environment belief $x^e_0$, the function $V^0_c(x^c_0, x^e_0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rej}$.  
+In conclusion, in this section we have derived the following. For given initial poses $x^c_0$ and $x^r_0$ of the copter and robot, and an initial environment belief $x^e_0$, the function $V^0_c(x^c_0, x^e_0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rej}$.
 \subsection{Related work}
 \sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. A Similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
 
@@ -537,8 +537,8 @@ Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider 
  \begin{equation}
    (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
  \end{equation}
- where $g$ %:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ 
- is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. 
+ where $g$ %:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$
+ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$.
 \sofie{[This is not really a "standard " Bellman recursion at all, take a look at wiki. Normally you have a reward outside of the expectation operator.]}}
 
 If $\mathbf{\Pi}$ is the set of all stationary policies, the optimal value function $V^*$ and policy $\pol^*$ for a given Bellman operator $\bellman$ is then found via the iterations
@@ -562,10 +562,10 @@ If $\mathbf{\Pi}$ is the set of all stationary policies, the optimal value funct
 \end{example}
 
 \begin{example}
-  Consider the finite-horizon optimal control problem 
+  Consider the finite-horizon optimal control problem
   \begin{equation}
      \max \sum_{t=0}^T J_t(x_t).
-  \end{equation} 
+  \end{equation}
   In this case, if the dynamic programming is initialized with $V_T(x) = J_T(x)$, iterated applications of the Bellman operator corresponding to $g_t(x', v') = J_{t-1}(x') + v'$, i.e.
   \begin{equation*}
     V_{t-1}(x) = \bellman_t V_{t} (x) = \max_{\pol} (J_{t-1}(x') + V_{t}(x')) T(x' \mid x, \pol(x))
@@ -599,7 +599,7 @@ The procedure generalizes immediately to $n$-length serial products where the $i
 \label{eq:general_decomp}
 \begin{aligned}
   & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\ 
+  & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\
    & \times W_{i} (x_1', \ldots, x_{i-1}', x_i', \ldots, x_n)
     \end{aligned} \right].
 \end{aligned}
@@ -614,7 +614,7 @@ In addition, if $\MDP_{i}$ is itself a serial or parallel product, the computati
 \begin{aligned}
   W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) & = \hspace{-2mm} \sum_{x_{i_2}'  \in \X_{i_2}} \left[ \begin{aligned} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_{i-1}') ) \\ \times W_i(\ldots (x_{i_1}', x_{i_2}') \ldots) \end{aligned} \right], \\
   W_{i-1}(\ldots (x_{i_1}, x_{i_2}) \ldots)  & =  \hspace{-2mm} \sum_{x_{i_1}' \in \X_{i_1}} \left[ \begin{aligned} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_{i-1}') ) \\
-  	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)	
+  	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)
   \end{aligned} \right].
 \end{aligned}
 \end{equation*}
@@ -640,8 +640,8 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 % \end{remark}
 
 % \begin{figure}[h]
-%   \setlength\figurewidth{0.8\columnwidth} 
-%   \setlength\figureheight{0.4\columnwidth} 
+%   \setlength\figurewidth{0.8\columnwidth}
+%   \setlength\figureheight{0.4\columnwidth}
 %   \begin{center}
 %   \input{2figs/scale}
 %   \end{center}
@@ -660,7 +660,7 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 	\begin{equation*}
 	\begin{aligned}
 	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\ 
+	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\
 	   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
 	    \end{aligned} \right].
 	\end{aligned}
@@ -677,7 +677,7 @@ As a consequence, for any aggregate system constructed from a hierarchy of seria
 %   \begin{itemize}
 %     \item Pro: can be mapped through CP linear operators via ALS
 %     \item Con: value iteration is nonlinear
-%     \item What about policy iteration with sparse policy? 
+%     \item What about policy iteration with sparse policy?
 %   \end{itemize}
 %   \item TT representation
 %   \begin{itemize}
@@ -698,7 +698,7 @@ A generalization of serial and parallel products are \emph{factored MDPs} \cite{
 
 The back-stepping Bellman computation is an example of a factored sum-product algorithm \cite{Kschischang2001} that has previously been used for a similar purpose as ours in the context of MDP abstractions \cite{EsmaeilZadehSoudjani2017}.
 
- 
+
 
 \section{Case Study}
 \label{sec:casestudy}
@@ -709,7 +709,7 @@ We now apply our ideas in a case study. After introducing concrete models for ro
 
 \paragraph{Abstract Robot Models}
 
-Finite-state abstractions for continuous-state models can be constructed in principled ways via abstractions or sampling-based methods, but for the purpose of clarity we bypass this step here and directly introduce finite-state models that capture the essentials of agents that moving around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis. 
+Finite-state abstractions for continuous-state models can be constructed in principled ways via abstractions or sampling-based methods, but for the purpose of clarity we bypass this step here and directly introduce finite-state models that capture the essentials of agents that moving around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis.
 
 We assume that low-level controllers are available for both robots so that they move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
 
@@ -738,7 +738,7 @@ We assume that low-level controllers are available for both robots so that they 
   \label{fig:envmdp}
 \end{figure}
 
-We assume that regions of interest have been extracted from low-resolution satellite imagery, along with prior probability estimates for the likelihood that the regions exhibit certain traits. Here we restrict attention to \emph{risk regions} that may contain obstacles the rover can not traverse, and \emph{target regions} that are likely places where scientific samples can be extracted. We associate to each region $i$ a belief MDP $\MDP_{e_i}$ with five states $\zeta \in \{ 0, p_-, p_0, p_+, 1\}$ and three inputs $v \in \{ N, W, S \}$ for (N)o measurement, (W)eak measurement, and (S)trong measurement. The transition matrices are $T_N = I_5$, 
+We assume that regions of interest have been extracted from low-resolution satellite imagery, along with prior probability estimates for the likelihood that the regions exhibit certain traits. Here we restrict attention to \emph{risk regions} that may contain obstacles the rover can not traverse, and \emph{target regions} that are likely places where scientific samples can be extracted. We associate to each region $i$ a belief MDP $\MDP_{e_i}$ with five states $\zeta \in \{ 0, p_-, p_0, p_+, 1\}$ and three inputs $v \in \{ N, W, S \}$ for (N)o measurement, (W)eak measurement, and (S)trong measurement. The transition matrices are $T_N = I_5$,
 \begin{equation}
   T_{S} = \left[\begin{smallmatrix}
     1        &  0  &  0  &  0  &  0   \\
@@ -759,7 +759,7 @@ The outgoing transitions from $p_0$ are illustrated in Figure \ref{fig:envmdp}.
 
 Given belief MDPs $\MDP_{e_i}$ for every region of interest, we construct the environment model $M_{env}$ as the parallel product
 \begin{equation}
-  \MDP_{env} = \MDP_{e_1} \otimes_{par} \MDP_{e_1}  \otimes_{par} \ldots \otimes_{par} \MDP_{e_n}. 
+  \MDP_{env} = \MDP_{e_1} \otimes_{par} \MDP_{e_1}  \otimes_{par} \ldots \otimes_{par} \MDP_{e_n}.
 \end{equation}
 
 \paragraph{Specification}
@@ -820,10 +820,10 @@ We connect the systems in serial as illustrated in Fig \ref{fig:agg}. The serial
 
 We demonstrate the features of the proposed solution in a few example scenarios.
 
-\paragraph{Scenario 1} Fig. \ref{fig:workspacemars} illustrates a real area of Mars where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be in-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is 
+\paragraph{Scenario 1} Fig. \ref{fig:workspacemars} illustrates a real area of Mars where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be in-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
 \begin{equation}
-  \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA}, 
-\end{equation} 
+  \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA},
+\end{equation}
 where the atomic proposition $\texttt{obstacle}$ is $\True$ if the rover is in a risk region that contains an obstacle, and $\texttt{sA}$ is $\True$ if the rover is in a target region that contains a science sample.
 
 A good way to use our method is as a way to determine when additional exploration is warranted. To illustrate we consider a scenario where the initial probability of specification satisfaction is high: there is a high estimated probability that a sample can be extracted from the easy-to-access region $A_3$. However, when the rover reaches $A_3$ it turns out to be empty and the mission is now associated with more risk. This motivates an exploration phase with the hope that the uncertainty can be reduced. In Fig. \ref{fig:marstrajectories} the team behavior is illustrated for two configurations of the environment: one where the specification can be satisfied and one where it is infeasible.
@@ -857,14 +857,14 @@ A good way to use our method is as a way to determine when additional exploratio
                   every axis y label/.style={
                       at={(0.,1.05)},
                   anchor=south,
-                  }   
+                  }
                   ]
       \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/proba0.txt};
       \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 35,1);
       \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:35,0) rectangle (axis cs: 251,1);
       \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:251,0) rectangle (axis cs: 321,1);
     \end{axis}
-  \end{tikzpicture} ~ 
+  \end{tikzpicture} ~
   \begin{tikzpicture}
     \begin{axis}[width=0.5\columnwidth,
                   height=0.3\columnwidth,
@@ -882,7 +882,7 @@ A good way to use our method is as a way to determine when additional exploratio
                   every axis y label/.style={
                       at={(0.,1.05)},
                   anchor=south,
-                  }   
+                  }
                   ]
       \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/proba1.txt};
       \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 35,1);
@@ -916,10 +916,10 @@ Executions generated from the resulting copter and rover policies are shown in F
 
 \begin{figure}
 	\begin{center}
-	\includegraphics[width=0.4\columnwidth]{2figs/exp0-map.pdf} ~ 
+	\includegraphics[width=0.4\columnwidth]{2figs/exp0-map.pdf} ~
 	\includegraphics[width=0.4\columnwidth]{2figs/exp1-map.pdf} \\
-	\vspace{1mm} 
-	\includegraphics[width=0.4\columnwidth]{2figs/exp2-map.pdf} ~ 
+	\vspace{1mm}
+	\includegraphics[width=0.4\columnwidth]{2figs/exp2-map.pdf} ~
 	\includegraphics[width=0.4\columnwidth]{2figs/exp3-map.pdf}
 	\end{center}
 	\caption{Illustration of the copter and rover policies for different environment configurations: a shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle). The region probabilities indicate the belief states after the copter exploration phase. Copter trajectories are shown in blue, and rover trajectories in orange, if the specification can not be satisfied the rover does not move. All four executions are generated by the exact same policies; they adapt according to measurements received during the execution.}
@@ -961,13 +961,12 @@ Executions generated from the resulting copter and rover policies are shown in F
 Future work:
 \begin{itemize}
 	\item Improved scalability via approximate DP, sparse value function representations (forego exactness)
-	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods. 
+	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods.
   \item Specification- and exploration-guided refinement e.g. \cite{Nilsson2017}
 \end{itemize}
 
-\bibliographystyle{abbrvnat} 
+\bibliographystyle{abbrvnat}
 \bibliography{2_references,AliAgha3}
- 
+
 % AliAgha,references_combined, AliAgha3
 \end{document}
-
