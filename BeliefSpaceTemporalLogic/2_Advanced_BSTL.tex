@@ -297,13 +297,13 @@ In the rest of the paper, we restrict attention to MDPs that are finite, i.e. th
 \section{A Stochastic Optimal Control Approach}
 \label{sec:stochopt}
 
-We now show that both subproblems can be solved as stochastic optimal control problems characterized by a Bellman operator 
-%Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator 
-%$\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
-\begin{equation}
-  (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
-\end{equation}
-where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. 
+% We now show that both subproblems can be solved as stochastic optimal control problems characterized by a Bellman operator 
+% %Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator 
+% %$\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
+% \begin{equation}
+%   (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
+% \end{equation}
+% where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. 
 
 The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.  
 
@@ -406,26 +406,26 @@ Recall that the rover performs the mission task from time instant $T_c$ (the end
 \end{aligned}
 \end{equation}
 where $\mathbf{x}^{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of the rover and environment.
-This can now be rewritten as 
+By incorporating the specification as part of the model we can write the design problem as follows: %  can now be rewritten as 
 \begin{equation}
   \label{eq:ev_target}
-  \mathbb{P}_{\mu}^{\MDP_1} \left[ \mathbf{x}^{[T_c,T_c+T_r]}_1 \models \lozenge X_f \right]
+  \argmax_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[ \mathbf{x}^{[T_c,T_c+T_r]}_1 \models \lozenge X_f \right]
 \end{equation}
 with  $\mathbf{x}^{[T_c,T_c+T_r]}_1$ being the state trajectory of the extended MDP $\MDP_1$ and with the target set $X_f=\X_{rov} \otimes \X_{env} \otimes Q_f$. 
 
-Given an indicator function $\mathbf 1_{X_f}:\X_1\rightarrow\{0,1\}$ with  $\mathbf 1_{X_f}(x) = 1 $ if $x\in X_f$ and $\mathbf 1_{X_f}(x) = 0$ otherwise, the probability \eqref{eq:ev_target} is equal to \(\mathbb{P}_{\mu} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]\)
-and for a given set of policies $\Pi$, the design problem is equal to 
-\begin{equation}
-  \label{eq:optmission}
-  \max_{\mu\in \Pi}\mathbb{P}_{\mu}^{\MDP_1} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]
-\end{equation}
-Remark that we only need to consider the mission design $\mu=\mu_{T_c}\mu_{T_c+1}\ldots \mu_{T_c+T_r}$ for which each policy instance only controls the rover, that is, $\mu_{t}:\X_{rov}\times\X_{env}\times\X_\varphi\rightarrow \U_{rov}$.
+% Given an indicator function $\mathbf 1_{X_f}:\X_1\rightarrow\{0,1\}$ with  $\mathbf 1_{X_f}(x) = 1 $ if $x\in X_f$ and $\mathbf 1_{X_f}(x) = 0$ otherwise, the probability \eqref{eq:ev_target} is equal to \(\mathbb{P}_{\mu} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]\)
+% and for a given set of policies $\Pi$, the design problem is equal to 
+% \begin{equation}
+%   \label{eq:optmission}
+%   \max_{\mu\in \Pi}\mathbb{P}_{\mu}^{\MDP_1} \left[\max_{x\in \mathbf{x}^{[T_c,T_c+T_r]}} \mathbf 1_{X_f}(x) \right]
+% \end{equation}
+% Remark that we only need to consider the mission design $\mu=\mu_{T_c}\mu_{T_c+1}\ldots \mu_{T_c+T_r}$ for which each policy instance only controls the rover, that is, $\mu_{t}:\X_{rov}\times\X_{env}\times\X_\varphi\rightarrow \U_{rov}$.
 
-To solve the optimal reachability problem \eqref{eq:optmission}, we define a value function $V_r$ that quantifies the probability that the rover satisfies its specification before time $T_r + T_c$ as a function of the system state $x^{t}=(x^{t}_r, x^{t}_e, x^{t}_\varphi)$ of $\MDP_1$ at time $t\geq T_c$:
+To solve the optimal reachability problem \eqref{eq:ev_target}, we define a value function $V_r$ that quantifies the probability that the rover satisfies its specification before time $T_r + T_c$ as a function of the system state $x^{t}=(x^{t}_r, x^{t}_e, x^{t}_\varphi)$ of $\MDP_1$ at time $t\geq T_c$:
 \begin{equation}
 \label{eq:rovervalue}
 \begin{aligned}
-	& V_r(x^{t}_r, x^{t}_e, x^{t}_\varphi)  = \mathbb{P} \left[\max_{x\in \mathbf{x}^{[t+1,T_c+T_r]}} \mathbf 1_{X_f}(x) \ \mid \mathbf{x}^{[t]} = x^{t} \right].
+	& V_r(x^{t}_r, x^{t}_e, x^{t}_\varphi)  = \max_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[\mathbf{x}_1^{[t+1,T_c+T_r]} \models \lozenge X_f \mid \mathbf{x}^{[t]} = x^{t} \right].
 \end{aligned}
 \end{equation}
 Starting from $ V^{T_c+T_r}\equiv 0$, this probability can be inductively computed along with the optimal policy as
@@ -433,9 +433,9 @@ Starting from $ V^{T_c+T_r}\equiv 0$, this probability can be inductively comput
 \label{eq:value_iter_mission}
   \begin{align} 
     & V^{t}(x)  = \max_{u \in \U_{rov}} \mathbb{E}\left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] \label{eq:iter_mission}, \\
-    & \pol_t(x) \in \argmax_{u\in \U_{rov}} \mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .  \end{align}
+    & \pol_1^t(x) \in \argmax_{u\in \U_{rov}} \mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .  \end{align}
 \end{subequations}
- for $x'\sim  T(\cdot \mid x, u)$.
+for $x'\sim  T(\cdot \mid x, u)$, and where $\ind_{X_f}$ is the indicator function \cite{Abate2008}.
 
 We now have a full characterization of the value iteration and policy computation. But the nested products in e.g. \eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
 
@@ -501,7 +501,7 @@ Y_\delta = \{x^{T_c}_c\}\times
 And we can specify the objective of the copter as 
 \begin{equation}
 \label{eq:coptervalue}
-	V_c(x_c^0, x_e^0) = \max_{\mu} \mathbb{P} \left[ \mathbf{x}_2^{[0, T_c]} \models \lozenge Y_\delta \mid \mathbf{x}^{[0]} = (x_c^0, x_e^0) \right].
+	V_c(x_c^0, x_e^0) = \max_{\mu_2} \mathbb{P}_{\mu_2}^{\MDP_2} \left[ \mathbf{x}_2^{[0, T_c]} \models \lozenge Y_\delta \mid \mathbf{x}^{[0]} = (x_c^0, x_e^0) \right].
 \end{equation}
 where we have used the symbol $Y_\delta$ as an atomic proposition for the associated set.
 Again this value and the associated optimal policy can be computed with value iterations.
