@@ -548,7 +548,7 @@ In conclusion, in this section we have derived the following. For given initial 
 
 \subsection{Product MDPs and Value Iteration}
 \label{sub:products}
-
+\red{[You should be able to cut about have a column here. Remove equations 22-24, and incorporate 25 into the text. Equation after 25 looks wrong to me. Just delete.[sofie]]}
 As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of the aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over product components.
 
 Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator $\bellman$ on the following form:
@@ -557,7 +557,7 @@ Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider 
 \end{equation}
 
 If $\mathbf{\Pi}$ is the set of all stationary policies, the optimal value function $V^*$ and policy $\pol^*$ for a given bellman operator $\bellman$ is then found via the iterations
-
+\red{[Indexing has to decrease! IT should be associated witht he time horizon]}
 \begin{subequations}
 \label{eq:value_iter}
   \begin{align}
