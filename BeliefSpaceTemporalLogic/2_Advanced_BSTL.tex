@@ -102,7 +102,7 @@ The contributions of this paper are threefold. Firstly, we present a novel probl
 
 We model the rover and copter as well as environment uncertainty as Markov Decision Processes. 
 
-\subsection{Markov Decision Processes models}
+\subsection{Markov Decision Process models}
 Consider the definition of a Markov Decision Process (MDP) as in \cite{Bertsekas1978}.
 \begin{definition}
 \label{def:MDP}
@@ -293,7 +293,7 @@ Our objective is to extract control policies that maximize the knowledge about t
 \noindent{\bfseries Computational Challenge.}
 \todo[inline]{This is where we need to clarify that we know what we are doing. Additionally, we should show that the presented methods for structured MDPs will allow (also for continuous space case studies) this method to be applied to realistic case studies.}
 
-In the rest of the paper we restrict attention to MDPs that are finite, i.e. they have finite state and input spaces. Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, we have  omitted such steps to improve the clarity of the presentation. Principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in e.g. \cite{Zamani2015,Haesaert2017}. An alternative is sampling-based methods that build probabilistic road maps to serve as approximate finite models of continuous-state systems \cite{Kavraki1996, Agha-mohammadi2014}. 
+In the rest of the paper, we restrict attention to MDPs that are finite, i.e. they have finite state and input spaces. Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, this has been omitted from the paper to improve the clarity of the presentation. Principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in e.g. \cite{Zamani2015,Haesaert2017}. An alternative is sampling-based methods that build probabilistic road maps to serve as approximate finite models of continuous-state systems \cite{Kavraki1996, Agha-mohammadi2014}. 
 
 
 \section{A Stochastic Optimal Control Approach}
@@ -316,6 +316,7 @@ We first show that specification satisfaction is related to a stochastic reachab
 \begin{example}
 \label{example:automaton} 
 Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MDP and a mission specification $\varphi = \lozenge a \wedge \lozenge b$ dictating that two tasks $a$ and $b$ should both eventually be satisfied. The atomic proposition $a$ is associated with state $x_1$ whereas $b$ is associated with $x_2$, i.e. the labeling function is $L(x_1) = \{ a \}$, $L(x_2) = \{b \}$ and $L(x_0) =\emptyset$. We can construct the system to the right in Fig. \ref{fig:specautomaton} that has the property that a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots$ satisfies the specification if and only if the sequence of control inputs $\pi$ to this system reaches the target state $q_f$. All trajectories reaching $q_f$ have the property that both $a$ and $b$ have been observed, and all trajectories with this property reach $q_f$.
+
 \begin{figure}[htp]
 \begin{tikzpicture}[node distance =2cm,scale=0.9]
       \node[initial,  initial text={},name = init,circle,draw] {$x_0$};
@@ -338,29 +339,30 @@ Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MD
    (x1) edge [loop above,dashed, red]
  node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
  \node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$}; 
- %    \path[->] (init) edge [bend left] node[above] {$a$} (A)
-%   (init) edge [bend right] node[below] {$b$} (B)
-%   (init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
-%   (A) edge [loop above] node[left] {$\neg a$} (A)
-%   (B) edge [loop below] node[right] {$\neg b $} (B)
-%   (B) edge [bend right] node[below] {$u_1$} (AB)
-%   (A) edge [bend left] node[above] {$u_1$} (AB);
-    \node[initial, right of = prod,initial text={},name = init,circle,draw, node distance=1.5cm] {$q_0$};
-    \begin{scope}[node distance =1cm]
-      \node[circle, draw,right of = init, yshift = .5cm] (A){$q_1$};
-    \node[circle, draw, right of = init, yshift = -.5cm](B) {$q_2$};
-    \node[ circle, draw,right of = B, yshift = .5cm, double, double distance=1pt] (AB){$q_f$};
-    \path[->] (init) edge [bend left] node[above] {$a$} (A)
-    (init) edge [bend right] node[below] {$b$} (B)
-    (init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
-    (A) edge [loop above] node[left] {$\neg a$} (A)
-    (B) edge [loop below] node[right] {$\neg b $} (B)
-    (B) edge [bend right] node[below] {$a$} (AB)
-    (A) edge [bend left] node[above] {$b$} (AB);
-    \end{scope}
-    
-  \end{tikzpicture}
-  \caption{On the left an example MDP, and on the right a finite-state system associated to the mission specification $\varphi = \lozenge a \wedge \lozenge b$.  }
+
+ %		\path[->] (init) edge [bend left] node[above] {$a$} (A)
+%		(init) edge [bend right] node[below] {$b$} (B)
+%		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
+%		(A) edge [loop above] node[left] {$\neg a$} (A)
+%		(B) edge [loop below] node[right] {$\neg b $} (B)
+%		(B) edge [bend right] node[below] {$u_1$} (AB)
+%		(A) edge [bend left] node[above] {$u_1$} (AB);
+		\node[initial, right of = prod,initial text={},name = init,circle,draw, node distance=1.5cm] {$q_0$};
+		\begin{scope}[node distance =1cm]
+			\node[circle, draw,right of = init, yshift = .5cm] (A){$q_1$};
+		\node[circle, draw, right of = init, yshift = -.5cm](B) {$q_2$};
+		\node[ circle, draw,right of = B, yshift = .5cm, double, double distance=1pt] (AB){$q_f$};
+		\path[->] (init) edge [bend left] node[above] {$a$} (A)
+		(init) edge [bend right] node[below] {$b$} (B)
+		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
+		(A) edge [loop above] node[left] {$\neg a$} (A)
+		(B) edge [loop below] node[right] {$\neg b $} (B)
+		(B) edge [bend right] node[below] {$a$} (AB)
+		(A) edge [bend left] node[above] {$b$} (AB);
+		\end{scope}
+		
+	\end{tikzpicture}
+	\caption{On the left an example MDP, and on the right a finite state system associated to mission specification $\varphi:= \lozenge a \wedge \lozenge b$.  }
   \label{fig:specautomaton}
 \end{figure} 
 \end{example}
@@ -452,7 +454,6 @@ with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a
 
 \todo[inline]{formalize and add  citations.}
 
-
 The exploration phase affects the environment belief $x_e$ at time $T_c$. We quantify the effect of the exploration as \emph{mission risk} $R:\X_{env}\rightarrow [0,1]$ defined as
 \begin{equation}
 	R(\cdot) = V_r(x^{T_c}_r, \cdot, x^{T_c}_\varphi),
@@ -475,6 +476,7 @@ which simply attempts to maximize the probability that the rover can satisfy the
 \end{example}
  
 Rather than naively maximizing the probability of satisfaction which can discourage exploration, we also consider it a positive outcome if the exploration phase shows that the probability of satisfying the mission is very low. Based on such knowledge resources can be redirected to more promising missions. We can separate possible outcomes of the exploration phase into:
+
 \begin{enumerate}
 	\item High confidence in mission satisfaction, i.e.,
 \begin{equation}\label{eq:accept}
@@ -506,7 +508,7 @@ And we can specify the objective of the copter as
 where we have used the symbol $Y_\delta$ as an atomic proposition for the associated set.
 Again this value and the associated optimal policy can be computed with value iterations.
 
-In conclusion we have derived the following. For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rec}$.  
+In conclusion we have derived the following. For given initial poses $x_c^0$ and $x_r^0$ of the copter and robot, and an initial environment belief $x_e^0$, the function $V_c(x_c^0, x_e^0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rec}$. \sofieNew{With this we have proposed a design methodology dependent on  its utility for decision making \cite{lindley2000philosophy}. As similar formulation towards decision making   has been proposed in \cite{haesaert2016experiment}.}
 
 
 \section{Product MDPs and Value Iteration}
