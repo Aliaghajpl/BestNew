@@ -212,67 +212,53 @@ These times can be determined based on the available battery capacity and remain
 
 The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.
 
-\subsection{Mission-Phase Optimal Control}
-We first show that specification satisfaction is related to a stochastic reachability problem over an extended MDP, and then detail how it can be written as a stochastic finite-horizon dynamic programming problem. We start with an example illustrating how product systems can be used to reason about specification satisfaction.
+\subsection{Optimal Control Solution of Mission Problem}
+
+We first show that specification satisfaction can be formulated as a stochastic reachability problem over an extended MDP, and then detail how the solution can be obtained via stochastic finite-horizon dynamic programming. We start with an example illustrating how extended systems can be used to reason about specification satisfaction.
 
 \begin{example}
 \label{example:automaton}
-Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MDP and a mission specification $\varphi = \lozenge a \wedge \lozenge b$ dictating that two tasks $a$ and $b$ should both eventually be satisfied. The atomic proposition $a$ is associated with state $x^a$ whereas $b$ is associated with $x^b$, i.e. the labeling function is $L(x^a) = \{ a \}$, $L(x^b) = \{b \}$ and $L(x^c) =\emptyset$. We can construct the system to the right in Fig. \ref{fig:specautomaton} that has the property that a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots$ satisfies the specification if and only if the sequence of control inputs $\pi$ to this system reaches the target state $q_f$. All trajectories reaching $q_f$ have the property that both $a$ and $b$ have been observed, and all trajectories with this property reach $q_f$.
+Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MDP and a mission specification $\varphi = \lozenge a \wedge \lozenge b$ dictating that two tasks $a$ and $b$ should both eventually be satisfied. The atomic proposition $a$ is associated with state $x^a$ whereas $b$ is associated with $x^b$, i.e. the labeling function is $L(x^a) = \{ a \}$, $L(x^b) = \{b \}$, and $L(x^c) =\emptyset$. We can construct the system to the right in Fig. \ref{fig:specautomaton} that has the property that a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots$ satisfies the specification if and only if the sequence of control inputs $\pi$ to this system reaches the target state $q_f$. All trajectories reaching $q_f$ have the property that both $a$ and $b$ have been observed, and all trajectories with this property reach $q_f$. It follows that the MDP to the left satisfies $\varphi$ if and only if the joint execution of the MDP and automaton reaches the final state $q_f$.
 
 \begin{figure}[htp]
-\begin{tikzpicture}[node distance =2cm,scale=0.9]
-      \node[initial,  initial text={},name = init,circle,draw] {$x^c$};
-    \node[circle, draw,right of = init, yshift = .75cm,align=center] (x1){$x^a$ \\ $\{a\}$ };
-    \node[circle, draw, right of = init, yshift = -.75cm, align=center](x2) {$x^b$ \\ $\{b\}$};
-    \path[->] (init) edge [bend left, dashed, red]
- node[above] {\small $ 0.8$} (x1)
- (init) edge [loop above, dashed, red]
- node[left] {\small$0.2$} (init)
- (init) edge [bend right, blue]
- node[below] {\small$ 0.7$} (x2)
-  (init) edge [loop below, blue]
- node[left] {\small$0.3$} (init)
- (x2) edge [bend right,dashed, red]
- node[left] {\small$0.6$} (x1)
-  (x2) edge [loop below, blue](x2)
-   (x2) edge [loop below,dashed, red]
- node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2)
-  (x1) edge [loop above, blue](x1)
-   (x1) edge [loop above,dashed, red]
- node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
- \node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$};
+	\begin{tikzpicture}[node distance =2cm,scale=0.9]
+	    \node[initial,  initial text={},name = init,circle,draw] {$x^c$};
+	    \node[circle, draw,right of = init, yshift = .75cm,align=center] (x1){$x^a$ \\ $\{a\}$ };
+	    \node[circle, draw, right of = init, yshift = -.75cm, align=center](x2) {$x^b$ \\ $\{b\}$};
+	    
+	    \path[->] (init) edge [bend left, dashed, red] node[above] {\small $ 0.8$} (x1)
+		          (init) edge [loop above, dashed, red]  node[left] {\small$0.2$} (init)
+		          (init) edge [bend right, blue] node[below] {\small$ 0.7$} (x2)
+		          (init) edge [loop below, blue]  node[left] {\small$0.3$} (init)
+		          (x2) edge [bend right,dashed, red]  node[left] {\small$0.6$} (x1)
+		          (x2) edge [loop below, blue] (x2)
+		          (x2) edge [loop below,dashed, red] node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2)
+		          (x1) edge [loop above, blue](x1)
+		          (x1) edge [loop above,dashed, red] node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
 
- %		\path[->] (init) edge [bend left] node[above] {$a$} (A)
-%		(init) edge [bend right] node[below] {$b$} (B)
-%		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
-%		(A) edge [loop above] node[left] {$\neg a$} (A)
-%		(B) edge [loop below] node[right] {$\neg b $} (B)
-%		(B) edge [bend right] node[below] {$u_1$} (AB)
-%		(A) edge [bend left] node[above] {$u_1$} (AB);
+		\node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$};
 		\node[initial, right of = prod,initial text={},name = init,circle,draw, node distance=1.5cm] {$q_0$};
 		\begin{scope}[node distance =1cm]
 			\node[circle, draw,right of = init, yshift = .5cm] (A){$q_1$};
-		\node[circle, draw, right of = init, yshift = -.5cm](B) {$q_2$};
-		\node[ circle, draw,right of = B, yshift = .5cm, double, double distance=1pt] (AB){$q_f$};
-		\path[->] (init) edge [bend left] node[above] {$a$} (A)
-		(init) edge [bend right] node[below] {$b$} (B)
-		(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
-		(A) edge [loop above] node[left] {$\neg a$} (A)
-		(B) edge [loop below] node[right] {$\neg b $} (B)
-		(B) edge [bend right] node[below] {$a$} (AB)
-		(A) edge [bend left] node[above] {$b$} (AB);
+			\node[circle, draw, right of = init, yshift = -.5cm](B) {$q_2$};
+			\node[ circle, draw,right of = B, yshift = .5cm, double, double distance=1pt] (AB){$q_f$};
+			\path[->] (init) edge [bend left] node[above] {$a$} (A)
+			(init) edge [bend right] node[below] {$b$} (B)
+			(init) edge [loop below] node[left] {$\neg a \wedge \neg b$} (init)
+			(A) edge [loop above] node[left] {$\neg a$} (A)
+			(B) edge [loop below] node[right] {$\neg b $} (B)
+			(B) edge [bend right] node[below] {$a$} (AB)
+			(A) edge [bend left] node[above] {$b$} (AB);
 		\end{scope}
-
 	\end{tikzpicture}
 	\caption{On the left an example MDP, and on the right a finite state system associated to mission specification $\varphi:= \lozenge a \wedge \lozenge b$.  }
   \label{fig:specautomaton}
 \end{figure}
 \end{example}
 
-The procedure in Example \ref{example:automaton} is general: for any specification $\varphi$ in the scLTL fragment it is possible to construct a finite-state automaton $\FSA_\varphi$ with accepting set $Q_f$ \cite{Belta2017}. A finite-state automaton is a special case of an MDP. Thus, the probability \eqref{eq:probLTL} that a specification is satisfied for an MDP $\MDP$ with state space $\X$ is equivalent to the probability that a set $\X\times Q_f$ in the state space of the extended product system $\MDP \otimes_{ser}^L \FSA_\psi$ is reached, where the product $\otimes_{ser}^L$ is defined as follows:
+The procedure in Example \ref{example:automaton} is general: for any specification $\varphi$ in the scLTL fragment it is possible to construct a finite-state automaton $\FSA_\varphi$ with accepting set $Q_f$ \cite{Belta2017}. Thus, the probability \eqref{eq:probLTL} that a specification is satisfied for an MDP $\MDP$ with state space $\X$ is equivalent to the probability that a set $\X\times Q_f$ in the state space of the extended product system $\MDP \otimes_{ser}^L \FSA_\psi$ is reached, where the product $\otimes_{ser}^L$ is defined as follows:
 \begin{definition} Consider two MDPs  $\MDP_1$ and $\MDP_2$. For a given \textbf{connection} $C : \X_1 \rightarrow \U_2$, their \textbf{serial product} is the MDP $\MDP_1 \otimes_{ser}^C \MDP_2 = (\X_1 \times \X_2, x_{ser}, \U_1, \tr_{ser})$, for $x_{ser}:= (x_{1,0},x_{2,0})$
-  with %$\init_{ser}= \init_1(x_1) \init_2(x_2)$
- % and
+  with
   \begin{equation}\label{eq:serial}
   \begin{aligned}
       \tr_{ser}&(x_1', x_2' \mid x_1, x_2, u_1) \\
@@ -280,7 +266,6 @@ The procedure in Example \ref{example:automaton} is general: for any specificati
   \end{aligned}
   \end{equation}
   Additionally, we say that their  \textbf{parallel product} is the MDP $\MDP_1 \otimes_{par} \MDP_2 = (\X_1 \times \X_2, x_{par}, \U_1 \times \U_2, \tr_{par})$,  for $x_{par}:= (x_{1,0},x_{2,0})$ with
-%where $\init_{par}(x_1, x_2) = \init_1(x_1) \init_2(x_2)$  and
   \begin{equation}
   \begin{aligned}
       \tr_{par}&(x_1', x_2' \mid x_1, x_2, u_1, u_2) \\
@@ -289,14 +274,13 @@ The procedure in Example \ref{example:automaton} is general: for any specificati
   \end{equation}
 \end{definition}
 
- Let us now look at the specific case of the rover mission. The MDP model of this mission contains both the rover $\MDP_{rov}$ and environment $\MDP_{env}$.
-Since   the environment belief MDP itself is composed of several belief MDPs over individual labels, i.e., $\MDP_{env}:=\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) $, it follows that the mission MDP is given as
+Let us now return to the Mission Problem, where the MDP model contains both the rover MDP $\MDP_{rov}$ and the environment MDP $\MDP_{env}$. Since $\MDP_{env}$ is itself composed of several belief MDPs over individual labels, i.e., $\MDP_{env}:=\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) $, it follows that the mission MDP is given as
 \begin{equation}
-  \left( \MDP_{rov} \otimes_{ser}^{C_1}\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right)
+  \MDP_{miss} = \left( \MDP_{rov} \otimes_{ser}^{C_1}\left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right)
 \end{equation}
 where $C_1 : \X_{rov} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ is a measurement model that maps rover poses to measurements in the environment model.
 
-Moreover, when combined with the temporal specification $\varphi$ we get an extended MDP composed of different parts: the rover, the environment belief model, and also the specification automaton.
+Moreover, when combined with the temporal specification $\varphi$ we get an extended MDP composed of different parts: the rover, the environment belief model, and also the specification automaton $\mathcal A_\varphi$.
  \begin{equation}
 \label{eq:syst_prod_def}
 	\MDP_1 = \left( \MDP_{rov} \otimes_{ser}^{C_1} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right) \otimes_{ser}^{L} \mathcal A_{\varphi}.
@@ -306,11 +290,10 @@ Here $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint spa
 Recall that the rover performs the mission task from time instant $T_c$ (the end time of the copter exploration) until time $T_r + T_c$. Thus for a given  policy $\mu$ the probability of mission specification satisfaction \eqref{eq:probLTL} can be expressed as
 \begin{equation}
 \begin{aligned}
-\mathbb{P}_\mu \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right].
+	\mathbb{P}_\mu^{\MDP_{miss}} \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right].
 \end{aligned}
 \end{equation}
-where $\mathbf{x}_{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of the rover and environment.
-By incorporating the specification as part of the model, we can write an equivalent design problem as follows: %  can now be rewritten as
+where $\mathbf{x}_{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of $\MDP_{miss}$. By incorporating the specification as part of the model, we can write an equivalent design problem as follows:
 \begin{equation}
   \label{eq:ev_target}
   \argmax_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[ \mathbf{x}_{[T_c,T_c+T_r]}^1 \models \lozenge X_f \right]
@@ -343,7 +326,7 @@ We now have a full characterization of the value iteration and policy computatio
 Furthermore, for every Markov policy $\mu_1$ for the extended MDP $\MDP$ there exists a policy $\mu$ for the rover-mission MDP.
 But the nested products in e.g. \eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
 
-\subsection{Exploration Problem: Task-Specific Information Gathering}
+\subsection{Optimal Control Solution of Exploration Problem}
 \label{sub:information}
 
 Similarly to above, we can model the overall stochastic system that is active in the exploration phase as
