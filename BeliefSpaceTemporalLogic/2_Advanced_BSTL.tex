@@ -384,54 +384,32 @@ In conclusion, in this section we have derived the following. For given initial 
 
 As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of these aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over the product components.
 
-Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator\footnote{\sofieNew{Remark that for this set of Bellman recursions, the control input is not rewarded directly, it only influences the value function via its effect on the next state distribution.}} $\bellman$ on the following form:
+Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator\footnote{Remark that for this set of Bellman recursions, the control input does not directly impact rewards, it only influences the value function via its effect on the next state distribution.} $\bellman$ on the following form:
 \begin{equation}
 (\bellman V) (x) =  \max_{u \in \U} g \left( x, \mathbb E \left[  V(x') \mid x,u \right] \right).
 \end{equation}
-where $g$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. For example, $g(x, v') = \max(\ind_{X_f}(x), v')$ corresponds to the Bellman operator for reachability of a set $X_f$ that we used in Section \ref{sec:valueiter}. Finite-horizon value iteration over a horizon $[0, T]$ consists of the following iterations:
+where $g$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$. For example, $g(x, v') = \max(\ind_{X_f}(x), v')$ corresponds to the Bellman operator for reachability of a set $X_f$ that we employed in Section \ref{sec:stochopt}. Finite-horizon value iteration over a horizon $[0, T]$ consists of the following iterations:
 \begin{equation}
 \begin{aligned}
 	V_T(x) & = g(x, 0), \quad V_{t-1} = \bellman V_t,\\
 	\mu_t(x) & \in \argmax_{u \in \U} g(x, \mathbb{E}\left[ V(x') \mid x,u \right])
 \end{aligned}
 \end{equation}
-
-We now consider the Bellman iteration step for product MDPs. For a serial product $\MDP = \MDP_1 \otimes_{ser}^{C} \MDP_2$ we get
+We consider the Bellman iteration step for product MDPs. For a serial product $\MDP = \MDP_1 \otimes_{ser}^{C} \MDP_2$ we get
 \begin{equation*}
 \begin{aligned}
 	&  \mathbb{E}^\MDP\left[ V(x_1', x_2') \mid x_1, x_2, u_1 \right] \\ 
 	& = \mathbb{E}^{\MDP_1} \left[ \mathbb{E}^{\MDP_2} \left[ V(x_1', x_2') \mid x_2, C(x_1')  \right] \mid x_1, u_1   \right],
 \end{aligned}
 \end{equation*}
-where we note that the inner expectation is a function of $x_2$ and $x_1'$.
-% \begin{equation*}
-% \begin{aligned}
-%   & \bellman V (x_1, x_2) = \max_{u_1 \in \U_1} \hspace{-2mm} \sum_{x_1', x_2' \in \X_1 \times \X_2}  \left[ \begin{aligned}
-%   	g(x_1', x_2', V(x_1', x_2')) \\
-%   	\times T_{ser}(x_1', x_2' \mid x_1, x_2, u_1)
-%   \end{aligned} \right] \\
-%   & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1}  T_1(x_1' \mid x_1, u_1 ) \left[ \begin{aligned}
-%    	\sum_{x_2' \in \X_2}  g(x_1', x_2', V(x_1', x_2')) \\
-%    	\times  T_2(x_2' \mid x_2, C(x_1'))
-%    \end{aligned} \right].
-% \end{aligned}
-% \end{equation*}
-It follows that the Bellman update $V \mapsto \bellman V$ for a serial product can be computed in back-stepping fashion as follows:
+where we note that the inner expectation is a function of $x_2$ and $x_1'$, but not of $x_1$. It follows that the Bellman update $V \mapsto \bellman V$ for a serial product can be computed in back-stepping fashion with an intermediate result $W$ as follows:
 \begin{equation*}
 \begin{aligned}
-	W_2(x_1', x_2) & = \mathbb{E}^{\MDP_2} \left[ V(x_1', x_2') \mid x_2, C(x_1')  \right], \\
-	W_1(u_1, x_1, x_2) & = \mathbb{E}^{\MDP_1} \left[ W_2(x_1', x_2) \mid x_1, u_1   \right], \\
-	\bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} g(x_1, x_2, W_1(u_1, x_1, x_2)).
+	W(x_1', x_2) & = \mathbb{E}^{\MDP_2} \left[ V(x_1', x_2') \mid x_2, C(x_1')  \right], \\
+	\bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} \mathbb{E}^{\MDP_1} \left[ W(x_1', x_2) \mid x_1, u_1   \right], \\
 \end{aligned}
 \end{equation*}
-% \begin{equation*}
-% \begin{aligned}
-%   W_2(x_1', x_2') & = g(x_1', x_2', V(x_1', x_2')) \\
-%   W_1(x_1', x_2) & = \sum_{x_2' \in \X_2}  T_2(x_2' \mid x_2, C(x_1')) W_2(x_1', x_2'), \\
-%   \bellman V(x_1, x_2) & = \max_{u_1 \in \U_1} \sum_{x_1' \in \X_1} T_1(x_1' \mid x_1, u_1) W_1(x_1', x_2).
-% \end{aligned}
-% \end{equation*}
-The procedure generalizes immediately to $n$-length serial products where the $(n-i)$th step becomes
+Each step only requires knowledge of a single MDP component. Furthermore, the procedure immediately generalizes to $n$-length serial products where the $(n-i)$th step becomes
 \begin{equation}
 \label{eq:general_decomp}
 \begin{aligned}
@@ -439,20 +417,9 @@ The procedure generalizes immediately to $n$-length serial products where the $(
 	& = \mathbb{E}^{\MDP_i}\hspace{-0.5mm}  \left[ W_{i+1} (\ldots, x_{i-1}', x_i', x_{i+1} \ldots) \hspace{-0.5mm} \mid\hspace{-0.5mm}  x_i, C_i(x_{i-1}') \right].
 \end{aligned}
 \end{equation}
-% \begin{equation}
-% \label{eq:general_decomp}
-% \begin{aligned}
-%   & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-%   & \quad = \sum_{x_{i}' \in \X_{i}} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, C(x_{i-1}')) \\ 
-%    & \times W_{i} (x_1', \ldots, x_{i-1}', x_i', \ldots, x_n)
-%     \end{aligned} \right].
-% \end{aligned}
-% \end{equation}
-
 \begin{remark}
-  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \prod_{j \in \Gamma_i} \X_j \rightarrow \U_i$ for some index set $\Gamma_i$ that determines which preceding systems that affect the input to system $i$.
+  In serial products of arbitrary length a connection $C_i$ can be defined either as $C_i: \X_{i-1} \rightarrow \U_i$, or as $C_i: \prod_{j \in \Gamma_i} \X_j \rightarrow \U_i$ for some index set $\Gamma_i \subset \{ 1, \ldots, i-1 \}$ that determines which preceding systems that affect the input to system $i$.
 \end{remark}
-
 In addition, if $\MDP_{i}$ is itself a serial or parallel product, the computation \eqref{eq:general_decomp} can again be performed via recursive back-stepping. If for instance $\MDP_{i} = \MDP_{i_1} \otimes_{par} \MDP_{i_2}$ is a parallel product we can write $x_i = (x_{i_1}, x_{i_2})$ and \eqref{eq:general_decomp} can be computed as
 \begin{equation}
 \begin{aligned}
@@ -462,86 +429,8 @@ In addition, if $\MDP_{i}$ is itself a serial or parallel product, the computati
 	& \quad = \mathbb{E}^{\MDP_{i_1}} \left[ W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) \mid x_{i_1}, C_i(x_{i-1}) \right].
 \end{aligned}
 \end{equation}
-% \begin{equation*}
-% \begin{aligned}
-%   W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) & = \hspace{-2mm} \sum_{x_{i_2}'  \in \X_{i_2}} \left[ \begin{aligned} T_{i_2}(x_{i_2}' \mid x_{i_2}, C(x_{i-1}') ) \\ \times W_i(\ldots (x_{i_1}', x_{i_2}') \ldots) \end{aligned} \right], \\
-%   W_{i-1}(\ldots (x_{i_1}, x_{i_2}) \ldots)  & =  \hspace{-2mm} \sum_{x_{i_1}' \in \X_{i_1}} \left[ \begin{aligned} T_{i_1}(x_{i_1}' \mid x_{i_1}, C(x_{i-1}') ) \\
-%   	\times W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots)	
-%   \end{aligned} \right].
-% \end{aligned}
-% \end{equation*}
 As a consequence, for any aggregate system constructed from a hierarchy of serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing any aggregate transition probabilities. The back-stepping approach is advantageous when the connections are sparse, i.e. the connection mappings $C$ can be compactly represented.
 
-% \begin{remark}
-%   The difference between sequential value iteration and centralized value iteration can be illustrated in tensor notation. Let $T_{u_i x_i}^{x_i'}$ be the transition matrix for system $i$ and let $U_{x'_{i-1}}^{u_i} = \ind_{C_{i-1}(x'_{i-1}) = u_i}$, then sequential computation is as follows:
-%   \begin{equation}
-%   \label{eq:tensor_sequential}
-%   \begin{aligned}
-%       & W_{x_1' \ldots, x_n'} = g(x_1', \ldots, x_n', V_{x_1', \ldots, x_n'}) \\
-%       & \text{for $k = n, n-1, \ldots, 2$}: \\
-%       & \quad W_{x_1'\ldots x_{k-1}' x_{k} \ldots x_n} = U_{x_{k-1}}^{u_k} T_{u_k x_k}^{x_k'}  W_{x_1'\ldots x_k' x_{k+1} \ldots x_n'} \quad \\
-%       & V_{x_1\ldots x_n} = \max_{u_1} T^{x_1'}_{u_1x_1} W_{x_1' x_2 \ldots x_n}
-%   \end{aligned}
-%   \end{equation}
-%   This can be contrasted with the naive approach where one first constructs the aggregate transition tensor $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ and then computes
-%   \begin{equation}
-%   \label{eq:tensor_naive}
-%     V_{x_1, \ldots x_n} = \max_{u_1} T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'} g(x_1', \ldots, x_n', V_{x_1', \ldots x_n'}).
-%   \end{equation}
-%   Eq \eqref{eq:tensor_naive} involves the same number of multiplications as \eqref{eq:tensor_sequential}, but the expensive construction of $T_{u_1 x_1 \ldots x_n}^{x_1', \ldots, x_n'}$ is avoided in \eqref{eq:tensor_sequential}.
-% \end{remark}
-
-% \begin{figure}[h]
-%   \setlength\figurewidth{0.8\columnwidth}
-%   \setlength\figureheight{0.4\columnwidth}
-%   \begin{center}
-%   \input{2figs/scale}
-%   \end{center}
-%   \caption{Run times of \eqref{eq:value_iter} for increasing values of $k$ using the (nai)ve and (seq)uential approach.}
-%   \label{fig:scalability}
-% \end{figure}
-% \begin{example}
-%   We demonstrate the advantage of sequential value iteration with a numerical example. We consider $k$-length serial products of MDPs with two actions and six states each; the total number of states in such a product is $6^k$. For increasing values of $k$ we compute the probability of reaching a certain part of the state space by sequential value iteration, and by naively forming the overall transitions matrices. Figure \ref{fig:scalability} illustrates the computation time for increasing values of $k$ over 10 trials. As can be seen, the advantage of sequential value iteration over the naive approach is significant.
-% \end{example}
-
-% \todo[inline]{PN: Plot also memory utilization}
-
-% \begin{remark}
-% 	The back-stepping approach above can easily be extended to the case of \emph{non-deterministic} set-valued connections $C : \X_1 \rightarrow 2^{\U_2}$. Non-deterministic connections are appropriate when there is uncertainty about what input that is triggered. For instance, non-determinism occurs naturally in abstractions constructed to over-approximate the true behavior \cite{Haesaert18}. When non-determinism is present the aggregate system is no longer an MDP, but can be regarded as a two-player stochastic system where an adversary controls the non-determinism. In this case, the worst-case resolution of non-determinism should be taken into account in value iteration. This is straightforward to incorporate into the back-stepping approach by introducing an extra minimizer over non-determinism:
-% 	\begin{equation*}
-% 	\begin{aligned}
-% 	  & W_{i-1}(x_1', \ldots, x_{i-1}', x_i, \ldots, x_n) \\
-% 	  & \quad = \sum_{x_{i}' \in \X_{i}} \min_{u_i \in C(x_{i-1}')} \left[ \begin{aligned} & T_{i} (x_{i}' \mid x_{i}, u_i) \\ 
-% 	   & \times W_{i} (x_1', \ldots, x_{i-1}', x_k', \ldots, x_n)
-% 	    \end{aligned} \right].
-% 	\end{aligned}
-% 	\end{equation*}
-% \end{remark}
-
-
-% \subsection{Sparse Value Function via Tensor Decomposition}
-
-% In the previous subsection we outlined how Bellman iterations for a value function can be performed sequentially in product systems. However, a dense value function representation is still of size $\mathcal O (|\X_1| |\X_2|)$ which can constitute a bottleneck for large products. In this section we explore how computational efficiency can be improved by using sparse value function representations. The cost is a loss of precision and guarantees with respect to the final value function.
-
-% Possible sparse representations
-% \begin{itemize}
-%   \item CP representation
-%   \begin{itemize}
-%     \item Pro: can be mapped through CP linear operators via ALS
-%     \item Con: value iteration is nonlinear
-%     \item What about policy iteration with sparse policy?
-%   \end{itemize}
-%   \item TT representation
-%   \begin{itemize}
-%     \item Pro: Black-box cross algorithm to approximate tensor via sampling
-%     \item Con: No analysis, brute force
-%   \end{itemize}
-%   \item Serial-parts, e.g. $V^1_{x_r e_1 \phi} \ldots V^n_{x_r e_n \phi}$
-%   \begin{itemize}
-%     \item Pro: May be suited to problem
-%     \item Con: Don't know how to update components, convergence not understood
-%   \end{itemize}
-% \end{itemize}
 
 \subsection{Related work}
 \label{sub:factored_mdp_work}
