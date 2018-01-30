@@ -100,12 +100,8 @@ The contributions of this paper are threefold. Firstly, in Section \ref{sec:prob
 \section{Problem Setup}
 \label{sec:problem}
 
-We model the rover and copter as well as environment uncertainty as Markov Decision Processes.
-
-\todo[inline]{Remove initial distribution}
-
 \subsection{Markov Decision Process models}
-Consider the definition of a Markov Decision Process (MDP) as in \cite{Bertsekas1978}.
+We model the rover and copter as well as environment uncertainty as Markov Decision Processes. Consider the definition of a Markov Decision Process (MDP) as in \cite{Bertsekas1978}.
 \begin{definition}
 \label{def:MDP}
   A discrete-time \textbf{Markov decision process} (MDP) is a tuple $\MDP = (\X, x_0,\tr, \U)$ where
@@ -300,8 +296,6 @@ Our objective is to extract control policies that maximize the knowledge about t
 
 \noindent{\bfseries Computational Challenge.}
 \todo[inline]{This is where we need to clarify that we know what we are doing. Additionally, we should show that the presented methods for structured MDPs will allow (also for continuous space case studies) this method to be applied to realistic case studies.}
-
-In the rest of the paper, we restrict attention to MDPs that are finite, i.e. they have finite state and input spaces. Though these MDPs can be obtained in a principled way as approximations of the original continuous-state MDPs, this has been omitted from the paper to improve the clarity of the presentation. Principled methods to construct finite-state approximations and to relate finite solutions to the original problem can be found in e.g. \cite{Zamani2015,Haesaert2017}. An alternative is sampling-based methods that build probabilistic road maps to serve as approximate finite models of continuous-state systems \cite{Kavraki1996, Agha-mohammadi2014}.
 
 
 \section{A Stochastic Optimal Control Approach}
@@ -701,7 +695,7 @@ We now apply our ideas in a case study. After introducing concrete models for ro
 
 \paragraph{Abstract Robot Models}
 
-Finite-state abstractions for continuous-state models can be constructed in principled ways via abstractions or sampling-based methods, but for the purpose of clarity we bypass this step here and directly introduce finite-state models that capture the essentials of agents that moving around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis.
+In practice robotic systems operate in continuous domains, but value iteration is infeasible over continuous state spaces. Construction of finite models that approximate continuous models include abstraction-based \cite{Zamani2015} and sampling-based \cite{Kavraki1996, Agha-mohammadi2014} methods; an alternative is to employ approximate methods on the continuous state space \cite{Powell2011}. For the purpose of clarity we bypass the model abstraction and directly introduce finite-state models that capture the essential dynamics of agents that move around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis.
 
 We assume that low-level controllers are available for both robots so that they move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
 
@@ -904,7 +898,7 @@ Executions generated from the resulting copter and rover policies are shown in F
   \label{fig:workspace1}
 \end{figure}
 
-\todo{Connect this example with the Terraswarm example of Sheshia.}
+\todo[inline]{Connect this example with the Terraswarm example of Sheshia.}
 
 \begin{figure}
 	\begin{center}
@@ -935,27 +929,12 @@ Executions generated from the resulting copter and rover policies are shown in F
 %   \label{fig:values1}
 % \end{figure}
 
-\section{Hardware Experiments}
-\label{sec:hardware}
-
-\begin{itemize}
-    \item Copter in CAST
-\end{itemize}
-
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-\begin{itemize}
-	\item Point out that approach is compatible with label-based abstractions
-\end{itemize}
+We presented a modeling framework for multi-agent systems operating in uncertain environments, and proposed a dynamic programming-based solution to the problem of in a specification-guided fashion determining what areas of the environment to explore. The solution method works with arbitrary MDPs, so there is significant flexibility in modeling which can be done via formal abstractions, sampling-based methods, etc. As demonstrated, value iteration is possible without constructing the aggregate systems explicitly, but scalability remains an issue since the representation of the value function grows linearly with the size of the aggregate state space (which grows exponentially with the number of system components). As discussed in Section \ref{sub:factored_mdp_work}, it can not be expected that sparse representations exist for the true value function, but sparse value function representations can potentially yield approximate methods that improve scalability further. This is one direction for future research. Another way to partially circumvent scalability issues is to iteratively refine the models in a specification- and exploration-guided fashion, as explored e.g. in \cite{Nilsson2017}. For instance, exploration may reveal that certain regions of interest should be treated as multiple regions, but at this point more information is known which reduces the size of the overall belief space. Thus, iterative exploration and model refinement can limit the number of uncertain region labels over time.  
 
-Future work:
-\begin{itemize}
-	\item Improved scalability via approximate DP, sparse value function representations (forego exactness)
-	\item Our solution method is however agnostic to the model components; they could substituted for models obtained from formal abstraction procedures or from sampling-based methods.
-  \item Specification- and exploration-guided refinement e.g. \cite{Nilsson2017}
-\end{itemize}
 
 \bibliographystyle{abbrvnat}
 \bibliography{2_references,AliAgha3}
