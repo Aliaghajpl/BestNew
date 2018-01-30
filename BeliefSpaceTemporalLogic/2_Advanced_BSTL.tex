@@ -271,7 +271,7 @@ Due to the nature of the mission---the copter is quick and has short battery lif
 These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover. For our purposes, the interesting scenarios is when there is a lot of uncertainty about whether the mission can be completed or not. If the mission is trivial, or it is already known to be difficult, exploration will only further establish these facts. \\
 \noindent{\bfseries Mission Problem.}
 
-The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied. In addition, to guide the exploration phase it is necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem is to for an initial rover state $x^r_{0}$, for all environment belief states $x^e_{T_c}$ compute
+The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied. In addition, to guide the exploration phase it is necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem is to compute for an initial rover state $x^r_{0}$ and for all environment belief states $x^e_{T_c}$ 
 \begin{equation}
   \label{eq:mission}
  	R(x^e_{T_c}) = \max_{\mu_1}\mathbb P_{\mu_1}^\MDP[\mathbf x \vDash \varphi \mid x^r_0, x^e_{T_c} ],
