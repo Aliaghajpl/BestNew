@@ -128,7 +128,7 @@ We capture this environmental uncertainty with MDPs $\MDP_{e_i}$ that model beli
 \subsection{Formal specifications}
 We use temporal logic formulas to formally describe tasks that the robot has to perform.
 The basic building blocks of a temporal logic formula are \emph{atomic propositions} that take values $\True$ or $\False$.  An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$.
-\todo[inline]{Connect with the previous example on the belief that a region contains a rock or not.}
+
 By combining atomic propositions into a formula, desired system behavior is expressed as set membership constraints (atomic propositions) together with temporal relations (operators). Consider a set $AP = \{ p_1, \ldots, p_L \}$ of atomic propositions; it defines an \emph{alphabet} $\alphabet$ where each \emph{letter} $\letter$ of the alphabet is defined as a set of atomic propositions. An infinite string of letters is a \emph{word} $\word=\letter_0\letter_1\letter_2\ldots$, which should be thought of as the observed output of a system. More specifically, for each execution $\mathbf{x} = x_0 x_1 x_2 \ldots$ of an MDP, a
 labeling function $\lab: \X \rightarrow \alphabet$ yields the associated word as $\word = \lab(x_0)\lab(x_1) \lab(x_2) \ldots$, i.e. for each time instance $k$, $L(x_k)$ maps the current state $x_k$ to a letter in the alphabet $\alphabet$. Desired behavioral properties can now be expressed via temporal logic formulas over the generated words.
 
@@ -163,10 +163,6 @@ In general, we cannot say that an MDP $\MDP$ satisfies a property $\varphi$ for 
   \mathbb P_{\mu}^\MDP[\mathbf x \vDash \varphi ].
 \end{equation}
 
-\todo[inline]{Example of a specification in rover and environment belief}
-
-\subsection{Problem formulation}
-
 The problem we address in this paper is as follows.
 
 \begin{problem}
@@ -177,10 +173,9 @@ Consider a robot-copter team in an uncertain environment modeled as an MDP.  Des
 
 We have chosen to work with the scLTL fragment that is restricted to properties that can be satisfied in finite time. For the purpose of Mars exploration where tasks are often defined on a daily basis (and thus are of finite duration) this fragment is sufficient to express all relevant specifications.
 
+\subsection{Problem Decomposition}
 
-Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable divide the problem into two subproblems.
-
-More specifically, we assume that the copter can complete its exploration before the rover enters the critical part of its scientific mission. We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
+Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable divide the problem into two subproblems. More specifically, we assume that the copter can complete its exploration before the rover enters the critical part of its scientific mission. We therefore propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
   %
 %\begin{figure}
 %	\begin{center}
@@ -272,16 +267,15 @@ More specifically, we assume that the copter can complete its exploration before
 %	\item An MDP $\MDP_{copt}$ modeling a copter in 3D space.
 %	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.
 %\end{enumerate}
-These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover.  \\
+These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the copter and rover. For our purposes, the interesting scenarios is when there is a lot of uncertainty about whether the mission can be completed or not. If the mission is trivial, or it is already known to be difficult, exploration will only further establish these facts. \\
 \noindent{\bfseries Mission Problem.}
-\todo[inline]{bla bla bla : connect also to existing literature. Remark clearly that this computation needs to yield a policy that maximizes the specification for all possible initial belief spaces.}
-\todo[inline]{Should we state here that mission which will probably fail are skipped?}
-Let the MDP for the mission phase be given as $\MDP_1$, then we want to compute   a policy $\mu_1$ as
+
+The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied. In addition, to guide the exploration phase it is necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem is to for an initial rover state $x^r_{0}$, for all environment belief states $x^e_{T_c}$ compute
 \begin{equation}
   \label{eq:mission}
-  \max_{\mu_1}\mathbb P_{\mu_1}^\MDP[\mathbf x \vDash \varphi ].
+ 	R(x^e_{T_c}) = \max_{\mu_1}\mathbb P_{\mu_1}^\MDP[\mathbf x \vDash \varphi \mid x^r_0, x^e_{T_c} ],
 \end{equation}
-
+along with a policy $\mu_1$ that maximizes the probability of specification satisfaction.
 
 
 \noindent{\bfseries Exploration Problem.}
@@ -293,9 +287,9 @@ Our objective is to extract control policies that maximize the knowledge about t
 \end{problem}
 
 
-
 \noindent{\bfseries Computational Challenge.}
-\todo[inline]{This is where we need to clarify that we know what we are doing. Additionally, we should show that the presented methods for structured MDPs will allow (also for continuous space case studies) this method to be applied to realistic case studies.}
+
+Due to the multiple interacting model components, a solution to Problem \ref{prob:main} is potentially computationally challenging. The decomposition into an exploration phase and a mission phase already improves scalability significantly by limiting the number of systems that are active at any given time (c.f. Fig. \ref{fig:execorder}). We additionally show in Section \ref{sec:valueiter} how the problem can be solved sequentially over system components, which avoids the expensive step of explicit computation of transition probabilities in the aggregate systems. Combined, these two innovations allow us to synthesize policies for realistic problems of modest size.
 
 
 \section{A Stochastic Optimal Control Approach}
@@ -510,7 +504,7 @@ Again this value and the associated optimal policy can be computed with value it
 
 In conclusion, in this section we have derived the following. For given initial poses $x^c_0$ and $x^r_0$ of the copter and robot, and an initial environment belief $x^e_0$, the function $V^0_c(x^c_0, x^e_0)$ as computed above is the probability that the exploration phase results in the task $\varphi$ being satisfiable with either probability at least $1- \delta_{acc}$, or with probability at most $\delta_{rej}$.
 \subsection{Related work}
-\sofieNew{The  proposed design methodology depends on  the utility for decision making as described in \cite{lindley2000philosophy}.  A similar formulation   has been proposed in \cite{haesaert2016experiment} for the design of experiments.}
+\sofieNew{The proposed design methodology depends on the utility for decision making as described in \cite{lindley2000philosophy}.  A similar formulation has been proposed in \cite{haesaert2016experiment} for the design of experiments.}
 
 \section{ Value Iteration for Product MDPs}
 \label{sec:valueiter}
@@ -805,7 +799,7 @@ We connect the systems in serial as illustrated in Fig \ref{fig:agg}. The serial
 
 We demonstrate the features of the proposed solution in a few example scenarios.
 
-\paragraph{Scenario 1} Fig. \ref{fig:workspacemars} illustrates a real area of Mars where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be in-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
+\paragraph{Scenario 1} Fig. \ref{fig:workspacemars} illustrates the Kimberly region in Mars Gale Crater where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be in-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
 \begin{equation}
   \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA},
 \end{equation}
