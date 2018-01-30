@@ -321,9 +321,8 @@ We now have a full characterization of the value iteration and policy computatio
 
 Similarly to above, we can model the overall stochastic system that is active in the exploration phase as
 \begin{equation}
-\begin{aligned}
-	\MDP_2 & = \MDP_{cop} \otimes_{ser}^{C_3} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right),
-\end{aligned}
+\label{eq:copt-env-rpod}
+	\MDP_2 = \MDP_{cop} \otimes_{ser}^{C_3} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right),
 \end{equation}
 with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a measurement model that maps copter poses to measurements of the environment labels. The exploration phase affects the environment belief $x^e_{T_c}$ at time $T_c$. We assume knowledge of the initial rover state $x_{T_c}^r$ (the initial state $x_{T_c}^\varphi$ of the specification automaton is always known), and quantify the effect of the exploration as \emph{mission risk} $R:\X_{env}\rightarrow [0,1]$ defined as
 \begin{equation}
@@ -510,40 +509,7 @@ We posit that the rover has a time window of length $T_r$ to fulfill its mission
 
 \paragraph{Measurement model}
 
-\begin{figure}
-\begin{center}
-    \begin{tikzpicture}
-    \node[draw, node distance=2cm, rounded corners] (rover) {$\MDP_{rov}$};
-    \node[draw, node distance=2cm, rounded corners, right of=rover] (environment) {$\MDP_{env}$};
-    \node[draw, node distance=2cm, rounded corners, right of=environment] (fsa) {$\MDP_\varphi$};
-
-    \draw[-latex] (rover) --  (environment);
-    \draw[-latex] (environment) --  (fsa);
-    \draw[-latex] (rover) to[out=-17, in=197] (fsa);
-
-    \draw ([xshift=-2mm, yshift=2mm]$(rover.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(fsa.south east)$) {};
-    \node[above of=rover, node distance=0.75cm] {$\MDP_1$};
-
-    \draw[latex-] (rover) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_r$};
-
-    \node[below of=rover, draw, node distance=1.6cm, rounded corners] (copter) {$\MDP_{cop}$};
-    \node[draw, node distance=2cm, rounded corners, right of=copter] (env2) {$\MDP_{env}$};
-
-    \draw[-latex] (copter) --  (env2);
-
-    \draw ([xshift=-2mm, yshift=2mm]$(copter.north west)$) rectangle ([xshift=2mm, yshift=-2mm]$(env2.south east)$) {};
-    \node[above of=copter, node distance=0.75cm] {$\MDP_2$};
-
-    \draw[latex-] (copter) -- ++(-1.2,0) node[coordinate] (west) {} node[above] {$u_c$};
-
-  \end{tikzpicture}
-\end{center}
-  \caption{Illustration of aggregate systems $\MDP_1$ and $\MDP_2$ constructed as serial products, where $\MDP_{env}$ is itself a parallel product.}
-  \label{fig:agg}
-\end{figure}
-
-
-We connect the systems in serial as illustrated in Fig \ref{fig:agg}. The serial products are defined via connections that map the state of one system to the input of the next. These connections are defined as follows:
+We connect the systems in serial as given by \eqref{eq:syst_prod_def}-\eqref{eq:copt-env-rpod}. The serial products are defined via connections that map the state of one system to the input of the next. These connections are defined as follows:
 \begin{itemize}
   \item If the rover is adjacent to a region $R_i$ it takes a (S)trong measurement of that region,
   \item If the copter is at low altitude and in region $R_i$, it takes a (S)trong measurement of that region,
