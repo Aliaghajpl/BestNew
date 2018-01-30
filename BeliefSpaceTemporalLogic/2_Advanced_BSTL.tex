@@ -403,14 +403,14 @@ Moreover, when combined with the temporal specification $\varphi$ we get an exte
 \end{equation}
 Here $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint space of rover poses and environment belief states to $2^{AP}$, where $AP$ is the set of atomic propositions used to construct $\varphi$. To design a policy for the mission, it is now sufficient to maximize the probability that the extended MDP \eqref{eq:syst_prod_def} reaches the target set $\X_{rov} \otimes \X_{env} \otimes Q_f$.
 
-Recall that the rover performs the mission task from time instant $T_c$ (the end time of the copter exploration) until time $T_r + T_c$. Thus for a given policy $\mu$ the probability of mission specification satisfaction \eqref{eq:probLTL} can be expressed as
+Recall that the rover performs the mission task from time instant $T_c$ (the end time of the copter exploration) until time $T_r + T_c$. Thus for a given  policy $\mu$ the probability of mission specification satisfaction \eqref{eq:probLTL} can be expressed as
 \begin{equation}
 \begin{aligned}
-\mathbb{P} \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right].
+\mathbb{P}_\mu \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right].
 \end{aligned}
 \end{equation}
 where $\mathbf{x}_{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of the rover and environment.
-By incorporating the specification as part of the model we can write the design problem as follows: %  can now be rewritten as
+By incorporating the specification as part of the model, we can write an equivalent design problem as follows: %  can now be rewritten as
 \begin{equation}
   \label{eq:ev_target}
   \argmax_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[ \mathbf{x}_{[T_c,T_c+T_r]}^1 \models \lozenge X_f \right]
@@ -432,17 +432,16 @@ To solve the optimal reachability problem \eqref{eq:ev_target}, we define a valu
 	& V_r(x_{t}^r, x_{t}^e, x_{t}^\varphi)  = \max_{\mu_1} \mathbb{P}_{\mu_1}^{\MDP_1} \left[\mathbf{x}^1_{[t,T_c+T_r]} \models \lozenge X_f \mid \mathbf{x}_{[t]}^1 = x_{t} \right].
 \end{aligned}
 \end{equation}
-Starting from $ V^{T_c+T_r}(x)\equiv \ind_{X_f}(x)$, this probability can be inductively computed, via \emph{value iterations}, along with the optimal policy as
-\begin{subequations}
-\label{eq:value_iter_mission}
+Starting from $ V^{T_c+T_r}(x)\equiv \ind_{X_f}(x)$, this probability can be inductively computed, via \emph{value iterations}, along with the optimal, Markov policy as
   \begin{align}
-    & V^{t}(x)  = \max_{u \in \U_{rov}}  \max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid} x_t=x\right] ) \label{eq:iter_mission}, \\
-    & \pol_1^t(x) \in \argmax_{u\in \U_{rov}} \left(\max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid }x_t=x\right] ) \right)%\mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .
-    \end{align}
-\end{subequations}
-for $x_{t+1}\sim  T(\cdot \mid x_t, u)$, and where $\ind_{X_f}$ is the indicator function \cite{Abate2008}.
+    & V^{t}(x)  = \max_{u \in \U_{rov}}  \max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid} x_t,u\right] )\label{eq:value_iter_mission}, \\
+    & \pol_1^t(x) \in \argmax_{u\in \U_{rov}} \left(\max( \ind_{X_f}(x), \mathbb{E}\left[V^{t+1}(x_{t+1}){\mid }x_t,u\right] ) \right)\notag%\mathbb E \left[ \max( \ind_{X_f}(x'), V^{t+1}(x')) \right] .
+    \end{align} 
+for $x_{t+1}\sim  T(\cdot\,{ \mid}\, x_t, u)$, and with $\ind_{X_f}$ is the indicator function. 
 %
-We now have a full characterization of the value iteration and policy computation. But the nested products in e.g. \eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
+We now have a full characterization of the value iteration and policy computation similar to  \cite{Abate2008}. 
+Furthermore, for every Markov policy $\mu_1$ for the extended MDP $\MDP$ there exists a policy $\mu$ for the rover-mission MDP.
+But the nested products in e.g. \eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition matrix is quadratic in the size of the state space, computation of the aggregate transition matrix quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
 
 \subsection{Exploration Problem: Task-Specific Information Gathering}
 \label{sub:information}
