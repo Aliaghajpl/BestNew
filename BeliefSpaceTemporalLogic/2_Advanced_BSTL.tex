@@ -167,109 +167,34 @@ We have chosen to work with the scLTL fragment that is restricted to properties 
 
 \subsection{Problem Decomposition}
 
-Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable to divide the problem into two subproblems. 
-% More specifically, we assume that the copter can complete its exploration before the rover enters the critical part of its scientific mission. 
-We propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
-  %
-%\begin{figure}
-%	\begin{center}
-%		\begin{tikzpicture}
-%			\draw[|-|] (0,0) node[yshift=-1mm, anchor=north] {$0$} -- (3,0) node[yshift=-1mm, anchor=north] {$T_c$};
-%			\draw[|-|] (3,0) -- (6,0) node[xshift=3mm, yshift=-1mm, anchor=north] {$T_c + T_r$};
-%			\draw[|-latex] (6,0) -- (7,0) node[anchor=west] {$t$};
-%
-%			\node at (0,0.3) {$x_c$};
-%			\node at (0,0.6) {$x_e$};
-%
-%			\node at (3,0.3) {$x_c$};
-%			\node at (3,0.6) {$x_e$};
-%			\node at (3,0.9) {$x_r$};
-%
-%			\node at (6,0.6) {$x_e$};
-%			\node at (6,0.9) {$x_r$};
-%
-%			\draw[-latex] (0.5,0.3) -- (2.5,0.3);
-%			\draw[-latex] (0.4,0.6) -- (2.5,0.6);
-%
-%			\draw[-latex] (3.5,0.9) -- (5.5,0.9);
-%			\draw[-latex] (3.5,0.6) -- (5.5,0.6);
-%
-%			\node (expl) at (1.5, -0.5) {Exploration};
-%			\node (miss) at (4.5, -0.5) {Mission};
-%
-%			\draw[dashed] (0,0) -- ($(expl.west)$);
-%			\draw[dashed] (3,0) -- ($(expl.east)$);
-%
-%			\draw[dashed] (3,0) -- ($(miss.west)$);
-%			\draw[dashed] (6,0) -- ($(miss.east)$);
-%
-%		\end{tikzpicture}
-%	\end{center}
-%	\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}
-%	\label{fig:execorder}
-%\end{figure}
-
+Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable to divide the problem into two subproblems. We propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
 
 \begin{figure}
-
-\centering
+	\centering
 	\begin{tikzpicture}
-			\draw[|-|] (0,0) node[yshift=-1mm, anchor=north] {$0$} -- (3,0) node[yshift=-1mm, anchor=north] {$T_c$};
-			\draw[|-|] (3,0) -- (6,0) node[xshift=3mm, yshift=-1mm, anchor=north] {$T_c + T_r$};
-			\draw[|-latex] (6,0) -- (7,0) node[anchor=west] {$t$};
-			\fill[color=explore]  (0,0) -- (3,0) -- (3,1.4) -- (0,1.4)--cycle;
-				\fill[color=mission]  (3,0) -- (6,0) -- (6,1.4) -- (3,1.4)--cycle;
+		\draw[|-|] (0,0) node[yshift=-1mm, anchor=north] {$0$} -- (3,0) node[yshift=-1mm, anchor=north] {$T_c$};
+		\draw[|-|] (3,0) -- (6,0) node[xshift=3mm, yshift=-1mm, anchor=north] {$T_c + T_r$};
+		\draw[|-latex] (6,0) -- (7,0) node[anchor=west] {$t$};
+		\fill[color=explore]  (0,0) -- (3,0) -- (3,1.4) -- (0,1.4)--cycle;
+		\fill[color=mission]  (3,0) -- (6,0) -- (6,1.4) -- (3,1.4)--cycle;
 
-%			\node at (0,0.3) {$x_c$};
-%			\node at (0,0.6) {$x_e$};
-			\node at (1.5,0.3) {\ \ \ \& Environment};
-			\node at (4.5,0.3) {\ \ \ \& Environment};
-			\node at (1,0.6) {Copter};
-			\node at (4,0.6) {Rover};
-%			\node at (3,0.3) {$x_c$};
-%			\node at (3,0.6) {$x_e$};
-%			\node at (3,0.9) {$x_r$};
-%
-%			\node at (6,0.6) {$x_e$};
-%			\node at (6,0.9) {$x_r$};
+		\node at (1.5,0.3) {\ \ \ \& Environment};
+		\node at (4.5,0.3) {\ \ \ \& Environment};
+		\node at (1,0.6) {Copter};
+		\node at (4,0.6) {Rover};
 
-%			\draw[-latex] (0.5,0.3) -- (2.5,0.3);
-%			\draw[-latex] (0.4,0.6) -- (2.5,0.6);
-%
-%			\draw[-latex] (3.5,0.9) -- (5.5,0.9);
-%			\draw[-latex] (3.5,0.6) -- (5.5,0.6);
+		\node (expl) at (1.5, 1.15) {\bfseries \color{black} Exploration};
+		\node (miss) at (4.5, 1.15) {\bfseries \color{black} Mission};
 
-
-			\node (expl) at (1.5, 1.15) {\bfseries \color{black} Exploration};
-			\node (miss) at (4.5, 1.15) {\bfseries \color{black} Mission};
-
-%			\draw[dashed] (0,0) -- ($(expl.west)$);
-%			\draw[dashed] (3,0) -- ($(expl.east)$);
-%
-%			\draw[dashed] (3,0) -- ($(miss.west)$);
-%			\draw[dashed] (6,0) -- ($(miss.east)$);
-
-		\end{tikzpicture}
-			\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}	\label{fig:execorder}
+	\end{tikzpicture}
+	\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}	
+	\label{fig:execorder}
 \end{figure}
-%
-%We consider a system consisting of the following components:
-%\begin{enumerate}
-%	\item An MDP $\MDP_{rov}$ with state $x_r$ modeling a ground rover in 2D space.
-%	\item An MDP $\MDP_{env}$ with state $x_e$ that captures belief dynamics over a collection of unknown environment labels.
-%	\item A scLTL specification $\varphi$ that expresses the requirement of the scientific mission. The formula is defined over a set of atomic propositions in $\X_{rov} \times \X_{env}$---the combined space of rover poses and environment beliefs.
-%	\item An MDP $\MDP_{copt}$ modeling a copter in 3D space.
-%	\item A measurement model that dictates how the state of $\MDP_{env}$ is updated from measurements received from the rover and copter. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground.
-%\end{enumerate}
+
 These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the active agent. While the execution order of the phases is exploration first and the mission execution, the reverse holds for design: first the mission design problem is solved and its solution informs the exploration design.
 
 \smallskip
 \noindent{\bfseries Mission Problem:} The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied, thus part of the Mission Problem is to synthesize such a policy. However, to guide the design of an exploration policy it is also necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem is to for a given initial rover state $x^r_{0}$, for all environment belief states $x^e_{T_c}$ compute the probability that the mission specification is satisfied, along with a maximizing policy.
-% \begin{equation}
- 	% R(x^e_{T_c}) = \max_{\mu_1}\mathbb P_{\mu_1}^\MDP[\mathbf x \vDash \varphi \mid x^r_0, x^e_{T_c} ],
-% \end{equation}
-% along with a policy $\mu_1$ that maximizes the probability of specification satisfaction.
-
 
 \smallskip
 \noindent{\bfseries Exploration Problem:} Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives. Based on the partition into exploration and mission phases we refine our problem as follows.
@@ -285,16 +210,7 @@ These times can be determined based on the available battery capacity and remain
 \section{A Stochastic Optimal Control Approach}
 \label{sec:stochopt}
 
-% We now show that both subproblems can be solved as stochastic optimal control problems characterized by a Bellman operator
-% %Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator
-% %$\bellman : (\X \rightarrow \mathbb{R}_+) \rightarrow (\X \rightarrow \mathbb{R}_+)$ on the following form:
-% \begin{equation}
-%   (\bellman V) (x) =  \max_{u \in \U}\mathbb E \left[ g(x', V(x')) \right]  \mbox{ for } x'\sim  T(\cdot \mid x, u).
-% \end{equation}
-% where $g:\X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$ is a problem-specific function and the value functions $V:\X\rightarrow \mathbb{R}_+$ are positive definite mappings defined on state space $\X$.
-
 The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.
-
 
 \subsection{Mission-Phase Optimal Control}
 We first show that specification satisfaction is related to a stochastic reachability problem over an extended MDP, and then detail how it can be written as a stochastic finite-horizon dynamic programming problem. We start with an example illustrating how product systems can be used to reason about specification satisfaction.
