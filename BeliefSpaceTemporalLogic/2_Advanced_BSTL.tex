@@ -450,9 +450,9 @@ We now apply our ideas in a case study. After introducing concrete models for ro
 
 \paragraph{Abstract Robot Models}
 
-In practice robotic systems operate in continuous domains, but value iteration is infeasible over continuous state spaces. Construction of finite models that approximate continuous models include abstraction-based \cite{Zamani2015} and sampling-based \cite{Kavraki1996, Agha-mohammadi2014} methods; an alternative is to employ approximate methods on the continuous state space \cite{Powell2011}. For the purpose of clarity we bypass the model abstraction and directly introduce finite-state models that capture the essential dynamics of agents that move around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis.
+In practice robotic systems operate in continuous domains, but value iteration is infeasible over continuous state spaces. Methods to construct finite approximations include abstraction-based \cite{Zamani2015} and sampling-based \cite{Kavraki1996, Agha-mohammadi2014} methods; an alternative is to employ approximate methods directly on the continuous state space \cite{Powell2011}. For the purpose of clarity we bypass these steps here and directly introduce finite-state models that capture the essential dynamics of agents that move around in a workspace. We denote the location of robot and copter with $x_r \in \mathbb{R}^2$ and $x_c \in \mathbb{R}^3$. For a given domain $\X_r \subset \mathbb{R}^2$ and $\X_c \subset \mathbb{R}^3$ we introduce abstract states $\xi_r \in [\X_r]_{N_{rx}, N_{ry}}$ and $\xi_c \in [\X_c]_{N_{cx}, N_{cy}, N_{cz}}$, where e.g. $N_{rx}$ is the number of discrete states along the $x$ axis.
 
-We assume that low-level controllers are available for both robots so that they move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
+We assume that low-level controllers are available for both robots so that they can move east, north, west, or south between the discrete states while remaining in the workspace, and that the copter can additionally adjust its elevation by moving up and down. With these assumptions we can model the rover with an MDP $\MDP_{rov}$ with $N_{rx} N_{ry}$ states and $4$ inputs, and the copter as an MDP $\MDP_{copt}$ with $N_{cx} N_{cy} N_{cz}$ states and $6$ inputs. In the following we fix $N_{rx} = N_{ry} = N_{cx} = N_{cy} = 10$ and $N_{cz} = 2$, i.e. both robots move on a 10x10 grid in 2D space, and the copter can fly at two different altitudes (in the following referred to as \emph{high} and \emph{low}).
 
 
 \paragraph{Environment Belief Model}
@@ -483,31 +483,29 @@ We assume that regions of interest have been extracted from low-resolution satel
 \begin{equation}
   T_{S} = \left[\begin{smallmatrix}
     1        &  0  &  0  &  0  &  0   \\
-    \bar p_- &  0  &  0  &  0  &  p_- \\
-    \bar p_0 &  0  &  0  &  0  &  p_0 \\
-    \bar p_+ &  0  &  0  &  0  &  p_+ \\
+    1- p_- &  0  &  0  &  0  &  p_- \\
+    1- p_0 &  0  &  0  &  0  &  p_0 \\
+    1- p_+ &  0  &  0  &  0  &  p_+ \\
     0        &  0  &  0  &  0  &  1
   \end{smallmatrix}\right],
   T_{W} = \left[\begin{smallmatrix}
     1        &  0                &  0  &  0           &  0   \\
     0        &  1                &  0  &  0           &  0 \\
-    0        &  \bar p_0         &  0  & p_0          &  0\\
+    0        &  1- p_0         &  0  & p_0          &  0\\
     0        &  0                &  0  &  1           &  0 \\
     0        &  0  &  0  &  0  &  1
   \end{smallmatrix}\right].
 \end{equation}
-The outgoing transitions from $p_0$ are illustrated in Figure \ref{fig:envmdp}.
-
-Given belief MDPs $\MDP_{e_i}$ for every region of interest, we construct the environment model $M_{env}$ as the parallel product
-\begin{equation}
+The outgoing transitions from $p_0$ are illustrated in Figure \ref{fig:envmdp}. Given belief MDPs $\MDP_{e_i}$ for every region of interest, we construct the environment model $M_{env}$ as the parallel product
+\begin{equation*}
   \MDP_{env} = \MDP_{e_1} \otimes_{par} \MDP_{e_1}  \otimes_{par} \ldots \otimes_{par} \MDP_{e_n}.
-\end{equation}
+\end{equation*}
 
 \paragraph{Specification}
 
-The objective of the mission is to satisfy a scLTL specification $\varphi$ over propositions over states in $\MDP_{rov}$ and $\MDP_{env}$. Examples of such propositions include
+The objective of the mission is to satisfy a scLTL specification $\varphi$ over propositions over states in $\MDP_{rov}$ and $\MDP_{env}$. We consider two basic types of propositions:
 \begin{itemize}
-  \item Don't enter a risk region $R_1$ that may contain an obstacle: $\xi_r \not  \in R_1 \lor \zeta_1 = 0$.
+  \item Don't be in a risk region $R_1$ that may contain an obstacle: $\xi_r \not  \in R_1 \lor \zeta_1 = 0$.
   \item Collect a sample at region $R_2$: $\xi_r \in R_2 \land \zeta_2 = 1$.
 \end{itemize}
 
@@ -561,13 +559,15 @@ We connect the systems in serial as illustrated in Fig \ref{fig:agg}. The serial
 
 We demonstrate the features of the proposed solution in a few example scenarios.
 
-\paragraph{Scenario 1} Fig. \ref{fig:workspacemars} illustrates the Kimberly region in Mars Gale Crater where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be in-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
+\noindent \textbf{Scenario 1:} Fig. \ref{fig:workspacemars} illustrates the Kimberly region in the Mars Gale Crater where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be non-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
 \begin{equation}
   \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA},
 \end{equation}
 where the atomic proposition $\texttt{obstacle}$ is $\True$ if the rover is in a risk region that contains an obstacle, and $\texttt{sA}$ is $\True$ if the rover is in a target region that contains a science sample.
 
-A good way to use our method is as a way to determine when additional exploration is warranted. To illustrate we consider a scenario where the initial probability of specification satisfaction is high: there is a high estimated probability that a sample can be extracted from the easy-to-access region $A_3$. However, when the rover reaches $A_3$ it turns out to be empty and the mission is now associated with more risk. This motivates an exploration phase with the hope that the uncertainty can be reduced. In Fig. \ref{fig:marstrajectories} the team behavior is illustrated for two configurations of the environment: one where the specification can be satisfied and one where it is infeasible.
+A good way to use our method is as a way to determine when additional exploration is warranted. To illustrate we consider a scenario where the initial probability of specification satisfaction is high: there is a high estimated probability that a sample can be extracted from the easy-to-access region $A_3$. However, when the rover reaches $A_3$ it turns out to be empty and the mission is now associated with much more risk. This motivates exploration with the hope that it can reduce mission uncertainty. 
+
+With the two-stage approach described in Section \ref{sec:stochopt} we can then compute 1) a value function $V_r(\xi_r, \xi_e, \xi_\varphi)$ and corresponding policy for the rover, and 2) a policy for the copter that maximizes the probability of reaching a state where $V_r(\xi_r^0, \xi_e, \xi_\varphi^0)$ is either close to 0 or close to 1. In Fig. \ref{fig:marstrajectories} the resulting team behavior is illustrated for two configurations of the environment: one where the specification can be satisfied and one where it is infeasible and the mission is aborted.
 
 \begin{figure}
   \begin{center}
@@ -637,11 +637,11 @@ A good way to use our method is as a way to determine when additional exploratio
 \end{figure}
 
 
-\paragraph{Scenario 2} To further illustrate intelligent behavior we consider an artificial example depicted in Fig. \ref{fig:workspace1}. The specification is as follows: either collect samples of types $A$ and $B$, or collect a sample of type $C$, while avoiding obstacles. Letting $\lozenge_o \varphi = \lnot \texttt{obstacle} \; \mathcal U \; \varphi$, the specification can be written
+\noindent \textbf{Scenario 2:} To further illustrate exploration and cooperative behavior we consider the artificial example depicted in Fig. \ref{fig:workspace1}. The specification is as follows: either collect samples of both types $A$ and $B$, or collect a sample of type $C$, while avoiding obstacles. Letting $\lozenge_o \varphi = \lnot \texttt{obstacle} \; \mathcal U \; \varphi$, the specification can be written
 \begin{equation*}
   \left( \lozenge_o \texttt{sA} \land \lozenge_o \texttt{sB} \right)  \lor \left( \lozenge_o  \texttt{sC}  \right).
 \end{equation*}
-The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). With the two-stage approach described in Section \ref{sec:stochopt} we can then compute 1) a value function $V_r(\xi_r, \xi_e, \xi_\varphi)$ and corresponding policy for the rover, and 2) a policy for the quadrotor that maximizes the probability of reaching a state where $V_r(\xi_r^0, \xi_e, \xi_\varphi^0)$ is either close to 0 or close to 1.
+The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). 
 
 Executions generated from the resulting copter and rover policies are shown in Fig. \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure. \ref{fig:copter_executions}, $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
 
@@ -688,7 +688,7 @@ Executions generated from the resulting copter and rover policies are shown in F
 \section{Conclusion}
 \label{sec:conclusion}
 
-We presented a modeling framework for multi-agent systems operating in uncertain environments, and proposed a dynamic programming-based solution to the problem of in a specification-guided fashion determining what areas of the environment to explore. The solution method works with arbitrary MDPs, so there is significant flexibility in modeling which can be done via formal abstractions, sampling-based methods, etc. As demonstrated, value iteration is possible without constructing the aggregate systems explicitly, but scalability remains an issue since the representation of the value function grows linearly with the size of the aggregate state space (which grows exponentially with the number of system components). As discussed in Section \ref{sub:factored_mdp_work}, it can not be expected that sparse representations exist for the true value function, but sparse value function representations can potentially yield approximate methods that improve scalability further. This is one direction for future research. Another way to partially circumvent scalability issues is to iteratively refine the models in a specification- and exploration-guided fashion, as explored e.g. in \cite{Nilsson2017}. For instance, exploration may reveal that certain regions of interest should be treated as multiple regions, but at this point more information is known which reduces the size of the overall belief space. Thus, iterative exploration and model refinement can limit the number of uncertain region labels over time.  
+We presented a modeling framework for multi-agent systems operating in uncertain environments, and proposed a dynamic programming-based solution to the problem of in a specification-guided fashion determining what areas of the environment to explore. The solution method works with arbitrary MDPs, so there is significant flexibility in modeling via formal abstractions, sampling-based methods, or using other methods. As demonstrated, value iteration does not necessitate explicit construction of the aggregate systems, but scalability remains an issue since the representation of the value function grows linearly with the size of the aggregate state space (which grows exponentially with the number of system components). As discussed in Section \ref{sub:factored_mdp_work}, it can not be expected that sparse representations exist for the true value function, but sparse value function representations can potentially yield approximate methods that improve scalability further. This is one direction for future research. Another way to partially circumvent scalability issues is to iteratively refine the models in a specification- and exploration-guided fashion, as explored e.g. in \cite{Nilsson2017}. For instance, exploration may reveal that certain regions of interest should be treated as multiple distinct regions, but at that point more information is known which reduces the size of the overall belief space. Thus, iterative exploration and model refinement can limit the number of uncertain region labels over time.  
 
 
 \bibliographystyle{abbrvnat}
