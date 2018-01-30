@@ -111,7 +111,7 @@ For a given sequence of control inputs $u_t \in \U$ with timing $t$, we say that
 
 \smallskip
 \noindent{\bfseries Rover and Copter as MDPs}.
-In case of the rover the state space $\X$ represents the two-dimensional space in which the rovers navigates. Its state transitions can be modeled as being either stochastic or deterministic. Similarly, the dynamics of the copter can be represented in three-dimensional space, where the additional dimension represents altitude. Effects of wind and other uncertainty influencing the state transitions can be captured by the stochastic transitions in the copter MDP model. For brevity, we refer to this model as $\MDP_{cop}$ and index its state as $x^c$. Similarly, we refer to the rover model as an MDP $\MDP_{rov}$ with state $x^r$.
+In case of the rover, the state space $\X$ represents the two-dimensional space in which the rovers navigates. Its state transitions can be modeled as being either stochastic or deterministic. Similarly, the dynamics of the copter can be represented in three-dimensional space, where the additional dimension represents altitude. Effects of wind and other uncertainty influencing the state transitions can be captured by the stochastic transitions in the copter MDP model. For brevity, we refer to this model as $\MDP_{cop}$ and index its state as $x^c$. Similarly, we refer to the rover model as an MDP $\MDP_{rov}$ with state $x^r$.
 
 \smallskip
 \noindent{\bfseries Environment Uncertainty as a Belief MDP.}
@@ -169,7 +169,7 @@ We have chosen to work with the scLTL fragment that is restricted to properties 
 \subsection{Problem Decomposition}
 
 Due to the nature of the mission---the copter is quick and has short battery life (minutes), the rover moves slowly (over hours)---it is reasonable to divide the problem into two subproblems. We propose to solve the problem sequentially based on its natural division into two phases: exploration and mission execution. As shown in Fig. \ref{fig:execorder}, the copter is active in the exploration phase, whereas the rover conducts the critical scientific mission in the second phase. We assume that the exploration phase lasts for a time $T_c$, and that the mission phase lasts at most for a time $T_r$.
-
+%
 \begin{figure}
 	\centering
 	\begin{tikzpicture}
@@ -191,11 +191,11 @@ Due to the nature of the mission---the copter is quick and has short battery lif
 	\caption{Illustration of execution order. In the exploration phase $[0, T_c]$ the copter explores the environment, whereas the rover executes the scientific mission on $[T_c, T_c + T_r]$.}	
 	\label{fig:execorder}
 \end{figure}
-
+%
 These times can be determined based on the available battery capacity and remaining hours of daylight. In both phases the environment belief is updated according to measurements taken by the active agent. While the execution order of the phases is exploration first and the mission execution, the reverse holds for design: first the mission design problem is solved and its solution informs the exploration design.
 
 \smallskip
-\noindent{\bfseries Mission Problem:} The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied, thus part of the Mission Problem is to synthesize such a policy. However, to guide the design of an exploration policy it is also necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem is to for a given initial rover state $x^r_{0}$, for all environment belief states $x^e_{T_c}$ compute the probability that the mission specification is satisfied, along with a maximizing policy.
+\noindent{\bfseries Mission Problem:} The objective in the mission phase is to maximize the probability that the specification $\varphi$ is satisfied, thus part of the Mission Problem is to synthesize such a policy. However, to guide the design of an exploration policy it is also necessary to quantify the probability of success for different environment belief states at time $T_c$. To this end, the objective of the Mission Problem as follows: for a given initial rover state $x^r_{0}$ and for all environment belief states $x^e_{T_c}$ compute the probability that the mission specification is satisfied, along with a maximizing policy.
 
 \smallskip
 \noindent{\bfseries Exploration Problem:} Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives. Based on the partition into exploration and mission phases we refine our problem as follows.
@@ -211,7 +211,7 @@ These times can be determined based on the available battery capacity and remain
 \section{A Stochastic Optimal Control Approach}
 \label{sec:stochopt}
 
-The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to design an exploration optimal control problem.
+The exploration phase impacts the execution of the mission phase via the shared knowledge of the environment. Since we are interested in solving the exploration in such a way that the impact on the rover mission is maximized, we first characterize the probability of rover mission success as a function of the environment belief. We then leverage this knowledge to define the exploration optimal control problem.
 
 \subsection{Optimal Control Solution of Mission Problem}
 
@@ -281,7 +281,7 @@ Let us now return to the Mission Problem, where the MDP model contains both the 
 \end{equation}
 where $C_1 : \X_{rov} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ is a measurement model that maps rover poses to measurements in the environment model.
 
-Moreover, when combined with the temporal specification $\varphi$ we get an extended MDP composed of different parts: the rover, the environment belief model, and also the specification automaton $\mathcal A_\varphi$.
+Moreover, when combined with the temporal specification $\varphi$ we get an extended MDP composed of different parts: the rover, the environment belief model, and also the specification automaton $\mathcal A_\varphi$
  \begin{equation}
 \label{eq:syst_prod_def}
 	\MDP_1 = \left( \MDP_{rov} \otimes_{ser}^{C_1} \left( \MDP_{e_1} \otimes_{par} \ldots \otimes_{par} \MDP_{e_n} \right) \right) \otimes_{ser}^{L} \mathcal A_{\varphi}.
@@ -291,7 +291,7 @@ Here $L : \X_{rov} \otimes \X_{env} \rightarrow \U_{\varphi}$ maps the joint spa
 Recall that the rover performs the mission task from time instant $T_c$ (the end time of the copter exploration) until time $T_r + T_c$. Thus for a given  policy $\mu$ the probability of mission specification satisfaction \eqref{eq:probLTL} can be expressed as
 \begin{equation}
 \begin{aligned}
-	\mathbb{P}_\mu^{\MDP_{miss}} \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right].
+	\mathbb{P}_\mu^{\MDP_{miss}} \left[ \mathbf{x}_{[T_c,T_c+T_r]} \models \varphi \right]
 \end{aligned}
 \end{equation}
 where $\mathbf{x}_{[T_c,T_c+T_r]}$ is the state trajectory over the interval $[T_c,T_c+T_r]$ of $\MDP_{miss}$. By incorporating the specification as part of the model, we can write an equivalent design problem as follows:
@@ -315,7 +315,7 @@ Starting from $ V^{T_c+T_r}(x)\equiv \ind_{X_f}(x)$, this probability along with
 \end{align} 
 for $x' \sim  T(\cdot\,{ \mid}\, x, u)$, and with $\ind_{X_f}$ is the indicator function. 
 
-We now have a full characterization of the value iteration and policy computation similar to \cite{Abate2008}. Furthermore, for every Markov policy $\mu_1$ for the extended MDP $\MDP_1$ there exists a policy $\mu$ for the rover-environment MDP $\MDP_{moss}$. But the nested products in e.g. \eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition kernel in matrix representation is quadratic in the size of the state space, computation in the aggregate system quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
+We now have a full characterization of the value iteration and policy computation similar to \cite{Abate2008}. Furthermore, for every Markov policy $\mu_1$ for the extended MDP $\MDP_1$ there exists a policy $\mu$ for the rover-environment MDP $\MDP_{miss}$. But the nested products in, e.g. ,\eqref{eq:syst_prod_def} lead to large aggregate state spaces, and since the size of the transition kernel in matrix representation is quadratic in the size of the state space, computation in the aggregate system quickly becomes challenging. In the next section we show that value iteration can be done sequentially over subsystems without computing aggregate transition matrices, but first we discuss the exploration problem.
 
 \subsection{Optimal Control Solution of Exploration Problem}
 \label{sub:information}
