@@ -392,7 +392,7 @@ where $g$ is a problem-specific function and the value functions $V:\X\rightarro
 \begin{equation}
 \begin{aligned}
 	V_T(x) & = g(x, 0), \quad V_{t-1} = \bellman V_t,\\
-	\mu_t(x) & \in \argmax_{u \in \U} g(x, \mathbb{E}\left[ V(x') \mid x,u \right])
+	\mu_t(x) & \in \argmax_{u \in \U} g(x, \mathbb{E}\left[ V(x') \mid x,u \right]).
 \end{aligned}
 \end{equation}
 We consider the Bellman iteration step for product MDPs. For a serial product $\MDP = \MDP_1 \otimes_{ser}^{C} \MDP_2$ we get
@@ -440,7 +440,6 @@ A generalization of serial and parallel products are \emph{factored MDPs} \cite{
 The back-stepping Bellman computation is an example of a factored sum-product algorithm \cite{Kschischang2001} that has previously been used for a similar purpose as ours in the context of MDP abstractions \cite{EsmaeilZadehSoudjani2017}.
 
 
-
 \section{Case Study}
 \label{sec:casestudy}
 
@@ -468,8 +467,6 @@ We assume that low-level controllers are available for both robots so that they 
 
     \draw[-latex, red] (bi) to[out=45, in=135] node[black, above] {$p_0$} (bp);
     \draw[-latex, red] (bi) to[out=135, in=45] node[black, above] {$\bar p_0$} (bm);
-    % \draw[-latex, red] (bi) to[out=45, in=135] node[black, above] {$q p_0$} (b1);
-    % \draw[-latex, red] (bi) to[out=135, in=45] node[black, above] {$q \bar p_0$} (b0);
     \draw[-latex, blue] (bi) to[out=-45, in=-135]  node[black, below] {$p_0$} (b1);
     \draw[-latex, blue] (bi) to[out=-135, in=-45]  node[black, below] {$\bar p_0$} (b0);
     \draw[-latex, black] (bi) to[loop below] node[below, black] {1} (bi);
@@ -667,23 +664,6 @@ Executions generated from the resulting copter and rover policies are shown in F
 	\label{fig:copter_executions}
 \end{figure}
 
-% \begin{figure}
-%   \begin{center}
-%     \footnotesize
-%     \begin{tikzpicture}
-%       \node[inner sep=0] (p1) {\includegraphics[height=0.24\columnwidth]{2figs/value-rov.pdf}};
-%       \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p1.east)$) (p2) {\includegraphics[height=0.24\columnwidth]{2figs/value-cop.pdf}};
-%       \node[inner sep=0, anchor=west] at ([xshift=2mm]$(p2.east)$) (n1) {\includegraphics[height=0.24\columnwidth]{2figs/cbar.pdf}};
-%       \node at ([yshift=2mm]$(p1.north)$) {$V_0^1(\xi_r, \xi_e^0, \xi_\varphi^0)$};
-%       \node at ([yshift=2mm]$(p2.north)$) {$V_0^2(\xi_c, \xi_e^0)$};
-%       \node at ([xshift=6mm]$(n1.north east)$) {$p = 0.48$};
-%       \node at ([xshift=6mm]$(n1.south east)$) {$p = 0$};
-%     \end{tikzpicture}
-%   \end{center}
-%   \caption{Illustration of value functions. As can be seen, the advantage of the copter is equivalent to having the rover's initial state be near a target region.}
-%   \label{fig:values1}
-% \end{figure}
-
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -694,5 +674,4 @@ We presented a modeling framework for multi-agent systems operating in uncertain
 \bibliographystyle{abbrvnat}
 \bibliography{2_references,AliAgha3}
 
-% AliAgha,references_combined, AliAgha3
 \end{document}
