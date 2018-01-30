@@ -82,7 +82,8 @@ Our approach lies at the intersection of formal synthesis methods and stochastic
 \subsection{Related work}
 Environment mapping for robot navigational purposes is an important prerequisite for robotic autonomy for which many types of methods have been proposed \cite{Thrun2005,stachniss2009_book,thrun2002robotic}. While mapping algorithms can be developed separately from planning algorithms, in this work, we are interested in \emph{joint} planning and mapping methods. Active perception techniques fall into this category \cite{blake1992active, aloimonos1988active,soatto2013actionable}. Active mapping or SLAM algorithms, a subcategory of active perception, aims to enhance the quality of the environment map (e.g., for the navigation task \cite{Agha2017_ISRR,feder1999adaptive,davison2002simultaneous,Mu16-CDC}) by choosing information-rich trajectories. However, these methods are typically limited to subsystem autonomy (e.g., navigation) and do not have a principled way of incorporating system-level constraints and high-level mission specifications and requirements. In this work, we aim to develop a novel methodology that allows for principled incorporation of mission specifications where the ``active" perception not only helps navigation, but also assists with satisfaction of mission goals.
 
-Three major classes of methods exist to solve stochastic optimal control problems: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem.
+We show that the mission and exploration tasks are solvable as   stochastic optimal control problems, for this 
+three major classes of solution methods exist: value iteration, policy iteration, and linear programming \cite{Bertsekas1978}. Approximate solutions methods to the stochastic optimal control problem under temporal logic constraints have been proposed via parametrized value function approximations \cite{Papusha2016,Leong2016}, and via tensor decompositions \cite{Alora2016}. While the above mentioned approaches are general in scope, we focus on uncertainty stemming from an unknown environment which we model in a way that leads to a naturally decomposed problem.
 
 
 \subsection{Contributions and Paper Layout}
@@ -268,6 +269,7 @@ These times can be determined based on the available battery capacity and remain
  	% R(x^e_{T_c}) = \max_{\mu_1}\mathbb P_{\mu_1}^\MDP[\mathbf x \vDash \varphi \mid x^r_0, x^e_{T_c} ],
 % \end{equation}
 % along with a policy $\mu_1$ that maximizes the probability of specification satisfaction.
+
 
 \smallskip
 \noindent{\bfseries Exploration Problem:} Our objective is to extract control policies that maximize the knowledge about the satisfiability of a given task: either we want the exploration to show that the task can be completed with a high probability, or that the probability of task completion is very low. Both are desirable outcomes since a negative results allows resources to be redirected towards more realistic objectives. Based on the partition into exploration and mission phases we refine our problem as follows.
