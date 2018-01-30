@@ -329,7 +329,8 @@ with $C_3 : \X_{cop} \rightarrow \U_{e_1} \times \ldots \times \U_{e_n}$ being a
 \begin{equation}
 	R(x_{T_c}^e) = V_r(x_{T_c}^r, x_{T_c}^e, x_{T_c}^\varphi),
 \end{equation}
-as a function of the environment belief state $x^e_{T_c}$, at the end of the exploration phase. Given $V_r(x_{T_c}^r, \cdot, x_{T_c}^\varphi)$, the question now becomes how the environment should be explored in order to maximize the probability of a favorable $R(x_{T_c}^e)$.
+as a function of the environment belief state $x^e_{T_c}$, at the end of the exploration phase. Given $R(x_{T_c}^e)$% %V_r(x_{T_c}^r, \cdot, x_{T_c}^\varphi)$
+, the question now becomes how the environment should be explored in order to maximize the probability of a favorable $R(x_{T_c}^e)$.
 
 What would a good result look like? As a first consideration, one could choose the exploration objective
 \begin{equation}
@@ -364,7 +365,7 @@ where $\delta_{rej}$ is the acceptable rejection risk for which the  rover missi
 \end{enumerate}
 The third outcome is the least useful for decision-making purposes as it is associated with the largest degree of uncertainty about task feasibility.
 
-Based on this classification we consider the mission exploration a success if it results in $x_e^{T_c}$ being either in the ``accept region'' or in the ``abort region''. We can encode this condition as a subset of the copter - environment space
+Based on this classification, we consider the mission exploration a success if it results in $x_e^{T_c}$ being either in the ``accept region'' or in the ``abort region''. We can encode this condition as a subset of the copter - environment space
 \begin{equation}
 Y_\delta = \X_{cop} \otimes
 	\{x^e_{T_c} \mbox{ s.t.  }\eqref{eq:accept}\mbox{ or s.t. }\eqref{eq:reject} \},
@@ -382,7 +383,7 @@ In conclusion, in this section we have derived the following. For given initial 
 \section{ Value Iteration for Product MDPs}
 \label{sec:valueiter}
 
-As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the mission and exploration phases are both formed as MDP products. Explicit construction of these aggregate systems quickly becomes computationally challenging. In this section we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over the product components.
+As detailed in the previous section, the aggregate systems $\MDP_1$ and $\MDP_2$ for the respective mission and exploration phases are both formed as MDP products. Explicit construction of these aggregate systems quickly becomes computationally challenging. In this section, we show that explicit construction is not required for certain types of value iteration---it can be performed recursively over the product components.
 
 Given a function $g: \X \times \mathbb{R}_+ \rightarrow \mathbb{R}_+$, consider a general Bellman operator\footnote{Remark that for this set of Bellman recursions, the control input does not directly impact rewards, it only influences the value function via its effect on the next state distribution.} $\bellman$ on the following form:
 \begin{equation}
@@ -429,7 +430,7 @@ In addition, if $\MDP_{i}$ is itself a serial or parallel product, the computati
 	& \quad = \mathbb{E}^{\MDP_{i_1}} \left[ W_{i_1}(\ldots (x_{i_1}', x_{i_2}) \ldots) \mid x_{i_1}, C_i(x_{i-1}) \right].
 \end{aligned}
 \end{equation}
-As a consequence, for any aggregate system constructed from a hierarchy of serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing any aggregate transition probabilities. The back-stepping approach is advantageous when the connections are sparse, i.e. the connection mappings $C$ can be compactly represented.
+As a consequence, for any aggregate system constructed from a hierarchy of serial and parallel products, iterative value function computation for this type of Bellman operator can be performed without explicitly computing any aggregate transition probabilities. The back-stepping approach is advantageous when the connections are sparse, i.e., when the connection mappings $C$ can be compactly represented.
 
 
 \subsection{Related Work}
@@ -605,7 +606,7 @@ With the two-stage approach described in Section \ref{sec:stochopt} we can then 
 \begin{equation*}
   \left( \lozenge_o \texttt{sA} \land \lozenge_o \texttt{sB} \right)  \lor \left( \lozenge_o  \texttt{sC}  \right).
 \end{equation*}
-The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). 
+The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). %todo: clarify that the time steps of the rover represent longer spans of physical time than the time steps of the copter. In other words, the sampling time of the copter is shorter than that of the rover.
 
 Executions generated from the resulting copter and rover policies are shown in Fig. \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure. \ref{fig:copter_executions}, $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
 
