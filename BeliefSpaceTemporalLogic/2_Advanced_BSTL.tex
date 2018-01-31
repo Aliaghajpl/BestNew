@@ -119,7 +119,13 @@ A common way to represent a map for planning purposes is to attach labels such a
 
 We capture this environmental uncertainty with MDPs $\MDP_{e_i}$ that model belief dynamics over labeled regions $i$ of the two-dimensional rover state space. The aggregate environment model $\MDP_{env}$ with state $x^e$ is the combination of individual MDPs $\MDP_{e_i}$. Transitions in these MDPs occur when measurements are taken from on-board sensors, i.e., the stochastic kernels are parameterized by the physical distance of the robots to the regions in a measurement model. For instance, it is reasonable to assume that the rover can take measurements of a given region provided that it is sufficiently close, and that the copter can take measurements of regions it flies above. Copter measurements also depend on the altitude: a high-flying copter can see a larger area but the image resolution is better if the copter is close to the ground. Hence the measurement models dictate the structured composition of the copter and rover models with the environment model. The resulting composed MDP represents the full model of the state of both robots and the current knowledge of the environment.
 
-\todo[inline]{Figure of copter and rover taking measurements of a region of interest}
+%\todo[inline]{Figure of copter and rover taking measurements of a region of interest}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{BeliefSpaceTemporalLogic/figs/SandDectection.png}
+    \caption{Taking measurements at  higher altitudes (A) allows the helicopter to cover larger area, however, due to low resolution of the image there is a larger uncertainty in the predicted labels. Whereas, taking measurements at lower altitudes (B) results in lower uncertainty of the measurements but we get less coverage of the area on the ground. Finally, the rover (C) can get measurements with very low uncertainty as it gets closer to the terrain. Further, it can also get the true label using its proprioceptive and exteroceptive sensors. For example, it can detect slippage due to sand by detecting a large discrepancy between location estimates from wheel odometery and visual odometry.}
+    \label{fig:MeasurementPossibilities}
+\end{figure}
 
 \subsection{Formal Specifications}
 We use temporal logic formulas to formally describe tasks that the rover should perform. The basic building blocks of a temporal logic formula are \emph{atomic propositions} that take values $\True$ or $\False$.  An atomic proposition $p$ is associated with a subset $A$ of a state space $\X$ in the sense that $p = \True$ if and only if $x \in A$.
