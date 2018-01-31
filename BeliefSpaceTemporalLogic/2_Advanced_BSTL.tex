@@ -44,7 +44,7 @@
 
 %\title{\huge Specification-guided Active Exploration: Applications to Safety-critical Mars Rover-Copter Mission}
 
-\title{\huge Specification-guided Active Exploration: Applications to a Risk-averse Rover/Copter Mars Mission}
+\title{\huge Specification-guided Active Exploration: Application to a Risk-averse Rover/Copter Mars Mission}
 
 %\title{\huge Verifiability-oriented Active Exploration: Applications to Safety-critical Mars Rover-Copter Team}
 
@@ -220,7 +220,6 @@ We first show that specification satisfaction can be formulated as a stochastic 
 \begin{example}
 \label{example:automaton}
 Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MDP and a mission specification $\varphi = \lozenge a \wedge \lozenge b$ dictating that two tasks $a$ and $b$ should both eventually be satisfied. The atomic proposition $a$ is associated with state $x^a$ whereas $b$ is associated with $x^b$, i.e. the labeling function is $L(x^a) = \{ a \}$, $L(x^b) = \{b \}$, and $L(x^c) =\emptyset$. We can construct the system to the right in Fig. \ref{fig:specautomaton} that has the property that a trace $\mathbf \pi=L(x_0) L(x_1) L(x_2)\ldots$ satisfies the specification if and only if the sequence of control inputs $\pi$ to this system reaches the target state $q_f$. All trajectories reaching $q_f$ have the property that both $a$ and $b$ have been observed, and all trajectories with this property reach $q_f$. It follows that the MDP to the left satisfies $\varphi$ if and only if the joint execution of the MDP and automaton reaches the final state $q_f$.
-
 \begin{figure}[htp]
 	\begin{tikzpicture}[node distance =2cm,scale=0.9]
 	    \node[initial,  initial text={},name = init,circle,draw] {$x^c$};
@@ -234,8 +233,8 @@ Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MD
 		          (x2) edge [bend right,dashed, red]  node[left] {\small$0.6$} (x1)
 		          (x2) edge [loop below, blue] (x2)
 		          (x2) edge [loop below,dashed, red] node[ above left] {\small \textcolor{red}{0.4}, \textcolor{blue}{1}\ \ } (x2)
-		          (x1) edge [loop above, blue](x1)
-		          (x1) edge [loop above,dashed, red] node[ below left ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
+		          (x1) edge [loop right, blue](x1)
+		          (x1) edge [loop right,dashed, red] node[right ] {\small \textcolor{red}{1}, \textcolor{blue}{1}\ \ } (x1) ;
 
 		\node[right of= x2, yshift = .75cm, node distance = 1cm, name=prod]{\large$\otimes$};
 		\node[initial, right of = prod,initial text={},name = init,circle,draw, node distance=1.5cm] {$q_0$};
@@ -252,6 +251,7 @@ Consider the example in Fig. \ref{fig:specautomaton} consisting of an example MD
 			(A) edge [bend left] node[above] {$b$} (AB);
 		\end{scope}
 	\end{tikzpicture}
+  \vspace{-4mm}
 	\caption{On the left an example MDP, and on the right a finite state system associated to mission specification $\varphi:= \lozenge a \wedge \lozenge b$.  }
   \label{fig:specautomaton}
 \end{figure}
@@ -473,6 +473,7 @@ We assume that low-level controllers are available for both robots so that they 
     \draw[-latex, black] (bi) to[loop below] node[below, black] {1} (bi);
   \end{tikzpicture}
   \end{center}
+  \vspace{-4mm}
   \caption{Illustration of the environment belief model for a single region, only transitions from the initial state $p_0$ are shown. Bars denote the complementary probability, i.e. $\bar p = 1-p$. When a high-quality measurement is received (blue edges), the belief transitions to $1$ with probability $p_0$ and to $0$ with probability $1-p_0$, whereas a low-quality measurement yields  beliefs $p_-$ or $p_+$. When no measurement is taken (black) the state does not change.}
   \label{fig:envmdp}
 \end{figure}
@@ -519,16 +520,12 @@ We connect the systems in serial as given by \eqref{eq:syst_prod_def}-\eqref{eq:
   \item The connection $C_\varphi$ defining the $\MDP_{rov} \otimes_{ser}^{C_\varphi} \MDP_{env}$ product is given by the truth value of atomic propositions for the state $(\xi_r, \xi_e)$.
 \end{itemize}
 
+\subsection{Scenarios}
 
-\subsection{Illustrations}
+We demonstrate the features of the proposed solution in a few example scenarios. In all scenarios we assume that a week measurement has accuracy 0.85, i.e. a positive weak measurement yields a belief state $\zeta=0.85$. We limit the rover to $T_r = 15$ steps and the copter to $T_r-T_c = 30$ steps. Since the rover moves much slower than the copter these two time intervals are not directly comparable: the copter will complete its 30 steps much faster than the rover completes 15 steps. Furthermore we set $\delta_{acc} = \delta_{rej} = 0.1$ which implies that goal of the exploration phase is to show that the mission can be completed with at least 90\% probability, or with at most 10\%. We assume that the copter can detect objects up to two grid points away (infinity norm) when it is flying at high altitude.
 
-We demonstrate the features of the proposed solution in a few example scenarios.
-
-\noindent \textbf{Scenario 1:} Fig. \ref{fig:workspacemars} illustrates the Kimberly region in the Mars Gale Crater where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be non-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is
-\begin{equation}
-  \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA},
-\end{equation}
-where the atomic proposition $\texttt{obstacle}$ is $\True$ if the rover is in a risk region that contains an obstacle, and $\texttt{sA}$ is $\True$ if the rover is in a target region that contains a science sample.
+\smallskip
+\noindent \textbf{Scenario 1:} The left part of Fig. \ref{fig:workspaces} illustrates the Kimberly region in the Mars Gale Crater where regions have been labeled as obstacles (red), risk regions (orange) and science target regions (blue). While the obstacle regions have been determined to be non-traversable, there is a sandy area $R_5$ and a rocky area $R_4$ that may be possible to cross. The objective is to collect a sample from any one of the three target regions while avoiding obstacles, i.e. the specification is $\varphi = \lnot \texttt{obstacle} \; \mathcal U \; \texttt{sA}$, where the atomic proposition $\texttt{obstacle}$ is $\True$ if the rover is in a risk region that contains an obstacle, and $\texttt{sA}$ is $\True$ if the rover is in a target region that contains a science sample.
 
 A good way to use our method is as a way to determine when additional exploration is warranted. To illustrate we consider a scenario where the initial probability of specification satisfaction is high: there is a high estimated probability that a sample can be extracted from the easy-to-access region $A_3$. However, when the rover reaches $A_3$ it turns out to be empty and the mission is now associated with much more risk. This motivates exploration with the hope that it can reduce mission uncertainty. 
 
@@ -536,99 +533,109 @@ With the two-stage approach described in Section \ref{sec:stochopt} we can then 
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.6\columnwidth]{2figs/arena-MARS.pdf}
+    \includegraphics[width=0.5\columnwidth]{2figs/exp1-workspace.pdf} ~ \raisebox{0.2cm}{\includegraphics[width=0.46\columnwidth]{2figs/exp2-workspace.pdf}}
   \end{center}
-  \caption{2D view of the work space where regions of interest $R_i$, $A_i$ are marked along with associated prior probabilities. Each abstract state is illustrated with a dot. The black square marks the required landing zone for the copter.}
-  \label{fig:workspacemars}
+  \vspace{-4mm}
+  \caption{Views of the two example work spaces where regions of interest are marked along with associated prior probabilities. Each abstract state is illustrated with a dot. The black square marks the required landing zone for the copter.}
+  \label{fig:workspaces}
 \end{figure}
 
-\begin{figure}
-\begin{center}
-  \footnotesize
-  \includegraphics[width=0.45\columnwidth]{2figs/trajectory0.pdf} ~ \includegraphics[width=0.45\columnwidth]{2figs/trajectory1.pdf}
-  \begin{tikzpicture}
-    \begin{axis}[width=0.5\columnwidth,
-                  height=0.3\columnwidth,
-                  xlabel={$t$},
-                  ylabel={$\mathbf{P}(\varphi)$},
-                  ymin = 0,
-                  ymax = 1,
-                  xticklabels = none,
-                  xtick = {},
-                  axis y line=middle,
-                  axis x line=middle,
-                  every axis x label/.style={
-                      at={(ticklabel* cs:1.05)}
-                  },
-                  every axis y label/.style={
-                      at={(0.,1.05)},
-                  anchor=south,
-                  }
-                  ]
-      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/proba0.txt};
-      \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 35,1);
-      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:35,0) rectangle (axis cs: 251,1);
-      \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:251,0) rectangle (axis cs: 321,1);
-    \end{axis}
-  \end{tikzpicture} ~
-  \begin{tikzpicture}
-    \begin{axis}[width=0.5\columnwidth,
-                  height=0.3\columnwidth,
-                  xlabel={$t$},
-                  ylabel={$\mathbf{P}(\varphi)$},
-                  ymin = 0,
-                  ymax = 1,
-                  xticklabels = none,
-                  xtick = {},
-                  axis y line=middle,
-                  axis x line=middle,
-                  every axis x label/.style={
-                      at={(ticklabel* cs:1.05)}
-                  },
-                  every axis y label/.style={
-                      at={(0.,1.05)},
-                  anchor=south,
-                  }
-                  ]
-      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/proba1.txt};
-      \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 35,1);
-      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:35,0) rectangle (axis cs: 248,1);
-      % \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:251,0) rectangle (axis cs: 321,1);
-    \end{axis}
-  \end{tikzpicture}
-\end{center}
-  \caption{Trajectories of the rover (orange) and copter (teal/purple for low/high elevation), and associated probabilities of specification satisfaction, for two environment configurations. In the initial mission phase (green), the rover moves towards a target area with a high sample probability of 0.9. However, the target area unexpectedly turns out to not contain a sample and the probability of specification satisfaction decreases to around 0.5. This triggers an exploration phase (blue) where the copter attempts to find out whether the mission can be completed or not. This succeeds in the illustration to the left and the rover proceeds with its mission, but fails in the case to the right and the mission is aborted.}
-  \label{fig:marstrajectories}
-\end{figure}
-
-
-\noindent \textbf{Scenario 2:} To further illustrate exploration and cooperative behavior we consider the artificial example depicted in Fig. \ref{fig:workspace1}. The specification is as follows: either collect samples of both types $A$ and $B$, or collect a sample of type $C$, while avoiding obstacles. Letting $\lozenge_o \varphi = \lnot \texttt{obstacle} \; \mathcal U \; \varphi$, the specification can be written
-\begin{equation*}
-  \left( \lozenge_o \texttt{sA} \land \lozenge_o \texttt{sB} \right)  \lor \left( \lozenge_o  \texttt{sC}  \right).
-\end{equation*}
-The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}. We assume that the rover can move for $T_r = 15$ time steps, and that the copter has enough battery to move for $T_c - T_r = 30$ time steps (including changes of altitude). %todo: clarify that the time steps of the rover represent longer spans of physical time than the time steps of the copter. In other words, the sampling time of the copter is shorter than that of the rover.
-
-Executions generated from the resulting copter and rover policies are shown in Fig. \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure. \ref{fig:copter_executions}, $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
+\pgfplotsset{probastyle/.style={%
+  width=0.55\columnwidth,
+  height=0.25\columnwidth,
+  xlabel={$t$},
+  ylabel={$\mathbf{P}(\mathbf{x} \models \varphi)$},
+  ytick = {0, 0.5, 1},
+  ymin = 0,
+  ymax = 1.1,
+  xmin = 0,
+  xticklabels = none,
+  xtick = {},
+  axis y line=middle,
+  axis x line=middle,
+  every axis x label/.style={
+      at={(ticklabel* cs:1.05)}
+  },
+  every axis y label/.style={
+      at={(0.05,1.05)},
+  anchor=south,
+  }
+}}
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.6\columnwidth]{2figs/arena.pdf}
+    \footnotesize
+    \includegraphics[width=0.48\columnwidth]{2figs/exp1-0-trajectory.pdf} ~ \includegraphics[width=0.48\columnwidth]{2figs/exp1-1-trajectory.pdf}
+    \begin{tikzpicture}
+      \begin{axis}[probastyle, xmax = 31.6]
+        \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp1-0-proba.txt};
+        \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 3.4,1);      % mission
+        \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:3.4,0) rectangle (axis cs: 24.8,1);    % exploration
+        \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:24.8,0) rectangle (axis cs: 31.6,1);   % mission
+      \end{axis}
+    \end{tikzpicture} ~
+    \begin{tikzpicture}
+      \begin{axis}[probastyle, xmax = 31.6]
+        \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp1-1-proba.txt};
+        \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 3.4,1);      % mission
+        \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:3.4,0) rectangle (axis cs: 23.6,1);    % exploration
+        % \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:251,0) rectangle (axis cs: 321,1); % mission
+      \end{axis}
+    \end{tikzpicture}
   \end{center}
-  \caption{2D view of the work space where regions of interest $R_1$, $R_2$, $A$, $B$, and $C$ are marked along with associated prior probabilities. Each abstract state is illustrated with a dot. The black square marks the required landing zone for the copter.}
-  \label{fig:workspace1}
+  \vspace{-4mm}
+  \caption{Above: Trajectories of the rover (orange) and copter (teal/purple for low/high elevation), and associated probabilities of specification satisfaction, for two environment configurations. A shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle), and the probabilities are the belief states after the exploration phase. 
+  Below: Estimated probability of specification satisfaction over time. In the initial mission phase (green), the rover moves towards a target area that has a high sample probability of 0.9. However, the target area unexpectedly turns out to not contain a sample and the probability of specification satisfaction decreases to around 0.5. This triggers an exploration phase (blue) where the copter attempts to find out whether the mission can be completed or not. This succeeds in the illustration to the left where $A_1$ contains a sample and the rover proceeds with its mission, but fails in the case to the right where $A_1$ is empty and the mission is aborted.}
+  \label{fig:marstrajectories}
 \end{figure}
 
-\todo[inline]{Connect this example with the Terraswarm example of Sheshia.}
+\smallskip
+\noindent \textbf{Scenario 2:} To further illustrate exploration and cooperative behavior we consider the artificial example depicted in the right part ofFig. \ref{fig:workspaces}. The specification is as follows: either collect samples of both types $A$ and $B$, or collect a sample of type $C$, while avoiding obstacles. Letting $\lozenge_o \varphi = \lnot \texttt{obstacle} \; \mathcal U \; \varphi$, the specification can be written $\left( \lozenge_o \texttt{sA} \land \lozenge_o \texttt{sB} \right)  \lor \left( \lozenge_o  \texttt{sC}  \right)$. The atomic proposition \texttt{sA} is $\True$ if $\xi_r \in A$ (rover is in region $A$) and $\zeta_A = 1$ (sample detected in $A$), and similarly for \texttt{sB} and \texttt{sC}.
+
+Executions generated from the resulting copter and rover policies are shown in Fig. \ref{fig:copter_executions} for different configurations of the true environment state. With only prior knowledge about the environment, the probability that the rover can satisfy the specification is $V_r(\xi_r^0, \xi_e^0, \xi_\varphi^0) = 0.25$. However, after the copter exploration all uncertainty is removed: for the two upper examples in Figure. \ref{fig:copter_executions}, $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 1$ and $0.85$, where $\xi_e^{T_c}$ is the environment belief state after copter exploration, and for the lower examples $V_r(\xi_r^0, \xi_e^{T_{c}}, \xi_\varphi^0) = 0.075$. This shows that the generated policy explores the environment in a way that efficiently reduces uncertainty about whether the specification can be satisfied.
+
+
+% \todo[inline]{Connect this example with the Terraswarm example of Sheshia.}
 
 \begin{figure}
+  \footnotesize
 	\begin{center}
-	\includegraphics[width=0.4\columnwidth]{2figs/exp0-map.pdf} ~
-	\includegraphics[width=0.4\columnwidth]{2figs/exp1-map.pdf} \\
+	\fbox{\includegraphics[width=0.44\columnwidth]{2figs/exp2-0-trajectory.pdf}} ~
+	\fbox{\includegraphics[width=0.44\columnwidth]{2figs/exp2-1-trajectory.pdf}} \\
+  \begin{tikzpicture}
+    \begin{axis}[probastyle, xmax=40]
+      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp2-0-proba.txt};
+      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 26,1);    % exploration
+      \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:26,0) rectangle (axis cs: 38.4,1);   % mission
+    \end{axis}
+  \end{tikzpicture} ~
+  \begin{tikzpicture}
+    \begin{axis}[probastyle, xmax=40]
+      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp2-1-proba.txt};
+      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 26.6,1);    % exploration
+      \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:26.6,0) rectangle (axis cs: 39.9,1);   % mission
+    \end{axis}
+  \end{tikzpicture}
 	\vspace{1mm}
-	\includegraphics[width=0.4\columnwidth]{2figs/exp2-map.pdf} ~
-	\includegraphics[width=0.4\columnwidth]{2figs/exp3-map.pdf}
+	\fbox{\includegraphics[width=0.44\columnwidth]{2figs/exp2-2-trajectory.pdf}} ~
+	\fbox{\includegraphics[width=0.44\columnwidth]{2figs/exp2-3-trajectory.pdf}}
+  \begin{tikzpicture}
+    \begin{axis}[probastyle, xmax=40]
+      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp2-2-proba.txt};
+      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 21.7,1);    % exploration
+      % \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:24.8,0) rectangle (axis cs: 31.6,1);   % mission
+    \end{axis}
+  \end{tikzpicture} ~
+  \begin{tikzpicture}
+    \begin{axis}[probastyle, xmax=40]
+      \addplot[mark=none, blue] table[x index=1, y index=0] {2figs/exp2-3-proba.txt};
+      \draw[draw=none, fill = explore, opacity = 0.3] (axis cs:0,0) rectangle (axis cs: 26.0,1);    % exploration
+      % \draw[draw=none, fill = mission, opacity = 0.3] (axis cs:24.8,0) rectangle (axis cs: 31.6,1);   % mission
+    \end{axis}
+  \end{tikzpicture}
 	\end{center}
-	\caption{Illustration of the copter and rover policies for different environment configurations: a shaded region indicates that the true state is equal to 0 (i.e. no sample or obstacle). The region probabilities indicate the belief states after the copter exploration phase. Copter trajectories are shown in blue, and rover trajectories in orange, if the specification can not be satisfied the rover does not move. All four executions are generated by the exact same policies; they adapt according to measurements received during the execution.}
+  \vspace{-4mm}
+	\caption{Illustration of the copter and rover policies for different environment configurations in the artificial scenario. Interpretation is equivalent to that of Fig. \ref{fig:marstrajectories}. All four executions are generated by the exact same policies; they adapt according to what is encountered in the environment. In the upper two examples the exploration phase shows high likelihood of specification satisfaction, whereas in the lower examples the specification is found to likely be infeasible and the mission is aborted.}
 	\label{fig:copter_executions}
 \end{figure}
 
