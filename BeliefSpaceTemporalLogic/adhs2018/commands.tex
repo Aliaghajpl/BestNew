@@ -1,0 +1,195 @@
+%% Additional packages
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+% \usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{url}
+%\usepackage[usenames,x11names]{xcolor}
+
+\ifdefined\algorithm
+% Don't load theorem style
+\else
+\usepackage[linesnumbered,vlined,ruled]{algorithm2e}
+\fi
+
+\usepackage{tikz}
+\usepackage{pgfplots} 
+\pgfplotsset{compat=1.14}
+\usetikzlibrary{arrows,automata,shapes,calc,backgrounds,spy,positioning,patterns}
+\usetikzlibrary{fit}
+
+\usepackage{epstopdf}
+
+
+ 
+
+%%% figure path
+\graphicspath{{figures/}}
+ 
+ 
+%% Roman, calligraphic, boldface, double barred letters
+\newcommand{\RM}[1]{\mathrm{#1}}
+\newcommand{\CA}[1]{\mathcal{#1}}
+\newcommand{\BF}[1]{\mathbf{#1}}
+\newcommand{\IT}[1]{\mathit{#1}}
+\newcommand{\BB}[1]{\mathbb{#1}}
+\newcommand{\TT}[1]{\mathtt{#1}}
+\newcommand{\FK}[1]{\mathfrak{#1}}
+\newcommand{\BS}[1]{\boldsymbol{#1}}
+
+
+%% spaces 
+\newcommand{\Real}{\BB{R}}
+\newcommand{\Symb}{\mathcal S}
+\newcommand{\borel}[1]{\mathcal{B}\left(#1\right)}
+
+
+%%% Probability
+\newcommand{\Ex}{\mathbf{E}}     % Probability of an event
+
+\newcommand{\po}{\mathbf{P}}     % Probability of an event
+\newcommand{\p}[1]{\po\left(#1\right)}     % Probability of an event
+\renewcommand{\P}{\BF{P}}
+\newcommand{\pd}[1]{p\left(#1\right)}     % Probability density  
+
+
+
+%% Modelling symbols
+%-------------MDP----------------------------
+\newcommand{\MDP}{\mathsf{M}}
+\newcommand{\POMDP}{\MDP_{\Z}}
+\newcommand{\C}{\mathbf{C}}
+\newcommand{\MB}{\mathsf{B}}
+
+ 
+\newcommand{\X}{{\mathbb{X}}}  % State
+\newcommand{\Z}{{\mathbb{Z}}}	% Observation space
+\newcommand{\A}{{\mathbb{U}}} % Action space
+\newcommand{\init}{\rho}
+\newcommand{\tr}{t}
+
+
+% product MDP
+\renewcommand{\S}{{\mathbb{S}}}	% Observation space
+
+\newcommand{\polb}{{\boldsymbol{\mu}}}
+\renewcommand{\pol}{{\mu}}
+
+\newcommand{\Y}{{\mathbb{Y}}}  % State
+
+%-------------POMDP-----------------------------
+\newcommand{\Hist}{{\mathbb{H}}}  %  History
+\newcommand{\I}{{\mathbb{I}}}  %  History
+\newcommand{\Belief}{b}
+\newcommand{\trb}{\tr_\Belief}
+\newcommand{\Xb}{\mathbb{B}}  % State
+\newcommand{\initb}{\init_\Belief}
+
+
+% -----------------Refinement relation----------
+\newcommand{\InF}{\mathcal{U}_{v}}
+\newcommand{\Wt}{\mathbb{W}_{\tr}}
+
+\newcommand{\grid}{{\boldsymbol{\eta}}}
+
+%%% Logic 
+%------------------Predicates-----------------------------------
+\newcommand{\Fpred}{{\mathcal F}}
+\newcommand{\Lab}{\mathsf{L}}
+\newcommand{\Labset}{\mathcal{L}}
+
+\newcommand{\alphabeth}{\Sigma}
+\newcommand{\word}{{\boldsymbol{\pi}}} % words formed from the alphabeth
+\newcommand{\letter}{\pi} % words formed from the alphabeth
+
+\newcommand{\Bel}{{\mathbf {T}}}
+\newcommand{\BelR}{{\mathbf {R}}}
+\newcommand{\trunc}[2]{\operatorname{trunc}_{#1}\left(#2\right)}
+
+
+%%% Temporal logic symbols
+\newcommand{\notltl}{\neg}
+\newcommand{\andltl}{\wedge}
+\newcommand{\orltl}{\vee}
+\newcommand{\Next}{\ensuremath{\bigcirc}}
+\newcommand{\Always}{\ensuremath{\ \square\ }}
+\newcommand{\Event}{\ensuremath{\ \diamondsuit\ }}
+\newcommand{\Until}{\ \CA{U}\ }
+\newcommand{\Implies}{\Rightarrow}
+\newcommand{\Equiv}{\Leftrightarrow}
+\newcommand{\True}{\top}
+\newcommand{\False}{\perp}
+\newcommand{\AP}{{AP}}
+\newcommand{\pred}{\xi}
+
+
+\newcommand{\eps}{\epsilon}
+\newcommand{\rel}{\mathcal{R}} % numbers option provides compact numerical references in the text. 
+
+%----- Exotic words----- 
+\newcommand{\buchi}{B\"uchi\ }
+
+%% Symbols of automata
+\newcommand{\PA}{\mathcal{P}} 
+\newcommand{\BA}{\mathcal{B}}
+\newcommand{\TS}{\mathcal{F}}
+\newcommand{\Language}{\mathbf{Lang}} % Language?
+\newcommand{\KA}{\mathcal{K}}
+\newcommand{\RA}{\mathcal{R}}
+\newcommand{\FSA}{\mathcal{A}}
+
+\newcommand{\TSX}{\BB{V}_\TS}
+\newcommand{\TSE}{\BB{E}_\TS}
+\newcommand{\TSEE}{\BB{E}}
+
+\newcommand{\DTL}{DTL~}
+
+ % Custom operators
+\newcommand{\norm}[1]{\left\| {#1} \right\|}
+\newcommand{\norminf}[1]{\left\| {#1} \right\|_{\infty}}
+\newcommand{\normeucl}[1]{\left\| {#1} \right\|_{2}}
+\newcommand{\abs}[1]{\left| {#1} \right|} 
+\DeclareMathOperator{\diag}{diag}
+
+\DeclareMathOperator*{\argmin}{arg\,min} 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\ball}{\mathcal{O}}
+
+\ifdefined\theoremstyle
+% Don't load theorem style:
+%% There are a number of predefined theorem-like environments in
+%% ifacconf.cls:
+%%
+%% \begin{thm} ... \end{thm}            % Theorem
+%% \begin{lem} ... \end{lem}            % Lemma
+%% \begin{claim} ... \end{claim}        % Claim
+%% \begin{conj} ... \end{conj}          % Conjecture
+%% \begin{cor} ... \end{cor}            % Corollary
+%% \begin{fact} ... \end{fact}          % Fact
+%% \begin{hypo} ... \end{hypo}          % Hypothesis
+%% \begin{prop} ... \end{prop}          % Proposition
+%% \begin{crit} ... \end{crit}          % Criterion
+\newtheorem{theorem}[thm]{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{problem}{Problem}
+
+
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+
+\else
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{cor}{Corollary}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{cond}{Condition}
+
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\fi
+
